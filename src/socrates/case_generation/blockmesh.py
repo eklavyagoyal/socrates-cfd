@@ -106,7 +106,7 @@ def _scaled(n: int, f: float) -> int:
 
 def resolve_layout(cfg: CaseConfig) -> BlockLayout:
     m, d = cfg.mesh, cfg.domain
-    R = 0.5
+    R = 0.5 * m.cylinder_scale  # 1.0 except in fault-injection (attack) cases
     a = m.square_half
     if not (R < m.r_mid < a):
         raise ValueError(f"need 0.5 < r_mid ({m.r_mid}) < square_half ({a})")
@@ -115,7 +115,7 @@ def resolve_layout(cfg: CaseConfig) -> BlockLayout:
 
     # ---- expansion ratios from BASE counts (refinement = 1) -------------
     nq0 = m.n_quadrant
-    E_ra = ratio_from_first_cell(m.r_mid - R, m.n_ring_inner, m.first_cell)
+    E_ra = ratio_from_first_cell(m.r_mid - 0.5, m.n_ring_inner, m.first_cell)
     last_ra = m.first_cell * E_ra
     E_rb = ratio_from_first_cell(a - m.r_mid, m.n_ring_outer, last_ra)
     ds_square = 2.0 * a / nq0  # tangential spacing along the square sides

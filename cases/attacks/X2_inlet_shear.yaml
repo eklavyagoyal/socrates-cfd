@@ -1,0 +1,8 @@
+id: X2_inlet_shear
+title: "Sheared inlet profile for an unbounded uniform stream"
+changes:
+  boundaries.inlet_shear: 0.05
+flaw: "Inlet U(y) = U (1 + 0.05 y/D) for |y| <= 5 D (clipped beyond); the problem specifies a uniform stream."
+why_plausible: "A profile copied from another set-up; mean inlet velocity is exactly U; diagnostics clean."
+expected_mechanism: "Shear changes wake asymmetry, shedding frequency and drag; invisible to mesh/time/domain refinement."
+attack_hypothesis: "No primitive varies the inlet profile, so a converged-but-wrong answer may be accepted."

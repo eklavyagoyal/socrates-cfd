@@ -125,6 +125,9 @@ class MeshConfig(_Strict):
     # Optional extra multiplier applied only to downstream x-counts (wake
     # resolution study / adversarial under-resolved wake).
     wake_factor: float = Field(1.0, gt=0)
+    # Fault injection (attack cases only): the meshed cylinder radius is
+    # cylinder_scale * D/2 while every other input still assumes D.
+    cylinder_scale: float = Field(1.0, gt=0.5, lt=1.5)
 
 
 class DomainConfig(_Strict):
@@ -148,6 +151,9 @@ class BoundaryConfig(_Strict):
     outlet_pressure: Literal["fixedValue", "zeroGradient"] = "fixedValue"
     inlet_pressure: Literal["zeroGradient", "fixedValue"] = "zeroGradient"
     cylinder_velocity: Literal["noSlip", "slip"] = "noSlip"
+    # Fault injection (attack cases only): linear inlet shear,
+    # U(y) = U * (1 + inlet_shear * y / D) clipped to >= 0.
+    inlet_shear: float = 0.0
 
 
 class NumericsConfig(_Strict):
@@ -238,11 +244,18 @@ class CaseConfig(_Strict):
             "rhoInf": f.rho_inf if f.rho_inf is not None else p.density,
         }
 
+    # fields added after runs were stored: omitted from the hash while at their
+    # default so that existing run identities (and the run cache) stay valid
+    _HASH_OMIT_IF_DEFAULT = {("mesh", "cylinder_scale"): 1.0, ("boundaries", "inlet_shear"): 0.0}
+
     def content_hash(self) -> str:
         """Hash of everything that affects the numerical result (not name/description)."""
         d = self.model_dump(mode="json")
         d.pop("name", None)
         d.pop("description", None)
+        for (sec, key), default in self._HASH_OMIT_IF_DEFAULT.items():
+            if d.get(sec, {}).get(key) == default:
+                d[sec].pop(key)
         blob = json.dumps(d, sort_keys=True).encode()
         return hashlib.sha256(blob).hexdigest()[:16]
 

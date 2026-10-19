@@ -1,0 +1,28 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 26.064133112000036,
+ "cost_usd": 0.04575627499999999,
+ "errors": [],
+ "verdict": "INCONCLUSIVE",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "Run is numerically healthy: completed, linear solvers converged, mass imbalance 6.667e-10, max Courant 0.74419, Re matches, force references consistent, 14 stationary cycles.",
+  "Statistical and averaging uncertainties are negligible (drag coefficient 1.125e-05 and 1.313e-05; Strouhal number 1.621e-05 and 9.748e-08).",
+  "Mesh, time-step and domain uncertainties are all unquantified because no refinement, time-step-reduction or domain-expansion run exists, so the error budget cannot be closed for either quantity.",
+  "Risk factors are present: blockage ratio 0.125 with symmetry walls at half-height 4D, against a requirement to treat the stream as unbounded; a coarse mesh (13070 cells, last wake cell 0.36188 D); and a Strouhal frequency resolution of 0.013333 against a Strouhal number of 0.17963 (about 7 %).",
+  "No demonstrated change exceeding the 3 % tolerance exists in the evidence, so REJECT is not justified. Acceptance is also unsupported, so the result is INCONCLUSIVE."
+ ],
+ "numeric_audit": {
+  "traced": 12,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "B1_small_domain",
+ "root_run": "B1_small_domain-a69ffb97a2e6"
+}

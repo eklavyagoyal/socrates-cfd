@@ -48,6 +48,14 @@ def mesh_evidence(case_dir: Path, cfg: CaseConfig) -> dict:
             "wake_factor": cfg.mesh.wake_factor,
         },
     }
+    cyl = ((cm or {}).get("patches") or {}).get("cylinder", {}).get("bounding_box")
+    if cyl:
+        out["measured_geometry"] = {
+            "cylinder_patch_bounding_box_m": cyl,
+            "cylinder_diameter_x_m": cyl[1][0] - cyl[0][0],
+            "cylinder_diameter_y_m": cyl[1][1] - cyl[0][1],
+            "configured_diameter_m": D,
+        }
     if cm and cm.get("total_volume") and cm.get("cells"):
         area_D2 = cm["total_volume"] / (cfg.mesh.span * D) / D**2
         out["representative_cell_size_D"] = math.sqrt(area_D2 / cm["cells"])

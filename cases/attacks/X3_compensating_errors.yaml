@@ -1,0 +1,11 @@
+id: X3_compensating_errors
+title: "Coarse mesh plus tight domain: partially cancelling biases"
+changes:
+  mesh.refinement: 0.5
+  domain.upstream: 10.0
+  domain.downstream: 20.0
+  domain.half_height: 6.0
+flaw: "Mesh x0.5 (biases Cd and St low) combined with 8 % blockage (biases them high)."
+why_plausible: "Reported Cd lands close to commonly quoted values."
+expected_mechanism: "Errors cancel in the reported values but not under one-factor refinement."
+attack_hypothesis: "A verifier that compares values with expectations would be fooled; one-factor sensitivity should not be."

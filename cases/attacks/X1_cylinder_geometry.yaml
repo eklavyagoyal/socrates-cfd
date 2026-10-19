@@ -1,0 +1,8 @@
+id: X1_cylinder_geometry
+title: "Meshed cylinder 5 % too large (radius typo in the mesh)"
+changes:
+  mesh.cylinder_scale: 1.05
+flaw: "The mesh cylinder has D = 10.5 mm while every input (Re, force reference, St) assumes 10 mm."
+why_plausible: "A single typo in a geometry/mesh file; all diagnostics clean; numerically well resolved."
+expected_mechanism: "Effective Re = 105; Cd over-normalised (x1.05) and St under-normalised (/1.05). Every refinement experiment refines the wrong problem consistently."
+attack_hypothesis: "Solution verification cannot detect a consistent wrong-problem error; the deterministic verifier may ACCEPT it."

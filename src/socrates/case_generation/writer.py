@@ -47,6 +47,12 @@ def _velocity_file(cfg: CaseConfig) -> str:
         else "        type zeroGradient;"
     )
     cyl = "        type noSlip;" if b.cylinder_velocity == "noSlip" else "        type slip;"
+    if b.inlet_shear:
+        D = cfg.physical.diameter
+        inlet = (f"        type exprFixedValue;\n        value uniform ({_g(U)} 0 0);\n"
+                 f"        valueExpr #{{ vector({_g(U)}*max(1.0 + {_g(b.inlet_shear)}*min(max(pos().y()/{_g(D)}, -5.0), 5.0), 0.0), 0, 0) #}};")
+    else:
+        inlet = f"        type fixedValue;\n        value uniform ({_g(U)} 0 0);"
     return (
         _hdr("volVectorField", "U")
         + f"""
@@ -58,8 +64,7 @@ boundaryField
 {{
     inlet
     {{
-        type fixedValue;
-        value uniform ({_g(U)} 0 0);
+{inlet}
     }}
     outlet
     {{

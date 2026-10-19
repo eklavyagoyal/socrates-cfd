@@ -1,0 +1,28 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 13.361955750000106,
+ "cost_usd": 0.038394275,
+ "errors": [],
+ "verdict": "REJECT",
+ "confidence": "HIGH",
+ "reasoning_summary": [
+  "The run used simpleFoam, a steady solver, at Re=100. The verifier's physics_regime check says this is in the periodic-shedding regime, with onset at Re~47.0. A steady solver can only return the unstable symmetric branch. Its drag is not the time-mean drag of the physical flow, so the reported mean_drag_coefficient of 1.0921 cannot be trusted.",
+  "The Strouhal number was not obtained. The setup reports strouhal_number as null and rms_lift_coefficient as 0.0. A steady solution has no shedding, so the requested Strouhal number is missing.",
+  "The steady solver did not satisfy its residualControl before the iteration limit (linear_solver_convergence FAIL). Even the steady solution is therefore not converged.",
+  "The mesh is coarse. It has 30580 cells and a representative cell size of 0.45745 D. The wake last cell is 1.0209 D, so the vortex street is poorly resolved. The mesh, time and domain sensitivity checks are all INCONCLUSIVE because no refinement studies were run.",
+  "Some checks passed: mass conservation, Re consistency, force reference consistency, and mesh validity. These do not fix the wrong-regime formulation. The deterministic verdict is REJECT."
+ ],
+ "numeric_audit": {
+  "traced": 6,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "D1_steady_solver",
+ "root_run": "D1_steady_solver-9cd0391edef9"
+}

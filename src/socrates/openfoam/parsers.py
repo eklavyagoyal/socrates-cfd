@@ -54,8 +54,13 @@ def parse_checkmesh(text: str) -> dict:
     ]
     out["completed"] = bool(re.search(r"^End\s*$", text, re.M))
     patches = {}
-    for m in re.finditer(r"^\s+(\w+)\s+(\d+)\s+(\d+)\s+(ok|multiply connected[^\n]*)", text, re.M):
-        patches[m.group(1)] = {"faces": int(m.group(2)), "points": int(m.group(3)), "topology": m.group(4)}
+    bbre = rf"\(({_FLOAT}) ({_FLOAT}) ({_FLOAT})\) \(({_FLOAT}) ({_FLOAT}) ({_FLOAT})\)"
+    for m in re.finditer(r"^\s+(\w+)\s+(\d+)\s+(\d+)\s+(ok[^(\n]*|multiply connected[^(\n]*)(.*)$", text, re.M):
+        entry = {"faces": int(m.group(2)), "points": int(m.group(3)), "topology": m.group(4).strip()}
+        b = re.search(bbre, m.group(5))
+        if b:
+            entry["bounding_box"] = [[float(b.group(i)) for i in (1, 2, 3)], [float(b.group(i)) for i in (4, 5, 6)]]
+        patches[m.group(1)] = entry
     out["patches"] = patches
     return out
 

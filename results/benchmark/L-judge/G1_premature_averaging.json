@@ -1,0 +1,42 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 14.842417578000095,
+ "cost_usd": 0.03468901,
+ "errors": [],
+ "verdict": "INCONCLUSIVE",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "Basic checks pass: the solver completed, checkMesh is OK, mass imbalance is 8.3333e-11, the Courant number is 0.73373, Re is consistent, and the force references are consistent. The flow is in the expected periodic shedding regime.",
+  "The stationary window has only 3 cycles. The drag drift is 4.0105% and the 95% CI on mean Cd is 0.044509 (about 3.4% of 1.3039). Both exceed the 3% tolerance, and the statistical uncertainty alone does not meet the 0.5*tolerance budget.",
+  "Strouhal resolution is 0.033333 in frequency, which is about 20% of St = 0.16129. The FFT gives 0.16169 and the windowed estimate gives 0.16058, so the two methods differ by about 0.7%. The verifier puts the St statistical uncertainty at 3.10%, which is above the 3% tolerance.",
+  "The submitted setup averaged from t=10, but the transient ended near 15.276 convective units. The reported Cd of 1.2961 therefore differs from the stationary-window value of 1.3039 (about 0.6%). This is small, but the averaging bias cannot be certified because the reference window is itself unreliable.",
+  "No mesh, time-step or domain sensitivity evidence exists. The mesh is coarse, with about 0.457 D cells, a 0.005 D first cell and a wake last cell of 1.02 D. The domain has 0.0125 blockage and symmetry lateral boundaries. These error components are unknown.",
+  "I can't show the results are within 3%, and I have no evidence that they are outside it. The verdict is INCONCLUSIVE rather than REJECT, because nothing demonstrates a change larger than the tolerance."
+ ],
+ "numeric_audit": {
+  "traced": 24,
+  "untraced": [
+   {
+    "token": "95%",
+    "context": "window has only 3 cycles. The drag drift is 4.0105% and the 95% CI on mean Cd is 0.044509 (about 3.4% o"
+   },
+   {
+    "token": "3.4%",
+    "context": "ift is 4.0105% and the 95% CI on mean Cd is 0.044509 (about 3.4% of 1.3039). Both exceed the 3% toleranc"
+   },
+   {
+    "token": "0.7%",
+    "context": " estimate gives 0.16058, so the two methods differ by about 0.7%. The verifier puts the St statistical u"
+   }
+  ],
+  "n_untraced": 3
+ },
+ "case": "G1_premature_averaging",
+ "root_run": "G1_premature_averaging-17c0143468d7"
+}

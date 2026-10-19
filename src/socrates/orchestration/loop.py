@@ -153,6 +153,8 @@ def run_adaptive(
 ) -> LoopResult:
     budget = budget or Budget()
     limits = limits or Limits()
+    if log_path:
+        log_path.parent.mkdir(parents=True, exist_ok=True)
     vcfg = vcfg or load_config()
     started = _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds")
     root = _node(store, root_run)

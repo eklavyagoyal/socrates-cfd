@@ -96,6 +96,8 @@ def run_summary(graph: RunGraph, rid: str) -> dict:
             "wake_cells_streamwise": md.get("wake_cells_streamwise"),
             "wake_last_cell_D": md.get("wake_last_cell_D"),
             "checkMesh_ok": cm.get("mesh_ok"),
+            "cylinder_patch_extent_x_m": (mesh.get("measured_geometry") or {}).get("cylinder_diameter_x_m"),
+            "cylinder_patch_extent_y_m": (mesh.get("measured_geometry") or {}).get("cylinder_diameter_y_m"),
             "max_non_orthogonality_deg": cm.get("max_non_orthogonality"),
             "max_skewness": cm.get("max_skewness"),
         },

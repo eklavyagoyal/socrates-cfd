@@ -1,0 +1,34 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 15.674036695000268,
+ "cost_usd": 0.044400575000000005,
+ "errors": [],
+ "verdict": "INCONCLUSIVE",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "The run is clean and well averaged. The solver completed, mass imbalance was 8.33e-11, and linear solvers converged in 100% of steps. Max Courant number was 0.39 and Re is consistent at 100. The force references are correct. The lift oscillation is sustained and periodic, as the physics-regime check expects.",
+  "Statistical error is negligible. There are 12 stationary cycles. The mean-drag 95% CI is 5.88e-05 and drift is 0.00018797. The reported Cd of 1.2951 matches the stationary window. The Strouhal number is 0.15561 from both the window and the FFT. The averaging and statistics components therefore pass for both quantities.",
+  "The error budget cannot be closed. The mesh, time-step and domain components are all unquantified, because no refinement, smaller-time-step or expanded-domain run exists. The verifier gives combined_uncertainty null for both quantities. Without these components the 3% tolerance cannot be certified.",
+  "There are warning signs, but they do not prove an error. The mesh is coarse: 7616 cells, representative cell size 0.91664 D, and wake cells growing to 2.0173 D. The blockage ratio is 0.0125 with symmetry lateral boundaries. These could bias Cd and St, but the evidence shows no change larger than the tolerance, so a REJECT is not justified.",
+  "Time-step sensitivity is also unknown. The step is 0.01 convective units, and the scheme is nominally second-order in space and backward in time. That does not quantify the discretisation error.",
+  "Conclusion: neither quantity can be trusted or rejected from this single run. A mesh refinement, a time-step reduction and a domain expansion would be needed to decide."
+ ],
+ "numeric_audit": {
+  "traced": 15,
+  "untraced": [
+   {
+    "token": "95%",
+    "context": "s negligible. There are 12 stationary cycles. The mean-drag 95% CI is 5.88e-05 and drift is 0.00018797."
+   }
+  ],
+  "n_untraced": 1
+ },
+ "case": "A1_coarse_mesh",
+ "root_run": "A1_coarse_mesh-8db269c22d05"
+}

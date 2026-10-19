@@ -124,3 +124,25 @@ def test_cumulative_refinement_limit():
 def test_content_hash_ignores_name():
     assert BASE.content_hash() == BASE.with_changes({}, name="other").content_hash()
     assert BASE.content_hash() != BASE.with_changes({"time.delta_t": 0.02}).content_hash()
+
+
+@pytest.mark.parametrize("changes", [{}, {"boundaries.inlet_shear": 0.1}, {"boundaries.lateral": "noSlipWall"},
+                                     {"numerics.solver": "simpleFoam"}])
+def test_each_patch_defined_exactly_once(tmp_path, changes):
+    import re
+    cfg = BASE.with_changes(changes)
+    write_case(cfg, tmp_path / "c")
+    for field in ("U", "p"):
+        txt = (tmp_path / "c" / "0" / field).read_text()
+        bf = txt[txt.index("boundaryField"):]
+        blocks = re.findall(r"^    (\w+)\n    \{\n(.*?)\n    \}", bf, re.S | re.M)
+        names = [b[0] for b in blocks]
+        assert sorted(names) == sorted(["inlet", "outlet", "cylinder", "top", "bottom", "frontAndBack"]), names
+        for name, body in blocks:
+            assert body.count("type ") == 1, (field, name, body)
+
+
+def test_cylinder_scale_only_changes_geometry():
+    a, b = resolve_layout(BASE), resolve_layout(BASE.with_changes({"mesh.cylinder_scale": 1.05}))
+    assert math.isclose(b.R, 0.525) and (a.nq, a.nra, a.E_ra) == (b.nq, b.nra, b.E_ra)
+    assert BASE.with_changes({"mesh.cylinder_scale": 1.0}).content_hash() == BASE.content_hash()

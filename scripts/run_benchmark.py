@@ -1,6 +1,7 @@
 """Run the benchmark systems on every manifest case (resumable).
 
     python scripts/run_benchmark.py --systems A,B,C-rule,C-llm,Bexh,L-judge [--cases id1,id2] [--workers 6]
+    (C-llm-r2, C-llm-r3, ...: independent repeats of C-llm for run-to-run variance)
 
 Results: results/benchmark/<system>/<case>.json; per-case reports for the
 adaptive systems in reports/cases/.
@@ -83,7 +84,7 @@ def run_one(system: str, case: dict, store: RunStore, spec: ProblemSpec, budget:
         res = system_b(store, spec, root.run_id)
     elif system == "C-rule":
         res = system_c(store, spec, root.run_id, planner="rule", budget=budget)
-    elif system == "C-llm":
+    elif system == "C-llm" or system.startswith("C-llm-r"):  # C-llm-r2, -r3: independent repeats (LLM variance)
         res = system_c(store, spec, root.run_id, planner="llm", budget=budget,
                        log_path=OUT / system / f"{case['id']}.partial.json")
     elif system == "Bexh":
@@ -97,7 +98,7 @@ def run_one(system: str, case: dict, store: RunStore, spec: ProblemSpec, budget:
     res["stamp"] = stamp(root)
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(json.dumps(res, indent=1, default=str))
-    if system in ("C-rule", "C-llm", "Bexh"):
+    if system in ("C-rule", "C-llm", "Bexh") or system.startswith("C-llm-r"):
         rep = REPO / "reports" / "cases" / f"{case['id']}__{system}.md"
         try:
             write_case_report(rep, store, spec,

@@ -256,6 +256,106 @@
     "expected_outcome": "If the refined run is statistically reliable and its Cd and St stay within about 0.015 of R0 (Cd 1.3306, St 0.16318), mesh uncertainty is within budget. Time and a longer R2 follow. A demonstrated change above 0.03 beyond 2x noise is a deterministic FAIL, and R0 is rejected."
    },
    "outcome": "executed -> X2_inlet_shear.m1.41-ca5c50f2e498 (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 30.82026792200486,
+    "cost_usd": 0.11277291,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 37675,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 55,
+     "untraced": [
+      {
+       "token": "0.019654",
+       "context": "ift_rel -0.02625, Cd uncertainty 0.02625 and St uncertainty 0.019654. R2 (Cd 1.329, St 0.16325) agrees with "
+      },
+      {
+       "token": "2.9",
+       "context": "7 of 12.0 compute. REFINE_MESH from R3 costs about 5695 s (~2.9x root), leaving enough for REDUCE_TIME_"
+      },
+      {
+       "token": "0.019654",
+       "context": "Cd drift_rel -0.02625 and uncertainties of 0.02625 (Cd) and 0.019654 (St), above the 0.015 budget"
+      }
+     ],
+     "n_untraced": 3
+    },
+    "run_aliases": {
+     "X2_inlet_shear-32168bfbca6b": "R0",
+     "X2_inlet_shear.D2x-8d92db3cbed0": "R1",
+     "X2_inlet_shear.long230-1a1e9e99a483": "R2",
+     "X2_inlet_shear.m1.41-ca5c50f2e498": "R3"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and failed_checks is empty. I can't ACCEPT, because the time and domain components are unmeasured for both quantities and the mesh component is unmeasured for St. I can't REJECT, because no FAIL was measured.",
+    "R3 (REFINE_MESH of R0, 61366 cells vs 30580) gives stationary-window Cd 1.3338 and St 0.16419. R0 gives Cd 1.3306 and St 0.16318. The root-to-finest change is 0.240% for Cd and 0.62% for St, both far below the 3% tolerance.",
+    "Mesh component for Cd passes at 1.44% (limit 1.5%), only just inside the budget. St mesh uncertainty is 3.68% and INCONCLUSIVE. This comes from a two-level Richardson estimate with an assumed order p=2 and Fs=3. The observed order is not measured, so the estimate is conservative and can't be certified.",
+    "R3 has only 6 stationary cycles, with its window start at the MSER cap (40.921). Its Cd CI95 is 2.576e-05, so the statistics are not the limiting factor. R3 also uses a smaller time step (0.0086903 vs 0.01), so the R0-to-R3 change mixes spatial and temporal effects slightly.",
+    "Domain check is INCONCLUSIVE because R2 is not statistically reliable. R2 has Cd drift_rel -0.02625, Cd uncertainty 0.02625 and St uncertainty 0.019654. R2 (Cd 1.329, St 0.16325) agrees with R0 (Cd 1.3306, St 0.16318) but that agreement is indicative only. R1 and R2 also have checkMesh_ok false and a coarser far-field mesh (0.79405 D vs 0.45745 D).",
+    "Time sensitivity is unmeasured. R0 has dt 0.01, max Courant 0.7323 and 612.82 steps per period, so a large error is unlikely. Unmeasured is still not a pass.",
+    "All runs record a non-uniform inlet (ux 0.1125 to 0.1875, mean 0.15, nonuniformity 0.5), although the question specifies a uniform stream. The verifier has no check for it and no menu primitive can change or measure it. It is an unquantified risk and must be flagged to the submitter.",
+    "Budget: 3 of 6 experiments used and 3.27 of 12.0 compute. REFINE_MESH from R3 costs about 5695 s (~2.9x root), leaving enough for REDUCE_TIME_STEP (~2116 s) and RUN_LONGER on R2 (~1756 s) afterwards."
+   ],
+   "missing_evidence": [
+    "Mesh uncertainty for St: a third mesh level is needed to measure the observed convergence order (currently assumed p=2, giving 3.68%)",
+    "Temporal discretisation uncertainty for Cd and St (no REDUCE_TIME_STEP run)",
+    "A statistically reliable domain family member: R2 has Cd drift_rel -0.02625 and uncertainties of 0.02625 (Cd) and 0.019654 (St), above the 0.015 budget",
+    "Why R1 and R2 have checkMesh_ok false and a coarser far-field mesh than R0, which confounds the domain comparison",
+    "Effect of the non-uniform inlet (ux 0.1125 to 0.1875, mean 0.15) versus the specified uniform stream. The profile shape is not recorded and no menu primitive can measure it.",
+    "Combined uncertainty for Cd and St against the 0.03 tolerance"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "St is mesh-converged at the 3% level. The 3.68% estimate is an artefact of the assumed p=2 two-level extrapolation, and the observed order will give a much smaller uncertainty.",
+     "test": "REFINE_MESH on R3 with factor 1.4142. If St and Cd change by well under 1.5% relative to R3 (St 0.16419, Cd 1.3338) and the three levels give a consistent observed order, mesh uncertainty is within budget. A change above 3% beyond 2x noise is a FAIL."
+    },
+    {
+     "hypothesis": "R2's slow drift (drift_rel -0.02625) is a long start-up transient in the larger domain, and R2's agreement with R0 is real.",
+     "test": "RUN_LONGER on R2 so that drift and uncertainty fall below 0.015. The verifier can then compute the domain component."
+    },
+    {
+     "hypothesis": "Temporal error at dt 0.01 with backward differencing is negligible.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2. Cd and St should change by much less than 1.5%."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "X2_inlet_shear.m1.41-ca5c50f2e498",
+    "reason": "St mesh uncertainty (3.68%) is the only component that exceeds the tolerance, and it is INCONCLUSIVE. It rests on an assumed order p=2 from two levels. Cd mesh is also close to its budget (1.44% vs 1.5%). Refining the finest run, R3, continues the same refinement family and gives a third level. That lets the observed order be measured and the St and Cd mesh uncertainty be certified or shown to be a FAIL. It avoids the far-field mesh confounding present in R1 and R2. Budget allows it and still leaves room for REDUCE_TIME_STEP and RUN_LONGER on R2.",
+    "expected_outcome": "If St and Cd change by less than about 1.5% from R3 (St 0.16419, Cd 1.3338) and the observed order is consistent, mesh uncertainty falls within budget for both quantities. REDUCE_TIME_STEP on R0 and RUN_LONGER on R2 then close the time and domain components. A demonstrated change above 3% beyond 2x noise would be a deterministic FAIL and R0 would be rejected."
+   },
+   "outcome": "executed -> X2_inlet_shear.m2-3f2d80a2a02e (completed)"
   }
  ]
 }

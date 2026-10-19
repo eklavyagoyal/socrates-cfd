@@ -1,0 +1,84 @@
+# Deterministic verification configuration.
+#
+# Every threshold is either
+#   (a) a documented OpenFOAM default or user-guide recommendation,
+#   (b) taken from the cited literature, or
+#   (c) derived from the user's requested tolerance tau via an explicit
+#       error-budget rule (documented below).
+# Anything else is reported as evidence only and the corresponding check
+# returns INCONCLUSIVE.  See docs/design.md section 7 for the reasoning.
+
+error_budget:
+  # A numerical-error component "passes" when its estimated uncertainty
+  # U_i <= component_pass_fraction * tau (it then consumes at most 25 % of
+  # the variance budget tau^2).  A component "fails" when a *demonstrated*
+  # change exceeds tau.  ACCEPT additionally needs the root-sum-square of
+  # all components <= tau (ASME V&V 20-2009 style combination of
+  # independent uncertainty components).
+  component_pass_fraction: 0.5
+  combine: rss
+
+mesh_quality:
+  # (a) OpenFOAM defaults, src/OpenFOAM/meshes/primitiveMesh/primitiveMeshCheck
+  max_non_orthogonality_deg: {value: 70.0, source: "OpenFOAM primitiveMesh::nonOrthThreshold_ default (70 deg); checkMesh reports '***' above it"}
+  max_skewness: {value: 4.0, source: "OpenFOAM primitiveMesh::skewThreshold_ default (4)"}
+  max_aspect_ratio: {value: 1000.0, source: "OpenFOAM primitiveMesh::aspectThreshold_ default (1000)"}
+
+courant:
+  # (a) OpenFOAM User Guide, lid-driven cavity tutorial: "To achieve
+  # temporal accuracy and numerical stability when running icoFoam, a
+  # Courant number of less than 1 is required."  Applies to PISO-mode
+  # operation (nOuterCorrectors == 1).  For PIMPLE outer iterations the
+  # solver can be stable at Co > 1 but temporal accuracy is then unproven
+  # -> INCONCLUSIVE until a time-step refinement shows it.
+  piso_max_co: {value: 1.0, source: "OpenFOAM User Guide (cavity tutorial); Issa (1986) J. Comput. Phys. 62:40"}
+
+conservation:
+  # (c) An imbalance eps of the global mass balance perturbs the effective
+  # free stream by O(eps); drag scales with U^2, so the induced Cd error is
+  # O(2 eps).  Requiring 2 eps <= tau/10 gives eps <= tau/20.
+  imbalance_fraction_of_tolerance: 0.05
+
+linear_solvers:
+  # (a) the configured solver tolerances themselves (no new threshold):
+  # a time step whose final p residual exceeds the configured tolerance
+  # means the pressure equation was not solved to specification.
+  allowed_fraction_unconverged_steps: 0.01
+  p_tolerance: 1.0e-7
+  U_tolerance: 1.0e-8
+
+consistency:
+  # Parameters that define *which problem* is solved must match the spec
+  # to rounding level; any larger mismatch means a different problem.
+  reynolds_relative: 1.0e-3
+  force_reference_relative: 1.0e-3
+
+statistics:
+  # minimum complete shedding cycles in the stationary window before a
+  # batch-means uncertainty is computed at all (t-quantile needs n-1 >= 3)
+  min_cycles: 4
+
+sensitivity:
+  # Roache (1998) / Celik et al. (2008): factor of safety 3 for two-grid
+  # studies with assumed order, 1.25 for three-grid studies whose observed
+  # order is consistent with the formal order.
+  safety_factor_two_level: 3.0
+  safety_factor_three_level: 1.25
+  min_refinement_ratio: 1.3   # Celik et al. (2008) recommend r > 1.3
+  # observed order accepted as 'consistent' if within this band of formal
+  observed_order_band: [0.5, 2.0]   # multiplicative band on formal order
+  # domain-size error model: |e| ~ (D/H)^q, q = 1 is the conservative
+  # (slowest-decaying) classical wake-blockage scaling (Allen & Vincenti 1944;
+  # Maskell 1963).  EXPERT REVIEW REQUIRED.
+  domain_error_order: 1.0
+
+physics_regime:
+  # (b) Literature regime boundaries for the 2D circular-cylinder wake.
+  # Used only for qualitative regime checks (steady vs periodic vs 3D),
+  # never as a value for any requested quantity.
+  shedding_onset_re: {value: 47.0, source: "Provansal, Mathis & Boyer (1987) JFM 182:1 (Re_c ~ 47); Williamson (1996) Annu. Rev. Fluid Mech. 28:477"}
+  three_d_transition_re: {value: 188.5, source: "Barkley & Henderson (1996) JFM 322:215 (mode A at Re ~ 188.5); Williamson (1996)"}
+  # sustained oscillation = rms of Cl over last quarter of record above this
+  # (classification threshold far above round-off, far below O(0.1) shedding
+  # lift; it only separates 'oscillating' from 'not oscillating')
+  oscillation_cl_rms: 1.0e-3

@@ -1,0 +1,281 @@
+"""Content-addressed run store with provenance.
+
+A run is identified by the hash of (numerical configuration, initialisation).
+Requesting the same run twice returns the stored result instead of
+re-running OpenFOAM; this keeps benchmark comparisons between systems
+consistent (they literally share the same simulations) and saves compute.
+
+Layout::
+
+    <root>/<run_id>/
+        case/            OpenFOAM case (fields of intermediate times pruned)
+        run.json         provenance record
+        evidence.json    extracted evidence
+        series.npz       force-coefficient time series (t, cd, cl)
+"""
+
+from __future__ import annotations
+
+import datetime as _dt
+import gzip
+import hashlib
+import json
+import os
+import platform
+import shutil
+import subprocess
+import sys
+import threading
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+from ..case_generation.spec import CaseConfig, ProblemSpec, diff_configs
+from ..case_generation.writer import write_case
+from ..evidence.extract import extract_evidence
+from ..openfoam.runner import RunFailure, openfoam_version_info, prune_time_dirs, run_case
+
+_LOCKS: dict[str, threading.Lock] = {}
+_LOCKS_GUARD = threading.Lock()
+_VERSION_CACHE: dict | None = None
+
+
+def _now() -> str:
+    return _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds")
+
+
+def _sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def software_versions() -> dict:
+    global _VERSION_CACHE
+    if _VERSION_CACHE is None:
+        import scipy
+
+        try:
+            repo = Path(__file__).resolve().parents[3]
+            commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, timeout=10).stdout.strip()
+            dirty = bool(subprocess.run(["git", "status", "--porcelain", "src"], cwd=repo, capture_output=True, text=True, timeout=10).stdout.strip())
+        except (subprocess.SubprocessError, OSError):
+            commit, dirty = None, None
+        _VERSION_CACHE = {
+            "openfoam": openfoam_version_info(),
+            "python": sys.version.split()[0],
+            "numpy": np.__version__,
+            "scipy": scipy.__version__,
+            "socrates_git_commit": commit,
+            "socrates_src_dirty": dirty,
+            "platform": platform.platform(),
+            "cpu_count": os.cpu_count(),
+        }
+    return _VERSION_CACHE
+
+
+@dataclass
+class Initialisation:
+    """How a run's initial fields are produced."""
+
+    kind: str  # "fresh" | "map" | "restart"
+    source_run: str | None = None
+    consistent: bool = True
+
+    def key(self) -> str:
+        return f"{self.kind}:{self.source_run or ''}:{int(self.consistent)}"
+
+
+@dataclass
+class RunResult:
+    run_id: str
+    run_dir: Path
+    status: str
+    provenance: dict
+    evidence: dict | None
+    config: CaseConfig
+
+    @property
+    def ok(self) -> bool:
+        return self.status == "completed"
+
+    def series(self) -> dict[str, np.ndarray]:
+        f = self.run_dir / "series.npz"
+        if not f.exists():
+            return {}
+        with np.load(f) as z:
+            return {k: z[k] for k in z.files}
+
+
+class RunStore:
+    def __init__(self, root: str | Path, cpu_slots: int = 4):
+        self.root = Path(root)
+        self.root.mkdir(parents=True, exist_ok=True)
+        self.cpu = threading.BoundedSemaphore(cpu_slots)
+
+    # ------------------------------------------------------------------
+    def run_id_for(self, cfg: CaseConfig, init: Initialisation) -> str:
+        h = hashlib.sha256((cfg.content_hash() + "|" + init.key()).encode()).hexdigest()[:12]
+        return f"{cfg.name}-{h}"
+
+    def _find_existing(self, cfg: CaseConfig, init: Initialisation) -> Path | None:
+        h = hashlib.sha256((cfg.content_hash() + "|" + init.key()).encode()).hexdigest()[:12]
+        for d in self.root.glob(f"*-{h}"):
+            if (d / "run.json").exists():
+                return d
+        return None
+
+    def load(self, run_id: str) -> RunResult:
+        d = self.root / run_id
+        prov = json.loads((d / "run.json").read_text())
+        ev_file = d / "evidence.json"
+        ev = json.loads(ev_file.read_text()) if ev_file.exists() else None
+        return RunResult(run_id, d, prov["status"], prov, ev, CaseConfig.model_validate(prov["case_config"]))
+
+    def list_runs(self) -> list[str]:
+        return sorted(d.name for d in self.root.iterdir() if (d / "run.json").exists())
+
+    # ------------------------------------------------------------------
+    def get_or_run(
+        self,
+        cfg: CaseConfig,
+        spec: ProblemSpec,
+        *,
+        init: Initialisation | None = None,
+        parent_run: str | None = None,
+        reason: str = "",
+        experiment: dict | None = None,
+        launched_by: str = "user",
+    ) -> RunResult:
+        init = init or Initialisation("fresh")
+        existing = self._find_existing(cfg, init)
+        key = existing.name if existing else self.run_id_for(cfg, init)
+        with _LOCKS_GUARD:
+            lock = _LOCKS.setdefault(key, threading.Lock())
+        with lock:
+            existing = self._find_existing(cfg, init)
+            if existing is not None:
+                res = self.load(existing.name)
+                if res.ok or res.provenance.get("failure_kind") == "solver":
+                    self._record_request(existing, launched_by, reason, parent_run, experiment)
+                    return res
+                shutil.rmtree(existing)  # infrastructure failure: retry cleanly
+            return self._execute(key, cfg, spec, init, parent_run, reason, experiment, launched_by)
+
+    def _record_request(self, d: Path, launched_by: str, reason: str, parent: str | None, experiment: dict | None) -> None:
+        """Append a cache-hit request to the run's request log (audit of reuse)."""
+        with open(d / "requests.jsonl", "a") as fh:
+            fh.write(json.dumps({"time": _now(), "launched_by": launched_by, "reason": reason,
+                                 "parent_run": parent, "experiment": experiment, "cache_hit": True}) + "\n")
+
+    def _execute(self, run_id, cfg, spec, init, parent_run, reason, experiment, launched_by) -> RunResult:
+        d = self.root / run_id
+        if d.exists():
+            shutil.rmtree(d)
+        case = d / "case"
+        parent_cfg = self.load(parent_run).config if parent_run else None
+        prov: dict[str, Any] = {
+            "run_id": run_id,
+            "status": "running",
+            "created": _now(),
+            "problem_spec": spec.model_dump(mode="json"),
+            "case_config": cfg.model_dump(mode="json"),
+            "config_hash": cfg.content_hash(),
+            "parent_run": parent_run,
+            "launch_reason": reason,
+            "launched_by": launched_by,
+            "experiment": experiment,
+            "config_changes_from_parent": diff_configs(parent_cfg, cfg) if parent_cfg else None,
+            "initialisation": {"kind": init.kind, "source_run": init.source_run, "consistent": init.consistent},
+            "software": software_versions(),
+        }
+        d.mkdir(parents=True)
+        (d / "run.json").write_text(json.dumps(prov, indent=2))
+
+        if init.kind == "restart":
+            src = self.root / init.source_run / "case"
+            shutil.copytree(src, case, ignore=shutil.ignore_patterns("log.*"))
+            # regenerate system/ and constant/ from the new config (e.g. endTime)
+            tmp = d / "_gen"
+            write_case(cfg, tmp)
+            for sub in ("system", "constant"):
+                shutil.rmtree(case / sub)
+                shutil.copytree(tmp / sub, case / sub)
+            shutil.copy(tmp / "case_config.json", case / "case_config.json")
+            shutil.rmtree(tmp)
+            # keep the source logs so the parsed history is complete
+            for lp in (src).glob(f"log.{cfg.numerics.solver}*"):
+                shutil.copy(lp, case / lp.name)
+            for lp in (src).glob("log.checkMesh"):
+                shutil.copy(lp, case / lp.name)
+        else:
+            write_case(cfg, case)
+
+        prov["started"] = _now()
+        failure: RunFailure | None = None
+        with self.cpu:
+            try:
+                rec = run_case(
+                    case,
+                    cfg.numerics.solver,
+                    perturb=(cfg.perturbation.enabled and cfg.numerics.solver == "pimpleFoam" and init.kind == "fresh"),
+                    map_from=(self.root / init.source_run / "case") if init.kind == "map" else None,
+                    map_consistent=init.consistent,
+                    restart=(init.kind == "restart"),
+                )
+                prov["commands"] = [s.__dict__ for s in rec.steps]
+                prov["wall_seconds"] = rec.wall_seconds
+            except RunFailure as exc:
+                failure = exc
+        prov["finished"] = _now()
+        if failure is not None:
+            prov["status"] = "failed"
+            prov["failure_kind"] = "solver" if failure.step not in ("blockMesh", "checkMesh") else "mesh"
+            prov["failure"] = {"step": failure.step, "returncode": failure.returncode, "log_tail": failure.log_tail}
+        else:
+            prov["status"] = "completed"
+
+        # evidence is extracted even for failed runs (partial evidence is evidence)
+        try:
+            ev, series = extract_evidence(case, cfg, spec)
+        except Exception as exc:  # noqa: BLE001 -- recorded, never swallowed
+            ev, series = {"extraction_error": repr(exc)}, {}
+            prov["evidence_extraction_error"] = repr(exc)
+        ev["run_id"] = run_id
+        ev["cost"] = {
+            "wall_seconds": prov.get("wall_seconds"),
+            "n_cells": ev.get("mesh", {}).get("n_cells"),
+            "n_steps": ev.get("solver", {}).get("n_steps"),
+        }
+        if ev["cost"]["n_cells"] and ev["cost"]["n_steps"]:
+            ev["cost"]["cell_steps"] = ev["cost"]["n_cells"] * ev["cost"]["n_steps"]
+        if series:
+            np.savez_compressed(d / "series.npz", **{k: v.astype(np.float64) for k, v in series.items()})
+        (d / "evidence.json").write_text(json.dumps(ev, indent=2, default=_json_default))
+
+        # raw output hashes + compressed logs; prune bulky intermediate fields
+        raw = {}
+        for lp in sorted(case.glob("log.*")):
+            raw[lp.name] = _sha256(lp)
+            with open(lp, "rb") as src_fh, gzip.open(d / f"{lp.name}.gz", "wb") as dst:
+                shutil.copyfileobj(src_fh, dst)
+        prov["raw_output_sha256"] = raw
+        prune_time_dirs(case)
+        (d / "run.json").write_text(json.dumps(prov, indent=2, default=_json_default))
+        return RunResult(run_id, d, prov["status"], prov, ev, cfg)
+
+
+def _json_default(o):
+    if isinstance(o, (np.floating,)):
+        return float(o)
+    if isinstance(o, (np.integer,)):
+        return int(o)
+    if isinstance(o, np.ndarray):
+        return o.tolist()
+    if isinstance(o, (np.bool_,)):
+        return bool(o)
+    raise TypeError(f"not JSON serialisable: {type(o)}")

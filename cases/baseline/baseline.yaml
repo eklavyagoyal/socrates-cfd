@@ -1,0 +1,55 @@
+# Baseline case: 2D laminar flow past a circular cylinder, Re = 100.
+# Justification of every choice: docs/design.md section 4 and
+# reports/baseline_validation.md.  Lengths in D, times in D/U.
+name: baseline
+description: Credible baseline (pimpleFoam, 2nd order space/time, 80D-wide domain)
+mesh:
+  refinement: 1.0
+  n_quadrant: 40          # 160 cells around the cylinder (ds = 0.0196 D at the wall)
+  n_ring_inner: 30        # cylinder -> r = 1 D, first cell 0.005 D (~20 cells inside delta ~ D/sqrt(Re) = 0.1 D)
+  n_ring_outer: 20        # r = 1 D -> square |x|,|y| <= 2.5 D
+  n_upstream: 35          # counts below preserve the near-field growth rate of the
+  n_downstream: 111       # exploratory design (first far-field cell 0.125 D, growth ~1.9 %/cell downstream)
+  n_lateral: 45
+  first_cell: 0.005
+  r_mid: 1.0
+  square_half: 2.5
+  span: 1.0
+  wake_factor: 1.0
+domain:
+  upstream: 30.0          # Posdziech & Grundmann (2007): inlet distance > 20 D
+  downstream: 50.0
+  half_height: 40.0       # blockage D/(2H) = 1.25 %; Qu et al. (2013): ~+1 % Cd at this blockage
+physical:
+  diameter: 0.01
+  inlet_velocity: 0.15
+  kinematic_viscosity: 1.5e-5
+  density: 1.2
+boundaries:
+  lateral: symmetryPlane  # free-slip far-field sides (as Behr et al. 1995 'slip' walls)
+  outlet_velocity: inletOutlet
+  outlet_pressure: fixedValue
+  inlet_pressure: zeroGradient
+  cylinder_velocity: noSlip
+numerics:
+  solver: pimpleFoam
+  ddt: backward                          # 2nd-order implicit (BDF2)
+  div_U: Gauss linearUpwind grad(U)      # 2nd-order upwind-biased convection
+  grad: Gauss linear
+  laplacian: Gauss linear corrected
+  n_outer_correctors: 1                  # PISO mode -> requires Co < 1
+  n_correctors: 2
+  n_nonorth_correctors: 0                # measured: identical Cd/Cl_rms to 1 corrector (max non-orth 43 deg)
+time:
+  delta_t: 0.01           # max Co ~ 0.75; ~600 steps per shedding period
+  end_time: 150.0         # transient decays ~x2 per cycle; < 0.005 % by t = 80 (measured)
+  adjust_time_step: false
+  max_co: 0.5
+  write_interval: 50.0
+averaging:
+  start_time: 75.0        # declared averaging window 75-150 D/U (~12 cycles)
+perturbation:
+  enabled: true
+  box_min: [0.5, 0.0]
+  box_max: [3.0, 1.0]
+  v_fraction: 0.3

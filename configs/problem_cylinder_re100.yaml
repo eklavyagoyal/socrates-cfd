@@ -1,0 +1,30 @@
+# Engineering question as a machine-readable specification.
+# Every run carries a verbatim copy of this file in its provenance record.
+problem:
+  id: cylinder2d_re100
+  type: cylinder_external_flow
+  dimensionality: 2D
+  question: >-
+    A long circular rod of diameter 10 mm is placed across a uniform, slow
+    stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag
+    coefficient and the vortex-shedding Strouhal number of the rod, per unit
+    span, to within 3 % each.  Treat the stream as unbounded.
+  fluid:
+    name: air (~20 degC, 1 atm)
+    kinematic_viscosity: 1.5e-5   # m^2/s (rounded; White, Fluid Mechanics, Table A.2 gives 1.51e-5 at 20 degC)
+    density: 1.2                  # kg/m^3
+  flow_regime_assumption: laminar, incompressible (Mach ~ 4e-4)
+geometry:
+  cylinder_diameter: 0.01   # m
+  unbounded: true
+operating_conditions:
+  inlet_velocity: 0.15      # m/s
+  reynolds_number: 100      # = U D / nu
+requested_outputs:
+  - mean_drag_coefficient
+  - strouhal_number
+verification:
+  requested_tolerance:      # relative
+    mean_drag_coefficient: 0.03
+    strouhal_number: 0.03
+  reference_mode: blind     # reference data are hidden from verifier and critic

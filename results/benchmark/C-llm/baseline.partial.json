@@ -165,6 +165,250 @@
     "expected_outcome": "If Cd and St change by much less than 1.5% relative to R0 (Cd 1.3311, St 0.16343), the domain component can be bounded and only the REDUCE_TIME_STEP check remains. A change above 1.5% means the domain component fails its budget and needs a further expansion. A change above 3% beyond 2x noise would be a measured FAIL."
    },
    "outcome": "executed -> baseline.D2x-efba395f6c27 (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 28.32054369800062,
+    "cost_usd": 0.09552611,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 28137,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 59,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "baseline-408129116207": "R0",
+     "baseline.m2-93c9ab8d6f2d": "R1",
+     "baseline.D2x-efba395f6c27": "R2"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed. A REJECT is not justified, because no measured change exceeds the 0.03 tolerance.",
+    "Time is unmeasured for both quantities. No REDUCE_TIME_STEP run exists, so time is listed as a missing uncertainty component for mean_drag_coefficient and strouhal_number. The 0.03 tolerance cannot be assessed without it.",
+    "R0 time step is 0.01 convective units, with 611.87 steps per shedding period and max Courant 0.73373. R0 uses a second-order backward scheme, but the time error has not been measured. A REDUCE_TIME_STEP run on R0 costs 1538 s.",
+    "Mesh, R0 vs R1: Cd 1.3311 to 1.3349 (change 0.284%, mesh uncertainty 0.01137, PASS). St 0.16343 to 0.16486 (change 0.87%, uncertainty 0.03464, INCONCLUSIVE). The St mesh component cannot be tightened with a further REFINE_MESH from R1, which is not allowed because cumulative refinement 2.83 exceeds 2.0.",
+    "Domain, R0 vs R2: Cd 1.3311 to 1.3226 (change 0.65%) and St 0.16343 to 0.16272 (change 0.44%). The estimated uncertainties are 0.03879 for Cd and 0.02615 for St, both INCONCLUSIVE. The demonstrated changes are below the 0.03 tolerance, so a domain-driven failure is less likely than an unmeasured time error.",
+    "R2 is a weak domain comparison. Its checkMesh_ok is false and its mesh is coarser than R0: representative_cell_size_D 0.79405 against 0.45745, and wake_last_cell_D 1.9729 against 1.0209. R2 also has only 6 stationary cycles, with Cd drift -0.0015761 and ci95 0.00074166. The domain change is therefore confounded with mesh coarsening and noise.",
+    "Averaging and statistics are negligible for both quantities. Cd: 9.366e-05 and 8.229e-05. St: 1.551e-05 and 6.605e-05. RUN_LONGER would not address any open component.",
+    "Budget is sufficient: 2 of 6 experiments and 4.19 of 12 compute units used. REDUCE_TIME_STEP on R0 is the cheapest way to fill a fully unmeasured component, and an EXPAND_DOMAIN run from R2 (1319 s) can follow."
+   ],
+   "missing_evidence": [
+    "Temporal discretisation error of mean_drag_coefficient and strouhal_number (no REDUCE_TIME_STEP run)",
+    "A domain uncertainty that is not confounded by R2's coarser mesh and failed checkMesh. The present values are 0.03879 for Cd and 0.02615 for St. Only R0 and R2 exist, with an assumed order of p=1.",
+    "A St mesh uncertainty below 0.5*tolerance. The present value is 0.03464 from a two-level estimate, and no further refinement is allowed.",
+    "Combined uncertainty against the 0.03 tolerance for both quantities"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "Temporal error at 0.01 D/U (611.87 steps per period, backward scheme) is below 1.5% for both Cd and St. R0's St frequency resolution is 0.013333, so any shift in St has to be read against this resolution.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2.0. Compare Cd (stationary 1.3311) and St (0.16343). A change well below 1.5% bounds the time component. A change above 3% beyond 2x noise would be a measured FAIL."
+    },
+    {
+     "hypothesis": "The R0 to R2 changes (Cd -0.65%, St -0.44%) come mostly from R2's coarser wake mesh and short 6-cycle record, not from the artificial boundaries.",
+     "test": "Run EXPAND_DOMAIN from R2 with factor 1.5 to get a three-level domain sequence (R0, R2, child). A further change below the noise floor would support domain adequacy."
+    },
+    {
+     "hypothesis": "The St mesh uncertainty of 0.03464 is inflated by the assumed order p=2 and Fs=3, because the measured R0 to R1 change is only 0.87%.",
+     "test": "Not testable with the remaining menu, because refinement from R1 is blocked. The deterministic verifier decides this component."
+    }
+   ],
+   "next_experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "baseline-408129116207",
+    "reason": "Time is the only uncertainty component still entirely unmeasured for both quantities, and the 0.03 tolerance cannot be assessed without it. Running on R0 keeps the mesh and domain identical, so the comparison isolates temporal error. R0 is cheap (1538 s) and has 12 stationary cycles with very small statistical noise. R1 costs 10029 s and R2 is confounded by its failed checkMesh.",
+    "expected_outcome": "If Cd and St change by much less than 1.5% from R0 (Cd 1.3311, St 0.16343), the time component can be bounded. Then only the domain and St mesh components remain open. A change above 1.5% means the time step needs further reduction. A change above 3% beyond 2x noise would be a measured FAIL."
+   },
+   "outcome": "executed -> baseline.dt0.005-693742b868bc (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 36.350608049000584,
+    "cost_usd": 0.11993581,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 36024,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 61,
+     "untraced": [
+      {
+       "token": "0.91",
+       "context": "mpute units used. EXPAND_DOMAIN from R2 costs 1319 s, about 0.91 root units, which is affordable."
+      }
+     ],
+     "n_untraced": 1
+    },
+    "run_aliases": {
+     "baseline-408129116207": "R0",
+     "baseline.m2-93c9ab8d6f2d": "R1",
+     "baseline.D2x-efba395f6c27": "R2",
+     "baseline.dt0.005-693742b868bc": "R3"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed. REJECT is not justified, because no demonstrated change exceeds the 0.03 tolerance.",
+    "Time is now measured (R0 vs R3). Cd stationary changed from 1.3311 to 1.3275 (change 0.276%, uncertainty 0.01103, PASS). St changed from 0.16343 to 0.16356 (change 0.077%, uncertainty 0.003094, PASS).",
+    "Mesh (R0 vs R1): Cd changed from 1.3311 to 1.3349 (change 0.284%, uncertainty 0.01137, PASS). St changed from 0.16343 to 0.16486 (change 0.87%, uncertainty 0.03464 > 0.5*tolerance, INCONCLUSIVE).",
+    "Domain (R0 vs R2) is INCONCLUSIVE for both quantities. Cd changed from 1.3311 to 1.3226 (change 0.65%, uncertainty 0.03879). St changed from 0.16343 to 0.16272 (change 0.44%, uncertainty 0.02615). The estimates rest on a two-level Richardson with assumed order p=1.",
+    "The domain component is the main open item for both quantities. Cd cannot reach a combined uncertainty without it, and St also needs it. The Cd domain uncertainty of 0.03879 alone exceeds the 0.03 tolerance.",
+    "R2 is a weak domain comparison. Its checkMesh_ok is false. Its mesh is coarser than R0 (representative_cell_size_D 0.79405 vs 0.45745, wake_last_cell_D 1.9729 vs 1.0209). It has only 6 stationary cycles with Cd drift_rel -0.0015761 and ci95 0.00074166. The R0-to-R2 change is therefore confounded with mesh and noise, and a measured order from a third domain level is needed.",
+    "Averaging and statistics are negligible. Cd: 9.366e-05 and 8.229e-05. St: 1.551e-05 and 6.605e-05. RUN_LONGER on R0 would not address any open component.",
+    "A REFINE_MESH on R0 at a factor below 2.0 could give an intermediate mesh level for the St mesh estimate. It does not help Cd and does not clear the domain blocker that affects both quantities, so it is lower priority now.",
+    "Budget: 3 of 6 experiments and 5.25 of 12 compute units used. EXPAND_DOMAIN from R2 costs 1319 s, about 0.91 root units, which is affordable."
+   ],
+   "missing_evidence": [
+    "A third domain level (R0, R2, larger domain) to measure the domain convergence order for Cd and St instead of assuming p=1. Current domain uncertainties are 0.03879 (Cd) and 0.02615 (St).",
+    "A St mesh uncertainty at or below 0.5*tolerance. The present value is 0.03464 from a two-level estimate with assumed p=2. A third mesh level would be needed to measure the order.",
+    "Combined uncertainty against the 0.03 tolerance for both quantities (combined_uncertainty is null)."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The R0-to-R2 shifts (Cd -0.65%, St -0.44%) are mostly from R2's coarser far-field and wake mesh (checkMesh_ok false) and its short 6-cycle record. A further domain expansion would then change Cd and St by much less than the R0-to-R2 shifts, and the domain uncertainty would fall below 1.5%.",
+     "test": "EXPAND_DOMAIN on R2 with factor 2.0, giving a domain 4 times R0's. Compare Cd and St against R2 and R0. Changes near or below R2's noise floor (Cd ci95 0.00074166) support domain adequacy. A monotonic shift continuing at the R0-to-R2 magnitude, or a change above 0.03 beyond 2x noise, refutes it."
+    },
+    {
+     "hypothesis": "The St mesh uncertainty of 0.03464 is inflated by the assumed order p=2 and Fs=3, because the measured R0-to-R1 St change is 0.87%.",
+     "test": "Run REFINE_MESH on R0 with an intermediate factor (e.g. 1.4142) to get a three-level mesh sequence R0, intermediate, R1. This is the next candidate after the domain question is resolved."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "baseline.D2x-efba395f6c27",
+    "reason": "Domain uncertainty is INCONCLUSIVE for both Cd (0.03879) and St (0.02615), and it blocks any combined uncertainty. The R0-to-R2 comparison is confounded by R2's coarser mesh and failed checkMesh, and it rests on an assumed order. Expanding from R2 extends the R0, R2 family to a third level with the largest lever arm. That lets the domain order be measured. It costs about 1319 s, so the total stays well inside the 12-unit compute budget.",
+    "expected_outcome": "If Cd and St change from R2 by much less than the R0-to-R2 shifts (Cd 1.3226 vs 1.3311, St 0.16272 vs 0.16343), the domain component can be bounded below 1.5%. St mesh would then be the only remaining open item. A continuing monotonic drift means the domain error is not converged and the unbounded-stream requirement is not yet demonstrated. A change above 0.03 beyond 2x noise would be a measured FAIL."
+   },
+   "outcome": "executed -> baseline.D2x-4312d7d8fec3 (completed)"
+  },
+  {
+   "iteration": 5,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 27.47388864399909,
+    "cost_usd": 0.12404290999999998,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 43672,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 47,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "baseline-408129116207": "R0",
+     "baseline.m2-93c9ab8d6f2d": "R1",
+     "baseline.D2x-efba395f6c27": "R2",
+     "baseline.dt0.005-693742b868bc": "R3",
+     "baseline.D2x-4312d7d8fec3": "R4"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed. REJECT is not justified, because no demonstrated change exceeds the 0.03 tolerance.",
+    "Two components are still open. Cd domain is 0.0181, above 0.5*tolerance, and the check is INCONCLUSIVE. St mesh is 0.03464, above 0.5*tolerance, and the check is INCONCLUSIVE. combined_uncertainty is null for both quantities.",
+    "Cd domain (R0, R2, R4): stationary Cd goes 1.3311, 1.3226, 1.3179, with a root-to-finest change of 1.01%. The observed order is p=0.86, which is slow convergence, so the Celik estimate is 1.81%. R4 cannot be expanded further because the cumulative domain factor would exceed 4.0. R2 and R4 have checkMesh_ok false, with coarser meshes (representative_cell_size_D 0.79405 and 1.397 against 0.45745 for R0), so the domain change is confounded with mesh coarsening. A further domain run would add little, and the Cd domain component may stay open.",
+    "St mesh (R0, R1): St goes 0.16343 to 0.16486, a change of 0.87%. The estimate of 0.03464 uses an assumed order p=2 and Fs=3 on only two levels. R1 cannot be refined further because cumulative refinement 2.83 exceeds 2.0. REFINE_MESH on R0 with an intermediate factor of 1.4142 gives a third mesh level between R0 and R1. That allows a measured order and the three-level Fs=1.25 procedure, which is the only route in the menu that can clear the St mesh component.",
+    "Time (R0, R3) is measured and passes. Cd uncertainty is 0.01103 and St uncertainty is 0.003094. Averaging and statistics are negligible for both quantities (Cd 9.366e-05 and 8.229e-05, St 1.551e-05 and 6.605e-05), so RUN_LONGER would not address any open component.",
+    "The R0 parent costs 1779 s. Budget is 4 of 6 experiments and 6.17 of 12 compute units used, so the run is affordable."
+   ],
+   "missing_evidence": [
+    "A measured mesh convergence order for strouhal_number. A third mesh level between R0 and R1 is needed. The current estimate of 0.03464 uses an assumed p=2 on two levels.",
+    "A domain uncertainty for mean_drag_coefficient at or below 0.5*tolerance. The current value of 0.0181 comes from a slowly converging sequence (p=0.86) whose R2 and R4 meshes are coarser and fail checkMesh. Expansion beyond R4 is blocked.",
+    "Combined uncertainty against the 0.03 tolerance for both quantities (combined_uncertainty is null)."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The St mesh uncertainty of 0.03464 is inflated by the assumed order p=2 and Fs=3. A measured three-level order, with R0 to R1 St change of only 0.87%, would give an uncertainty at or below 1.5%.",
+     "test": "REFINE_MESH on R0 with factor 1.4142. If the St values are monotonic across R0 (0.16343), the new run and R1 (0.16486), and the measured order is near 2 or higher, the mesh component drops below 0.5*tolerance and passes. An oscillatory or non-monotonic sequence, or a low order, keeps it INCONCLUSIVE."
+    },
+    {
+     "hypothesis": "The Cd domain drift (1.3311, 1.3226, 1.3179) is partly a mesh-coarsening artefact of the R2 and R4 far-field meshes (checkMesh_ok false). The true domain error may be smaller than the 0.0181 estimate.",
+     "test": "Not directly testable with the remaining menu. A later EXPAND_DOMAIN from R2 with factor 1.5 would add a fourth domain level, but it is lower priority than the St mesh item."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "baseline-408129116207",
+    "reason": "St mesh is the open component that a menu experiment can resolve. The existing estimate of 0.03464 rests on two levels and an assumed order. An intermediate mesh from R0 at factor 1.4142 gives a geometrically consistent three-level sequence with R1 (cell-size ratios of about 1.414 each) and a measured order. The Cd domain component cannot be improved by expansion beyond R4. A further domain run from R2 would add less information.",
+    "expected_outcome": "If St is monotonic across R0, the new run and R1 and the measured order is near 2 or higher, the St mesh uncertainty falls below 1.5% and the St mesh check passes. The Cd mesh estimate is also tightened. A non-monotonic or low-order result leaves St mesh INCONCLUSIVE. A change above 0.03 beyond 2x noise relative to R0 would be a measured FAIL."
+   },
+   "outcome": "executed -> baseline.m1.41-807cdf343a51 (completed)"
   }
  ]
 }

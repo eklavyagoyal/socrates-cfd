@@ -48,24 +48,45 @@ def combine_truth(root_value: float, chains: dict[str, dict]) -> dict:
 
 
 def label_case(reported: dict, truth: dict[str, float], tolerances: dict[str, float],
-               setup_problems: list[str] | None = None) -> dict:
-    """Pre-registered rule: flawed if max error > tau (or the set-up answers a different problem);
-    credible if max error <= tau/2; ambiguous otherwise.  A missing requested value counts as flawed."""
-    errs, missing = {}, []
+               setup_problems: list[str] | None = None, truth_uncertainty: dict[str, float] | None = None) -> dict:
+    """Pre-registered rule, with the pre-registered mitigation for truth uncertainty.
+
+    e_q = |reported_q - T_q| / T_q, ratio = max_q e_q / tau_q.
+      flawed     ratio > 1, a requested quantity is missing, or the set-up solves a different problem
+      credible   ratio <= 1/2
+      ambiguous  otherwise
+    If the interval [e - u_T, e + u_T] (u_T = relative truth uncertainty) straddles tau or tau/2 for any
+    quantity, the label is not determined by the evidence: such a case is labelled 'ambiguous' and flagged
+    label_unstable (setup problems still make it 'flawed').
+    """
+    u = truth_uncertainty or {}
+    errs, missing, unstable = {}, [], []
     for q, tau in tolerances.items():
         v = reported.get(q)
         if v is None:
             missing.append(q)
             continue
-        errs[q] = abs(v - truth[q]) / abs(truth[q])
+        e = abs(v - truth[q]) / abs(truth[q])
+        errs[q] = e
+        uq = u.get(q, 0.0)
+        for thr in (tau, 0.5 * tau):
+            if e - uq < thr < e + uq:
+                unstable.append(q)
+                break
     ratio = max((errs[q] / tolerances[q] for q in errs), default=0.0)
     reasons = list(setup_problems or [])
     if missing:
         reasons.append(f"requested quantities not produced: {missing}")
-    if reasons or ratio > 1.0:
+    clearly_flawed = any(errs[q] - u.get(q, 0.0) > tolerances[q] for q in errs)
+    if reasons or clearly_flawed:
+        label = "flawed"
+    elif unstable:
+        label = "ambiguous"
+    elif ratio > 1.0:
         label = "flawed"
     elif ratio <= 0.5:
         label = "credible"
     else:
         label = "ambiguous"
-    return {"label": label, "errors": errs, "max_error_over_tolerance": ratio, "setup_problems": reasons}
+    return {"label": label, "errors": errs, "max_error_over_tolerance": ratio, "setup_problems": reasons,
+            "label_unstable": sorted(set(unstable)), "truth_uncertainty": u}

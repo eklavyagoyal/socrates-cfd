@@ -19,10 +19,28 @@ from ..checks.base import load_config
 from ..checks.verifier import RunGraph, RunNode, verify
 from ..critic.audit import audit_numbers
 from ..critic.backends import ClaudeCLIBackend
-from ..critic.prompt import alias_map, anonymize, build_package, render_user_prompt
+from ..critic.prompt import alias_map, anonymize, render_user_prompt, run_summary
 from ..experiments.primitives import ActionRejected, plan_experiment
 from .loop import LLMPlanner, RuleBasedPlanner, run_adaptive
 from .store import RunStore
+
+
+def decision_code_fingerprint() -> str:
+    """Hash of every source file / config that can change a verdict (not reporting code)."""
+    import hashlib
+    from pathlib import Path
+
+    src = Path(__file__).resolve().parents[1]
+    repo = src.parents[1]
+    files = sorted([*src.joinpath("checks").glob("*.py"), *src.joinpath("critic").glob("*.py"),
+                    *src.joinpath("evidence").glob("*.py"), src / "orchestration" / "loop.py",
+                    src / "orchestration" / "systems.py", src / "experiments" / "primitives.py",
+                    repo / "configs" / "verification.yaml"])
+    h = hashlib.sha256()
+    for f in files:
+        h.update(f.name.encode())
+        h.update(f.read_bytes())
+    return h.hexdigest()[:16]
 
 
 def system_a(ev: dict) -> dict:
@@ -105,7 +123,8 @@ def system_b_exhaustive(store: RunStore, spec: ProblemSpec, root: str) -> dict:
 
 
 JUDGE_SYSTEM_PROMPT = """You are an expert CFD reviewer. You are given the recorded evidence of ONE completed simulation
-and the results of deterministic checks on it. No further simulations can be run.
+(configuration, mesh statistics, solver diagnostics, temporal behaviour, extracted quantities). You are NOT given the
+outcome of any automated check. No further simulations can be run.
 Decide whether the requested quantities from this simulation can be trusted to the requested relative tolerance:
 ACCEPT (trustworthy), REJECT (not trustworthy), or INCONCLUSIVE (cannot tell from this evidence).
 Rules: reason only from the recorded evidence; do not use remembered literature or textbook values of any quantity
@@ -130,15 +149,25 @@ JUDGE_SCHEMA = {
 }
 
 
+def judge_package(spec: ProblemSpec, graph: RunGraph) -> dict:
+    """Evidence only: no deterministic verdict, no check outcomes, no decision rule (ungated ablation)."""
+    s = spec.model_dump(mode="json")
+    pkg = {
+        "engineering_question": s["problem"]["question"],
+        "problem_specification": {
+            "geometry": s["geometry"], "operating_conditions": s["operating_conditions"],
+            "fluid": s["problem"]["fluid"], "requested_outputs": s["requested_outputs"],
+            "requested_relative_tolerance": s["verification"]["requested_tolerance"],
+        },
+        "runs": [run_summary(graph, rid) for rid in graph.nodes],
+    }
+    return anonymize(pkg, alias_map(graph))
+
+
 def llm_judge(store: RunStore, spec: ProblemSpec, root: str, backend=None) -> dict:
     backend = backend or ClaudeCLIBackend()
     graph = _root_graph(store, root)
-    v = verify(graph, spec, load_config())
-    pkg = anonymize(build_package(spec, graph, v, history=[], menu=[], budget={"note": "no experiments possible"}),
-                    alias_map(graph))
-    pkg.pop("experiment_menu", None)
-    pkg.pop("budget", None)
-    pkg.pop("previous_critic_decisions", None)
+    pkg = judge_package(spec, graph)
     call = backend.complete(JUDGE_SYSTEM_PROMPT, render_user_prompt(pkg), JUDGE_SCHEMA)
     out = {"backend": backend.describe(), "ok": call.ok, "latency_s": call.latency_s, "cost_usd": call.cost_usd,
            "errors": call.errors}

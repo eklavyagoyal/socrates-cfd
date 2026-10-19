@@ -248,3 +248,20 @@ def test_fail_needs_change_beyond_noise():
     res = assess_sequence(check="mesh_sensitivity", component="mesh", qoi="q", values=[1.0, 1.035],
                           sizes=[1.0, 0.7], run_ids=["a", "b"], formal_order=2.0, tau=0.03, cfg=CFG, noise=0.0)
     assert res.status == Status.FAIL
+
+
+def test_label_uses_truth_uncertainty():
+    from socrates.orchestration.truth import label_case
+    T = {"mean_drag_coefficient": 1.33, "strouhal_number": 0.165}
+    tol = {"mean_drag_coefficient": 0.03, "strouhal_number": 0.03}
+    rep = {"mean_drag_coefficient": 1.33 * 1.0302, "strouhal_number": 0.165}
+    assert label_case(rep, T, tol)["label"] == "flawed"
+    lab = label_case(rep, T, tol, truth_uncertainty={"mean_drag_coefficient": 0.005, "strouhal_number": 0.005})
+    assert lab["label"] == "ambiguous" and lab["label_unstable"] == ["mean_drag_coefficient"]
+    rep["mean_drag_coefficient"] = 1.33 * 1.10
+    assert label_case(rep, T, tol, truth_uncertainty={"mean_drag_coefficient": 0.005})["label"] == "flawed"
+    assert label_case({"mean_drag_coefficient": 1.0}, T, tol)["label"] == "flawed"  # St missing
+    # one quantity borderline at tau/2, the other clearly beyond tau -> still flawed
+    rep = {"mean_drag_coefficient": 1.33 * 1.015, "strouhal_number": 0.165 * 1.08}
+    assert label_case(rep, T, tol, truth_uncertainty={"mean_drag_coefficient": 0.005,
+                                                      "strouhal_number": 0.005})["label"] == "flawed"

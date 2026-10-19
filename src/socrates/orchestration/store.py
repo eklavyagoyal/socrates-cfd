@@ -200,8 +200,20 @@ class RunStore:
         ev, series = extract_evidence(d / "case", cfg, spec)
         old = json.loads((d / "evidence.json").read_text()) if (d / "evidence.json").exists() else {}
         ev["run_id"] = run_id
-        ev["cost"] = old.get("cost", {})
         ev["extraction"] = {**extractor_fingerprint(), "reextracted": True}
+        # recompute cost: a restart is charged only for the steps it computed itself
+        n_total = (ev.get("solver") or {}).get("n_steps")
+        offset = 0
+        init = prov.get("initialisation") or {}
+        if init.get("kind") == "restart" and init.get("source_run"):
+            try:
+                offset = int(((self.load(init["source_run"]).evidence or {}).get("solver") or {}).get("n_steps") or 0)
+            except (OSError, KeyError, json.JSONDecodeError):
+                offset = 0
+        n = (n_total - offset) if n_total is not None else None
+        n_cells = (ev.get("mesh") or {}).get("n_cells")
+        ev["cost"] = {**old.get("cost", {}), "n_steps": n, "n_steps_including_restart_history": n_total,
+                      "n_cells": n_cells, "cell_steps": (n_cells * n) if (n_cells and n) else None}
         if series:
             np.savez_compressed(d / "series.npz", **{k: v.astype(np.float64) for k, v in series.items()})
         (d / "evidence.json").write_text(json.dumps(ev, indent=2, default=_json_default))

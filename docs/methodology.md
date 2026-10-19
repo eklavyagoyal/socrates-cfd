@@ -191,3 +191,11 @@ of the verification evidence and of the validation against literature in
 ### Observations logged during the evaluation (not changed in the pre-registered verifier)
 
 - **J1 (coarse wake):** `checkMesh -allGeometry` reports "Cells with small determinant (< 0.001): 48", which OpenFOAM counts as a failed check, so `mesh_quality` FAILs and every system REJECTs J1. Its reported Cd/St are within ~1 % of the baseline, so if the measured label is *credible*, this is a false rejection caused by an extended-geometry quality heuristic rather than by an accuracy problem. A post-hoc variant that treats `-allGeometry`-only failures as INCONCLUSIVE (to be discharged by mesh refinement) is evaluated separately and reported as a protocol deviation.
+
+## 9. Reproducibility check
+
+Case A1 was re-run from scratch inside the container (`docker/Dockerfile`, image built from the pinned
+`openfoam2412=2412.260127-1` package and `requirements.lock`) with an empty run store, and compared with the host run:
+same content-addressed run id (`A1_coarse_mesh-8db269c22d05`), and mean Cd, St and Cl rms identical to all printed
+digits (relative difference 0.0). Files: `results/reproducibility/`. Single-core OpenFOAM runs with identical inputs
+and binaries are bitwise deterministic here; parallel (decomposed) runs would not be expected to be.

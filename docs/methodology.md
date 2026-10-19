@@ -188,6 +188,39 @@ tuned to a case. All happened before any system evaluation.
 of the verification evidence and of the validation against literature in
 `reports/baseline_validation.md`.
 
+### Corrections from the adversarial code review (before any system result was used)
+
+A six-lens adversarial review (signal analysis, check logic, experiments/store/loop, LLM authority, CFD methodology,
+evaluation validity) was run with independent reviewer agents while the first benchmark batch was in progress. The
+findings below were each traced against the code before fixing. **All benchmark results produced before these fixes were
+discarded and every system was re-run on the corrected code** (results now carry a decision-code fingerprint and are
+recomputed automatically if that changes).
+
+| # | Defect | Consequence if unfixed | Fix |
+|---|---|---|---|
+| R1 | Run ids embed the case name (`B1_small_domain-…`) and were shown to the LLM | "Blind" LLM was told the flaw; its experiment choice (e.g. EXPAND_DOMAIN first on B1) partly read the label | Opaque aliases R0, R1, … in every LLM-facing package (incl. dict keys, history, feedback); regression test on real evidence |
+| R2 | OpenFOAM counts `writeInterval` from the restart time | A RUN_LONGER segment never wrote its final state; a chained continuation restarted from a stale time and its new forces went to `coefficient_<t>.dat`, which the parser ignored | writeInterval = segment length; post-run check that the latest time = endTime; ambiguous `coefficient_*.dat` siblings raise |
+| R3 | Refinement families ignored children of RUN_LONGER continuations | The rule planner (which refines from the continuation) produced invisible experiments and looped on duplicates | Families built over same-config classes (run + continuations); duplicate experiments rejected with feedback |
+| R4 | Observed order below the band fell back to the *higher* formal order | Slow (pre-asymptotic) convergence was extrapolated with a fast order: under-estimated uncertainty, spurious PASS | p = min(observed, formal) with Fs = 3; no positive solution → INCONCLUSIVE |
+| R5 | Celik fixed-point iteration could return an unconverged iterate | Wrong p used with Fs = 1.25 | Bracketed root solve; None if no root |
+| R6 | Family members' values used without a reliability check; two-level estimate ignored noise | A still-adjusting child could cause FAIL, a noise-level difference a PASS | Every member must pass the statistics criterion (else the planner is pointed to RUN_LONGER on it); noise floors on U and on the FAIL rule |
+| R7 | Degenerate families (two runs at one level) divided by zero | Loop crash, case silently dropped | Levels collapsed; degenerate ratio → INCONCLUSIVE; verifier errors recorded as INCONCLUSIVE |
+| R8 | `ddt` order parsing assumed order 2 unless the string started with "Euler" | CrankNicolson ψ < 1 or 'bounded Euler' treated as 2nd order | Explicit parser; unknown/non-time-accurate schemes → time component INCONCLUSIVE |
+| R9 | RUN_LONGER cost included the parent's copied history | Budget exhausted early; compute metric inflated | Cost = steps computed by the run itself (also on re-extraction) |
+| R10 | 1.4142 (LLM) vs √2 (rule) gave different run hashes | Identical simulations run twice | Factors canonicalised (snap to default within 0.1 %, else 3 decimals) |
+| R11 | St statistical uncertainty lacked the drift/half-difference terms the design specifies | Drifting frequencies under-reported (~4×) | Period drift and half-window difference added |
+| R12 | Diverged (non-finite) histories classified as "oscillating" | physics_regime PASS on a crashed run; invalid JSON | Non-finite/unbounded histories reported as such |
+| R13 | Numeric audit expanded every token by 100× with 2 % tolerance | Literature values and years counted as "traced"; leakage invisible | Printed-precision matching, % only against 100×values, critic's own history excluded from the pool |
+| R14 | Review/judge outputs not strictly validated (`concur: "false"` → True) | Fail-open on the only LLM path gating ACCEPT | pydantic StrictBool models; invalid → fail safe (INCONCLUSIVE / ERROR) |
+| R15 | CLI inherited effort/extra-context environment; no model record | Non-reproducible LLM configuration | Explicit effort, environment filtering, CLI version and a model *fingerprint* (hash) recorded per call |
+| R16 | L-judge was given the verifier's verdict and decision rule | The "ungated LLM judge" ablation merely re-labelled System B | Evidence-only package (no check outcomes, verdict or rule) |
+| R17 | "Correct decisions" headline rewarded decisiveness; failed jobs vanished from denominators | A system with 5 false acceptances ranked above a safe one | Per-label pre-registered rates with false acceptance first; ERROR persisted and reported separately; every (system, case) required |
+| R18 | Labels ignored the uncertainty of the in-house truth | Labels of near-boundary cases (B2 at 1.007 τ) set by noise | Pre-registered mitigation implemented: interval straddling τ or τ/2 → ambiguous, flagged |
+| R19 | Provenance hashed only logs; re-extraction unrecorded | QoI source files and child initial fields unverifiable | Hashes of postProcessing and final fields; extractor fingerprint in every evidence file |
+| R20 | Orphaned runs (owner died) were deleted and recomputed | Wasted compute when processes restart | Completed orphans are adopted and finalized |
+
+The fixes were themselves re-reviewed by a second adversarial pass (see the next section).
+
 ### Observations logged during the evaluation (not changed in the pre-registered verifier)
 
 - **J1 (coarse wake):** `checkMesh -allGeometry` reports "Cells with small determinant (< 0.001): 48", which OpenFOAM counts as a failed check, so `mesh_quality` FAILs and every system REJECTs J1. Its reported Cd/St are within ~1 % of the baseline, so if the measured label is *credible*, this is a false rejection caused by an extended-geometry quality heuristic rather than by an accuracy problem. A post-hoc variant that treats `-allGeometry`-only failures as INCONCLUSIVE (to be discharged by mesh refinement) is evaluated separately and reported as a protocol deviation.

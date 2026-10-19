@@ -37,6 +37,8 @@ V2 = load_config(REPO / "configs" / "verification_v2.yaml")
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--benchmark-extensions", action="store_true",
+                    help="also apply review-only and verifier v2 to the finished benchmark cases")
     a = ap.parse_args()
     spec = ProblemSpec.from_yaml(REPO / "configs" / "problem_cylinder_re100.yaml")
     store = RunStore(REPO / "results" / "runs")
@@ -78,6 +80,9 @@ def main() -> None:
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
         list(ex.map(job, [(s, p) for s in systems for p in attacks]))
 
+    if not a.benchmark_extensions:
+        print("done (attacks only)", flush=True)
+        return
     # extensions applied to the benchmark cases (no new simulations)
     bench = REPO / "results" / "benchmark"
     for f in sorted((bench / "C-llm").glob("*.json")):

@@ -1,0 +1,451 @@
+{
+ "verdict": "REJECT",
+ "verifier": {
+  "verdict": "REJECT",
+  "per_qoi": {
+   "mean_drag_coefficient": {
+    "verdict": "INCONCLUSIVE",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "INCONCLUSIVE",
+     "statistics": "INCONCLUSIVE",
+     "mesh": "INCONCLUSIVE",
+     "time": "INCONCLUSIVE",
+     "domain": "INCONCLUSIVE"
+    },
+    "component_uncertainty": {},
+    "combined_uncertainty": null
+   },
+   "strouhal_number": {
+    "verdict": "INCONCLUSIVE",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "INCONCLUSIVE",
+     "statistics": "INCONCLUSIVE",
+     "mesh": "INCONCLUSIVE",
+     "time": "INCONCLUSIVE",
+     "domain": "INCONCLUSIVE"
+    },
+    "component_uncertainty": {},
+    "combined_uncertainty": null
+   }
+  },
+  "missing_components": {
+   "mean_drag_coefficient": [
+    "averaging",
+    "statistics",
+    "mesh",
+    "time",
+    "domain"
+   ],
+   "strouhal_number": [
+    "averaging",
+    "statistics",
+    "mesh",
+    "time",
+    "domain"
+   ]
+  },
+  "failed_checks": [
+   "linear_solver_convergence",
+   "physics_regime"
+  ],
+  "checks": [
+   {
+    "check": "solver_completion",
+    "status": "PASS",
+    "reason": "solver ran to its configured end and printed 'End'",
+    "value": 4000.0,
+    "threshold": null,
+    "source": "solver log",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mesh_quality",
+    "status": "PASS",
+    "reason": "checkMesh reports 'Mesh OK'; non-orthogonality, skewness and aspect ratio within OpenFOAM's limits. This shows the mesh is valid, NOT that it resolves the flow.",
+    "value": {
+     "max_non_orthogonality": 43.31296755,
+     "max_skewness": 0.5338415736,
+     "max_aspect_ratio": 20.98476912
+    },
+    "threshold": {
+     "max_non_orthogonality": 70.0,
+     "max_skewness": 4.0,
+     "max_aspect_ratio": 1000.0
+    },
+    "source": "checkMesh log ('Mesh OK' / 'Failed N mesh checks'); limits: max_non_orthogonality: OpenFOAM primitiveMesh::nonOrthThreshold_ default (70 deg); checkMesh reports '***' above it; max_skewness: OpenFOAM primitiveMesh::skewThreshold_ default (4); max_aspect_ratio: OpenFOAM primitiveMesh::aspectThreshold_ default (1000)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mass_conservation",
+    "status": "PASS",
+    "reason": "max relative boundary-flux imbalance 4.77e-05 <= 1.50e-03; cannot bias the requested quantities beyond tau/10",
+    "value": 4.7698166666749225e-05,
+    "threshold": 0.0015,
+    "source": "postProcessing/flux_*/surfaceFieldValue.dat; threshold = tau/20 (2*eps <= tau/10 bound on induced Cd error)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {
+     "continuity_sum_local_max": 4.232489049e-05
+    }
+   },
+   {
+    "check": "linear_solver_convergence",
+    "status": "FAIL",
+    "reason": "steady solver did not satisfy its residualControl before the iteration limit",
+    "value": null,
+    "threshold": null,
+    "source": "simpleFoam log 'SIMPLE solution converged'",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "courant_number",
+    "status": "INCONCLUSIVE",
+    "reason": "not applicable to a steady pseudo-time solver; temporal behaviour unverifiable",
+    "value": null,
+    "threshold": null,
+    "source": "configuration",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "reynolds_consistency",
+    "status": "PASS",
+    "reason": "case Re=100 matches spec Re=100",
+    "value": {
+     "case": 100.0,
+     "spec": 100.0,
+     "spec_from_parameters": 100.0
+    },
+    "threshold": 0.001,
+    "source": "case physical parameters vs spec",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "force_reference_consistency",
+    "status": "PASS",
+    "reason": "magUInf equals inlet velocity and Aref equals D x mesh span",
+    "value": {
+     "magUInf": 0.15,
+     "lRef": 0.01,
+     "Aref": 0.0001,
+     "rhoInf": 1.2
+    },
+    "threshold": 0.001,
+    "source": "forceCoeffs entries vs inlet BC velocity and mesh-measured projected area (D x span)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {
+     "Aref_from_mesh_bounding_box": 0.0001
+    }
+   },
+   {
+    "check": "physics_regime",
+    "status": "FAIL",
+    "reason": "Re=100.0 lies in the periodic-shedding regime (onset Re~47.0); a steady formulation can only return the unstable symmetric branch, whose drag is not the time-mean drag of the physical flow",
+    "value": {
+     "re": 100.0,
+     "solver": "simpleFoam"
+    },
+    "threshold": 47.0,
+    "source": "Provansal, Mathis & Boyer (1987) JFM 182:1 (Re_c ~ 47); Williamson (1996) Annu. Rev. Fluid Mech. 28:477; Barkley & Henderson (1996) JFM 322:215 (mode A at Re ~ 188.5); Williamson (1996)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "convection_scheme_order",
+    "status": "PASS",
+    "reason": "convection scheme 'Gauss linearUpwind grad(U)' is nominally second order",
+    "value": "Gauss linearUpwind grad(U)",
+    "threshold": null,
+    "source": "J. Fluids Eng. editorial policy on numerical accuracy (published with Celik et al. 2008): at least second-order spatial schemes; first-order numerical diffusion called 'devastating'",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "averaging_window",
+    "status": "INCONCLUSIVE",
+    "reason": "steady solver: no time averaging performed",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "averaging",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "averaging_window",
+    "status": "INCONCLUSIVE",
+    "reason": "steady solver: no time averaging performed",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "averaging",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "INCONCLUSIVE",
+    "reason": "steady solver: no statistics",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "statistics",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "INCONCLUSIVE",
+    "reason": "steady solver: no statistics",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "statistics",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "family member(s) not statistically reliable for mean_drag_coefficient (run, cycles, uncertainty): [('D1_steady_solver-9cd0391edef9', None, None), ('D1_steady_solver.m1.41-8b4f695bbef8', None, None), ('D1_steady_solver.m2-4d2ef7cd2ddc', None, None)]; run them longer first",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "mesh",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9",
+     "D1_steady_solver.m1.41-8b4f695bbef8",
+     "D1_steady_solver.m2-4d2ef7cd2ddc"
+    ],
+    "details": {
+     "unreliable_members": [
+      "D1_steady_solver-9cd0391edef9",
+      "D1_steady_solver.m1.41-8b4f695bbef8",
+      "D1_steady_solver.m2-4d2ef7cd2ddc"
+     ]
+    }
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "family member(s) not statistically reliable for strouhal_number (run, cycles, uncertainty): [('D1_steady_solver-9cd0391edef9', None, None), ('D1_steady_solver.m1.41-8b4f695bbef8', None, None), ('D1_steady_solver.m2-4d2ef7cd2ddc', None, None)]; run them longer first",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "mesh",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9",
+     "D1_steady_solver.m1.41-8b4f695bbef8",
+     "D1_steady_solver.m2-4d2ef7cd2ddc"
+    ],
+    "details": {
+     "unreliable_members": [
+      "D1_steady_solver-9cd0391edef9",
+      "D1_steady_solver.m1.41-8b4f695bbef8",
+      "D1_steady_solver.m2-4d2ef7cd2ddc"
+     ]
+    }
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REDUCE_TIME_STEP experiment has been run; time error of mean_drag_coefficient is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "time",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REDUCE_TIME_STEP experiment has been run; time error of strouhal_number is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "time",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9"
+    ],
+    "details": {}
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "family member(s) not statistically reliable for mean_drag_coefficient (run, cycles, uncertainty): [('D1_steady_solver-9cd0391edef9', None, None), ('D1_steady_solver.D2x-75e8343e69b7', None, None)]; run them longer first",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "domain",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9",
+     "D1_steady_solver.D2x-75e8343e69b7"
+    ],
+    "details": {
+     "unreliable_members": [
+      "D1_steady_solver-9cd0391edef9",
+      "D1_steady_solver.D2x-75e8343e69b7"
+     ]
+    }
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "family member(s) not statistically reliable for strouhal_number (run, cycles, uncertainty): [('D1_steady_solver-9cd0391edef9', None, None), ('D1_steady_solver.D2x-75e8343e69b7', None, None)]; run them longer first",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "domain",
+    "uncertainty": null,
+    "runs": [
+     "D1_steady_solver-9cd0391edef9",
+     "D1_steady_solver.D2x-75e8343e69b7"
+    ],
+    "details": {
+     "unreliable_members": [
+      "D1_steady_solver-9cd0391edef9",
+      "D1_steady_solver.D2x-75e8343e69b7"
+     ]
+    }
+   }
+  ]
+ },
+ "experiments": [
+  {
+   "action": "RUN_LONGER",
+   "parent": "D1_steady_solver-9cd0391edef9",
+   "rejected": "RUN_LONGER is meaningless for a steady (simpleFoam) run"
+  },
+  {
+   "action": "REFINE_MESH",
+   "parent": "D1_steady_solver-9cd0391edef9",
+   "run_id": "D1_steady_solver.m1.41-8b4f695bbef8",
+   "status": "completed",
+   "cell_steps": 245464000,
+   "wall_seconds": 543.1288984610001
+  },
+  {
+   "action": "REFINE_MESH",
+   "parent": "D1_steady_solver.m1.41-8b4f695bbef8",
+   "run_id": "D1_steady_solver.m2-4d2ef7cd2ddc",
+   "status": "completed",
+   "cell_steps": 217118000,
+   "wall_seconds": 612.8751221229977
+  },
+  {
+   "action": "REDUCE_TIME_STEP",
+   "parent": "D1_steady_solver-9cd0391edef9",
+   "rejected": "REDUCE_TIME_STEP is meaningless for a steady (simpleFoam) run"
+  },
+  {
+   "action": "EXPAND_DOMAIN",
+   "parent": "D1_steady_solver-9cd0391edef9",
+   "run_id": "D1_steady_solver.D2x-75e8343e69b7",
+   "status": "completed",
+   "cell_steps": 162400000,
+   "wall_seconds": 338.62170147399956
+  }
+ ],
+ "runs": [
+  "D1_steady_solver-9cd0391edef9",
+  "D1_steady_solver.m1.41-8b4f695bbef8",
+  "D1_steady_solver.m2-4d2ef7cd2ddc",
+  "D1_steady_solver.D2x-75e8343e69b7"
+ ],
+ "case": "D1_steady_solver",
+ "root_run": "D1_steady_solver-9cd0391edef9",
+ "stamp": {
+  "decision_code": "6406c53bb2011ef5",
+  "created": "2026-10-19T11:29:02+00:00",
+  "evidence_sha": {
+   "D1_steady_solver-9cd0391edef9": "218b490d869dadb1",
+   "D1_steady_solver.m1.41-8b4f695bbef8": "41dd78b8925c7200",
+   "D1_steady_solver.m2-4d2ef7cd2ddc": "afbdc93a7df686b6",
+   "D1_steady_solver.D2x-75e8343e69b7": "9d957e86f294a49e"
+  },
+  "root_config_hash": "5e15ea2b5873f91b",
+  "benchmark_git_commit": "3d9f43c76ed129515acd71309c29fff798a93899",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
+ }
+}

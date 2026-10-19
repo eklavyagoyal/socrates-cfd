@@ -1,0 +1,88 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 21.634548354999424,
+    "cost_usd": 0.053185975,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13007,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 40,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "K1_central_scheme-e4e5fb66bdca": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so I can't ACCEPT. There is no FAIL, so I can't REJECT.",
+    "Three uncertainty components are unmeasured for both quantities: mesh, time and domain. Without them, no combined uncertainty exists against the 0.03 tolerance.",
+    "The R0 averaging and statistics components are small. Drag: averaging 7.04e-05 and statistics 0.0001331. Strouhal: averaging 1.316e-05 and statistics 2.748e-05. R0 has 12 stationary cycles, so more run length would add little.",
+    "R0 has the coarsest-looking discretisation, so mesh error is the most likely flaw. The representative cell size is 0.45745 D, the last wake cell is 1.0209 D, and there are 160 cells around the cylinder (30580 cells total). The scheme is 'Gauss linear', which is non-dissipative and can be sensitive to under-resolved wake gradients.",
+    "Time error looks less likely to be dominant. The time step is 0.01 convective units, with 612.39 steps per shedding period, max Courant 0.73638, and backward time scheme.",
+    "Domain error is possible but less likely to dominate. The domain extents are 30 D upstream, 50 D downstream and 40 D half-height, with blockage ratio 0.0125. The inlet pressure BC is zeroGradient and the lateral boundary is symmetryPlane.",
+    "REFINE_MESH on R0 (est. 5070 s, against a budget of 12x root compute with 6 experiments) gives the first mesh-sensitivity estimate. It is the experiment most likely to shift drag or Strouhal by more than 3%. The default factor of 1.4142 matches the quoted cost estimate."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation uncertainty for mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation uncertainty for both quantities (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage uncertainty for both quantities (no EXPAND_DOMAIN run)",
+    "Combined uncertainty against the 0.03 tolerance",
+    "Measured inlet velocity (inlet_velocity_measured is null)"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The R0 mesh (cell size 0.45745 D, last wake cell 1.0209 D, 160 cells around the cylinder) under-resolves the near wake and shear layers. With the non-dissipative Gauss linear scheme, this biases mean Cd (1.3403) and St (0.1633) by more than 1.5% (half the tolerance).",
+     "test": "REFINE_MESH on R0 with factor 1.4142. Compare mean Cd and St from the stationary window. A change under about 1.5% in both, with a plausible convergence trend, supports mesh adequacy. A change above 3% means FAIL, and the sequence should continue with a finer mesh."
+    },
+    {
+     "hypothesis": "Domain truncation is a smaller error source than mesh. The 40 D half-height with symmetry planes and 1.25% blockage should change Cd and St by well under 1.5%.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2 in a later experiment, if budget allows. Compare Cd and St."
+    },
+    {
+     "hypothesis": "Time error is negligible at 612 steps per period with the second-order backward scheme.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2 in a later experiment. Check that Cd and St change by less than 1.5%."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "K1_central_scheme-e4e5fb66bdca",
+    "reason": "Mesh error is the largest unmeasured component and the most likely to change Cd or St by more than 3%. R0 has coarse far-wake cells (last cell 1.0209 D) and a non-dissipative Gauss linear scheme. The refinement keeps the same block ratios, so it gives a clean mesh-sensitivity estimate. Time step and run length have adequate margins (612 steps per period, 12 cycles).",
+    "expected_outcome": "If mean Cd and St change by less than about 1.5% relative to R0 (Cd 1.3403, St 0.1633), mesh uncertainty is within budget and the next experiments are domain and time. A change above 3% means the mesh error alone invalidates R0 at the requested tolerance. If the time step is reduced for Courant reasons, the change is recorded and must be considered when attributing the difference."
+   },
+   "outcome": "executed -> K1_central_scheme.m1.41-9a011a4052fe (completed)"
+  }
+ ]
+}

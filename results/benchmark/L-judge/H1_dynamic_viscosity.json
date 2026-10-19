@@ -1,0 +1,27 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 7.066362900000058,
+ "cost_usd": 0.03242401,
+ "errors": [],
+ "verdict": "REJECT",
+ "confidence": "HIGH",
+ "reasoning_summary": [
+  "The case was configured at Re=83.333, but the problem specifies Re=100 (U=0.15 m/s, D=0.01 m, nu=1.5e-05 gives Re=100). The relative mismatch is 16.67%.",
+  "The simulation therefore answers a different question. Its mean drag coefficient of 1.3486 and Strouhal number of 0.15402 belong to Re=83.333, not Re=100. Both quantities depend on Reynolds number, and the 3% tolerance is much smaller than a 16.67% Reynolds shift.",
+  "The averaging and statistical uncertainties are tiny, and the run completed, conserved mass and converged. None of that fixes a wrong operating condition.",
+  "The mesh, time-step and domain sensitivities are also unquantified (all INCONCLUSIVE). The Reynolds mismatch is already decisive, so the run is rejected rather than called inconclusive."
+ ],
+ "numeric_audit": {
+  "traced": 13,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "H1_dynamic_viscosity",
+ "root_run": "H1_dynamic_viscosity-4ab90bfffff4"
+}

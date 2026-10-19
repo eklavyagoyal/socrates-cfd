@@ -1,0 +1,29 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 13.005871515999388,
+ "cost_usd": 0.03875301,
+ "errors": [],
+ "verdict": "INCONCLUSIVE",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "Run is clean and well-converged: the solver completed, mass imbalance is 8.3333e-11, the final pressure residual is at tolerance, and max Courant number is 0.73374.",
+  "The flow is periodic as expected, with 13 stationary cycles. The statistical and averaging uncertainties are small. For mean drag the statistics term is 0.001199 and the averaging term is 9.319e-05. For Strouhal number they are 0.0001784 and 6.507e-05. All of these are well under the 0.03 tolerance.",
+  "The mesh error is unquantified. No refinement run exists, and the mesh is fairly coarse: 30580 cells, a representative cell size of 0.45745 D, and a wake whose last cell is 1.0209 D. Mesh error could plausibly be a meaningful fraction of the 3% tolerance, but the evidence cannot show whether it is.",
+  "The time-step error is unquantified. There is no time-step reduction run. The step is 0.01 convective units, with 608.73 steps per shedding period. That looks fine, but it is not demonstrated.",
+  "The domain error is unquantified. The lateral boundaries are noSlipWall rather than a free-stream condition, even though the problem says to treat the stream as unbounded. The blockage ratio is 0.0125, with 30 D upstream, 50 D downstream and 40 D half-height. The effect of the wall boundary layers and the fixed-pressure outlet on drag and Strouhal number is not shown.",
+  "The error budget rule needs every component to be at most 0.5 times the tolerance, and it needs the root-sum-square of all components to be within the tolerance. Three components are missing for both quantities, so the budget cannot be closed. No evidence shows a change larger than the tolerance, so REJECT is not justified."
+ ],
+ "numeric_audit": {
+  "traced": 19,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "E1_noslip_side_walls",
+ "root_run": "E1_noslip_side_walls-88a7cd5812e8"
+}

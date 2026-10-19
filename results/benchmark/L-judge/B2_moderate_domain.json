@@ -1,0 +1,28 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 17.064729942999293,
+ "cost_usd": 0.04199561,
+ "errors": [],
+ "verdict": "INCONCLUSIVE",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "Run is clean: it completed, mass imbalance is 3e-10, linear solvers converged, and the maximum Courant number is 0.74. Re and force references match the spec, and sustained shedding is present.",
+  "Statistical and averaging uncertainties are negligible: 2.49e-05 for drag and 9.59e-06 for Strouhal over 13 stationary cycles.",
+  "No mesh, time-step or domain sensitivity study exists, so those error components are unquantified. The error budget needs each at or below 1.5 % and the combined error at or below 3 %, which cannot be shown.",
+  "Concerns without demonstration: a modest mesh (19160 cells, cell size 0.20424 D, last wake cell 0.55293 D) and 0.05 blockage with symmetry lateral boundaries, although the question asks for an unbounded stream.",
+  "No evidence demonstrates an error above 3 %, so REJECT is not justified. ACCEPT is not justified either, because three error components are unknown."
+ ],
+ "numeric_audit": {
+  "traced": 10,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "B2_moderate_domain",
+ "root_run": "B2_moderate_domain-55b85b2cd33e"
+}

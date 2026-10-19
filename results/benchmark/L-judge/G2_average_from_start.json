@@ -1,0 +1,30 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 11.716865055999733,
+ "cost_usd": 0.037509775,
+ "errors": [],
+ "verdict": "INCONCLUSIVE",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "The run is numerically healthy. It completed, checkMesh is OK, mass imbalance is 8.3333e-11, the linear solvers converged, and max Courant is 0.73373. Re is consistent at 100.0, and the force references match the inlet velocity and D.",
+  "The flow is periodic, as the physics-regime check expects. The stationary window has 5 cycles, with 613.51 steps per shedding period.",
+  "Averaging and statistical uncertainties pass. For drag they are 0.005234 and 0.01039, and for Strouhal number 0.009529 and 0.00342. All are within the 0.5*tolerance budget of 1.5%.",
+  "The stationary-window drag is 1.3266, against 1.3196 reported by the submitted setup. The Strouhal numbers are 0.163 (stationary window) and 0.16144 (reported). Both gaps are small relative to the 3% tolerance.",
+  "No mesh, time-step or domain sensitivity evidence exists, so those error components are unknown. The mesh is fairly coarse, with a representative cell size of 0.45745 D and 30580 cells. The wake last-cell size is 1.0209 D.",
+  "The domain has symmetry lateral boundaries and a fixed-value outlet pressure. Their effect on the unbounded-flow answer is unquantified, even though the blockage ratio is 0.0125.",
+  "The error budget needs every component to be quantified, and the combined uncertainty is null. Nothing shows the 3% tolerance is exceeded, so REJECT is not justified. Nothing shows it is met either, so the result is INCONCLUSIVE."
+ ],
+ "numeric_audit": {
+  "traced": 20,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "G2_average_from_start",
+ "root_run": "G2_average_from_start-e7384e5a2c24"
+}

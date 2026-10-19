@@ -219,7 +219,7 @@ See research §7. In summary:
 
 - **Hard limits:** cumulative refinement ≤ 2; ≤ 160 k cells; Δt ≥ root/8; domain ≤ 4× root; end time ≤ 600 D/U.
 - **Every child run is stored** with its parent, reason, requesting planner, config diff, initialisation and provenance (content-addressed; identical requests reuse the stored run).
-- **Mapped children:** run 100 D/U, with the transient removed by MSER.
+- **Mapped children:** run 80 D/U, with the transient removed by MSER. An already-periodic start adjusts faster than a fresh start; this was reduced from 100 D/U for compute before any child was run.
 - **Fresh starts** (if the parent has no periodic state) use the parent's duration. Mapping a non-shedding field could suppress shedding that the child would develop.
 
 ## 19. Success criteria for the prototype (fixed before evaluation)

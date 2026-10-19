@@ -51,8 +51,11 @@ class Limits:
     max_end_time: float = 600.0
     co_limit: float = 1.0
     co_target: float = 0.9
-    mapped_run_length: float = 100.0  # D/U for children initialised from a mapped periodic state
-    mapped_averaging_start: float = 50.0
+    # D/U for children initialised from a mapped periodic state: an already
+    # periodic start adjusts faster than a fresh start; MSER may still discard
+    # up to half, leaving >= 6 cycles
+    mapped_run_length: float = 80.0
+    mapped_averaging_start: float = 40.0
 
 
 @dataclass

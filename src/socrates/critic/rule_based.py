@@ -24,6 +24,15 @@ def candidate_actions(graph: RunGraph, verdict: Verdict) -> list[NextExperiment]
         missing.update(comps)
     out: list[NextExperiment] = []
     seen = set()
+    # a sensitivity study blocked by a statistically unreliable member: lengthen that member first
+    for c in verdict.checks:
+        for rid in (c.details or {}).get("unreliable_members", []):
+            if rid in graph.nodes and ("RUN_LONGER", rid) not in seen:
+                seen.add(("RUN_LONGER", rid))
+                parent = graph.longest_same_config(rid).run_id
+                out.append(NextExperiment(action="RUN_LONGER", parameters={}, parent_run=parent,
+                                          reason=f"refinement-family member {rid} is not statistically reliable",
+                                          expected_outcome="a reliable stationary estimate for the sensitivity study"))
     for comp in ORDER:
         if comp not in missing:
             continue

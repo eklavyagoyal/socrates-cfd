@@ -272,7 +272,13 @@ def concat_time_dirs(post_dir: str | Path, filename: str) -> dict[str, np.ndarra
         key=lambda d: float(d.name),
     )
     merged: dict[str, list[np.ndarray]] = {}
+    stem = filename.rsplit(".", 1)[0]
     for d in subdirs:
+        siblings = sorted(d.glob(f"{stem}_*.dat"))
+        if siblings:
+            # OpenFOAM writes <stem>_<time>.dat when a restart reuses a start-time
+            # directory: the output of two segments is then ambiguous
+            raise ValueError(f"ambiguous restart output in {d}: {[x.name for x in siblings]}")
         f = d / filename
         if not f.exists():
             continue

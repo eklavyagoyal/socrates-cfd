@@ -20,6 +20,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Protocol
 
+from pydantic import BaseModel, ConfigDict, StrictBool
+
 from ..case_generation.blockmesh import resolve_layout
 from ..case_generation.spec import ProblemSpec
 from ..checks.base import load_config
@@ -30,6 +32,8 @@ from ..critic.prompt import (
     REVIEW_SCHEMA,
     REVIEW_SYSTEM_PROMPT,
     SYSTEM_PROMPT,
+    alias_map,
+    anonymize,
     build_package,
     menu_entries,
     render_user_prompt,
@@ -55,17 +59,32 @@ class Planner(Protocol):
                menu: list[dict], budget: dict, feedback: str | None) -> tuple[CriticDecision | None, dict]: ...
 
 
+class ReviewConcern(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    concern: str
+    evidence_fields: list[str]
+
+
+class ReviewDecision(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    concur: StrictBool
+    blocking_concerns: list[ReviewConcern]
+    reasoning_summary: list[str]
+
+
 class RuleBasedPlanner:
     name = "rule_based"
 
     def decide(self, spec, graph, verdict, history, menu, budget, feedback):
-        d = rule_based_decision(graph, verdict)
-        # skip actions that were already rejected for this parent (limits/budget)
-        rejected = {(h.get("next_experiment") or {}).get("action") for h in history if h.get("action_rejected")}
-        if d.next_experiment and d.next_experiment.action in rejected:
-            from ..critic.rule_based import candidate_actions
+        from ..critic.rule_based import candidate_actions
 
-            alts = [c for c in candidate_actions(graph, verdict) if c.action not in rejected]
+        d = rule_based_decision(graph, verdict)
+        # skip (action, parent) pairs that were rejected (limits/budget/duplicate) before
+        rejected = {((h.get("next_experiment") or {}).get("action"), (h.get("next_experiment") or {}).get("parent_run"))
+                    for h in history if h.get("action_rejected")}
+        ne = d.next_experiment
+        if ne and (ne.action, ne.parent_run) in rejected:
+            alts = [c for c in candidate_actions(graph, verdict) if (c.action, c.parent_run) not in rejected]
             d = d.model_copy(update={"next_experiment": alts[0] if alts else None})
         return d, {"planner": self.name}
 
@@ -76,14 +95,16 @@ class LLMPlanner:
         self.name = name
 
     def decide(self, spec, graph, verdict, history, menu, budget, feedback):
-        package = build_package(spec, graph, verdict, history, menu, budget)
+        aliases = alias_map(graph)
+        inverse = {v: k for k, v in aliases.items()}
+        package = anonymize(build_package(spec, graph, verdict, history, menu, budget), aliases)
         prompt = render_user_prompt(package)
         if feedback:
-            prompt += "\n\nFEEDBACK ON YOUR PREVIOUS ANSWER (it was not executed):\n" + feedback
+            prompt += "\n\nFEEDBACK ON YOUR PREVIOUS ANSWER (it was not executed):\n" + anonymize(feedback, aliases)
         call = self.backend.complete(SYSTEM_PROMPT, prompt, json_schema())
         meta = {"planner": self.name, "backend": self.backend.describe(), "latency_s": call.latency_s,
                 "cost_usd": call.cost_usd, "attempts": call.attempts, "errors": call.errors,
-                "prompt_chars": len(prompt)}
+                "prompt_chars": len(prompt), "model_fingerprint": getattr(call, "model_fingerprint", None)}
         if not call.ok:
             meta["failure"] = "LLM call failed"
             return None, meta
@@ -97,17 +118,35 @@ class LLMPlanner:
         if d.next_experiment:
             texts += [d.next_experiment.reason, d.next_experiment.expected_outcome]
         meta["numeric_audit"] = audit_numbers(texts, package)
+        meta["run_aliases"] = aliases
+        if d.next_experiment and d.next_experiment.parent_run in inverse:
+            d.next_experiment.parent_run = inverse[d.next_experiment.parent_run]
         return d, meta
 
     def review(self, spec, graph, verdict, history) -> dict:
         """Acceptance review: may only concur or raise evidence-cited blocking concerns."""
-        package = build_package(spec, graph, verdict, history, [], {"note": "review only; no experiments"})
+        package = anonymize(build_package(spec, graph, verdict, history, [], {"note": "review only; no experiments"}),
+                            alias_map(graph))
         package.pop("experiment_menu", None)
         call = self.backend.complete(REVIEW_SYSTEM_PROMPT, render_user_prompt(package), REVIEW_SCHEMA)
-        out = {"latency_s": call.latency_s, "cost_usd": call.cost_usd, "attempts": call.attempts, "errors": call.errors}
-        if not call.ok or not isinstance(call.output, dict) or "concur" not in call.output:
-            out["failure"] = "review call failed or malformed"
+        out = {"latency_s": call.latency_s, "cost_usd": call.cost_usd, "attempts": call.attempts, "errors": call.errors,
+               "model_fingerprint": getattr(call, "model_fingerprint", None)}
+        if not call.ok:
+            out["failure"] = "review call failed"
             return out
+        try:
+            o = ReviewDecision.model_validate(call.output)
+        except Exception as exc:  # noqa: BLE001 -- fail safe: a malformed review never concurs
+            out["failure"] = f"review output invalid: {exc}"
+            return out
+        concerns = [c.model_dump() for c in o.blocking_concerns]
+        texts = list(o.reasoning_summary) + [c["concern"] for c in concerns]
+        # an evidence-cited concern blocks; a concern without evidence fields is recorded but cannot block
+        blocking = [c for c in concerns if c["evidence_fields"]]
+        out.update(concur=o.concur and not blocking, blocking_concerns=blocking,
+                   uncited_concerns=[c for c in concerns if not c["evidence_fields"]],
+                   reasoning_summary=o.reasoning_summary, numeric_audit=audit_numbers(texts, package))
+        return out
         o = call.output
         concerns = [c for c in o.get("blocking_concerns", []) if c.get("evidence_fields")]
         texts = list(o.get("reasoning_summary", [])) + [c["concern"] for c in concerns]
@@ -196,7 +235,12 @@ def run_adaptive(
     t0 = time.monotonic()
 
     while True:
-        verdict = verify(graph, spec, vcfg)
+        try:
+            verdict = verify(graph, spec, vcfg)
+        except Exception as exc:  # noqa: BLE001 -- recorded; never a silent crash or a favourable default
+            history.append({"iteration": calls, "outcome": f"verifier error: {exc!r}"})
+            stop_reason = f"verifier error: {exc!r}"
+            break
         if verdict.verdict == "ACCEPT" and acceptance_review and hasattr(planner, "review"):
             rv = planner.review(spec, graph, verdict, history)
             calls += 1
@@ -281,6 +325,18 @@ def run_adaptive(
                 stop_reason = "repeated invalid actions"
                 break
             continue
+        dup = store.existing_run_id(plan.child_config, plan.init) if hasattr(store, "existing_run_id") else None
+        if dup is not None and dup in graph.nodes:
+            entry["outcome"] = f"rejected: identical experiment already in the evidence graph as {dup}"
+            entry["action_rejected"] = True
+            history.append(entry)
+            invalid += 1
+            feedback = (f"That experiment ({ne.action} {plan.params} on {ne.parent_run}) was already run as {dup}; "
+                        "choose a different experiment or parent.")
+            if invalid >= budget.max_invalid_actions:
+                stop_reason = "repeated invalid actions"
+                break
+            continue
         if spent + plan.estimated_cell_steps > budget.max_cost_factor * root_cost:
             entry["outcome"] = (f"rejected: estimated cost {plan.estimated_cell_steps / root_cost:.1f}x root exceeds "
                                 f"remaining budget {(budget.max_cost_factor * root_cost - spent) / root_cost:.1f}x")
@@ -308,7 +364,11 @@ def run_adaptive(
         if log_path:
             log_path.write_text(json.dumps({"partial": True, "history": history}, indent=1, default=str))
 
-    final_v = verify(graph, spec, vcfg)
+    try:
+        final_v = verify(graph, spec, vcfg)
+    except Exception as exc:  # noqa: BLE001
+        final_v = Verdict("INCONCLUSIVE", [], {}, {}, [f"verifier error: {exc!r}"])
+        final = "INCONCLUSIVE"
     res = LoopResult(
         root_run=root_run, planner=planner.name, final_verdict=final, stop_reason=stop_reason,
         verdict=final_v.to_dict(), history=history, runs=list(graph.nodes), experiments=experiments,

@@ -204,7 +204,7 @@ def _function_objects(cfg: CaseConfig) -> str:
 """
 
 
-def _control_dict(cfg: CaseConfig) -> str:
+def _control_dict(cfg: CaseConfig, segment_start: float = 0.0) -> str:
     tc = cfg.convective_time
     t = cfg.time
     if cfg.numerics.solver == "simpleFoam":
@@ -226,11 +226,12 @@ timePrecision   8;
 runTimeModifiable false;
 """
     else:
-        # Fields are written exactly once, at endTime (writeInterval = endTime
-        # is a write time both for fresh runs and for restarts that extend
-        # endTime).  OpenFOAM does not otherwise write at endTime, and restarts
-        # / mapped children must start from the true final state.  Writing does
-        # not affect the solution, so time.write_interval is not used.
+        # Fields are written exactly once, at endTime.  OpenFOAM counts write
+        # intervals from the (re)start time, so the interval is the length of
+        # this segment (endTime - segment_start).  It does not otherwise write
+        # at endTime, and restarts / mapped children must start from the true
+        # final state.  Writing does not affect the solution, so
+        # time.write_interval is not used.
         adjust = "yes" if t.adjust_time_step else "no"
         body = f"""
 application     pimpleFoam;
@@ -243,7 +244,7 @@ adjustTimeStep  {adjust};
 maxCo           {_g(t.max_co)};
 maxDeltaT       {_g(t.delta_t * tc)};
 writeControl    {'adjustable' if t.adjust_time_step else 'runTime'};
-writeInterval   {_g(t.end_time * tc)};
+writeInterval   {_g((t.end_time - segment_start) * tc)};
 purgeWrite      0;
 writeFormat     ascii;
 writePrecision  10;
@@ -385,15 +386,19 @@ regions
 """
 
 
-def write_case(cfg: CaseConfig, case_dir: str | Path) -> BlockLayout:
-    """Create ``case_dir`` (must not contain a previous case) and write all files."""
+def write_case(cfg: CaseConfig, case_dir: str | Path, segment_start: float = 0.0) -> BlockLayout:
+    """Create ``case_dir`` and write all files.
+
+    ``segment_start`` (in D/U) is the restart time for a continued run, so that
+    the final state of the segment is written.
+    """
     case_dir = Path(case_dir)
     for sub in ("0", "constant", "system"):
         (case_dir / sub).mkdir(parents=True, exist_ok=True)
     bm_text, layout = render_blockmesh_dict(cfg)
     files = {
         "system/blockMeshDict": bm_text,
-        "system/controlDict": _control_dict(cfg),
+        "system/controlDict": _control_dict(cfg, segment_start),
         "system/fvSchemes": _fv_schemes(cfg),
         "system/fvSolution": _fv_solution(cfg),
         "system/setFieldsDict": _set_fields(cfg),

@@ -109,6 +109,10 @@ def analyze_unsteady(
         out["oscillating"] = None
         out["reason"] = "fewer than 20 force samples"
         return out
+    if not (np.all(np.isfinite(cd)) and np.all(np.isfinite(cl))) or np.max(np.abs(cl)) > 1e3:
+        out["oscillating"] = None
+        out["reason"] = "non-finite or unbounded force history (diverged solution)"
+        return out
 
     # --- is there a sustained oscillation? --------------------------------
     # amplitude judged on the last quarter (is it still oscillating at the
@@ -215,12 +219,14 @@ def analyze_unsteady(
     se_T = float(periods.std(ddof=1) / np.sqrt(n)) if n > 1 else None
     lag1 = float(np.corrcoef(cyc_cd_s[:-1], cyc_cd_s[1:])[0, 1]) if n > 3 and cyc_cd_s.std() > 0 else None
     # linear drift of cycle means across the window, expressed as total change / mean
+    half = n // 2
     tc = np.array([0.5 * (c["t_start"] + c["t_end"]) for c in stat_cycles])
     slope = float(np.polyfit(tc, cyc_cd_s, 1)[0]) if n > 2 else 0.0
     drift_rel = float(slope * (t_b - t_a) / mean_cd)
     amp = cyc_amp[d:]
     amp_drift = float(np.polyfit(tc, amp, 1)[0] * (t_b - t_a) / max(amp.mean(), 1e-30)) if n > 2 else 0.0
-    half = n // 2
+    period_drift = float(np.polyfit(tc, periods, 1)[0] * (t_b - t_a) / periods.mean()) if n > 2 else 0.0
+    period_half = float((periods[half:].mean() - periods[:half].mean()) / periods.mean()) if n >= 4 else None
     out["stationary_window"] = {
         "method": "MSER on per-cycle mean Cd, lift amplitude and period; integer cycles",
         "truncated_cycles": int(d),
@@ -243,6 +249,8 @@ def analyze_unsteady(
         "cycle_mean_cd_lag1_autocorr": lag1,
         "mean_cd_relative_drift": drift_rel,
         "cl_amplitude_relative_drift": amp_drift,
+        "period_relative_drift": period_drift,
+        "period_half_difference_rel": period_half,
         "mean_cd_half_difference_rel": float(
             (cyc_cd_s[half:].mean() - cyc_cd_s[:half].mean()) / mean_cd
         )

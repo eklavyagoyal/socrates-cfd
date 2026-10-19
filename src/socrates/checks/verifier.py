@@ -64,8 +64,23 @@ def _formal_order_space(cfg: CaseConfig) -> float:
     return 1.0 if len(s) >= 2 and s[1] == "upwind" else 2.0
 
 
-def _formal_order_time(cfg: CaseConfig) -> float:
-    return 1.0 if cfg.numerics.ddt.strip().startswith("Euler") else 2.0
+def _formal_order_time(cfg: CaseConfig) -> float | None:
+    """Formal temporal order of the ddt scheme; None if not time-accurate / unknown."""
+    toks = cfg.numerics.ddt.replace("bounded", "").split()
+    if not toks:
+        return None
+    name = toks[0]
+    if name == "Euler":
+        return 1.0
+    if name == "backward":
+        return 2.0
+    if name == "CrankNicolson":
+        try:
+            psi = float(toks[1])
+        except (IndexError, ValueError):
+            return None
+        return 2.0 if psi >= 1.0 else 1.0  # psi < 1 blends in Euler: formally first order
+    return None  # localEuler, steadyState, unknown: no temporal-accuracy claim possible
 
 
 class RunGraph:
@@ -89,27 +104,50 @@ class RunGraph:
                         best = c
         return best
 
+    def same_config_class(self, rid: str) -> list[str]:
+        """A run and all its completed RUN_LONGER continuations (one numerical set-up)."""
+        out, frontier = [rid], [rid]
+        while frontier:
+            n = frontier.pop()
+            for c in self.children(n, "RUN_LONGER"):
+                if c.ok and c.run_id not in out:
+                    out.append(c.run_id)
+                    frontier.append(c.run_id)
+        return out
+
     def factor_family(self, factor: str) -> list[RunNode]:
-        """Root followed by runs reached via repeated ``factor`` primitives (ordered coarse->fine)."""
+        """Root followed by runs reached via repeated ``factor`` primitives (ordered coarse->fine).
+
+        Children of a RUN_LONGER continuation belong to the same level as its
+        source (same numerical set-up), so traversal starts from the whole
+        same-config class of every member.  Each member is represented by its
+        longest continuation; members at an identical refinement level are
+        collapsed (the most recent one is kept).
+        """
         action = FACTOR_ACTIONS[factor]
-        fam = [self.longest_same_config(self.root)]
-        frontier = [self.root]
-        seen = set()
+        members = [self.longest_same_config(self.root)]
+        frontier = list(self.same_config_class(self.root))
+        seen = set(frontier)
         while frontier:
             rid = frontier.pop()
             for c in self.children(rid, action):
                 if c.run_id in seen or not c.ok:
                     continue
-                seen.add(c.run_id)
-                fam.append(self.longest_same_config(c.run_id))
-                frontier.append(c.run_id)
-        key = {
-            "mesh": lambda n: -(n.evidence.get("mesh") or {}).get("representative_cell_size_D", math.inf),
-            "time": lambda n: -n.config.time.delta_t,
-            "domain": lambda n: n.config.domain.half_height,
-        }[factor]
-        root = fam[0]
-        rest = sorted(fam[1:], key=key)
+                cls = self.same_config_class(c.run_id)
+                seen.update(cls)
+                members.append(self.longest_same_config(c.run_id))
+                frontier.extend(cls)
+        root = members[0]
+        by_level: dict[float, RunNode] = {}
+        for n in members[1:]:
+            sz = _size(factor, n)
+            if sz is None:
+                continue
+            key = round(sz, 9)
+            if abs(key - round(_size(factor, root) or -1, 9)) < 1e-12:
+                continue  # same level as the root: no information about this factor
+            by_level[key] = n  # later members replace earlier ones at the same level
+        rest = sorted(by_level.values(), key=lambda n: -(_size(factor, n) or 0.0))
         return [root] + rest
 
 
@@ -142,6 +180,22 @@ def sensitivity_checks(graph: RunGraph, spec: ProblemSpec, vcfg: dict) -> list[C
                 continue
             values = [_stationary(n, q) for n in fam]
             sizes = [_size(factor, n) for n in fam]
+            # every member must itself be a statistically reliable estimate
+            frac = vcfg["error_budget"]["component_pass_fraction"]
+            min_cyc = vcfg["statistics"]["min_cycles"]
+            unreliable = []
+            for n in fam:
+                sw = ((n.evidence.get("forces") or {}).get("stationary_window") or {})
+                u, _ = statistical_uncertainty(n.evidence, q)
+                if (sw.get("n_cycles") or 0) < min_cyc or u is None or u > frac * tau:
+                    unreliable.append((n.run_id, sw.get("n_cycles"), u))
+            if unreliable:
+                out.append(CheckResult(name, Status.INCONCLUSIVE,
+                                       f"family member(s) not statistically reliable for {q} "
+                                       f"(run, cycles, uncertainty): {unreliable}; run them longer first",
+                                       qoi=q, component=factor, runs=[n.run_id for n in fam],
+                                       details={"unreliable_members": [u[0] for u in unreliable]}))
+                continue
             noise = max((statistical_uncertainty(n.evidence, q)[0] or 0.0) for n in fam)
             notes = []
             if factor == "mesh":
@@ -151,6 +205,12 @@ def sensitivity_checks(graph: RunGraph, spec: ProblemSpec, vcfg: dict) -> list[C
                     notes.append(f"time step also varied across the mesh family: {sorted(dts)} (Courant control)")
             elif factor == "time":
                 order = _formal_order_time(root.config)
+                if order is None:
+                    out.append(CheckResult(name, Status.INCONCLUSIVE,
+                                           f"time scheme '{root.config.numerics.ddt}' has no known formal order of "
+                                           "accuracy; temporal error cannot be estimated", qoi=q, component=factor,
+                                           runs=[n.run_id for n in fam]))
+                    continue
             else:
                 order = vcfg["sensitivity"]["domain_error_order"]
                 notes.append("domain-size error assumed ~ (D/H)^q with q=1 (EXPERT REVIEW)")

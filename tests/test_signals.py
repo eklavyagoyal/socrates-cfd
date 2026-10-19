@@ -68,3 +68,20 @@ def test_real_coarse_mesh_history():
     assert 0.14 < st < 0.17
     assert abs(sw["frequency_fft"] - sw["frequency_zero_crossing"]) / sw["frequency_zero_crossing"] < 2e-3
     assert sw["n_cycles"] >= 8
+
+
+def test_diverged_history_is_not_oscillating():
+    t = np.arange(0, 10, 0.01)
+    cl = np.sin(5 * t) * np.exp(t)
+    cl[-5:] = np.inf
+    r = analyze_unsteady(t, 1 + 0 * t, cl, convective_time=0.1, declared_start=1.0)
+    assert r["oscillating"] is None and "non-finite" in r["reason"]
+
+
+def test_period_drift_measured():
+    t = np.arange(0, 60, 0.002)
+    f = 2.5 * (1 + 0.002 * t)  # slowly increasing frequency
+    phase = 2 * np.pi * np.cumsum(f) * 0.002
+    r = analyze_unsteady(t, 1.3 + 0 * t, 0.3 * np.sin(phase), convective_time=0.1, declared_start=None)
+    sw = r["stationary_window"]
+    assert sw["period_relative_drift"] < -0.01

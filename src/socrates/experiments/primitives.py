@@ -98,6 +98,9 @@ def normalise_params(action: str, params: dict | None) -> dict[str, float]:
             raise ActionRejected(f"{action}.{name} must be a number, got {v!r}") from exc
         if not (lo <= v <= hi) or not math.isfinite(v):
             raise ActionRejected(f"{action}.{name}={v} outside allowed range [{lo}, {hi}]")
+        # canonicalise so that numerically equivalent requests map to one run
+        # (e.g. 1.4142 and sqrt(2)): snap to the default within 0.1 %, else 3 decimals
+        v = default if abs(v - default) <= 1e-3 * default else round(v, 3)
         out[name] = v
     return out
 

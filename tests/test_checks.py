@@ -202,3 +202,49 @@ def test_geometry_consistency_extension():
     # v1 (pre-registered) configuration does not run it
     assert "geometry_consistency" not in [c.check for c in run_static_checks(ev, SPEC, CFG)]
     assert "geometry_consistency" in [c.check for c in run_static_checks(ev, SPEC, cfg2)]
+
+
+# ---- regressions from the adversarial review (findings #2, #3, #4, #5/#13) ----
+
+def test_slow_convergence_not_extrapolated_with_formal_order():
+    # eps32/eps21 = 1.1 -> p_obs ~ 0.28; the old fallback to p=2 gave U ~1.4 % (PASS)
+    r = 2 ** 0.5
+    res = _seq([1.2958, 1.298, 1.300], [1.0, 1 / r, 0.5])
+    assert res.details["observed_order"] < 0.5
+    assert res.status == Status.INCONCLUSIVE and res.uncertainty > 0.03
+
+
+def test_no_positive_order_is_inconclusive():
+    res = assess_sequence(check="time_sensitivity", component="time", qoi="q", values=[1.2944, 1.298, 1.300],
+                          sizes=[0.01, 0.004, 0.01 / 2.5 / 1.5], run_ids=["a", "b", "c"], formal_order=2.0,
+                          tau=0.03, cfg=CFG)
+    assert res.status == Status.INCONCLUSIVE
+
+
+def test_observed_order_never_returns_unconverged_value():
+    # r32 > r21^2 makes the plain fixed-point map oscillate; the bracketed solve must be exact or None
+    for p_true in (0.7, 1.0, 1.5, 2.0, 3.0):
+        h3, h2, h1 = 4.0, 1.6, 1.0
+        f = lambda h: 1.0 + 0.05 * h ** p_true
+        p, _ = observed_order(f(h3) - f(h2), f(h2) - f(h1), h2 / h1, h3 / h2, 2.0)
+        assert p is not None and abs(p - p_true) < 1e-6
+
+
+def test_degenerate_family_does_not_crash():
+    res = _seq([1.30, 1.31, 1.312], [1.0, 0.5, 0.5])
+    assert res.status == Status.INCONCLUSIVE
+
+
+def test_two_level_noise_floor():
+    res = assess_sequence(check="mesh_sensitivity", component="mesh", qoi="q", values=[1.30, 1.3002],
+                          sizes=[1.0, 0.7], run_ids=["a", "b"], formal_order=2.0, tau=0.03, cfg=CFG, noise=0.014)
+    assert res.status == Status.INCONCLUSIVE
+
+
+def test_fail_needs_change_beyond_noise():
+    res = assess_sequence(check="mesh_sensitivity", component="mesh", qoi="q", values=[1.0, 1.035],
+                          sizes=[1.0, 0.7], run_ids=["a", "b"], formal_order=2.0, tau=0.03, cfg=CFG, noise=0.01)
+    assert res.status != Status.FAIL
+    res = assess_sequence(check="mesh_sensitivity", component="mesh", qoi="q", values=[1.0, 1.035],
+                          sizes=[1.0, 0.7], run_ids=["a", "b"], formal_order=2.0, tau=0.03, cfg=CFG, noise=0.0)
+    assert res.status == Status.FAIL

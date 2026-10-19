@@ -10,11 +10,15 @@ Two levels (Roache 1998; Celik et al. 2008, J. Fluids Eng. 130:078001):
     e_root  = delta * r^p / (r^p - 1)            (Richardson, assumed order p)
     U_root  = Fs2 * e_root,   Fs2 = 3
 Three levels (Celik et al. 2008 procedure):
-    observed order p by fixed-point iteration, monotone/oscillatory test
-    via sign(eps32/eps21), extrapolated value q_ext, U_root = Fs3*|q_3-q_ext|/|q_ext|
-    with Fs3 = 1.25 when p is consistent with the formal order, otherwise
-    Fs2 with the formal order (more conservative).  Oscillatory or noisy
-    sequences fall back to U_root = Fs2 * (range / |q_finest|).
+    observed order p (bracketed root of Celik's equation), monotone/oscillatory
+    test via sign(eps32/eps21), extrapolated value q_ext,
+    U_root = Fs*|q_3-q_ext|/|q_ext| with Fs = 1.25 when p is within the band
+    around the formal order, otherwise Fs = 3 with p = min(observed, formal)
+    (never extrapolate slow convergence with a fast order).  No positive
+    observed order -> INCONCLUSIVE.  Oscillatory or noise-level sequences use
+    U_root = Fs2 * (range / |q_finest|).  Both estimates are floored at
+    Fs2 * statistical noise, and a FAIL needs the change to exceed tau by more
+    than twice the noise.  Degenerate families (equal sizes) -> INCONCLUSIVE.
 Decision for the root at tolerance tau:
     FAIL         |q_root - q_finest| / |q_finest| > tau   (demonstrated change)
     PASS         U_root <= pass_fraction * tau
@@ -28,22 +32,49 @@ import math
 from .base import CheckResult, Status
 
 
-def observed_order(eps32: float, eps21: float, r21: float, r32: float, p0: float) -> tuple[float | None, int]:
-    """Celik et al. (2008) fixed-point iteration for the apparent order."""
-    if eps21 == 0 or eps32 == 0:
+def observed_order(eps32: float, eps21: float, r21: float, r32: float, p0: float,
+                   p_max: float = 10.0) -> tuple[float | None, int]:
+    """Apparent order from Celik et al. (2008):  p = |ln|eps32/eps21| + q(p)| / ln r21.
+
+    Solved as a root of g(p) = p ln r21 - |ln|eps32/eps21| + q(p)| on (0, p_max]
+    by sign-change bracketing + bisection, so an unconverged iterate is never
+    returned (the plain fixed-point map oscillates when r32 > r21^2).  Returns
+    (None, n) when no positive order solves the equation.
+    """
+    if eps21 == 0 or eps32 == 0 or r21 <= 1.0 or r32 <= 1.0:
         return None, 0
     s = 1.0 if eps32 / eps21 > 0 else -1.0
-    p = p0
-    for it in range(1, 101):
+    lnr = math.log(abs(eps32 / eps21))
+
+    def g(p: float) -> float | None:
         try:
-            qp = math.log((r21**p - s) / (r32**p - s))
-            p_new = abs(math.log(abs(eps32 / eps21)) + qp) / math.log(r21)
+            return p * math.log(r21) - abs(lnr + math.log((r21**p - s) / (r32**p - s)))
         except (ValueError, ZeroDivisionError, OverflowError):
-            return None, it
-        if abs(p_new - p) < 1e-8:
-            return p_new, it
-        p = p_new
-    return p, 100
+            return None
+
+    grid = [1e-3 * (p_max / 1e-3) ** (i / 400) for i in range(401)]  # log-spaced
+    prev_p, prev_g = None, None
+    for p in grid:
+        gp = g(p)
+        if gp is None:
+            prev_p, prev_g = None, None
+            continue
+        if prev_g is not None and (prev_g == 0 or prev_g * gp < 0):
+            a, b, ga = prev_p, p, prev_g
+            for it in range(200):
+                m = 0.5 * (a + b)
+                gm = g(m)
+                if gm is None:
+                    return None, it
+                if ga * gm <= 0:
+                    b = m
+                else:
+                    a, ga = m, gm
+                if b - a < 1e-10:
+                    return 0.5 * (a + b), it
+            return 0.5 * (a + b), 200
+        prev_p, prev_g = p, gp
+    return None, len(grid)
 
 
 def assess_sequence(
@@ -85,12 +116,16 @@ def assess_sequence(
         details["notes"].append(f"refinement ratio below {sens['min_refinement_ratio']} (Celik et al. 2008)")
 
     method = ""
+    if any(r <= 1.0 + 1e-6 for r in ratios):
+        return CheckResult(check, Status.INCONCLUSIVE,
+                           f"degenerate {component} family: two runs at the same refinement level ({ratios})",
+                           qoi=qoi, component=component, runs=run_ids, details=details)
     if len(values) == 2:
         r = ratios[0]
         p = formal_order
         e_root = change * r**p / (r**p - 1.0)
-        u_root = fs2 * e_root
-        method = f"two-level Richardson, assumed order p={p:g}, Fs={fs2:g}"
+        u_root = max(fs2 * e_root, fs2 * noise)  # a difference below the statistical noise proves nothing
+        method = f"two-level Richardson, assumed order p={p:g}, Fs={fs2:g} (noise floor {noise:.1e})"
         details.update(estimated_root_error=e_root)
     else:
         q3, q2, q1 = values[0], values[-2], values[-1]
@@ -109,20 +144,28 @@ def assess_sequence(
         else:
             p_obs, n_it = observed_order(eps32, eps21, r21, r32, formal_order)
             details.update(observed_order=p_obs, iterations=n_it)
-            if p_obs is not None and lo * formal_order <= p_obs <= hi * formal_order:
+            if p_obs is None:
+                return CheckResult(check, Status.INCONCLUSIVE,
+                                   f"monotone {component} sequence but no positive observed order solves the Celik "
+                                   f"equation: not in the asymptotic range", qoi=qoi, component=component,
+                                   runs=run_ids, details=details)
+            if lo * formal_order <= p_obs <= hi * formal_order:
                 p, fs = p_obs, fs3
                 method = f"three-level Celik procedure, observed order p={p_obs:.2f}, Fs={fs3:g}"
             else:
-                p, fs = formal_order, fs2
-                method = (f"three-level, observed order {p_obs if p_obs is None else round(p_obs, 2)} outside "
-                          f"[{lo}, {hi}]x formal; formal order p={formal_order:g} with Fs={fs2:g}")
+                # outside the asymptotic band: use the SMALLER of observed and formal order
+                # (slow convergence must not be extrapolated with a fast order) and Fs=3
+                p, fs = min(p_obs, formal_order), fs2
+                method = (f"three-level, observed order {p_obs:.2f} outside [{lo}, {hi}]x formal; "
+                          f"p=min(observed, formal)={p:.2f} with Fs={fs2:g}")
             q_ext = (r21**p * q1 - q2) / (r21**p - 1.0)
             e_root = abs(q3 - q_ext) / abs(q_ext)
-            u_root = fs * e_root
+            u_root = max(fs * e_root, fs2 * noise)
             details.update(extrapolated_value=q_ext, estimated_root_error=e_root)
     details["method"] = method
     src = "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001"
-    if change > tau:
+    details["noise"] = noise
+    if change - 2.0 * noise > tau:  # demonstrated beyond the statistical noise of the two runs
         return CheckResult(check, Status.FAIL,
                            f"{qoi} of the run under verification changes by {change:.2%} under {component} refinement "
                            f"(> tau={tau:.0%}); its value is not converged to the requested tolerance [{method}]",

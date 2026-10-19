@@ -24,6 +24,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -55,6 +56,21 @@ def _sha256(path: Path) -> str:
         for chunk in iter(lambda: fh.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def extractor_fingerprint() -> dict:
+    """Identity of the code that turns raw outputs into evidence (for re-extraction provenance)."""
+    src = Path(__file__).resolve().parents[1]
+    h = hashlib.sha256()
+    for f in sorted([*(src / "evidence").glob("*.py"), src / "openfoam" / "parsers.py"]):
+        h.update(f.name.encode())
+        h.update(f.read_bytes())
+    return {"extractor_sha256": h.hexdigest()[:16], "git_commit": software_versions().get("socrates_git_commit"),
+            "time": _now()}
+
+
+def _hash_tree(root: Path) -> dict[str, str]:
+    return {str(f.relative_to(root)): _sha256(f) for f in sorted(root.rglob("*")) if f.is_file()}
 
 
 def software_versions() -> dict:
@@ -164,6 +180,10 @@ class RunStore:
                 return d
         return None
 
+    def existing_run_id(self, cfg: CaseConfig, init: Initialisation) -> str | None:
+        d = self._find_existing(cfg, init)
+        return d.name if d is not None else None
+
     def load(self, run_id: str) -> RunResult:
         d = self.root / run_id
         prov = json.loads((d / "run.json").read_text())
@@ -181,7 +201,7 @@ class RunStore:
         old = json.loads((d / "evidence.json").read_text()) if (d / "evidence.json").exists() else {}
         ev["run_id"] = run_id
         ev["cost"] = old.get("cost", {})
-        ev["extraction"] = {"reextracted": _now()}
+        ev["extraction"] = {**extractor_fingerprint(), "reextracted": True}
         if series:
             np.savez_compressed(d / "series.npz", **{k: v.astype(np.float64) for k, v in series.items()})
         (d / "evidence.json").write_text(json.dumps(ev, indent=2, default=_json_default))
@@ -222,6 +242,11 @@ class RunStore:
                 if res.ok or res.provenance.get("failure_kind") in ("solver", "mesh"):
                     self._record_request(existing, launched_by, reason, parent_run, experiment)
                     return res
+                if res.status == "running":  # owner died: adopt a completed orphan if possible
+                    adopted = self._adopt_orphan(existing)
+                    if adopted is not None:
+                        self._record_request(existing, launched_by, reason, parent_run, experiment)
+                        return adopted
                 shutil.rmtree(existing)  # owner died mid-run (infrastructure failure): retry cleanly
             return self._execute(key, cfg, spec, init, parent_run, reason, experiment, launched_by)
 
@@ -280,7 +305,7 @@ class RunStore:
             shutil.copytree(src, case, ignore=shutil.ignore_patterns("log.*"))
             # regenerate system/ and constant/ from the new config (e.g. endTime)
             tmp = d / "_gen"
-            write_case(cfg, tmp)
+            write_case(cfg, tmp, segment_start=self.load(init.source_run).config.time.end_time)
             # replace dictionaries only; constant/polyMesh (the mesh) must be kept
             shutil.rmtree(case / "system")
             shutil.copytree(tmp / "system", case / "system")
@@ -314,6 +339,17 @@ class RunStore:
             except RunFailure as exc:
                 failure = exc
         prov["finished"] = _now()
+        if failure is None and cfg.numerics.solver == "pimpleFoam":
+            failure = _check_final_state_written(case, cfg)
+        offset = 0
+        if init.kind == "restart":
+            src_ev = self.load(init.source_run).evidence or {}
+            offset = int((src_ev.get("solver") or {}).get("n_steps") or 0)
+        return self._finalize(d, run_id, case, cfg, spec, prov, failure, steps_offset=offset)
+
+    def _finalize(self, d: Path, run_id: str, case: Path, cfg: CaseConfig, spec: ProblemSpec, prov: dict,
+                  failure: RunFailure | None, steps_offset: int = 0) -> RunResult:
+        """Extract evidence, hash/compress raw logs, prune fields, write the provenance record."""
         if failure is not None:
             prov["status"] = "failed"
             prov["failure_kind"] = "solver" if failure.step not in ("blockMesh", "checkMesh") else "mesh"
@@ -328,13 +364,18 @@ class RunStore:
             ev, series = {"extraction_error": repr(exc)}, {}
             prov["evidence_extraction_error"] = repr(exc)
         ev["run_id"] = run_id
+        ev["extraction"] = extractor_fingerprint()
+        n_steps_total = ev.get("solver", {}).get("n_steps")
+        n_steps = (n_steps_total - steps_offset) if n_steps_total is not None else None
         ev["cost"] = {
             "wall_seconds": prov.get("wall_seconds"),
             "n_cells": ev.get("mesh", {}).get("n_cells"),
-            "n_steps": ev.get("solver", {}).get("n_steps"),
+            # steps computed BY THIS RUN (a restart's history includes its parent's steps)
+            "n_steps": n_steps,
+            "n_steps_including_restart_history": n_steps_total,
         }
-        if ev["cost"]["n_cells"] and ev["cost"]["n_steps"]:
-            ev["cost"]["cell_steps"] = ev["cost"]["n_cells"] * ev["cost"]["n_steps"]
+        if ev["cost"]["n_cells"] and n_steps:
+            ev["cost"]["cell_steps"] = ev["cost"]["n_cells"] * n_steps
         if series:
             np.savez_compressed(d / "series.npz", **{k: v.astype(np.float64) for k, v in series.items()})
         (d / "evidence.json").write_text(json.dumps(ev, indent=2, default=_json_default))
@@ -347,8 +388,81 @@ class RunStore:
                 shutil.copyfileobj(src_fh, dst)
         prov["raw_output_sha256"] = raw
         prune_time_dirs(case)
+        # function-object outputs (source of every Cd/St) and the retained final fields
+        # (initial condition of mapped/restarted children) are hashed too
+        if (case / "postProcessing").exists():
+            prov["postprocessing_sha256"] = _hash_tree(case / "postProcessing")
+        latest = max((x for x in case.iterdir() if x.is_dir() and _is_time(x.name)), key=lambda x: float(x.name),
+                     default=None)
+        if latest is not None:
+            prov["final_fields_sha256"] = {"time": latest.name, "files": _hash_tree(latest)}
         (d / "run.json").write_text(json.dumps(prov, indent=2, default=_json_default))
         return RunResult(run_id, d, prov["status"], prov, ev, cfg)
+
+    def _adopt_orphan(self, d: Path) -> RunResult | None:
+        """A run whose owning process died: wait for its solver, then finalize it if it completed.
+
+        Returns None when there is nothing usable (the caller then re-runs it).
+        """
+        case = d / "case"
+        if not case.exists():
+            return None
+
+        def solver_alive() -> bool:
+            for pid in os.listdir("/proc"):
+                if pid.isdigit():
+                    try:
+                        if os.readlink(f"/proc/{pid}/cwd") == str(case.resolve()):
+                            return True
+                    except OSError:
+                        continue
+            return False
+
+        while solver_alive():
+            time.sleep(30)
+        prov = json.loads((d / "run.json").read_text())
+        cfg = CaseConfig.model_validate(prov["case_config"])
+        spec = ProblemSpec.model_validate(prov["problem_spec"])
+        logs = sorted(case.glob(f"log.{cfg.numerics.solver}*"))
+        if not logs:
+            return None
+        text = logs[-1].read_text(errors="replace")
+        if not re.search(r"^End\s*$", text, re.M):
+            return None
+        m = re.findall(r"ExecutionTime = ([\d.eE+-]+) s\s+ClockTime = ([\d.eE+-]+) s", text)
+        prov["wall_seconds"] = float(m[-1][1]) if m else None
+        prov["adopted_orphan"] = {"note": "owner process died; solver output completed and was finalized", "time": _now()}
+        prov["finished"] = _now()
+        offset = 0
+        init = prov.get("initialisation") or {}
+        if init.get("kind") == "restart":
+            src_ev = self.load(init["source_run"]).evidence or {}
+            offset = int((src_ev.get("solver") or {}).get("n_steps") or 0)
+        return self._finalize(d, prov["run_id"], case, cfg, spec, prov, None, steps_offset=offset)
+
+
+def _is_time(name: str) -> bool:
+    try:
+        float(name)
+        return True
+    except ValueError:
+        return False
+
+
+def _check_final_state_written(case: Path, cfg: CaseConfig) -> RunFailure | None:
+    """Children restart from / map the latest time directory: it must be endTime."""
+    times = []
+    for d in case.iterdir():
+        try:
+            if d.is_dir():
+                times.append(float(d.name))
+        except ValueError:
+            continue
+    end = cfg.time.end_time * cfg.convective_time
+    latest = max(times) if times else None
+    if latest is None or abs(latest - end) > 1e-6 * max(end, 1e-12):
+        return RunFailure("final_state_write", -1, f"latest written time {latest} != endTime {end}")
+    return None
 
 
 def _json_default(o):

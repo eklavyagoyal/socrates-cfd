@@ -10,6 +10,8 @@ L-judge LLM judgement on static evidence, no experiments, no deterministic gatin
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict
 
 from ..case_generation.spec import ProblemSpec
@@ -17,7 +19,7 @@ from ..checks.base import load_config
 from ..checks.verifier import RunGraph, RunNode, verify
 from ..critic.audit import audit_numbers
 from ..critic.backends import ClaudeCLIBackend
-from ..critic.prompt import build_package, render_user_prompt
+from ..critic.prompt import alias_map, anonymize, build_package, render_user_prompt
 from ..experiments.primitives import ActionRejected, plan_experiment
 from .loop import LLMPlanner, RuleBasedPlanner, run_adaptive
 from .store import RunStore
@@ -112,8 +114,8 @@ for this problem; every number you write must appear in the evidence. Output JSO
 
 class JudgeDecision(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    decision: str
-    confidence: str
+    decision: Literal["ACCEPT", "REJECT", "INCONCLUSIVE"]
+    confidence: Literal["LOW", "MEDIUM", "HIGH"]
     reasoning_summary: list[str]
 
 
@@ -132,17 +134,21 @@ def llm_judge(store: RunStore, spec: ProblemSpec, root: str, backend=None) -> di
     backend = backend or ClaudeCLIBackend()
     graph = _root_graph(store, root)
     v = verify(graph, spec, load_config())
-    pkg = build_package(spec, graph, v, history=[], menu=[], budget={"note": "no experiments possible"})
+    pkg = anonymize(build_package(spec, graph, v, history=[], menu=[], budget={"note": "no experiments possible"}),
+                    alias_map(graph))
     pkg.pop("experiment_menu", None)
     pkg.pop("budget", None)
     pkg.pop("previous_critic_decisions", None)
     call = backend.complete(JUDGE_SYSTEM_PROMPT, render_user_prompt(pkg), JUDGE_SCHEMA)
     out = {"backend": backend.describe(), "ok": call.ok, "latency_s": call.latency_s, "cost_usd": call.cost_usd,
            "errors": call.errors}
-    if call.ok:
+    out["model_fingerprint"] = getattr(call, "model_fingerprint", None)
+    try:
+        if not call.ok:
+            raise ValueError("LLM call failed")
         d = JudgeDecision.model_validate(call.output)
         out.update(verdict=d.decision, confidence=d.confidence, reasoning_summary=d.reasoning_summary,
                    numeric_audit=audit_numbers(d.reasoning_summary, pkg))
-    else:
-        out["verdict"] = "ERROR"
+    except Exception as exc:  # noqa: BLE001 -- recorded as ERROR, counted as undecided
+        out.update(verdict="ERROR", error=repr(exc))
     return out

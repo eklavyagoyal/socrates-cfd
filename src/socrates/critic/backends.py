@@ -8,6 +8,7 @@ times with exponential backoff + jitter; every attempt is recorded.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import random
@@ -31,6 +32,7 @@ class LLMCall:
     cost_usd: float | None
     attempts: int
     errors: list[str] = field(default_factory=list)
+    model_fingerprint: str | None = None
 
 
 class ClaudeCLIBackend:
@@ -43,28 +45,41 @@ class ClaudeCLIBackend:
 
     name = "claude-cli"
 
-    def __init__(self, model: str | None = None, timeout_s: float = 300.0, max_attempts: int = 3):
+    # environment variables that could silently change model, effort or loaded context
+    _ENV_DROP = ("CLAUDE_CODE_SESSION_ID", "CLAUDE_EFFORT", "CLAUDE_ADDITIONAL_DIRECTORIES",
+                 "CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD", "ANTHROPIC_MODEL")
+
+    def __init__(self, model: str | None = None, effort: str = "high", timeout_s: float = 300.0,
+                 max_attempts: int = 3):
         if shutil.which("claude") is None:
             raise LLMUnavailable("claude CLI not found on PATH")
         self.model = model
+        self.effort = effort
         self.timeout_s = timeout_s
         self.max_attempts = max_attempts
         self._cwd = tempfile.mkdtemp(prefix="socrates_critic_")
+        try:
+            self.cli_version = subprocess.run(["claude", "--version"], capture_output=True, text=True,
+                                              timeout=30).stdout.strip()
+        except (subprocess.SubprocessError, OSError):
+            self.cli_version = None
 
     def describe(self) -> dict:
-        # model identifiers are deliberately not recorded in repository artifacts
+        # model names are deliberately kept out of repository artifacts; a fingerprint
+        # (hash of the model identifiers reported by the CLI) is recorded per call instead
         return {"backend": self.name, "model": "cli-default" if self.model is None else "configured",
+                "effort": self.effort, "cli_version": self.cli_version,
                 "timeout_s": self.timeout_s, "max_attempts": self.max_attempts}
 
     def complete(self, system_prompt: str, user_prompt: str, schema: dict) -> LLMCall:
         cmd = [
             "claude", "-p", "--output-format", "json", "--tools", "", "--no-session-persistence",
             "--strict-mcp-config", "--setting-sources", "", "--system-prompt", system_prompt,
-            "--json-schema", json.dumps(schema),
+            "--json-schema", json.dumps(schema), "--effort", self.effort,
         ]
         if self.model:
             cmd += ["--model", self.model]
-        env = {k: v for k, v in os.environ.items() if k not in ("CLAUDE_CODE_SESSION_ID",)}
+        env = {k: v for k, v in os.environ.items() if k not in self._ENV_DROP}
         errors: list[str] = []
         t0 = time.monotonic()
         raw = ""
@@ -81,7 +96,9 @@ class ClaudeCLIBackend:
                 out = env_json.get("structured_output")
                 if out is None:
                     out = json.loads(env_json.get("result", ""))
-                return LLMCall(True, out, raw, time.monotonic() - t0, env_json.get("total_cost_usd"), attempt, errors)
+                fp = hashlib.sha256(",".join(sorted(env_json.get("modelUsage") or {})).encode()).hexdigest()[:12]
+                return LLMCall(True, out, raw, time.monotonic() - t0, env_json.get("total_cost_usd"), attempt, errors,
+                               model_fingerprint=fp)
             except (subprocess.TimeoutExpired, RuntimeError, json.JSONDecodeError) as exc:
                 errors.append(f"attempt {attempt}: {type(exc).__name__}: {str(exc)[:300]}")
                 if attempt < self.max_attempts:

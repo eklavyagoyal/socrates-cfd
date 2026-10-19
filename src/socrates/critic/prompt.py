@@ -134,6 +134,34 @@ def check_table(verdict: Verdict) -> list[dict]:
     return rows
 
 
+def alias_map(graph: RunGraph) -> dict[str, str]:
+    """Opaque, stable aliases for run ids (R0 = root, then in creation order).
+
+    Run ids embed the case name (e.g. 'B1_small_domain-...'), which would tell
+    the LLM what the flaw is.  Every LLM-facing text uses these aliases instead.
+    """
+    return {rid: f"R{i}" for i, rid in enumerate(graph.nodes)}
+
+
+def anonymize(obj, aliases: dict[str, str]):
+    """Replace every real run id (in strings and dict keys) by its alias."""
+    order = sorted(aliases, key=len, reverse=True)
+
+    def sub(x: str) -> str:
+        for rid in order:
+            if rid in x:
+                x = x.replace(rid, aliases[rid])
+        return x
+
+    if isinstance(obj, str):
+        return sub(obj)
+    if isinstance(obj, dict):
+        return {(sub(k) if isinstance(k, str) else k): anonymize(v, aliases) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [anonymize(v, aliases) for v in obj]
+    return obj
+
+
 def build_package(spec: ProblemSpec, graph: RunGraph, verdict: Verdict, history: list[dict],
                   menu: list[dict], budget: dict) -> dict:
     s = spec.model_dump(mode="json")
@@ -155,7 +183,7 @@ def build_package(spec: ProblemSpec, graph: RunGraph, verdict: Verdict, history:
             "error_budget_rule": "each component must have estimated uncertainty <= 0.5*tolerance and the root-sum-square "
                                  "of all components <= tolerance; a demonstrated change > tolerance is a FAIL",
         },
-        "previous_critic_decisions": history,
+        "previous_critic_decisions": [{k: v for k, v in h.items() if k != "meta"} for h in history],
         "experiment_menu": menu,
         "budget": budget,
     }

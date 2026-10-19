@@ -297,6 +297,8 @@ def statistical_uncertainty(ev: dict, q: str) -> tuple[float | None, dict]:
         st_fft = sta.get("strouhal_number_fft")
         parts = {
             "ci95_period": (sw.get("period_ci95_halfwidth") or 0.0) / T,
+            "period_drift": abs(sw.get("period_relative_drift") or 0.0),
+            "period_half_difference": abs(sw.get("period_half_difference_rel") or 0.0),
             "fft_vs_zero_crossing": _rel(st_fft, sta[q]) if st_fft else 0.0,
         }
     elif q == "rms_lift_coefficient":

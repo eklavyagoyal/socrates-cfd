@@ -71,6 +71,15 @@ def test_primitive_executes_and_records_parent(tiny, action, params, kind):
         # continues from the true final state: exactly the additional steps
         assert ev["solver"]["n_steps"] == root.evidence["solver"]["n_steps"] + 1250
         assert ev["temporal_behavior"]["record_length_convective"] == pytest.approx(65.0, abs=0.1)
+        # regression (review #7): the restarted segment must write its own final state
+        times = sorted(float(d) for d in os.listdir(child.run_dir / "case") if d[0].isdigit())
+        assert times[-1] == pytest.approx(65.0 * base.convective_time, rel=1e-6)
+        # and a chained continuation must start from it (exactly the new steps again)
+        plan2 = plan_experiment("RUN_LONGER", {"additional_convective_times": 25}, parent_run=child.run_id,
+                                parent_cfg=child.config, parent_ev=child.evidence, root_cfg=base)
+        grand = store.get_or_run(plan2.child_config, SPEC, init=plan2.init, parent_run=child.run_id, reason="chain")
+        assert grand.ok and grand.evidence["cost"]["n_steps"] == 1250
+        assert grand.evidence["temporal_behavior"]["record_length_convective"] == pytest.approx(90.0, abs=0.1)
     else:
         assert "log.mapFields" in [s["log_file"] for s in child.provenance["commands"]]
         # mapped from a shedding state: lift oscillates from the first convective unit
@@ -78,3 +87,26 @@ def test_primitive_executes_and_records_parent(tiny, action, params, kind):
         s = child.series()
         early = s["t"] < 5 * base.convective_time
         assert np.std(s["cl"][early]) > 0.01
+
+
+def test_orphaned_completed_run_is_adopted_not_rerun(tiny):
+    """A run whose owner process died after the solver finished is finalized, not recomputed."""
+    import json
+
+    store, base, root = tiny
+    f = root.run_dir / "run.json"
+    prov = json.loads(f.read_text())
+    prov.update(status="running", owner_pid=2**22 - 7)  # a pid that does not exist
+    f.write_text(json.dumps(prov))
+    again = store.get_or_run(base, SPEC, reason="orphan test")
+    assert again.ok and again.run_id == root.run_id
+    assert again.provenance.get("adopted_orphan")
+    assert again.evidence["cost"]["n_steps"] == root.evidence["cost"]["n_steps"]
+
+
+def test_restart_cost_counts_only_new_steps(tiny):
+    store, base, root = tiny
+    plan = plan_experiment("RUN_LONGER", {"additional_convective_times": 25}, parent_run=root.run_id,
+                           parent_cfg=root.config, parent_ev=root.evidence, root_cfg=base)
+    child = store.get_or_run(plan.child_config, SPEC, init=plan.init, parent_run=root.run_id, reason="cost test")
+    assert child.evidence["cost"]["n_steps"] == 1250

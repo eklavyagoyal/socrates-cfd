@@ -42,3 +42,38 @@ def test_audit_flags_untraceable_numbers():
 def test_audit_accepts_percentages_of_package_fractions():
     a = audit_numbers(["change of 2.5%"], {"change": 0.025})
     assert a["n_untraced"] == 0
+
+
+def test_llm_package_is_blind_to_case_names():
+    """Regression (review finding): run ids embed case names such as 'B1_small_domain'."""
+    import json
+    from pathlib import Path
+
+    from socrates.case_generation.spec import CaseConfig, ProblemSpec
+    from socrates.checks.verifier import RunGraph, RunNode, verify
+    from socrates.critic.prompt import alias_map, anonymize, build_package, render_user_prompt
+
+    spec = ProblemSpec.from_yaml("configs/problem_cylinder_re100.yaml")
+    runs = sorted(Path("results/runs").glob("B1_small_domain-*/run.json"))
+    if not runs:
+        import pytest
+        pytest.skip("stored B1 run not available")
+    prov = json.loads(runs[0].read_text())
+    ev = json.loads((runs[0].parent / "evidence.json").read_text())
+    rid = prov["run_id"]
+    g = RunGraph([RunNode(rid, CaseConfig.model_validate(prov["case_config"]), ev)], rid)
+    v = verify(g, spec)
+    history = [{"outcome": f"executed -> {rid}", "next_experiment": {"parent_run": rid}}]
+    menu = [{"action": "REFINE_MESH", "estimated_wall_seconds_by_parent": {rid: 100}}]
+    text = render_user_prompt(anonymize(build_package(spec, g, v, history, menu, {}), alias_map(g)))
+    for leak in (rid, "B1_", "small_domain", "small domain", "adversarial"):
+        assert leak not in text, leak
+    assert "R0" in text
+
+
+def test_audit_printed_precision_and_no_percent_laundering():
+    pkg = {"strouhal_frequency_resolution": 0.013333, "domain": 20.0, "cd": 1.2951,
+           "previous_critic_decisions": [{"reasoning_summary": ["literature Cd 1.33"]}]}
+    a = audit_numbers(["literature Cd = 1.33 (Williamson 1996)", "domain 20 D", "Cd 1.30", "1.3% resolution"], pkg)
+    toks = sorted(u["token"] for u in a["untraced"])
+    assert toks == ["1.33", "1996"], toks  # 1.30 matches 1.2951 at printed precision; 1.3% = 100*0.013333

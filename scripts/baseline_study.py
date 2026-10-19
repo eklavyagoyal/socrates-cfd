@@ -7,6 +7,13 @@ One-factor-at-a-time refinement chains from the baseline, run in parallel:
     run longer: +100 D/U
 Levels mapped from the baseline run concurrently; the initialisation source does
 not enter the statistic (every mapped level runs 80 D/U and averages the last 40).
+
+Stage 2 (added after the first study, before any benchmark label was used; see
+reports/baseline_validation.md): the x2 and x4 domain levels had not reached a limit
+cycle in 80 D/U (the wake must first cross the enlarged domain), so both are continued
+(RUN_LONGER) until the run length exceeds the wake transit time to the outlet plus
+the averaging window; and a fourth time level (dt/8) tests the slow St convergence.
+The report uses every member's longest continuation, as the verifier does.
 Results: results/baseline/study.json (consumed by scripts/make_baseline_report.py).
 """
 
@@ -69,9 +76,26 @@ def main() -> None:
 
     with ThreadPoolExecutor(max_workers=len(CHAINS)) as ex:
         results = dict(ex.map(chain, CHAINS))
+
+    # ---- stage 2: continuations of the domain levels, fourth time level ----
+    def extend(job):
+        name, idx, action, params = job
+        parent = store.load(results[name][idx]["run_id"])
+        return name, idx, action, step(name, action, params, parent)
+
+    jobs = [("domain", 0, "RUN_LONGER", {"additional_convective_times": 100.0}),   # x2: outlet 100 D, run 180 D/U
+            ("domain", 1, "RUN_LONGER", {"additional_convective_times": 200.0}),   # x4: outlet 200 D, run 280 D/U
+            ("time", 1, "REDUCE_TIME_STEP", {"factor": 2})]                         # dt/8 from dt/4
+    extensions = {"continuations": {}, "time_level_4": None}
+    with ThreadPoolExecutor(max_workers=len(jobs)) as ex:
+        for name, idx, action, res in ex.map(extend, jobs):
+            if action == "RUN_LONGER":
+                extensions["continuations"][results[name][idx]["run_id"]] = res.run_id
+            else:
+                extensions["time_level_4"] = {"run_id": res.run_id, "parent": results[name][idx]["run_id"]}
     d = REPO / "results" / "baseline"
     d.mkdir(parents=True, exist_ok=True)
-    (d / "study.json").write_text(json.dumps({"root": root.run_id, "chains": results}, indent=2))
+    (d / "study.json").write_text(json.dumps({"root": root.run_id, "chains": results, "stage2": extensions}, indent=2))
 
 
 if __name__ == "__main__":

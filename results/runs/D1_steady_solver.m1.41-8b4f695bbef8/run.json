@@ -1,6 +1,6 @@
 {
   "run_id": "D1_steady_solver.m1.41-8b4f695bbef8",
-  "status": "running",
+  "status": "completed",
   "owner_pid": 2895,
   "created": "2026-10-19T11:04:03+00:00",
   "problem_spec": {
@@ -166,5 +166,55 @@
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4
+  },
+  "started": "2026-10-19T11:04:07+00:00",
+  "commands": [
+    {
+      "step": "blockMesh",
+      "command": "blockMesh",
+      "returncode": 0,
+      "wall_seconds": 2.065091205000499,
+      "log_file": "log.blockMesh"
+    },
+    {
+      "step": "checkMesh",
+      "command": "checkMesh -allGeometry -allTopology",
+      "returncode": 0,
+      "wall_seconds": 1.7224209849991894,
+      "log_file": "log.checkMesh"
+    },
+    {
+      "step": "simpleFoam",
+      "command": "simpleFoam",
+      "returncode": 0,
+      "wall_seconds": 539.3413862710004,
+      "log_file": "log.simpleFoam"
+    }
+  ],
+  "wall_seconds": 543.1288984610001,
+  "finished": "2026-10-19T11:13:10+00:00",
+  "raw_output_sha256": {
+    "log.blockMesh": "c6f9d0cad0f3f61718b4c5f75cab43972cbe91f946340086529964f4a9328323",
+    "log.checkMesh": "188f70a8abec87848811db76b38aa1b3b07ee92739bca71509a9bb34290356c5",
+    "log.simpleFoam": "4102d84f2fe959f6fe56a742ae55e27c61f7d506d3695b760678e091a3958ce5"
+  },
+  "postprocessing_sha256": {
+    "flux_bottom/0/surfaceFieldValue.dat": "38f97bd13032901fd7816a6af2df64f569dbe51f4677689bfe610c7f3b292507",
+    "flux_inlet/0/surfaceFieldValue.dat": "660a95e97850c2da902fc16ad51586483d22d74e1f687a88fba34d214a52604e",
+    "flux_outlet/0/surfaceFieldValue.dat": "f22b2454e91a54070c899ac1da229fd859b1e1a7fd5cbea5d27921f983fccbd2",
+    "flux_top/0/surfaceFieldValue.dat": "2042700b6dd45a4340629ea898ac44d873256b181f1115965177c0779db33b6b",
+    "forceCoeffs1/0/coefficient.dat": "eb9645739cfd81ecb56258e43da87358ef08e3fad4d264ab4d7e8fa8508a37e6",
+    "solverInfo1/0/solverInfo.dat": "3a1ffce15467e6d054318b2739d3d2f998723f4f82a12857ac37af48c033a18a"
+  },
+  "final_fields_sha256": {
+    "time": "4000",
+    "files": {
+      "U": "d491c1862f30eee56140b158ba31340d27b5a05295086f44629ae8c4e7f6d07e",
+      "p": "1574feec5da71d09d19edb52d1230633753d99f9aefa791570e0057e3ac83d8e",
+      "phi": "c3186c3e9685cd42b50fb54dc49bdaeafce87a4e6760b8b7e82532f98dc1cf05",
+      "uniform/cumulativeContErr": "5d09d4f0f4b414bd0776663ade127981ef8d8b875f44c802fc695aa2d437dad6",
+      "uniform/functionObjects/functionObjectProperties": "1501afb9176f77fae2f07031ea11ab117fc9a09890e8080c8f1125f081049335",
+      "uniform/time": "a11f86ed85474e1167ba07540e1728eb82c368747a51b75768c27763eceffba1"
+    }
   }
 }

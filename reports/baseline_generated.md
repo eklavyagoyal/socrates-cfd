@@ -29,18 +29,22 @@ Criterion 2 (pre-registered, design.md §19) uses the band widened by τ; the na
 
 ### One-factor-at-a-time verification study
 
-| factor | run | size | Cd | St | Cl rms |
-|---|---|---|---|---|---|
-| mesh | `baseline-408129116207` | 0.4575 | 1.3311 | 0.1634 | 0.2286 |
-| mesh | `baseline.m1.41-807cdf343a51` | 0.3229 | 1.3349 | 0.1644 | 0.2312 |
-| mesh | `baseline.m2-93c9ab8d6f2d` | 0.2287 | 1.3349 | 0.1649 | 0.2294 |
-| time | `baseline-408129116207` | 0.01 | 1.3311 | 0.1634 | 0.2286 |
-| time | `baseline.dt0.005-693742b868bc` | 0.005 | 1.3275 | 0.1636 | 0.2225 |
-| time | `baseline.dt0.0025-f1e9eaf0cd2a` | 0.0025 | 1.3258 | 0.1637 | 0.2196 |
-| domain | `baseline-408129116207` | 0.025 | 1.3311 | 0.1634 | 0.2286 |
-| domain | `baseline.D2x-efba395f6c27` | 0.0125 | 1.3226 | 0.1627 | 0.2263 |
-| domain | `baseline.D2x-4312d7d8fec3` | 0.00625 | 1.3179 | 0.1625 | 0.2206 |
-| run longer (250 D/U) | `baseline.long250-8b585d987e4c` | — | 1.3312 | 0.1634 | 0.2286 |
+Values used for the reference are those of each member's longest continuation (rows marked ↳). The time chain is extrapolated from its finest three levels.
+
+| factor | run | size | run length (D/U) | Cd | St | Cl rms |
+|---|---|---|---|---|---|---|
+| mesh | `baseline-408129116207` | 0.4575 | 150 | 1.3311 | 0.1634 | 0.2286 |
+| mesh | ↳ `baseline.long250-8b585d987e4c` | 0.4575 | 250 | 1.3312 | 0.1634 | 0.2286 |
+| mesh | `baseline.m1.41-807cdf343a51` | 0.3229 | 80 | 1.3349 | 0.1644 | 0.2312 |
+| mesh | `baseline.m2-93c9ab8d6f2d` | 0.2287 | 80 | 1.3349 | 0.1649 | 0.2294 |
+| time | `baseline-408129116207` | 0.01 | 150 | 1.3311 | 0.1634 | 0.2286 |
+| time | ↳ `baseline.long250-8b585d987e4c` | 0.01 | 250 | 1.3312 | 0.1634 | 0.2286 |
+| time | `baseline.dt0.005-693742b868bc` | 0.005 | 80 | 1.3275 | 0.1636 | 0.2225 |
+| time | `baseline.dt0.0025-f1e9eaf0cd2a` | 0.0025 | 80 | 1.3258 | 0.1637 | 0.2196 |
+| domain | `baseline-408129116207` | 0.025 | 150 | 1.3311 | 0.1634 | 0.2286 |
+| domain | ↳ `baseline.long250-8b585d987e4c` | 0.025 | 250 | 1.3312 | 0.1634 | 0.2286 |
+| domain | `baseline.D2x-efba395f6c27` | 0.0125 | 80 | 1.3226 | 0.1627 | 0.2263 |
+| domain | `baseline.D2x-4312d7d8fec3` | 0.00625 | 80 | 1.3179 | 0.1625 | 0.2206 |
 
 **Statistical reliability of every study member** (same measures as the verifier's statistics check; the truth uncertainty carries these through the extrapolation weights):
 
@@ -49,39 +53,39 @@ Criterion 2 (pre-registered, design.md §19) uses the band widened by τ; the na
 | `baseline-408129116207` | 12 | True | 8.23e-05 | 6.60e-05 | +8.23e-05 |
 | `baseline.m1.41-807cdf343a51` | 7 | True | 2.34e-05 | 4.21e-05 | +2.34e-05 |
 | `baseline.m2-93c9ab8d6f2d` | 7 | True | 3.70e-06 | 4.18e-05 | +3.70e-06 |
+| `baseline.long250-8b585d987e4c` | 23 | False | 5.01e-06 | 1.24e-05 | +5.01e-06 |
 | `baseline.dt0.005-693742b868bc` | 7 | True | 2.96e-05 | 3.86e-05 | -2.96e-05 |
 | `baseline.dt0.0025-f1e9eaf0cd2a` | 7 | True | 4.42e-05 | 3.52e-05 | -4.42e-05 |
 | `baseline.D2x-efba395f6c27` | 6 | True | 1.58e-03 | 1.43e-03 | -1.58e-03 |
 | `baseline.D2x-4312d7d8fec3` | 6 | True | 1.70e-03 | 1.11e-03 | -1.70e-03 |
-| `baseline.long250-8b585d987e4c` | 23 | False | 5.01e-06 | 1.24e-05 | +5.01e-06 |
 
 ### Richardson extrapolation per factor and combined in-house reference
 
 | quantity | factor | method | extrapolated | correction vs baseline |
 |---|---|---|---|---|
-| mean_drag_coefficient | time | Richardson with observed order 1.13, Fs=1.25 | 1.32438 | -0.00675 |
-| mean_drag_coefficient | mesh | Richardson with observed order 2.66, Fs=1.25 | 1.33905 | +0.00791 |
-| mean_drag_coefficient | domain | Richardson with observed order 0.86, Fs=1.25 | 1.31214 | -0.01899 |
-| strouhal_number | time | observed order 0.2501218774888081 outside band; p = min(observed, formal) = 0.25 with Fs=3 | 0.16423 | +0.00079 |
-| strouhal_number | mesh | Richardson with observed order 2.77, Fs=1.25 | 0.16500 | +0.00157 |
-| strouhal_number | domain | Richardson with observed order 1.55, Fs=1.25 | 0.16236 | -0.00108 |
-| rms_lift_coefficient | time | Richardson with observed order 1.05, Fs=1.25 | 0.21684 | -0.01174 |
-| rms_lift_coefficient | mesh | Richardson with observed order 3.51, Fs=1.25 | 0.23464 | +0.00606 |
-| rms_lift_coefficient | domain | non-monotone, divergent or exact: finest value | 0.22058 | -0.00800 |
+| mean_drag_coefficient | time | Richardson with observed order 1.14, Fs=1.25 | 1.32441 | -0.00676 |
+| mean_drag_coefficient | mesh | Richardson with observed order 2.62, Fs=1.25 | 1.33911 | +0.00794 |
+| mean_drag_coefficient | domain | Richardson with observed order 0.87, Fs=1.25 | 1.31219 | -0.01898 |
+| strouhal_number | time | observed order 0.2066519222496308 outside band; p = min(observed, formal) = 0.21 with Fs=3 | 0.16436 | +0.00092 |
+| strouhal_number | mesh | Richardson with observed order 2.75, Fs=1.25 | 0.16501 | +0.00157 |
+| strouhal_number | domain | Richardson with observed order 1.56, Fs=1.25 | 0.16236 | -0.00108 |
+| rms_lift_coefficient | time | Richardson with observed order 1.05, Fs=1.25 | 0.21685 | -0.01174 |
+| rms_lift_coefficient | mesh | Richardson with observed order 3.50, Fs=1.25 | 0.23464 | +0.00606 |
+| rms_lift_coefficient | domain | non-monotone, divergent or exact: finest value | 0.22058 | -0.00801 |
 
 Mesh levels were run with dt = 0.01, 0.0086734, 0.006133 (Courant control), so each mesh level is shifted to the baseline dt with the time chain's error model C·dt^p before extrapolation (otherwise part of the time error would be counted twice):
 
 | quantity | p (time) | shifts applied to mesh levels | T without the shift | T with the shift | difference |
 |---|---|---|---|---|---|
-| mean_drag_coefficient | 1.13 | +0.00e+00, -1.00e-03, -2.86e-03 | 1.30921 | 1.31330 | +0.312% |
-| strouhal_number | 0.25 | -0.00e+00, +2.78e-05, +9.15e-05 | 0.16491 | 0.16472 | -0.120% |
-| rms_lift_coefficient | 1.05 | +0.00e+00, -1.63e-03, -4.71e-03 | 0.20966 | 0.21490 | +2.437% |
+| mean_drag_coefficient | 1.14 | +0.00e+00, -1.01e-03, -2.89e-03 | 1.30921 | 1.31336 | +0.316% |
+| strouhal_number | 0.21 | -0.00e+00, +2.67e-05, +8.84e-05 | 0.16504 | 0.16485 | -0.117% |
+| rms_lift_coefficient | 1.05 | +0.00e+00, -1.63e-03, -4.71e-03 | 0.20965 | 0.21490 | +2.441% |
 
 | quantity | baseline (stationary) | in-house reference T | uncertainty of T (of which statistical) | literature band | T in band | T in band widened by τ |
 |---|---|---|---|---|---|---|
-| mean_drag_coefficient | 1.3311 | **1.3133** | ±0.72% (0.43%) | 1.31–1.33 | True | True |
-| strouhal_number | 0.1634 | **0.1647** | ±1.06% (0.19%) | 0.164–0.166 | True | True |
-| rms_lift_coefficient | 0.2286 | **0.2149** | ±4.07% (0.30%) | 0.222–0.235 | False | — |
+| mean_drag_coefficient | 1.3312 | **1.3134** | ±0.71% (0.42%) | 1.31–1.33 | True | True |
+| strouhal_number | 0.1634 | **0.1648** | ±1.29% (0.19%) | 0.164–0.166 | True | True |
+| rms_lift_coefficient | 0.2286 | **0.2149** | ±4.08% (0.30%) | 0.222–0.235 | False | — |
 
 ### Deterministic verification of the baseline
 

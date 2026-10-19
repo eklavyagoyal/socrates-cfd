@@ -42,14 +42,29 @@ def sta(store, rid):
     return (store.load(rid).evidence.get("qoi") or {}).get("stationary") or {}
 
 
+def sta_c(store, rid, cont):
+    """Stationary values of the longest continuation of a study member."""
+    return sta(store, cont.get(rid, rid))
+
+
 def main() -> None:
     spec = ProblemSpec.from_yaml(REPO / "configs" / "problem_cylinder_re100.yaml")
     store = RunStore(REPO / "results" / "runs")
     study = json.loads((REPO / "results" / "baseline" / "study.json").read_text())
     root = study["root"]
     ch = {k: [root] + [e["run_id"] for e in v] for k, v in study["chains"].items()}
+    stage2 = study.get("stage2") or {}
+    if stage2.get("time_level_4"):
+        ch["time"].append(stage2["time_level_4"]["run_id"])
+    # every member's value is taken from its longest continuation (as the verifier does for statistics)
+    cont = dict(stage2.get("continuations") or {})
+    if len(ch.get("longer", [])) > 1:
+        cont[root] = ch["longer"][-1]
     rb = store.load(root)
     ev = rb.evidence
+
+    def val_run(rid):
+        return cont.get(rid, rid)
 
     def size(factor, rid):
         r = store.load(rid)
@@ -64,27 +79,28 @@ def main() -> None:
     tau = spec.verification.requested_tolerance
 
     def u_stat_abs(rid, q):
-        u, _ = statistical_uncertainty(store.load(rid).evidence or {}, q)
-        v = sta(store, rid).get(q)
+        r = val_run(rid)
+        u, _ = statistical_uncertainty(store.load(r).evidence or {}, q)
+        v = sta(store, r).get(q)
         return (u or 0.0) * abs(v or 0.0)
 
     for q in QS:
         per = {}
-        missing = [r for f in ("time", "mesh", "domain") for r in ch[f] if sta(store, r).get(q) is None]
+        missing = [r for f in ("time", "mesh", "domain") for r in ch[f] if sta_c(store, r, cont).get(q) is None]
         if missing:
             skipped[q] = f"stationary value missing in {missing}"
             print(f"{q}: no reference computed ({skipped[q]})", flush=True)
             continue
         for factor, order in (("time", 2.0), ("mesh", 2.0), ("domain", 1.0)):
-            rids = ch[factor]
-            vals = [sta(store, r).get(q) for r in rids]
+            rids = ch[factor][-3:]  # the finest three levels (the time chain has four after stage 2)
+            vals = [sta_c(store, r, cont).get(q) for r in rids]
             if factor == "mesh":
                 # The mesh chain also lowers dt (Courant control), so its raw values contain part of the
                 # time error that the time chain already corrects for (double counting).  Shift every mesh
                 # level to the baseline dt with the time chain's own error model e(dt) = C dt^p.
                 tc = per["time"]
                 p_t = tc.get("order_used") or 2.0  # the order the time extrapolation actually used
-                c_t = (sta(store, root)[q] - tc["extrapolated"]) / dt_root ** p_t
+                c_t = (sta_c(store, root, cont)[q] - tc["extrapolated"]) / dt_root ** p_t
                 dts = [store.load(r).config.time.delta_t for r in rids]
                 shift = [c_t * (dt ** p_t - dt_root ** p_t) for dt in dts]
                 raw = extrapolate_chain(vals, [size(factor, r) for r in rids], order)
@@ -93,7 +109,7 @@ def main() -> None:
                               "shift_applied": shift, "mesh_extrapolated_without_shift": raw["extrapolated"]}
             per[factor] = extrapolate_chain(vals, [size(factor, r) for r in rids], order)
             per[factor]["runs"] = rids
-        root_v = sta(store, root)[q]
+        root_v = sta_c(store, root, cont)[q]
         # statistical uncertainty of the members, carried through the extrapolation weights (the root's once)
         stat = {"root": u_stat_abs(root, q)}
         for factor, c in per.items():
@@ -184,22 +200,23 @@ def main() -> None:
         L.append(f"| {q} | {fmt(rep.get(q))} | {fmt(x)} | {lo}–{hi} | {(lo <= x <= hi) if x is not None else '—'} | "
                  f"{wide} | {inw} |")
     L.append("\n### One-factor-at-a-time verification study\n")
-    L.append("| factor | run | size | Cd | St | Cl rms |\n|---|---|---|---|---|---|")
+    L.append("Values used for the reference are those of each member's longest continuation (rows marked ↳). "
+             "The time chain is extrapolated from its finest three levels.\n")
+    L.append("| factor | run | size | run length (D/U) | Cd | St | Cl rms |\n|---|---|---|---|---|---|---|")
     for factor in ("mesh", "time", "domain"):
         for rid in ch[factor]:
-            x = sta(store, rid)
-            L.append(f"| {factor} | `{rid}` | {size(factor, rid):.4g} | {x.get('mean_drag_coefficient', float('nan')):.4f} | "
-                     f"{x.get('strouhal_number', float('nan')):.4f} | {x.get('rms_lift_coefficient', float('nan')):.4f} |")
-    for rid in ch["longer"][1:]:
-        x = sta(store, rid)
-        L.append(f"| run longer (250 D/U) | `{rid}` | — | {fmt(x.get('mean_drag_coefficient'))} | {fmt(x.get('strouhal_number'))} | "
-                 f"{fmt(x.get('rms_lift_coefficient'))} |")
+            for i, r in enumerate([rid] + ([cont[rid]] if rid in cont else [])):
+                x = sta(store, r)
+                L.append(f"| {factor} | {'↳ ' if i else ''}`{r}` | {size(factor, rid):.4g} | "
+                         f"{store.load(r).config.time.end_time:g} | {fmt(x.get('mean_drag_coefficient'))} | "
+                         f"{fmt(x.get('strouhal_number'))} | {fmt(x.get('rms_lift_coefficient'))} |")
+
     L.append("\n**Statistical reliability of every study member** (same measures as the verifier's statistics check; "
              "the truth uncertainty carries these through the extrapolation weights):\n")
     L.append("| run | stationary cycles | MSER at cap | u_stat Cd | u_stat St | Cd drift in window |\n|---|---|---|---|---|---|")
     seen = []
     for factor in ("mesh", "time", "domain", "longer"):
-        for rid in ch[factor]:
+        for rid in ch[factor] + [cont[r] for r in ch[factor] if r in cont]:
             if rid in seen:
                 continue
             seen.append(rid)

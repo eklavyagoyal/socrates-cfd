@@ -1,0 +1,88 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 39.50612977400124,
+    "cost_usd": 0.054008610000000006,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13328,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 33,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "G2_average_from_start-e7384e5a2c24": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and there are no failed checks, so I can't ACCEPT or REJECT. Mesh, time and domain uncertainty are all unmeasured for both Cd and St (no REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run exists).",
+    "The physics_regime check for R0 is INCONCLUSIVE. The lift amplitude changes by +6.7% across the analysed window, so the oscillation is not yet a sustained limit cycle.",
+    "The stationary window starts at 27.88 convective units, and stationary_window_start_is_mser_cap is true. Only 5 stationary cycles are available, out of a 59.99 record.",
+    "The submitted-setup values differ from the stationary-window values. Cd is 1.3196 against 1.3266, a 0.523% bias. St is 0.16144 against 0.163, a 0.953% bias. Cd drift is 0.010388 and the Cd 95% CI is 0.0058205.",
+    "Averaging and statistics components already use part of the 0.03 tolerance. For Cd they are 0.005234 and 0.01039. For St they are 0.009529 and 0.008104. Any mesh, time or domain term would have to fit in the remaining margin.",
+    "A transient that may still be developing would confound every later comparison against R0. Mesh, time and domain deltas would mix discretisation effects with unsteady-growth effects. A longer record is the cheapest way to settle this first. It is estimated at 1060 s, against 1126 to 1963 s for the other experiments.",
+    "Time resolution looks adequate on the recorded values: 613.51 steps per shedding period and max Courant 0.73373. Domain extents are generous: upstream 30 D, downstream 50 D, half height 40 D, blockage 0.0125. The coarse mesh (representative cell size 0.45745 D, wake last cell 1.0209 D) is the next most likely error source after the transient question is closed."
+   ],
+   "missing_evidence": [
+    "Whether the lift/drag oscillation has reached a saturated limit cycle (amplitude change is +6.7% in the current window)",
+    "Mesh discretisation error for Cd and St (no REFINE_MESH run)",
+    "Temporal discretisation error for Cd and St (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error for Cd and St (no EXPAND_DOMAIN run)",
+    "A stationary window that does not start at the MSER cap, with more shedding cycles"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The R0 transient has not finished. The lift amplitude is still growing (+6.7%), so the stationary window (start 27.88, MSER cap) is contaminated and Cd and St are slightly biased.",
+     "test": "RUN_LONGER on R0 by 100 convective times. Confirmed if the lift amplitude keeps changing by more than a few percent, or Cd and St shift by more than the current CI or drift. Refuted if the amplitude saturates and the physics_regime check passes with Cd and St within the current uncertainties."
+    },
+    {
+     "hypothesis": "The mesh is too coarse in the wake and near the cylinder to resolve Cd and St to 3%.",
+     "test": "After the limit cycle is established, run REFINE_MESH from the extended run. Compare Cd and St against the parent."
+    },
+    {
+     "hypothesis": "Boundary truncation is negligible at the recorded extents.",
+     "test": "Run EXPAND_DOMAIN and check that Cd and St change by less than the budget."
+    }
+   ],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {
+     "additional_convective_times": 100.0
+    },
+    "parent_run": "G2_average_from_start-e7384e5a2c24",
+    "reason": "The physics_regime check is INCONCLUSIVE because the lift amplitude changes by +6.7% across the window. The stationary window starts at the MSER cap with only 5 cycles. A developed limit cycle is needed before mesh, time and domain comparisons mean anything, and this is the cheapest primitive.",
+    "expected_outcome": "The lift amplitude saturates and the physics_regime check resolves. Cd and St are measured over many more stationary cycles with smaller averaging and statistical uncertainty. This gives a clean baseline for REFINE_MESH, REDUCE_TIME_STEP and EXPAND_DOMAIN. If Cd or St move by more than the tolerance, the R0 window was contaminated."
+   },
+   "outcome": "executed -> G2_average_from_start.long160-24e243b2227c (completed)"
+  }
+ ]
+}

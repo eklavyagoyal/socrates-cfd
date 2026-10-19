@@ -1,0 +1,87 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 40.91728310799954,
+    "cost_usd": 0.053785610000000005,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13282,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 38,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "C1_large_timestep-49d90ffccdac": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict for R0 is INCONCLUSIVE with no failed checks. This is not a REJECT, and it cannot be an ACCEPT.",
+    "Mesh, time and domain uncertainty components are unmeasured for both mean_drag_coefficient and strouhal_number. Missing components are not a pass.",
+    "Measured components are small. For R0 the averaging bias is 8.688e-05 (Cd) and 1.261e-05 (St). The statistical uncertainty is 0.0001028 (Cd) and 8.418e-05 (St). The stationary window has 12 cycles. Cd drift is 0.00010279 relative. Run length is therefore not the limiting issue.",
+    "R0 mesh looks coarse for a 3% target: 30580 cells, representative cell size 0.45745 D, wake_last_cell_D 1.0209, and wall_first_cell_D 0.005. The 160 cells around the cylinder are a fine point, but the wake and far field are coarse. This is the most likely source of an error larger than 3% in both Cd and St.",
+    "R0 time-step risk is moderate. Max Courant is 3.4157 (check INCONCLUSIVE), but steps_per_shedding_period is 122.32 with a second-order backward scheme.",
+    "R0 domain risk is moderate to low. Blockage ratio is 0.0125, upstream 30 D, downstream 50 D, half-height 40 D, with symmetryPlane lateral boundaries.",
+    "Mesh refinement is the most informative first experiment. It is affordable at 1240 s estimated against a 12x-root compute budget, with 0 of 6 experiments used. A factor of 2.0 gives a clear signal on a mesh this coarse."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (no REFINE_MESH run).",
+    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run). Courant check INCONCLUSIVE at max Co 3.4157.",
+    "Domain truncation/blockage error for both quantities (no EXPAND_DOMAIN run).",
+    "Combined uncertainty against the 0.03 tolerance for both quantities."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "R0 mesh (cell size 0.45745 D, coarse wake ending at 1.0209 D cells) is under-resolved, so Cd and/or St shift by more than 3% on refinement.",
+     "test": "REFINE_MESH on R0 with factor 2.0. Compare Cd and St against R0 (1.3237 and 0.16351 in the stationary window). A relative change above 3% (beyond noise) confirms it. A change below about 1.5% supports an acceptable mesh component."
+    },
+    {
+     "hypothesis": "Temporal error at Co 3.4157 and dt 0.05 D/U is small, so the St and Cd changes are below 1.5% on dt halving.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2.0, afterwards."
+    },
+    {
+     "hypothesis": "Blockage of 1.25% and the symmetry-plane lateral boundaries bias Cd and St by less than 1.5%.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2.0, afterwards."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "C1_large_timestep-49d90ffccdac",
+    "reason": "Mesh error is the largest unmeasured risk. R0 has a coarse representative cell size (0.45745 D) and a coarse wake (last cell 1.0209 D). Both Cd and St are sensitive to wake and near-body resolution, so refinement is the likeliest experiment to expose a change above 3%.",
+    "expected_outcome": "If Cd and St change by less than about 1.5% relative to R0 (Cd 1.3237, St 0.16351), the mesh component is acceptable and time and domain checks follow. If they change by more than 3% beyond noise, the verifier registers a FAIL for R0. A change between those values calls for a further refinement."
+   },
+   "outcome": "executed -> C1_large_timestep.m2-6e4f672cac17 (failed)"
+  }
+ ]
+}

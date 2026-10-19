@@ -83,8 +83,13 @@ def staleness(result: dict, result_file: Path, store: RunStore, decision_code: s
         written = _dt.datetime.fromtimestamp(result_file.stat().st_mtime, _dt.timezone.utc)
     except OSError:
         return None
-    newer = [rid for rid in result_runs(result) if (t := _evidence_time(store, rid)) and t > written]
-    return f"evidence re-extracted after the result was written: {newer}" if newer else None
+    # the root's evidence is read when the computation starts (an adaptive loop records `started`); child runs
+    # are created during the loop, so for them the write time of the result is the reference
+    started = _dt.datetime.fromisoformat(result["started"]) if result.get("started") else written
+    root = result.get("root_run")
+    newer = [rid for rid in result_runs(result)
+             if (t := _evidence_time(store, rid)) and t > (started if rid == root else written)]
+    return f"evidence re-extracted after the result was computed from it: {newer}" if newer else None
 
 
 def current_root(store: RunStore, repo: Path, case: dict) -> str | None:

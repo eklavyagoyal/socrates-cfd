@@ -8,35 +8,34 @@
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 25.132452709000063,
- "cost_usd": 0.036996175,
+ "latency_s": 24.13041948600039,
+ "cost_usd": 0.04304307499999999,
  "errors": [],
  "model_fingerprint": "6ad399b27406",
  "verdict": "ACCEPT",
  "confidence": "MEDIUM",
  "reasoning_summary": [
-  "Setup matches the question. Re = 0.15*0.01/1.5e-5 = 100, which equals the configured 100. Force references are consistent: magUInf 0.15, lRef 0.01, rhoInf 1.2.",
-  "The domain is effectively unbounded: blockage ratio 0.0125, 30D upstream, 50D downstream and 40D half-height. The boundary conditions are sensible: fixedValue outlet pressure, inletOutlet outlet velocity, noSlip cylinder.",
-  "The run is numerically well behaved. max_courant is 0.73638, mass_imbalance_max is 8.3333e-11, checkMesh_ok is true, max non-orthogonality is 43.313 deg and max skewness is 0.53384. The scheme is second-order in time (backward) with 2 pressure correctors.",
-  "The temporal statistics are converged. There are 12 stationary cycles at 612.39 steps per period. The drag drift is -0.00013306 relative, the half-window difference is -6.5091e-05 relative, and the 95% CI is 3.62e-05, all far below the 3% tolerance. The stationary-window and submitted-setup values agree: Cd 1.3403 vs 1.3404, St 0.1633 vs 0.16329.",
-  "Strouhal is cross-checked two ways. The time-domain value 0.1633 (period ~6.12 convective units) matches the FFT value 0.16329. The nominal FFT bin resolution of 0.013333 is coarse relative to 3% of St, but the independent period-based estimate agrees. The Cl amplitude of 0.3476 is consistent with the RMS of 0.2456 (0.3476/sqrt2 = 0.2458).",
-  "Residual uncertainty: this is a single run with no mesh or time-step refinement. The mesh is moderate (30580 cells, 160 around the cylinder, wake cells growing to 1.0209 D) and uses Gauss linear convection. The near-cylinder resolution looks adequate (wall_first_cell_D 0.005), and nothing in the evidence signals a defect, so I accept with medium confidence.",
-  "Several fields are null and could not be checked: inlet_velocity_measured, cylinder_patch_extent_x_m and cylinder_patch_extent_y_m. Aref 0.0001 implies a 0.01 m span, which I could not confirm against the mesh."
+  "Setup matches the question. Re = 0.15*0.01/1.5e-5 = 100, which matches the configured value of 100. The force references (magUInf 0.15, lRef 0.01, Aref 0.0001, rhoInf 1.2) are consistent with the problem. The measured inlet is uniform (ux_nonuniformity 0.0, uy_max_abs 0.0).",
+  "The domain is effectively unbounded: 30D upstream, 50D downstream, 40D half-height, and a blockage ratio of 0.0125. The outlet and inlet boundary conditions are standard, and checkMesh passed. Max non-orthogonality is 43.313 deg and max skewness is 0.53384. Both are acceptable.",
+  "Temporal resolution is good: 0.01 convective-unit time step, 612.39 steps per shedding period, max Courant 0.73638, and mass imbalance 8.3333e-11. The second-order backward scheme is used.",
+  "The statistics are stationary. The window holds 12 cycles. Cd drift is -0.00013306 relative, the half-window difference is -6.5091e-05, and the 95% CI is 3.62e-05. The window-based Cd of 1.3403 agrees with the reported 1.3404.",
+  "The Strouhal number is consistent across methods. The period is 612.39 steps * 0.01 = 6.1239 convective units, so St = 0.16329. This matches the FFT value of 0.16329. The FFT bin width (0.013333) is coarse, but the period-based estimate removes that limitation. Rms Cl of 0.2456 against Cl amplitude of 0.3476 is self-consistent, since 0.3476/\u221a2 \u2248 0.2458.",
+  "Residual risks: only one mesh, so there is no direct grid-convergence evidence. The mesh is fairly coarse (30580 cells, 0.45745D representative size, 1.0209D last wake cell) and the convection scheme is central (Gauss linear). The stationary-window start sits at the MSER cap, though the negligible drift suggests the transient has decayed. Nothing in the evidence signals a defect, so I accept at medium confidence."
  ],
  "numeric_audit": {
-  "traced": 39,
+  "traced": 36,
   "untraced": [
    {
     "token": "95%",
-    "context": "the half-window difference is -6.5091e-05 relative, and the 95% CI is 3.62e-05, all far below the 3% to"
+    "context": "elative, the half-window difference is -6.5091e-05, and the 95% CI is 3.62e-05. The window-based Cd of "
    },
    {
-    "token": "6.12",
-    "context": "oss-checked two ways. The time-domain value 0.1633 (period ~6.12 convective units) matches the FFT value"
+    "token": "6.1239",
+    "context": "sistent across methods. The period is 612.39 steps * 0.01 = 6.1239 convective units, so St = 0.16329. This"
    },
    {
     "token": "0.2458",
-    "context": "0.3476 is consistent with the RMS of 0.2456 (0.3476/sqrt2 = 0.2458)."
+    "context": "l amplitude of 0.3476 is self-consistent, since 0.3476/\u221a2 \u2248 0.2458."
    }
   ],
   "n_untraced": 3
@@ -45,8 +44,12 @@
  "root_run": "K1_central_scheme-e4e5fb66bdca",
  "stamp": {
   "decision_code": "6406c53bb2011ef5",
+  "created": "2026-10-19T11:04:28+00:00",
+  "evidence_sha": {
+   "K1_central_scheme-e4e5fb66bdca": "d8715cf39b354b7c"
+  },
   "root_config_hash": "c0932162b7028d01",
-  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_git_commit": "3d9f43c76ed129515acd71309c29fff798a93899",
   "benchmark_src_dirty": false,
   "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
  }

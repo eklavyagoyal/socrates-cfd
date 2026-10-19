@@ -158,3 +158,26 @@ def test_outage_after_an_invalid_proposal_is_still_an_infrastructure_error(monke
     p2 = Scripted([_more(parent="nope"), _more(parent="nope"), _more(parent="nope")])
     res2 = run_adaptive("root", FakeStore(), SPEC, p2, Budget(max_invalid_actions=3), vcfg={}).to_dict()
     assert not is_infrastructure_error(res2)  # the planner's own invalid proposals are a verification outcome
+
+
+def test_staleness_uses_loop_start_for_the_root_and_write_time_for_children(tmp_path):
+    import json as _json
+    import os
+
+    from socrates.orchestration.evaluation import staleness
+    from socrates.orchestration.store import RunStore
+
+    store = RunStore(tmp_path / "runs")
+    for rid, t in (("root-1", "2026-01-01T10:30:00+00:00"), ("child-1", "2026-01-01T10:40:00+00:00")):
+        (store.root / rid).mkdir(parents=True)
+        (store.root / rid / "evidence.json").write_text(_json.dumps({"extraction": {"time": t}}))
+    f = tmp_path / "res.json"
+    res = {"root_run": "root-1", "runs": ["root-1", "child-1"], "started": "2026-01-01T10:00:00+00:00",
+           "stamp": {"decision_code": "x"}}
+    f.write_text("{}")
+    written = 1767264600 + 3600  # 2026-01-01T11:50:00Z, after both extractions
+    os.utime(f, (written, written))
+    assert "root-1" in staleness(res, f, store, "x", "root-1")  # root re-extracted after the loop started
+    res["started"] = "2026-01-01T10:35:00+00:00"
+    assert staleness(res, f, store, "x", "root-1") is None  # child created during the loop: fine
+    assert "decision code" in staleness(res, f, store, "y", "root-1")

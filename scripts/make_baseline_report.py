@@ -54,17 +54,35 @@ def main() -> None:
             return r.config.time.delta_t
         return 1.0 / r.config.domain.half_height
 
-    truth, chains_out = {}, {}
+    truth, chains_out, overlap = {}, {}, {}
+    dt_root = rb.config.time.delta_t
     for q in QS:
         per = {}
-        for factor, order in (("mesh", 2.0), ("time", 2.0), ("domain", 1.0)):
+        for factor, order in (("time", 2.0), ("mesh", 2.0), ("domain", 1.0)):
             rids = ch[factor]
             vals = [sta(store, r).get(q) for r in rids]
+            if factor == "mesh":
+                # The mesh chain also lowers dt (Courant control), so its raw values contain part of the
+                # time error that the time chain already corrects for (double counting).  Shift every mesh
+                # level to the baseline dt with the time chain's own error model e(dt) = C dt^p.
+                tc = per["time"]
+                p_t = tc["order"] if tc.get("order") and 0.5 * 2.0 <= tc["order"] <= 4.0 else 2.0
+                c_t = (sta(store, root)[q] - tc["extrapolated"]) / dt_root ** p_t
+                dts = [store.load(r).config.time.delta_t for r in rids]
+                shift = [c_t * (dt ** p_t - dt_root ** p_t) for dt in dts]
+                raw = extrapolate_chain(vals, [size(factor, r) for r in rids], order)
+                vals = [v - sh for v, sh in zip(vals, shift)]
+                overlap[q] = {"mesh_level_dt": dts, "time_error_model": {"C": c_t, "p": p_t},
+                              "shift_applied": shift, "mesh_extrapolated_without_shift": raw["extrapolated"]}
             per[factor] = extrapolate_chain(vals, [size(factor, r) for r in rids], order)
             per[factor]["runs"] = rids
         root_v = sta(store, root)[q]
         truth[q] = combine_truth(root_v, per)
         truth[q]["root_value"] = root_v
+        if q in overlap:
+            no_shift = dict(per, mesh=dict(per["mesh"], extrapolated=overlap[q]["mesh_extrapolated_without_shift"]))
+            overlap[q]["truth_without_shift"] = combine_truth(root_v, no_shift)["value"]
+            truth[q]["time_overlap_correction"] = overlap[q]
         chains_out[q] = per
         lo, hi = LIT[q]["band"]
         truth[q]["literature_band"] = [lo, hi]
@@ -97,7 +115,8 @@ def main() -> None:
         for sp in ("top", "right"):
             ax.spines[sp].set_visible(False)
     axs[1].set_xlabel("t U / D", fontsize=8.5)
-    axs[0].set_title("Baseline force history (shaded: declared averaging window; dashed: MSER transient end)", fontsize=8.5)
+    axs[0].set_title("Baseline force history (shaded: declared averaging window; dashed: start of the stationary window)",
+                     fontsize=8.5)
     fig.tight_layout()
     (REPO / "reports" / "figures").mkdir(parents=True, exist_ok=True)
     fig.savefig(REPO / "reports" / "figures" / "baseline_forces.png", dpi=160)
@@ -119,7 +138,8 @@ def main() -> None:
           f"| final p-solve converged | {100 * (1 - sol['p_last_solve_unconverged_fraction_1e-7']):.1f} % of steps |",
           f"| continuity error (sum local, max) | {sol['continuity_sum_local_max']:.2e} |",
           f"| boundary mass imbalance (max) | {ev['conservation']['relative_imbalance_max']:.2e} |",
-          f"| transient end (MSER) | {tb['transient_end_time_convective']:.1f} D/U |",
+          f"| stationary-window start (MSER{', at its 50 % cap' if tb.get('mser_hit_cap') else ''}) | "
+          f"{tb['transient_end_time_convective']:.1f} D/U |",
           f"| stationary cycles | {sw['n_cycles']} |",
           f"| steps per shedding period | {tb['steps_per_period']:.0f} |",
           f"| Cd 95 % CI half-width (batch means) | {sw['mean_cd_ci95_halfwidth']:.2e} |"]
@@ -145,6 +165,15 @@ def main() -> None:
     for q in QS:
         for factor, c in chains_out[q].items():
             L.append(f"| {q} | {factor} | {c['method']} | {c['extrapolated']:.5f} | {truth[q]['corrections'][factor]:+.5f} |")
+    L.append("\nMesh levels were run with dt = " + ", ".join(f"{d:.5g}" for d in overlap[QS[0]]["mesh_level_dt"])
+             + " (Courant control), so each mesh level is shifted to the baseline dt with the time chain's error model "
+               "C·dt^p before extrapolation (otherwise part of the time error would be counted twice):\n")
+    L.append("| quantity | p (time) | shifts applied to mesh levels | T without the shift | T with the shift | difference |\n|---|---|---|---|---|---|")
+    for q in QS:
+        o = overlap[q]
+        L.append(f"| {q} | {o['time_error_model']['p']:.2f} | " + ", ".join(f"{x:+.2e}" for x in o["shift_applied"])
+                 + f" | {o['truth_without_shift']:.5f} | {truth[q]['value']:.5f} | "
+                 f"{(truth[q]['value'] - o['truth_without_shift']) / truth[q]['value']:+.3%} |")
     L.append("\n| quantity | baseline (stationary) | in-house reference T | uncertainty of T | literature band | T in band |\n|---|---|---|---|---|---|")
     for q in QS:
         tq = truth[q]

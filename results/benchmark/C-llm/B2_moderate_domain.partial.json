@@ -1,5 +1,455 @@
 {
- "partial": true,
+ "root_run": "B2_moderate_domain-55b85b2cd33e",
+ "planner": "llm_critic",
+ "final_verdict": "REJECT",
+ "stop_reason": "deterministic verifier verdict is decisive",
+ "verdict": {
+  "verdict": "REJECT",
+  "per_qoi": {
+   "mean_drag_coefficient": {
+    "verdict": "REJECT",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "PASS",
+     "statistics": "PASS",
+     "mesh": "INCONCLUSIVE",
+     "time": "INCONCLUSIVE",
+     "domain": "FAIL"
+    },
+    "component_uncertainty": {
+     "averaging": 1.8581236036513182e-06,
+     "statistics": 2.4920945380732298e-05
+    },
+    "combined_uncertainty": null
+   },
+   "strouhal_number": {
+    "verdict": "INCONCLUSIVE",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "PASS",
+     "statistics": "PASS",
+     "mesh": "INCONCLUSIVE",
+     "time": "INCONCLUSIVE",
+     "domain": "INCONCLUSIVE"
+    },
+    "component_uncertainty": {
+     "averaging": 7.006427276056601e-06,
+     "statistics": 9.903815968313377e-06,
+     "domain": 0.03701457393941714
+    },
+    "combined_uncertainty": null
+   }
+  },
+  "missing_components": {
+   "mean_drag_coefficient": [
+    "mesh",
+    "time",
+    "domain"
+   ],
+   "strouhal_number": [
+    "mesh",
+    "time",
+    "domain"
+   ]
+  },
+  "failed_checks": [
+   "domain_sensitivity[mean_drag_coefficient]"
+  ],
+  "checks": [
+   {
+    "check": "solver_completion",
+    "status": "PASS",
+    "reason": "solver ran to its configured end and printed 'End'",
+    "value": 10.0000000005,
+    "threshold": null,
+    "source": "solver log",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mesh_quality",
+    "status": "PASS",
+    "reason": "checkMesh reports 'Mesh OK'; non-orthogonality, skewness and aspect ratio within OpenFOAM's limits. This shows the mesh is valid, NOT that it resolves the flow.",
+    "value": {
+     "max_non_orthogonality": 43.31296755,
+     "max_skewness": 0.5338415736,
+     "max_aspect_ratio": 9.03691296
+    },
+    "threshold": {
+     "max_non_orthogonality": 70.0,
+     "max_skewness": 4.0,
+     "max_aspect_ratio": 1000.0
+    },
+    "source": "checkMesh log ('Mesh OK' / 'Failed N mesh checks'); limits: max_non_orthogonality: OpenFOAM primitiveMesh::nonOrthThreshold_ default (70 deg); checkMesh reports '***' above it; max_skewness: OpenFOAM primitiveMesh::skewThreshold_ default (4); max_aspect_ratio: OpenFOAM primitiveMesh::aspectThreshold_ default (1000)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mass_conservation",
+    "status": "PASS",
+    "reason": "max relative boundary-flux imbalance 3.00e-10 <= 1.50e-03; cannot bias the requested quantities beyond tau/10",
+    "value": 3.000000060292737e-10,
+    "threshold": 0.0015,
+    "source": "postProcessing/flux_*/surfaceFieldValue.dat; threshold = tau/20 (2*eps <= tau/10 bound on induced Cd error)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "continuity_sum_local_max": 3.804064871e-13
+    }
+   },
+   {
+    "check": "linear_solver_convergence",
+    "status": "PASS",
+    "reason": "final pressure solve reached the configured tolerance in 100.0% of steps",
+    "value": {
+     "fraction_of_steps_above_tolerance": 0.0,
+     "max_final_residual": 9.999831172e-08,
+     "iteration_limit_hits": 0
+    },
+    "threshold": 0.01,
+    "source": "solver log, last pressure solve of each time step (relTol 0, so it must reach the configured absolute tolerance); solverInfo is not used because it records only the first solve of a step",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "courant_number",
+    "status": "PASS",
+    "reason": "max Courant number 0.74 < 1.0 (PISO mode). Stability/accuracy guideline only; temporal discretisation error is not quantified by this.",
+    "value": 0.7352551552,
+    "threshold": 1.0,
+    "source": "OpenFOAM User Guide (cavity tutorial); Issa (1986) J. Comput. Phys. 62:40",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "reynolds_consistency",
+    "status": "PASS",
+    "reason": "case Re=100 matches spec Re=100",
+    "value": {
+     "case": 100.0,
+     "spec": 100.0,
+     "spec_from_parameters": 100.0
+    },
+    "threshold": 0.001,
+    "source": "case physical parameters vs spec",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "force_reference_consistency",
+    "status": "PASS",
+    "reason": "magUInf equals inlet velocity and Aref equals D x mesh span",
+    "value": {
+     "magUInf": 0.15,
+     "lRef": 0.01,
+     "Aref": 0.0001,
+     "rhoInf": 1.2
+    },
+    "threshold": 0.001,
+    "source": "forceCoeffs entries vs inlet BC velocity and mesh-measured projected area (D x span)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "Aref_from_mesh_bounding_box": 0.0001
+    }
+   },
+   {
+    "check": "physics_regime",
+    "status": "PASS",
+    "reason": "sustained periodic lift oscillation present, as expected for 47.0 < Re=100.0 < 188.5",
+    "value": 100.0,
+    "threshold": null,
+    "source": "Provansal, Mathis & Boyer (1987) JFM 182:1 (Re_c ~ 47); Williamson (1996) Annu. Rev. Fluid Mech. 28:477; Barkley & Henderson (1996) JFM 322:215 (mode A at Re ~ 188.5); Williamson (1996)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "convection_scheme_order",
+    "status": "PASS",
+    "reason": "convection scheme 'Gauss linearUpwind grad(U)' is nominally second order",
+    "value": "Gauss linearUpwind grad(U)",
+    "threshold": null,
+    "source": "J. Fluids Eng. editorial policy on numerical accuracy (published with Celik et al. 2008): at least second-order spatial schemes; first-order numerical diffusion called 'devastating'",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "averaging_window",
+    "status": "PASS",
+    "reason": "reported mean_drag_coefficient is biased by 0.000% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+    "value": 1.8581236036513182e-06,
+    "threshold": 0.03,
+    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+    "qoi": "mean_drag_coefficient",
+    "component": "averaging",
+    "uncertainty": 1.8581236036513182e-06,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "reported": 1.3712817718756345,
+     "stationary": 1.3712792238693414,
+     "declared_start_convective": 75.0,
+     "transient_end_convective": 69.50008093579945,
+     "declared_window_cycles": 12,
+     "kind": "bias"
+    }
+   },
+   {
+    "check": "averaging_window",
+    "status": "PASS",
+    "reason": "reported strouhal_number is biased by 0.001% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+    "value": 7.006427276056601e-06,
+    "threshold": 0.03,
+    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+    "qoi": "strouhal_number",
+    "component": "averaging",
+    "uncertainty": 7.006427276056601e-06,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "reported": 0.16704091382411376,
+     "stationary": 0.1670397434722989,
+     "declared_start_convective": 75.0,
+     "transient_end_convective": 69.50008093579945,
+     "declared_window_cycles": 12,
+     "kind": "bias"
+    }
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "PASS",
+    "reason": "statistical/stationarity uncertainty 2.49e-05 <= 1.50%",
+    "value": 2.4920945380732298e-05,
+    "threshold": 0.015,
+    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+    "qoi": "mean_drag_coefficient",
+    "component": "statistics",
+    "uncertainty": 2.4920945380732298e-05,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "components": {
+      "ci95": 6.809096403027557e-06,
+      "drift": 2.4920945380732298e-05,
+      "half_difference": 1.0075777922056405e-05
+     },
+     "n_cycles": 13,
+     "mser_hit_cap": true
+    }
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "PASS",
+    "reason": "statistical/stationarity uncertainty 9.90e-06 <= 1.50%",
+    "value": 9.903815968313377e-06,
+    "threshold": 0.015,
+    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+    "qoi": "strouhal_number",
+    "component": "statistics",
+    "uncertainty": 9.903815968313377e-06,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "components": {
+      "ci95_period": 9.5868318259222e-06,
+      "period_drift": 9.903815968313377e-06,
+      "period_half_difference": 5.2089908658014116e-06,
+      "fft_vs_zero_crossing": 7.431716594320814e-06
+     },
+     "n_cycles": 13,
+     "mser_hit_cap": true
+    }
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REFINE_MESH experiment has been run; mesh error of mean_drag_coefficient is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "mesh",
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REFINE_MESH experiment has been run; mesh error of strouhal_number is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "mesh",
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REDUCE_TIME_STEP experiment has been run; time error of mean_drag_coefficient is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "time",
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REDUCE_TIME_STEP experiment has been run; time error of strouhal_number is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "time",
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "FAIL",
+    "reason": "mean_drag_coefficient of the run under verification changes by 3.39% under domain refinement (> tau=3%); its value is not converged to the requested tolerance",
+    "value": 0.0338865943566707,
+    "threshold": 0.03,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "mean_drag_coefficient",
+    "component": "domain",
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e",
+     "B2_moderate_domain.D2x-44c88f366919",
+     "B2_moderate_domain.D2x-39e861cedde4"
+    ],
+    "details": {
+     "values": [
+      1.3712792238693414,
+      1.339526308163713,
+      1.3263342723991998
+     ],
+     "inverse_half_height": [
+      0.1,
+      0.05,
+      0.025
+     ],
+     "formal_order": 1.0,
+     "notes": [
+      "domain-size error assumed ~ (D/H)^q with q=1 (EXPERT REVIEW)"
+     ],
+     "root_to_finest_change": 0.0338865943566707,
+     "refinement_ratios": [
+      2.0,
+      2.0
+     ],
+     "noise": 0.0008144857879799902
+    }
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "estimated domain uncertainty of strouhal_number = 3.70% > 1.50% but the demonstrated change 2.45% <= tau; more refinement would be needed [three-level Celik procedure, observed order p=1.28, Fs=1.25]",
+    "value": 0.03701457393941714,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "strouhal_number",
+    "component": "domain",
+    "uncertainty": 0.03701457393941714,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e",
+     "B2_moderate_domain.D2x-44c88f366919",
+     "B2_moderate_domain.D2x-39e861cedde4"
+    ],
+    "details": {
+     "values": [
+      0.1670397434722989,
+      0.16420786591392886,
+      0.16304530928874167
+     ],
+     "inverse_half_height": [
+      0.1,
+      0.05,
+      0.025
+     ],
+     "formal_order": 1.0,
+     "notes": [
+      "domain-size error assumed ~ (D/H)^q with q=1 (EXPERT REVIEW)"
+     ],
+     "root_to_finest_change": 0.02449892119547815,
+     "refinement_ratios": [
+      2.0,
+      2.0
+     ],
+     "noise": 0.0007452112225713579,
+     "observed_order": 1.2844579011551094,
+     "iterations": 28,
+     "extrapolated_value": 0.16223567593431334,
+     "estimated_root_error": 0.029611659151533715,
+     "method": "three-level Celik procedure, observed order p=1.28, Fs=1.25"
+    }
+   }
+  ]
+ },
  "history": [
   {
    "iteration": 1,
@@ -82,6 +532,210 @@
     "expected_outcome": "If the boundary effect is small, mean Cd and St stay within about 1.5% of R0 (1.3713 and 0.16704), which clears the domain component. If either shifts by more than 3%, the verifier can mark domain sensitivity as a FAIL and R0 is rejected. An intermediate shift means a further expansion or a larger factor is needed."
    },
    "outcome": "executed -> B2_moderate_domain.D2x-44c88f366919 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 22.67433000199526,
+    "cost_usd": 0.07114891,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 20444,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 45,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "B2_moderate_domain-55b85b2cd33e": "R0",
+     "B2_moderate_domain.D2x-44c88f366919": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks. I can't ACCEPT, and nothing in the package invalidates R0, so I can't REJECT.",
+    "R0 sampling is not the limiting factor. Averaging and statistics uncertainty for mean_drag_coefficient are 1.858e-06 and 2.492e-05, and for strouhal_number they are 7.006e-06 and 9.904e-06. R0 has 13 stationary cycles.",
+    "R1 (EXPAND_DOMAIN from R0) moved both quantities. Mean Cd went from 1.3713 (R0) to 1.3395 (R1), and St went from 0.16704 to 0.16421. The verifier records demonstrated changes of 2.37% and 1.72%, both below the 0.03 tolerance. So there is no FAIL.",
+    "The domain component is still unresolved. The verifier estimates 0.1422 for Cd and 0.1035 for St, using a two-level Richardson extrapolation with an assumed order p=1 and Fs=3. Both are above the 0.5*tolerance budget. The order is assumed, not measured, and the verifier says more refinement is needed.",
+    "R1 is only a partially converged domain. It has blockage_ratio 0.025, half_height_D 20, upstream_D 30 and downstream_D 50, with symmetryPlane lateral boundaries. The question requires an unbounded stream. The Cd and St shifts are monotonic and not yet shown to be flattening.",
+    "A third domain level from R1 gives a three-level sequence with a constant factor of 2.0 (R0, R1, R2). This lets the verifier measure the convergence order instead of assuming it. It is the cheapest way to cut the largest uncertainty component.",
+    "R1 has 6 stationary cycles, and its St frequency resolution is 0.025, coarser than R0's 0.013333. Its stationary-window St (0.16421) is reported to 5 digits, so the cycle count is not a concern for the domain comparison. Still, R2 should keep a similar or longer record.",
+    "Mesh and time errors are unmeasured for both quantities. They stay as later experiments, because the domain term dominates the budget now.",
+    "Budget is ample: 1 of 6 experiments used, and 0.75 of 12 relative compute used."
+   ],
+   "missing_evidence": [
+    "Measured (not assumed-order) domain convergence for mean_drag_coefficient and strouhal_number: a third domain level beyond R1",
+    "Mesh discretisation error for both quantities (no REFINE_MESH run)",
+    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run)",
+    "Combined uncertainty against the 0.03 tolerance and the 0.5*tolerance per-component rule"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The domain truncation and blockage effect is still significant at R1 (blockage_ratio 0.025). It decays slowly, with an order near the assumed p=1. The R1 values of Cd (1.3395) and St (0.16421) are therefore still above or below the unbounded values by more than 1.5%.",
+     "test": "EXPAND_DOMAIN with factor 2.0 from R1. If the further changes in Cd and St are clearly smaller than the R0 to R1 changes, the sequence is converging, and the three-level data gives a measured order. If they are comparable, the hypothesis is confirmed and a larger domain is needed. If a change exceeds the 0.03 tolerance, the verifier can fail the domain check."
+    },
+    {
+     "hypothesis": "Mesh error (R0 representative_cell_size_D 0.20424, wake_last_cell_D 0.55293) is a separate contribution of more than 1.5% to Cd or St.",
+     "test": "REFINE_MESH, factor about 1.4142, once the domain component is resolved."
+    },
+    {
+     "hypothesis": "The time step (0.01 D/U, 598.66 steps per period, backward scheme) gives negligible temporal error.",
+     "test": "REDUCE_TIME_STEP, factor 2.0, from the best domain/mesh run once those are resolved."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "B2_moderate_domain.D2x-44c88f366919",
+    "reason": "Domain is the largest unresolved component: the verifier estimates 0.1422 for Cd and 0.1035 for St, using an assumed order p=1. R1 changed Cd from 1.3713 to 1.3395 and St from 0.16704 to 0.16421, so the boundaries still matter. A third level with the same factor of 2.0 as R0 to R1 lets the verifier measure the convergence order and extrapolate to the unbounded stream the question requires.",
+    "expected_outcome": "If the domain effect is converging, Cd and St change by clearly less than they did from R0 to R1 (which were 2.37% and 1.72%). The domain uncertainty then drops towards the 1.5% budget. If the changes are similar in size, the effect is not converging and a larger expansion is needed. A change above the 0.03 tolerance would be a FAIL."
+   },
+   "outcome": "executed -> B2_moderate_domain.D2x-39e861cedde4 (completed)"
   }
- ]
+ ],
+ "runs": [
+  "B2_moderate_domain-55b85b2cd33e",
+  "B2_moderate_domain.D2x-44c88f366919",
+  "B2_moderate_domain.D2x-39e861cedde4"
+ ],
+ "experiments": [
+  {
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 2.0
+   },
+   "parent_run": "B2_moderate_domain-55b85b2cd33e",
+   "changes": {
+    "averaging.start_time": {
+     "from": 75.0,
+     "to": 40.0
+    },
+    "domain.downstream": {
+     "from": 25.0,
+     "to": 50.0
+    },
+    "domain.half_height": {
+     "from": 10.0,
+     "to": 20.0
+    },
+    "domain.upstream": {
+     "from": 15.0,
+     "to": 30.0
+    },
+    "mesh.n_downstream": {
+     "from": 78,
+     "to": 110
+    },
+    "mesh.n_lateral": {
+     "from": 24,
+     "to": 35
+    },
+    "mesh.n_upstream": {
+     "from": 27,
+     "to": 36
+    },
+    "time.end_time": {
+     "from": 150.0,
+     "to": 80.0
+    }
+   },
+   "notes": [
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "B2_moderate_domain-55b85b2cd33e"
+   },
+   "estimated_cell_steps": 214880000.0,
+   "run_id": "B2_moderate_domain.D2x-44c88f366919",
+   "status": "completed",
+   "cell_steps": 214880000.0,
+   "wall_seconds": 924.8347764950013
+  },
+  {
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 2.0
+   },
+   "parent_run": "B2_moderate_domain.D2x-44c88f366919",
+   "changes": {
+    "domain.downstream": {
+     "from": 50.0,
+     "to": 100.0
+    },
+    "domain.half_height": {
+     "from": 20.0,
+     "to": 40.0
+    },
+    "domain.upstream": {
+     "from": 30.0,
+     "to": 60.0
+    },
+    "mesh.n_downstream": {
+     "from": 110,
+     "to": 144
+    },
+    "mesh.n_lateral": {
+     "from": 35,
+     "to": 45
+    },
+    "mesh.n_upstream": {
+     "from": 36,
+     "to": 45
+    }
+   },
+   "notes": [
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "B2_moderate_domain.D2x-44c88f366919"
+   },
+   "estimated_cell_steps": 289360000.0,
+   "run_id": "B2_moderate_domain.D2x-39e861cedde4",
+   "status": "completed",
+   "cell_steps": 289360000.0,
+   "wall_seconds": 1037.2902798430005
+  }
+ ],
+ "cost": {
+  "experiment_cell_steps": 504240000.0,
+  "relative_to_root": 1.7544885177453027,
+  "experiment_wall_seconds": 1962.1250563380017,
+  "n_experiments": 2,
+  "planner_calls": 2,
+  "planner_cost_usd": 0.12484521999999999,
+  "loop_wall_seconds": 35525.780881692
+ },
+ "authority_violations": [],
+ "n_planner_failures": 0,
+ "n_invalid_events": 0,
+ "started": "2026-10-19T09:08:43+00:00",
+ "finished": "2026-10-19T19:00:49+00:00"
 }

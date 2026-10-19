@@ -1,0 +1,402 @@
+{
+ "verdict": "INCONCLUSIVE",
+ "per_qoi": {
+  "mean_drag_coefficient": {
+   "verdict": "INCONCLUSIVE",
+   "tolerance": 0.03,
+   "component_status": {
+    "averaging": "PASS",
+    "statistics": "PASS",
+    "mesh": "INCONCLUSIVE",
+    "time": "INCONCLUSIVE",
+    "domain": "INCONCLUSIVE"
+   },
+   "component_uncertainty": {
+    "averaging": 7.0403520343379e-05,
+    "statistics": 0.00013305656093745485
+   },
+   "combined_uncertainty": null
+  },
+  "strouhal_number": {
+   "verdict": "INCONCLUSIVE",
+   "tolerance": 0.03,
+   "component_status": {
+    "averaging": "PASS",
+    "statistics": "PASS",
+    "mesh": "INCONCLUSIVE",
+    "time": "INCONCLUSIVE",
+    "domain": "INCONCLUSIVE"
+   },
+   "component_uncertainty": {
+    "averaging": 1.316110343732669e-05,
+    "statistics": 2.7480848949875145e-05
+   },
+   "combined_uncertainty": null
+  }
+ },
+ "missing_components": {
+  "mean_drag_coefficient": [
+   "mesh",
+   "time",
+   "domain"
+  ],
+  "strouhal_number": [
+   "mesh",
+   "time",
+   "domain"
+  ]
+ },
+ "failed_checks": [],
+ "checks": [
+  {
+   "check": "solver_completion",
+   "status": "PASS",
+   "reason": "solver ran to its configured end and printed 'End'",
+   "value": 10.0000000005,
+   "threshold": null,
+   "source": "solver log",
+   "qoi": null,
+   "component": null,
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "mesh_quality",
+   "status": "PASS",
+   "reason": "checkMesh reports 'Mesh OK'; non-orthogonality, skewness and aspect ratio within OpenFOAM's limits. This shows the mesh is valid, NOT that it resolves the flow.",
+   "value": {
+    "max_non_orthogonality": 43.31296755,
+    "max_skewness": 0.5338415736,
+    "max_aspect_ratio": 20.98476912
+   },
+   "threshold": {
+    "max_non_orthogonality": 70.0,
+    "max_skewness": 4.0,
+    "max_aspect_ratio": 1000.0
+   },
+   "source": "checkMesh log ('Mesh OK' / 'Failed N mesh checks'); limits: max_non_orthogonality: OpenFOAM primitiveMesh::nonOrthThreshold_ default (70 deg); checkMesh reports '***' above it; max_skewness: OpenFOAM primitiveMesh::skewThreshold_ default (4); max_aspect_ratio: OpenFOAM primitiveMesh::aspectThreshold_ default (1000)",
+   "qoi": null,
+   "component": null,
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "mass_conservation",
+   "status": "PASS",
+   "reason": "max relative boundary-flux imbalance 8.33e-11 <= 1.50e-03; cannot bias the requested quantities beyond tau/10",
+   "value": 8.333340528049461e-11,
+   "threshold": 0.0015,
+   "source": "postProcessing/flux_*/surfaceFieldValue.dat; threshold = tau/20 (2*eps <= tau/10 bound on induced Cd error)",
+   "qoi": null,
+   "component": null,
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {
+    "continuity_sum_local_max": 5.972816263e-14
+   }
+  },
+  {
+   "check": "linear_solver_convergence",
+   "status": "PASS",
+   "reason": "final pressure solve reached the configured tolerance in 100.0% of steps",
+   "value": {
+    "fraction_of_steps_above_tolerance": 0.0,
+    "max_final_residual": 9.999854262e-08,
+    "iteration_limit_hits": 0
+   },
+   "threshold": 0.01,
+   "source": "solver log, last pressure solve of each time step (relTol 0, so it must reach the configured absolute tolerance); solverInfo is not used because it records only the first solve of a step",
+   "qoi": null,
+   "component": null,
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "courant_number",
+   "status": "PASS",
+   "reason": "max Courant number 0.74 < 1.0 (PISO mode). Stability/accuracy guideline only; temporal discretisation error is not quantified by this.",
+   "value": 0.736379511,
+   "threshold": 1.0,
+   "source": "OpenFOAM User Guide (cavity tutorial); Issa (1986) J. Comput. Phys. 62:40",
+   "qoi": null,
+   "component": null,
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "reynolds_consistency",
+   "status": "PASS",
+   "reason": "case Re=100 matches spec Re=100",
+   "value": {
+    "case": 100.0,
+    "spec": 100.0,
+    "spec_from_parameters": 100.0
+   },
+   "threshold": 0.001,
+   "source": "case physical parameters vs spec",
+   "qoi": null,
+   "component": null,
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "force_reference_consistency",
+   "status": "PASS",
+   "reason": "magUInf equals inlet velocity and Aref equals D x mesh span",
+   "value": {
+    "magUInf": 0.15,
+    "lRef": 0.01,
+    "Aref": 0.0001,
+    "rhoInf": 1.2
+   },
+   "threshold": 0.001,
+   "source": "forceCoeffs entries vs inlet BC velocity and mesh-measured projected area (D x span)",
+   "qoi": null,
+   "component": null,
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {
+    "Aref_from_mesh_bounding_box": 0.0001
+   }
+  },
+  {
+   "check": "physics_regime",
+   "status": "PASS",
+   "reason": "sustained periodic lift oscillation present, as expected for 47.0 < Re=100.0 < 188.5",
+   "value": 100.0,
+   "threshold": null,
+   "source": "Provansal, Mathis & Boyer (1987) JFM 182:1 (Re_c ~ 47); Williamson (1996) Annu. Rev. Fluid Mech. 28:477; Barkley & Henderson (1996) JFM 322:215 (mode A at Re ~ 188.5); Williamson (1996)",
+   "qoi": null,
+   "component": null,
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "convection_scheme_order",
+   "status": "PASS",
+   "reason": "convection scheme 'Gauss linear' is nominally second order",
+   "value": "Gauss linear",
+   "threshold": null,
+   "source": "J. Fluids Eng. editorial policy on numerical accuracy (published with Celik et al. 2008): at least second-order spatial schemes; first-order numerical diffusion called 'devastating'",
+   "qoi": null,
+   "component": null,
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "averaging_window",
+   "status": "PASS",
+   "reason": "reported mean_drag_coefficient is biased by 0.007% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+   "value": 7.0403520343379e-05,
+   "threshold": 0.03,
+   "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+   "qoi": "mean_drag_coefficient",
+   "component": "averaging",
+   "uncertainty": 7.0403520343379e-05,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {
+    "reported": 1.3404429774082973,
+    "stationary": 1.3403486121475148,
+    "declared_start_convective": 75.0,
+    "transient_end_convective": 71.08349942869991,
+    "declared_window_cycles": 11,
+    "kind": "bias"
+   }
+  },
+  {
+   "check": "averaging_window",
+   "status": "PASS",
+   "reason": "reported strouhal_number is biased by 0.001% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+   "value": 1.316110343732669e-05,
+   "threshold": 0.03,
+   "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+   "qoi": "strouhal_number",
+   "component": "averaging",
+   "uncertainty": 1.316110343732669e-05,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {
+    "reported": 0.16329301599406568,
+    "stationary": 0.16329516513862488,
+    "declared_start_convective": 75.0,
+    "transient_end_convective": 71.08349942869991,
+    "declared_window_cycles": 11,
+    "kind": "bias"
+   }
+  },
+  {
+   "check": "statistical_uncertainty",
+   "status": "PASS",
+   "reason": "statistical/stationarity uncertainty 1.33e-04 <= 1.50%",
+   "value": 0.00013305656093745485,
+   "threshold": 0.015,
+   "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+   "qoi": "mean_drag_coefficient",
+   "component": "statistics",
+   "uncertainty": 0.00013305656093745485,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {
+    "components": {
+     "ci95": 2.7008016571218826e-05,
+     "drift": 0.00013305656093745485,
+     "half_difference": 6.509132706659201e-05
+    },
+    "n_cycles": 12,
+    "mser_hit_cap": true
+   }
+  },
+  {
+   "check": "statistical_uncertainty",
+   "status": "PASS",
+   "reason": "statistical/stationarity uncertainty 2.75e-05 <= 1.50%",
+   "value": 2.7480848949875145e-05,
+   "threshold": 0.015,
+   "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+   "qoi": "strouhal_number",
+   "component": "statistics",
+   "uncertainty": 2.7480848949875145e-05,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {
+    "components": {
+     "ci95_period": 2.7480848949875145e-05,
+     "period_drift": 0.0,
+     "period_half_difference": 0.0,
+     "fft_vs_zero_crossing": 3.22231330249236e-06
+    },
+    "n_cycles": 12,
+    "mser_hit_cap": true
+   }
+  },
+  {
+   "check": "mesh_sensitivity",
+   "status": "INCONCLUSIVE",
+   "reason": "no REFINE_MESH experiment has been run; mesh error of mean_drag_coefficient is unknown",
+   "value": null,
+   "threshold": null,
+   "source": "",
+   "qoi": "mean_drag_coefficient",
+   "component": "mesh",
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "mesh_sensitivity",
+   "status": "INCONCLUSIVE",
+   "reason": "no REFINE_MESH experiment has been run; mesh error of strouhal_number is unknown",
+   "value": null,
+   "threshold": null,
+   "source": "",
+   "qoi": "strouhal_number",
+   "component": "mesh",
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "time_sensitivity",
+   "status": "INCONCLUSIVE",
+   "reason": "no REDUCE_TIME_STEP experiment has been run; time error of mean_drag_coefficient is unknown",
+   "value": null,
+   "threshold": null,
+   "source": "",
+   "qoi": "mean_drag_coefficient",
+   "component": "time",
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "time_sensitivity",
+   "status": "INCONCLUSIVE",
+   "reason": "no REDUCE_TIME_STEP experiment has been run; time error of strouhal_number is unknown",
+   "value": null,
+   "threshold": null,
+   "source": "",
+   "qoi": "strouhal_number",
+   "component": "time",
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "domain_sensitivity",
+   "status": "INCONCLUSIVE",
+   "reason": "no EXPAND_DOMAIN experiment has been run; domain error of mean_drag_coefficient is unknown",
+   "value": null,
+   "threshold": null,
+   "source": "",
+   "qoi": "mean_drag_coefficient",
+   "component": "domain",
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  },
+  {
+   "check": "domain_sensitivity",
+   "status": "INCONCLUSIVE",
+   "reason": "no EXPAND_DOMAIN experiment has been run; domain error of strouhal_number is unknown",
+   "value": null,
+   "threshold": null,
+   "source": "",
+   "qoi": "strouhal_number",
+   "component": "domain",
+   "uncertainty": null,
+   "runs": [
+    "K1_central_scheme-e4e5fb66bdca"
+   ],
+   "details": {}
+  }
+ ],
+ "case": "K1_central_scheme",
+ "root_run": "K1_central_scheme-e4e5fb66bdca",
+ "stamp": {
+  "decision_code": "6406c53bb2011ef5",
+  "root_config_hash": "c0932162b7028d01",
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+ }
+}

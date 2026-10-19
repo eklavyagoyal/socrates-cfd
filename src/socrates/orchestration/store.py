@@ -207,7 +207,13 @@ class RunStore:
         key = existing.name if existing else self.run_id_for(cfg, init)
         with _LOCKS_GUARD:
             lock = _LOCKS.setdefault(key, threading.Lock())
-        with lock:
+        # thread lock (same process) + fcntl lock (other processes) for the whole
+        # find-or-execute, so an identical run is never executed twice concurrently
+        lock_dir = self.root / ".locks"
+        lock_dir.mkdir(exist_ok=True)
+        h = key.rsplit("-", 1)[-1]
+        with lock, open(lock_dir / f"{h}.lock", "w") as lfh:
+            fcntl.flock(lfh, fcntl.LOCK_EX)
             existing = self._find_existing(cfg, init)
             while existing is not None and self._running_elsewhere(existing):
                 time.sleep(30)  # another process owns this run: wait for it

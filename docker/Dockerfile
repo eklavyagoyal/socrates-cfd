@@ -27,14 +27,18 @@ RUN --mount=type=secret,id=extra_ca,required=false \
 
 WORKDIR /work
 COPY requirements.lock pyproject.toml README.md ./
-RUN pip3 install --no-cache-dir -r requirements.lock
+RUN --mount=type=secret,id=extra_ca,required=false \
+    set -eux; if [ -f /run/secrets/extra_ca ]; then export PIP_CERT=/run/secrets/extra_ca; fi; \
+    pip3 install --no-cache-dir -r requirements.lock
 COPY src ./src
 COPY configs ./configs
 COPY cases ./cases
 COPY benchmark ./benchmark
 COPY scripts ./scripts
 COPY tests ./tests
-RUN pip3 install --no-cache-dir --no-deps -e .
+RUN --mount=type=secret,id=extra_ca,required=false \
+    set -eux; if [ -f /run/secrets/extra_ca ]; then export PIP_CERT=/run/secrets/extra_ca; fi; \
+    pip3 install --no-cache-dir --no-deps -e .
 
 # the LLM critic needs the `claude` CLI and credentials; it is optional:
 # deterministic systems (A, B, C-rule, B+exh) run without it.

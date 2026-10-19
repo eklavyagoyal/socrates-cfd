@@ -1,0 +1,55 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.303 (Claude Code)",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 13.663942219998717,
+ "cost_usd": 0.02479161,
+ "errors": [],
+ "model_fingerprint": "6ad399b27406",
+ "verdict": "REJECT",
+ "confidence": "HIGH",
+ "reasoning_summary": [
+  "The force normalisation is inconsistent with the flow. The force reference uses magUInf = 0.16, but the measured inlet velocity is uniform at 0.15 (ux_min = ux_max = 0.15). The specified Reynolds number of 100 also corresponds to 0.15 m/s with D = 0.01 and nu = 1.5e-5.",
+  "Cd scales with 1/U_ref^2, so the reported mean Cd of 1.1699 is too low by a factor of (0.15/0.16)^2, about 0.879. Rescaled to the true inlet speed, Cd would be about 1.1699 x (0.16/0.15)^2 \u2248 1.33. That is about 14 % away from the reported value, well outside the 3 % tolerance.",
+  "The Strouhal number may carry a similar normalisation problem. Time is expressed in convective units, and St = fD/U would shift by about 6.7 % if U = 0.16 were used instead of 0.15. The evidence does not show which velocity was used for St, so its reliability is also in doubt.",
+  "The statistical quality of the record is good, with 12 stationary cycles, tiny drift and a small confidence interval. That only shows the run is self-consistent. It does not fix a systematic reference-velocity error, which makes the submitted Cd untrustworthy.",
+  "The mesh is also fairly coarse for a 3 % target. Cells are about 0.457 D, and the wake's last cell is 1.02 D. The Strouhal frequency resolution is 0.013333, which is about 8 % of St. No mesh-convergence evidence is given. This is secondary to the reference-velocity mismatch."
+ ],
+ "numeric_audit": {
+  "traced": 19,
+  "untraced": [
+   {
+    "token": "0.879",
+    "context": "Cd of 1.1699 is too low by a factor of (0.15/0.16)^2, about 0.879. Rescaled to the true inlet speed, Cd w"
+   },
+   {
+    "token": "1.33",
+    "context": "rue inlet speed, Cd would be about 1.1699 x (0.16/0.15)^2 \u2248 1.33. That is about 14 % away from the repor"
+   },
+   {
+    "token": "14",
+    "context": "would be about 1.1699 x (0.16/0.15)^2 \u2248 1.33. That is about 14 % away from the reported value, well ou"
+   },
+   {
+    "token": "6.7",
+    "context": "sed in convective units, and St = fD/U would shift by about 6.7 % if U = 0.16 were used instead of 0.15"
+   }
+  ],
+  "n_untraced": 4
+ },
+ "case": "I1_force_reference",
+ "root_run": "I1_force_reference-43978f7eb1a8",
+ "stamp": {
+  "decision_code": "6406c53bb2011ef5",
+  "root_config_hash": "421bde056fe49efa",
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+ }
+}

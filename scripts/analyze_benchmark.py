@@ -181,7 +181,7 @@ def main() -> None:
         ev = store.load(root).evidence or {}
         rep = (ev.get("qoi") or {}).get("reported") or {}
         lab = label_case(rep, T, spec.verification.requested_tolerance, setup_problems(ev), truth_uncertainty=uT)
-        # secondary, post-hoc view: the same rule on point estimates (truth uncertainty ignored)
+        # the docs/design.md section-19 rule verbatim, on point estimates (without the truth-uncertainty mitigation)
         lab["label_point_estimate"] = label_case(rep, T, spec.verification.requested_tolerance, setup_problems(ev))["label"]
         lab.update(intended=case["intended"], expected=case["expected_expert_judgement"], root_run=root,
                    reported={q: rep.get(q) for q in spec.requested_outputs},
@@ -275,7 +275,7 @@ def main() -> None:
             "first_experiment_targets_flaw": f"{hit}/{hit + miss}" if (hit + miss) else None,
         }}
     systems = [s for s in SYSTEMS if s in metrics]
-    for s in systems:  # secondary view: identical verdicts, point-estimate labels
+    for s in systems:  # same verdicts, labels from the section-19 rule without the truth-uncertainty mitigation
         pc = [(labels[cid]["label_point_estimate"], c["verdict"]) for cid, c in metrics[s]["cases"].items()
               if c["outcome"] != "error"]
 
@@ -299,7 +299,7 @@ def main() -> None:
     if problems:
         L += ["**Missing or stale results (NOT counted in the rates of the system concerned; recompute before "
               "drawing conclusions):** " + "; ".join(problems), ""]
-    L += ["| case | label | max err / τ | unstable | point-estimate label (secondary) | " + " | ".join(systems) + " |",
+    L += ["| case | label (with mitigation) | max err / τ | unstable | label without mitigation | " + " | ".join(systems) + " |",
           "|---|---|---|---|---|" + "---|" * len(systems)]
     for cid in cases:
         lab = labels[cid]
@@ -337,8 +337,11 @@ def main() -> None:
             else:
                 vals.append("—" if x is None else (f"{x:.2f}" if isinstance(x, float) else str(x)))
         L.append(f"| {name} | " + " | ".join(vals) + " |")
-    L += ["", "### Secondary view (post-hoc): labels from point estimates, truth uncertainty ignored", "",
-          "_Same verdicts; only the labels change. The pre-registered labels above are primary._", "",
+    L += ["", "### Labels without the truth-uncertainty mitigation (design.md §19 rule verbatim, point estimates)", "",
+          "_Same verdicts; only the labels change. Both label sets are pre-registered: the §19 rule, and the risk "
+          "mitigation 'label near-boundary cases ambiguous' (design.md, major technical risks 2), operationalised in "
+          "review R18 before any result as 'the interval e ± U(T) straddles τ or τ/2'. The table above uses the "
+          "mitigation._", "",
           "| metric | " + " | ".join(systems) + " |", "|---|" + "---|" * len(systems)]
     for k, name in [("n_flawed", "flawed cases"), ("n_credible", "credible cases"), ("n_ambiguous", "ambiguous cases"),
                     ("false_acceptance_rate", "**false acceptance**"), ("detection_rate", "detection"),

@@ -56,6 +56,8 @@ def main() -> None:
     stage2 = study.get("stage2") or {}
     if stage2.get("time_level_4"):
         ch["time"].append(stage2["time_level_4"]["run_id"])
+    if stage2.get("domain_level_x3"):  # stage 3: x3 domain level between x2 and x4
+        ch["domain"].insert(2, stage2["domain_level_x3"]["run_id"])
     # every member's value is taken from its longest continuation (as the verifier does for statistics)
     cont = dict(stage2.get("continuations") or {})
     if len(ch.get("longer", [])) > 1:
@@ -91,9 +93,18 @@ def main() -> None:
             skipped[q] = f"stationary value missing in {missing}"
             print(f"{q}: no reference computed ({skipped[q]})", flush=True)
             continue
+        conditioning = {}
         for factor, order in (("time", 2.0), ("mesh", 2.0), ("domain", 1.0)):
-            rids = ch[factor][-3:]  # the finest three levels (the time chain has four after stage 2)
+            rids = ch[factor][-3:]  # the finest three levels (time and domain chains have four after stages 2-3)
             vals = [sta_c(store, r, cont).get(q) for r in rids]
+            if len(ch[factor]) > 3 and factor != "mesh":
+                # conditioning check: extrapolation from the next-coarser three levels; their difference is added
+                # to U(T) (a simple stand-in for the fit uncertainty of multi-grid least squares, Eca & Hoekstra 2014)
+                alt_ids = ch[factor][-4:-1]
+                alt = extrapolate_chain([sta_c(store, r, cont).get(q) for r in alt_ids],
+                                        [size(factor, r) for r in alt_ids], order)
+                conditioning[factor] = {"coarser_three": alt_ids, "extrapolated_coarser_three": alt["extrapolated"],
+                                        "method_coarser_three": alt["method"]}
             if factor == "mesh":
                 # The mesh chain also lowers dt (Courant control), so its raw values contain part of the
                 # time error that the time chain already corrects for (double counting).  Shift every mesh
@@ -109,6 +120,10 @@ def main() -> None:
                               "shift_applied": shift, "mesh_extrapolated_without_shift": raw["extrapolated"]}
             per[factor] = extrapolate_chain(vals, [size(factor, r) for r in rids], order)
             per[factor]["runs"] = rids
+            if factor in conditioning:
+                conditioning[factor]["difference"] = abs(conditioning[factor]["extrapolated_coarser_three"]
+                                                         - per[factor]["extrapolated"])
+                per[factor]["conditioning"] = conditioning[factor]
         root_v = sta_c(store, root, cont)[q]
         # statistical uncertainty of the members, carried through the extrapolation weights (the root's once)
         stat = {"root": u_stat_abs(root, q)}
@@ -116,11 +131,21 @@ def main() -> None:
             fin, mid = c["runs"][-1], c["runs"][-2]
             stat[factor] = ((c["weights"]["finest"] * u_stat_abs(fin, q)) ** 2
                             + (c["weights"]["middle"] * u_stat_abs(mid, q)) ** 2) ** 0.5
-        truth[q] = combine_truth(root_v, per, statistical=stat)
-        truth[q]["root_value"] = root_v
+        extra = dict(stat)
+        for factor, c in conditioning.items():
+            extra[f"{factor}_conditioning"] = c["difference"]
         if q in overlap:
+            # model-form term: the shift assumes a mesh-independent time error; the finest-mesh dt pair
+            # (baseline.m2-476115cbbf20 vs -93c9ab8d6f2d) shows the dt sensitivity there is smaller, so the full
+            # effect of the shift is carried as an uncertainty
             no_shift = dict(per, mesh=dict(per["mesh"], extrapolated=overlap[q]["mesh_extrapolated_without_shift"]))
-            overlap[q]["truth_without_shift"] = combine_truth(root_v, no_shift, statistical=stat)["value"]
+            overlap[q]["truth_without_shift"] = combine_truth(root_v, no_shift)["value"]
+            t_shift = combine_truth(root_v, per)["value"]
+            extra["time_overlap_model_form"] = abs(t_shift - overlap[q]["truth_without_shift"])
+        truth[q] = combine_truth(root_v, per, statistical=extra)
+        truth[q]["root_value"] = root_v
+        truth[q]["statistical_only"] = {k: v for k, v in stat.items()}
+        if q in overlap:
             truth[q]["time_overlap_correction"] = overlap[q]
         chains_out[q] = per
         lo, hi = LIT[q]["band"]
@@ -245,11 +270,22 @@ def main() -> None:
         L.append(f"| {q} | {o['time_error_model']['p']:.2f} | " + ", ".join(f"{x:+.2e}" for x in o["shift_applied"])
                  + f" | {o['truth_without_shift']:.5f} | {truth[q]['value']:.5f} | "
                  f"{(truth[q]['value'] - o['truth_without_shift']) / truth[q]['value']:+.3%} |")
+    L.append("\nTerms of U(T) (absolute, combined by RSS): " + "; ".join(
+        f"{q}: discretisation " + ", ".join(f"{f} {c['uncertainty']:.2e}" for f, c in chains_out[q].items())
+        + ", " + ", ".join(f"{k} {v:.2e}" for k, v in truth[q]["statistical_terms"].items() if v > 0)
+        for q in QT) + ".")
+    for q in QT:
+        for f, c in chains_out[q].items():
+            if c.get("conditioning"):
+                cd_ = c["conditioning"]
+                L.append(f"- conditioning, {q} {f}: finest three → {c['extrapolated']:.5f}; next-coarser three "
+                         f"({', '.join(cd_['coarser_three'])}) → {cd_['extrapolated_coarser_three']:.5f} "
+                         f"({cd_['method_coarser_three']}); difference {cd_['difference']:.2e} added to U(T)")
     L.append("\n| quantity | baseline (stationary) | in-house reference T | uncertainty of T (of which statistical) | "
              "literature band | T in band | T in band widened by τ |\n|---|---|---|---|---|---|---|")
     for q in QT:
         tq = truth[q]
-        stat_rel = sum(u**2 for u in tq["statistical_terms"].values()) ** 0.5 / abs(tq["value"])
+        stat_rel = sum(u**2 for u in tq["statistical_only"].values()) ** 0.5 / abs(tq["value"])
         L.append(f"| {q} | {tq['root_value']:.4f} | **{tq['value']:.4f}** | ±{tq['uncertainty_rel']:.2%} ({stat_rel:.2%}) | "
                  f"{tq['literature_band'][0]}–{tq['literature_band'][1]} | {tq['in_band']} | {tq.get('in_widened_band', '—')} |")
     L.append("\n### Deterministic verification of the baseline\n")

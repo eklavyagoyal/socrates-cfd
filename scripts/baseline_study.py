@@ -14,6 +14,9 @@ cycle in 80 D/U (the wake must first cross the enlarged domain), so both are con
 (RUN_LONGER) until the run length exceeds the wake transit time to the outlet plus
 the averaging window; and a fourth time level (dt/8) tests the slow St convergence.
 The report uses every member's longest continuation, as the verifier does.
+
+Stage 3 (after a second fact-check): a fourth domain level (x3, half-height 120 D) continued to a limit cycle,
+to test whether the three-level domain extrapolation is in its asymptotic range.
 Results: results/baseline/study.json (consumed by scripts/make_baseline_report.py).
 """
 
@@ -95,6 +98,13 @@ def main() -> None:
                 extensions["time_level_4"] = {"run_id": res.run_id, "parent": results[name][idx]["run_id"]}
     d = REPO / "results" / "baseline"
     d.mkdir(parents=True, exist_ok=True)
+    # ---- stage 3: a fourth domain level, to test the conditioning of the domain extrapolation ----
+    # The x3 level (half-height 120 D, EXPAND_DOMAIN 1.5 from x2) already exists in the store (requested by the
+    # LLM critic for the baseline case); it is continued to a limit cycle like the other domain levels.
+    x3 = store.load("baseline.D1.5x-ed421affd588")
+    x3c = step("domain", "RUN_LONGER", {"additional_convective_times": 120.0}, x3)   # outlet 150 D, run 200 D/U
+    extensions["domain_level_x3"] = {"run_id": x3.run_id, "continuation": x3c.run_id}
+    extensions["continuations"][x3.run_id] = x3c.run_id
     (d / "study.json").write_text(json.dumps({"root": root.run_id, "chains": results, "stage2": extensions}, indent=2))
 
 

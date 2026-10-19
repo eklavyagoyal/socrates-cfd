@@ -2,8 +2,8 @@
  "truth": {
   "mean_drag_coefficient": {
    "value": 1.3046303497433422,
-   "uncertainty_abs": 0.014959412496727791,
-   "uncertainty_rel": 0.01146639927522055,
+   "uncertainty_abs": 0.01546951124078589,
+   "uncertainty_rel": 0.011857390289769957,
    "corrections": {
     "time": -0.006977757825115782,
     "mesh": 0.007721197078547348,
@@ -13,9 +13,17 @@
     "root": 6.671125993678185e-06,
     "time": 5.7132893533002195e-05,
     "mesh": 2.202798158535356e-05,
-    "domain": 0.0001362970440719402
+    "domain": 0.0001362970440719402,
+    "time_conditioning": 0.00021466155611049587,
+    "time_overlap_model_form": 0.003933913598170857
    },
    "root_value": 1.3311683486196924,
+   "statistical_only": {
+    "root": 6.671125993678185e-06,
+    "time": 5.7132893533002195e-05,
+    "mesh": 2.202798158535356e-05,
+    "domain": 0.0001362970440719402
+   },
    "time_overlap_correction": {
     "mesh_level_dt": [
      0.01,
@@ -47,8 +55,8 @@
   },
   "strouhal_number": {
    "value": 0.1638227647104692,
-   "uncertainty_abs": 0.0004552401640217339,
-   "uncertainty_rel": 0.002778857778565139,
+   "uncertainty_abs": 0.0007870615169244868,
+   "uncertainty_rel": 0.004804347663864015,
    "corrections": {
     "time": 0.00033535443951626664,
     "mesh": 0.001497095802307613,
@@ -58,9 +66,17 @@
     "root": 2.0241322658646214e-06,
     "time": 2.358247611833897e-05,
     "mesh": 1.1658596277269936e-05,
-    "domain": 7.166588294583377e-06
+    "domain": 7.166588294583377e-06,
+    "time_conditioning": 0.0005845637411489579,
+    "time_overlap_model_form": 0.00026553240295465463
    },
    "root_value": 0.16343701062693017,
+   "statistical_only": {
+    "root": 2.0241322658646214e-06,
+    "time": 2.358247611833897e-05,
+    "mesh": 1.1658596277269936e-05,
+    "domain": 7.166588294583377e-06
+   },
    "time_overlap_correction": {
     "mesh_level_dt": [
      0.01,
@@ -92,8 +108,8 @@
   },
   "rms_lift_coefficient": {
    "value": 0.2142506887016829,
-   "uncertainty_abs": 0.008877407725832735,
-   "uncertainty_rel": 0.04143467533116501,
+   "uncertainty_abs": 0.010320998053836485,
+   "uncertainty_rel": 0.04817253151613984,
    "corrections": {
     "time": -0.01171254982544484,
     "mesh": 0.006078539140880607,
@@ -103,9 +119,17 @@
     "root": 4.598274152129676e-06,
     "time": 5.4509132519673955e-05,
     "mesh": 3.248832832357364e-05,
-    "domain": 8.417913395850011e-06
+    "domain": 8.417913395850011e-06,
+    "time_conditioning": 2.384068305780196e-05,
+    "time_overlap_model_form": 0.0052644149265092255
    },
    "root_value": 0.22858423683727774,
+   "statistical_only": {
+    "root": 4.598274152129676e-06,
+    "time": 5.4509132519673955e-05,
+    "mesh": 3.248832832357364e-05,
+    "domain": 8.417913395850011e-06
+   },
    "time_overlap_correction": {
     "mesh_level_dt": [
      0.01,
@@ -157,7 +181,17 @@
      "baseline.dt0.005-693742b868bc",
      "baseline.dt0.0025-f1e9eaf0cd2a",
      "baseline.dt0.00125-f6325a72e9cd"
-    ]
+    ],
+    "conditioning": {
+     "coarser_three": [
+      "baseline-408129116207",
+      "baseline.dt0.005-693742b868bc",
+      "baseline.dt0.0025-f1e9eaf0cd2a"
+     ],
+     "extrapolated_coarser_three": 1.324405252350687,
+     "method_coarser_three": "Richardson with observed order 1.14, Fs=1.25",
+     "difference": 0.00021466155611049587
+    }
    },
    "mesh": {
     "values": [
@@ -237,7 +271,17 @@
      "baseline.dt0.005-693742b868bc",
      "baseline.dt0.0025-f1e9eaf0cd2a",
      "baseline.dt0.00125-f6325a72e9cd"
-    ]
+    ],
+    "conditioning": {
+     "coarser_three": [
+      "baseline-408129116207",
+      "baseline.dt0.005-693742b868bc",
+      "baseline.dt0.0025-f1e9eaf0cd2a"
+     ],
+     "extrapolated_coarser_three": 0.1643569288075954,
+     "method_coarser_three": "observed order 0.2066519222496308 outside band; p = min(observed, formal) = 0.21 with Fs=3",
+     "difference": 0.0005845637411489579
+    }
    },
    "mesh": {
     "values": [
@@ -317,7 +361,17 @@
      "baseline.dt0.005-693742b868bc",
      "baseline.dt0.0025-f1e9eaf0cd2a",
      "baseline.dt0.00125-f6325a72e9cd"
-    ]
+    ],
+    "conditioning": {
+     "coarser_three": [
+      "baseline-408129116207",
+      "baseline.dt0.005-693742b868bc",
+      "baseline.dt0.0025-f1e9eaf0cd2a"
+     ],
+     "extrapolated_coarser_three": 0.2168478463287751,
+     "method_coarser_three": "Richardson with observed order 1.05, Fs=1.25",
+     "difference": 2.384068305780196e-05
+    }
    },
    "mesh": {
     "values": [

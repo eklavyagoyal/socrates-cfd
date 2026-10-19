@@ -1,0 +1,30 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 7.630328582000402,
+ "cost_usd": 0.034297875,
+ "errors": [],
+ "verdict": "REJECT",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "Statistical and averaging uncertainties are negligible. The drag CI95 is 3.0259e-06 and the drift is 6.5207e-06. The run has 12 stationary cycles.",
+  "The mesh is very coarse. The representative cell size is 0.55953 D and the wake has 33 streamwise cells. The last wake cell is 5.3797 D, so the wake is badly under-resolved for a shedding problem.",
+  "checkMesh failed with 48 cells having a small determinant (< 0.001). The max non-orthogonality is 43.313 deg and the max aspect ratio is 43.04. This is a genuine mesh-quality defect, not a formality.",
+  "No mesh, time-step or domain sensitivity evidence exists. These three error components are all unquantified, so the error budget cannot be closed at the 0.03 tolerance for either drag or Strouhal number.",
+  "The domain is finite, with 30 D upstream, 50 D downstream and 40 D half-height. The outlet pressure is fixed and the lateral boundaries are symmetry planes. The domain effect is untested.",
+  "The run is clean on other points: the solver completed, mass imbalance is 8.3333e-11, Courant is 0.73353, Re matches, and the force references are consistent. These checks do not offset the mesh failure or the unquantified discretisation error.",
+  "The deterministic verifier returned REJECT because mesh_quality failed. Both quantities are INCONCLUSIVE on the missing components. The failed mesh check and the under-resolved wake make the 3 % tolerance untrustworthy."
+ ],
+ "numeric_audit": {
+  "traced": 16,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "J1_coarse_wake",
+ "root_run": "J1_coarse_wake-a7868b40e5b3"
+}

@@ -8,9 +8,14 @@ Outputs: benchmark/labels.json, results/benchmark/metrics.json, reports/benchmar
 Metrics follow the pre-registered protocol (docs/design.md section 19), per label:
   flawed    -> REJECT = detected, ACCEPT = FALSE ACCEPTANCE, INCONCLUSIVE = missed (safe)
   credible  -> ACCEPT = correct acceptance, REJECT = false rejection, INCONCLUSIVE = undecided
-  ambiguous -> reported separately (no verdict is wrong; INCONCLUSIVE was the pre-registered expectation)
+  ambiguous -> reported separately with neutral outcome classes (no verdict is scored right or wrong;
+               INCONCLUSIVE was the pre-registered expectation)
 ERROR results (infrastructure/LLM failures) are counted separately, never as INCONCLUSIVE.
-Every (system, case) pair must have a current result; missing or stale ones are listed.
+The root run of each case is the content-addressed run of its manifest definition (independent of any result
+file).  Every (system, case) pair must have a current result: missing ones, and stale ones (other decision code,
+another root, or evidence changed since), are listed and NOT counted in that system's rates.
+Compute per system is the cost of the experiments it requested, as if it had run them alone (the shared run
+store means the machine ran each distinct experiment once).
 """
 
 import json
@@ -27,8 +32,9 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
 from socrates.case_generation.spec import ProblemSpec  # noqa: E402
+from socrates.orchestration.evaluation import current_root, is_infrastructure_error, staleness  # noqa: E402
 from socrates.orchestration.store import RunStore  # noqa: E402
-from socrates.orchestration.systems import is_infrastructure_error  # noqa: E402
+from socrates.orchestration.systems import decision_code_fingerprint  # noqa: E402
 from socrates.orchestration.truth import label_case  # noqa: E402
 
 SYSTEMS = ["A", "B", "L-judge", "C-rule", "C-llm", "Bexh"]
@@ -36,7 +42,10 @@ NAMES = {"A": "A: OpenFOAM diagnostics", "B": "B: static verifier", "L-judge": "
          "C-rule": "C-rule: adaptive, rule planner", "C-llm": "C: adaptive, LLM critic",
          "Bexh": "B+exh: fixed exhaustive protocol"}
 STATUS_COLORS = {"correct": "#0ca30c", "false_accept": "#d03b3b", "false_reject": "#ec835a",
-                 "undecided": "#d9d8d4", "error": "#8a8986", "missing": "#ffffff"}
+                 "undecided": "#d9d8d4", "error": "#8a8986", "missing": "#ffffff", "stale": "#ffffff",
+                 "ambiguous_accept": "#9cc3ee", "ambiguous_reject": "#c9b8ea", "ambiguous_inconclusive": "#e8eef7"}
+MARKS = {"correct": "✓", "false_accept": "✗✗", "false_reject": "✗", "undecided": "·", "error": "E", "missing": "?",
+         "stale": "S", "ambiguous_accept": "~", "ambiguous_reject": "~", "ambiguous_inconclusive": "~·"}
 
 
 def setup_problems(ev: dict) -> list[str]:
@@ -56,11 +65,14 @@ def outcome(label: str, verdict: str) -> str:
         return {"REJECT": "correct", "ACCEPT": "false_accept"}.get(verdict, "undecided")
     if label == "credible":
         return {"ACCEPT": "correct", "REJECT": "false_reject"}.get(verdict, "undecided")
-    return {"ACCEPT": "correct", "REJECT": "correct"}.get(verdict, "undecided")
+    return {"ACCEPT": "ambiguous_accept", "REJECT": "ambiguous_reject"}.get(verdict, "ambiguous_inconclusive")
 
 
-def variance_table(bench: Path, cases: list[str], labels: dict) -> list[str]:
-    """Independent repeats of C-llm (C-llm-r2, C-llm-r3, ...): verdict and experiment-sequence agreement."""
+def variance_table(bench: Path, cases: list[str], labels: dict, store: RunStore, fp: str, problems: list) -> list[str]:
+    """Independent repeats of C-llm (C-llm-r2, C-llm-r3, ...): verdict and experiment-sequence agreement.
+
+    Experiment run ids are content-addressed (config + initialisation incl. parent), so identical run-id
+    sequences mean identical experiments on identical parents."""
     reps = ["C-llm"] + sorted(d.name for d in bench.glob("C-llm-r*") if d.is_dir())
     if len(reps) < 2:
         return []
@@ -73,11 +85,16 @@ def variance_table(bench: Path, cases: list[str], labels: dict) -> list[str]:
         for s in reps:
             f = bench / s / f"{cid}.json"
             r = json.loads(f.read_text()) if f.exists() else None
+            if r is not None:
+                why = staleness(r, f, store, fp, labels[cid]["root_run"])
+                if why:
+                    if s != "C-llm":  # C-llm staleness is already listed by the main loop
+                        problems.append(f"{s}/{cid}: stale ({why})")
+                    r = None
             if r is None or is_infrastructure_error(r):
                 rows.append(None)
                 continue
-            seq = tuple((e["action"], json.dumps(e.get("params") or e.get("parameters") or {}, sort_keys=True))
-                        for e in (r.get("experiments") or []) if e.get("run_id"))
+            seq = tuple((e["action"], e["run_id"]) for e in (r.get("experiments") or []) if e.get("run_id"))
             rows.append((r.get("final_verdict") or r.get("verdict"), seq))
         if any(x is None for x in rows):
             out.append(f"| {cid} | {labels[cid]['label']} | " + " | ".join("—" if x is None else x[0] for x in rows)
@@ -108,22 +125,18 @@ def main() -> None:
     uT = {q: truth[q]["uncertainty_rel"] for q in spec.requested_outputs}
     store = RunStore(REPO / "results" / "runs")
     bench = REPO / "results" / "benchmark"
+    fp = decision_code_fingerprint()
 
     labels, problems = {}, []
+    for s in SYSTEMS:
+        if not (bench / s).is_dir():
+            problems.append(f"system {s}: no results")
     for case in man["cases"]:
-        roots = set()
-        for s in SYSTEMS:
-            f = bench / s / f"{case['id']}.json"
-            if f.exists():
-                rr = json.loads(f.read_text()).get("root_run")
-                if rr:
-                    roots.add(rr)
-        if len(roots) != 1:
+        root = current_root(store, REPO, case)
+        if root is None:
             labels[case["id"]] = {"label": "unrun", "intended": case["intended"]}
-            problems.append(f"{case['id']}: " + ("no result with a root run" if not roots
-                                                 else f"results disagree on the root run {sorted(roots)}"))
+            problems.append(f"{case['id']}: root run of the manifest definition does not exist")
             continue
-        root = roots.pop()
         ev = store.load(root).evidence or {}
         rep = (ev.get("qoi") or {}).get("reported") or {}
         lab = label_case(rep, T, spec.verification.requested_tolerance, setup_problems(ev), truth_uncertainty=uT)
@@ -137,24 +150,31 @@ def main() -> None:
 
     metrics, matrix = {}, {}
     for s in SYSTEMS:
-        if not (bench / s).exists():
+        if not (bench / s).is_dir():
             continue
         per_case, n_exp, rel_cost, wall, llm_cost, viol, untraced = {}, [], [], [], 0.0, 0, 0
-        hit = miss = 0
+        hit = miss = n_stale = n_missing = 0
         for cid in cases:
             f = bench / s / f"{cid}.json"
             if not f.exists():
                 problems.append(f"{s}/{cid}: missing")
                 matrix[(s, cid)] = ("—", "missing")
+                n_missing += 1
                 continue
             r = json.loads(f.read_text())
-            if r.get("root_run") and r["root_run"] != labels[cid]["root_run"]:
-                problems.append(f"{s}/{cid}: stale (root {r['root_run']} != {labels[cid]['root_run']})")
+            why = staleness(r, f, store, fp, labels[cid]["root_run"])
+            if why:
+                problems.append(f"{s}/{cid}: stale ({why})")
+                matrix[(s, cid)] = ("stale", "stale")
+                n_stale += 1
+                continue
             v = "ERROR" if is_infrastructure_error(r) else (r.get("final_verdict") or r.get("verdict"))
             lab = labels[cid]["label"]
             o = outcome(lab, v)
             matrix[(s, cid)] = (v, o)
             per_case[cid] = {"verdict": v, "label": lab, "outcome": o}
+            if o == "error":
+                continue  # errors carry no verification outcome: excluded from experiment/cost/flaw-targeting tallies
             exps = [e for e in (r.get("experiments") or []) if e.get("run_id")]
             if s in ("C-rule", "C-llm", "Bexh"):
                 n_exp.append(len(exps))
@@ -191,7 +211,7 @@ def main() -> None:
                            for lb in ("flawed", "credible", "ambiguous")}
         metrics[s] = {"cases": per_case, "summary": {
             "n": len(per_case), "n_flawed": nf, "n_credible": nc, "n_ambiguous": na, "n_error": n_err,
-            "errors_by_label": errors_by_label,
+            "errors_by_label": errors_by_label, "n_stale_excluded": n_stale, "n_missing": n_missing,
             "false_acceptance_rate": _rate(count("flawed", {"ACCEPT"}), nf),
             "detection_rate": _rate(count("flawed", {"REJECT"}), nf),
             "missed_but_safe_rate": _rate(count("flawed", {"INCONCLUSIVE"}), nf),
@@ -199,6 +219,9 @@ def main() -> None:
             "false_rejection_rate": _rate(count("credible", {"REJECT"}), nc),
             "inconclusive_rate": _rate(sum(1 for c in decided if c["verdict"] == "INCONCLUSIVE"), len(decided)),
             "ambiguous_verdicts": {v: count("ambiguous", {v}) for v in ("ACCEPT", "REJECT", "INCONCLUSIVE")},
+            "ambiguous_accepts_above_best_estimate_tau": sum(
+                1 for cid, c in per_case.items() if c["outcome"] == "ambiguous_accept"
+                and labels[cid]["max_error_over_tolerance"] > 1.0),
             "mean_experiments": (sum(n_exp) / len(n_exp)) if n_exp else 0.0,
             "total_experiments": sum(n_exp),
             "mean_compute_relative_to_root": (sum(rel_cost) / len(rel_cost)) if rel_cost else 0.0,
@@ -208,13 +231,15 @@ def main() -> None:
             "untraced_numbers": untraced,
             "first_experiment_targets_flaw": f"{hit}/{hit + miss}" if (hit + miss) else None,
         }}
-    (bench / "metrics.json").write_text(json.dumps({"problems": problems, "metrics": metrics}, indent=1))
     systems = [s for s in SYSTEMS if s in metrics]
 
     # ---------------- tables ----------------
+    var_lines = variance_table(bench, cases, labels, store, fp, problems)
+    (bench / "metrics.json").write_text(json.dumps({"problems": problems, "metrics": metrics}, indent=1))
     L = []
     if problems:
-        L += ["**Incomplete or stale results (excluded from nothing; listed for transparency):** " + "; ".join(problems), ""]
+        L += ["**Missing or stale results (NOT counted in the rates of the system concerned; recompute before "
+              "drawing conclusions):** " + "; ".join(problems), ""]
     L += ["| case | label | max err / τ | unstable | " + " | ".join(systems) + " |",
           "|---|---|---|---|" + "---|" * len(systems)]
     for cid in cases:
@@ -222,19 +247,22 @@ def main() -> None:
         cells = []
         for s in systems:
             v, o = matrix.get((s, cid), ("—", "missing"))
-            mark = {"correct": "✓", "false_accept": "✗✗", "false_reject": "✗", "undecided": "·", "error": "E", "missing": "?"}[o]
-            cells.append(f"{v} {mark}")
+            cells.append(f"{v} {MARKS[o]}")
         L.append(f"| {cid} | {lab['label']} | {lab['max_error_over_tolerance']:.2f} | "
                  f"{','.join(lab['label_unstable']) or ''} | " + " | ".join(cells) + " |")
-    L += ["", "✓ correct · ✗✗ **false acceptance** · ✗ false rejection · `·` INCONCLUSIVE (safe, undecided) · E error · ? missing",
-          ""]
+    L += ["", "✓ correct · ✗✗ **false acceptance** · ✗ false rejection · `·` INCONCLUSIVE (safe, undecided) · "
+              "`~` / `~·` verdict on an ambiguous case (not scored; INCONCLUSIVE expected) · E error · ? missing · "
+              "S stale (not counted)", ""]
     keys = [("n", "cases"), ("n_flawed", "flawed cases (decided)"), ("n_credible", "credible cases (decided)"),
             ("n_ambiguous", "ambiguous cases (decided)"),
             ("false_acceptance_rate", "**false acceptance** (flawed → ACCEPT)"), ("detection_rate", "detection (flawed → REJECT)"),
             ("missed_but_safe_rate", "missed but safe (flawed → INCONCLUSIVE)"),
             ("correct_acceptance_rate", "correct acceptance (credible → ACCEPT)"),
             ("false_rejection_rate", "false rejection (credible → REJECT)"), ("inconclusive_rate", "inconclusive (all decided)"),
-            ("ambiguous_verdicts", "ambiguous cases: verdicts"), ("n_error", "errors (excluded from rates)"),
+            ("ambiguous_verdicts", "ambiguous cases: verdicts"),
+            ("ambiguous_accepts_above_best_estimate_tau", "ambiguous cases ACCEPTed although best-estimate error > τ"),
+            ("n_error", "errors (excluded from rates)"), ("n_stale_excluded", "stale results (excluded)"),
+            ("n_missing", "missing results"),
             ("errors_by_label", "errors by label"),
             ("mean_experiments", "mean extra simulations / case"), ("mean_compute_relative_to_root", "mean extra compute / case (× root)"),
             ("total_experiment_wall_hours", "total experiment wall time (h)"), ("llm_cost_usd", "LLM cost (USD)"),
@@ -250,7 +278,7 @@ def main() -> None:
             else:
                 vals.append("—" if x is None else (f"{x:.2f}" if isinstance(x, float) else str(x)))
         L.append(f"| {name} | " + " | ".join(vals) + " |")
-    L += variance_table(bench, cases, labels)
+    L += var_lines
     (REPO / "reports" / "benchmark_tables.md").write_text("\n".join(L) + "\n")
 
     # ---------------- figures ----------------
@@ -272,10 +300,12 @@ def main() -> None:
     ax.tick_params(length=0)
     for sp in ax.spines.values():
         sp.set_visible(False)
-    keys_l = ["correct", "false_accept", "false_reject", "undecided", "error"]
-    ax.legend([plt.Rectangle((0, 0), 1, 1, color=STATUS_COLORS[k]) for k in keys_l],
-              ["correct", "false acceptance (dangerous)", "false rejection", "inconclusive", "error"],
-              loc="upper center", bbox_to_anchor=(0.5, -0.03), ncol=5, fontsize=7.5, frameon=False)
+    keys_l = ["correct", "false_accept", "false_reject", "undecided", "ambiguous_accept", "ambiguous_reject",
+              "ambiguous_inconclusive", "error"]
+    ax.legend([plt.Rectangle((0, 0), 1, 1, color=STATUS_COLORS[k], ec="#b4b2ad", lw=0.4) for k in keys_l],
+              ["correct", "false acceptance (dangerous)", "false rejection", "inconclusive (safe)",
+               "ambiguous case: ACCEPT", "ambiguous case: REJECT", "ambiguous case: INCONCLUSIVE (expected)", "error"],
+              loc="upper center", bbox_to_anchor=(0.5, -0.03), ncol=4, fontsize=7, frameon=False)
     ax.set_title("Verdict per case and system (text = verdict; colour = outcome vs ground-truth label)", fontsize=9)
     fig.tight_layout()
     fig.savefig(figdir / "verdict_matrix.png", dpi=160)

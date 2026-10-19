@@ -20,6 +20,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
 from socrates.case_generation.spec import ProblemSpec  # noqa: E402
+from socrates.checks.static import statistical_uncertainty  # noqa: E402
 from socrates.checks.verifier import verify  # noqa: E402
 from socrates.orchestration.loop import graph_for  # noqa: E402
 from socrates.orchestration.store import RunStore  # noqa: E402
@@ -31,6 +32,10 @@ LIT = {  # research.md section 2.3 (reference band; NOT used by the verifier)
     "rms_lift_coefficient": {"band": (0.222, 0.235), "wide": (0.215, 0.235)},
 }
 QS = ["mean_drag_coefficient", "strouhal_number", "rms_lift_coefficient"]
+
+
+def fmt(x, spec=".4f"):
+    return "—" if x is None else format(x, spec)
 
 
 def sta(store, rid):
@@ -54,10 +59,22 @@ def main() -> None:
             return r.config.time.delta_t
         return 1.0 / r.config.domain.half_height
 
-    truth, chains_out, overlap = {}, {}, {}
+    truth, chains_out, overlap, skipped = {}, {}, {}, {}
     dt_root = rb.config.time.delta_t
+    tau = spec.verification.requested_tolerance
+
+    def u_stat_abs(rid, q):
+        u, _ = statistical_uncertainty(store.load(rid).evidence or {}, q)
+        v = sta(store, rid).get(q)
+        return (u or 0.0) * abs(v or 0.0)
+
     for q in QS:
         per = {}
+        missing = [r for f in ("time", "mesh", "domain") for r in ch[f] if sta(store, r).get(q) is None]
+        if missing:
+            skipped[q] = f"stationary value missing in {missing}"
+            print(f"{q}: no reference computed ({skipped[q]})", flush=True)
+            continue
         for factor, order in (("time", 2.0), ("mesh", 2.0), ("domain", 1.0)):
             rids = ch[factor]
             vals = [sta(store, r).get(q) for r in rids]
@@ -66,7 +83,7 @@ def main() -> None:
                 # time error that the time chain already corrects for (double counting).  Shift every mesh
                 # level to the baseline dt with the time chain's own error model e(dt) = C dt^p.
                 tc = per["time"]
-                p_t = tc["order"] if tc.get("order") and 0.5 * 2.0 <= tc["order"] <= 4.0 else 2.0
+                p_t = tc.get("order_used") or 2.0  # the order the time extrapolation actually used
                 c_t = (sta(store, root)[q] - tc["extrapolated"]) / dt_root ** p_t
                 dts = [store.load(r).config.time.delta_t for r in rids]
                 shift = [c_t * (dt ** p_t - dt_root ** p_t) for dt in dts]
@@ -77,18 +94,28 @@ def main() -> None:
             per[factor] = extrapolate_chain(vals, [size(factor, r) for r in rids], order)
             per[factor]["runs"] = rids
         root_v = sta(store, root)[q]
-        truth[q] = combine_truth(root_v, per)
+        # statistical uncertainty of the members, carried through the extrapolation weights (the root's once)
+        stat = {"root": u_stat_abs(root, q)}
+        for factor, c in per.items():
+            fin, mid = c["runs"][-1], c["runs"][-2]
+            stat[factor] = ((c["weights"]["finest"] * u_stat_abs(fin, q)) ** 2
+                            + (c["weights"]["middle"] * u_stat_abs(mid, q)) ** 2) ** 0.5
+        truth[q] = combine_truth(root_v, per, statistical=stat)
         truth[q]["root_value"] = root_v
         if q in overlap:
             no_shift = dict(per, mesh=dict(per["mesh"], extrapolated=overlap[q]["mesh_extrapolated_without_shift"]))
-            overlap[q]["truth_without_shift"] = combine_truth(root_v, no_shift)["value"]
+            overlap[q]["truth_without_shift"] = combine_truth(root_v, no_shift, statistical=stat)["value"]
             truth[q]["time_overlap_correction"] = overlap[q]
         chains_out[q] = per
         lo, hi = LIT[q]["band"]
         truth[q]["literature_band"] = [lo, hi]
         truth[q]["in_band"] = lo <= truth[q]["value"] <= hi
+        t = tau.get(q)
+        if t is not None:  # pre-registered criterion 2 (design.md section 19): band widened by tau
+            truth[q]["literature_band_widened_by_tau"] = [lo * (1 - t), hi * (1 + t)]
+            truth[q]["in_widened_band"] = lo * (1 - t) <= truth[q]["value"] <= hi * (1 + t)
     (REPO / "results" / "baseline" / "truth.json").write_text(
-        json.dumps({"truth": truth, "chains": chains_out, "root": root}, indent=1, default=float))
+        json.dumps({"truth": truth, "chains": chains_out, "root": root, "skipped": skipped}, indent=1, default=float))
 
     # full-study verification verdict of the baseline
     all_runs = [root] + [e["run_id"] for v in study["chains"].values() for e in v]
@@ -144,12 +171,18 @@ def main() -> None:
           f"| steps per shedding period | {tb['steps_per_period']:.0f} |",
           f"| Cd 95 % CI half-width (batch means) | {sw['mean_cd_ci95_halfwidth']:.2e} |"]
     L.append("\n### Quantities of interest vs literature (research.md §2.3)\n")
-    L.append("| quantity | reported (declared window) | stationary | literature band | in band |\n|---|---|---|---|---|")
+    L.append("Criterion 2 (pre-registered, design.md §19) uses the band widened by τ; the narrow band is shown for information.\n")
+    L.append("| quantity | reported (declared window) | stationary | literature band | in band | band widened by τ | **in widened band** |\n|---|---|---|---|---|---|---|")
     rep = ev["qoi"]["reported"]
     st = ev["qoi"]["stationary"]
     for q in QS:
         lo, hi = LIT[q]["band"]
-        L.append(f"| {q} | {rep.get(q):.4f} | {st.get(q):.4f} | {lo}–{hi} | {lo <= st[q] <= hi} |")
+        t = tau.get(q)
+        x = st.get(q)
+        wide = f"{lo * (1 - t):.4f}–{hi * (1 + t):.4f}" if t is not None else "— (not a requested quantity)"
+        inw = (lo * (1 - t) <= x <= hi * (1 + t)) if (t is not None and x is not None) else "—"
+        L.append(f"| {q} | {fmt(rep.get(q))} | {fmt(x)} | {lo}–{hi} | {(lo <= x <= hi) if x is not None else '—'} | "
+                 f"{wide} | {inw} |")
     L.append("\n### One-factor-at-a-time verification study\n")
     L.append("| factor | run | size | Cd | St | Cl rms |\n|---|---|---|---|---|---|")
     for factor in ("mesh", "time", "domain"):
@@ -159,26 +192,47 @@ def main() -> None:
                      f"{x.get('strouhal_number', float('nan')):.4f} | {x.get('rms_lift_coefficient', float('nan')):.4f} |")
     for rid in ch["longer"][1:]:
         x = sta(store, rid)
-        L.append(f"| run longer (250 D/U) | `{rid}` | — | {x['mean_drag_coefficient']:.4f} | {x['strouhal_number']:.4f} | {x['rms_lift_coefficient']:.4f} |")
+        L.append(f"| run longer (250 D/U) | `{rid}` | — | {fmt(x.get('mean_drag_coefficient'))} | {fmt(x.get('strouhal_number'))} | "
+                 f"{fmt(x.get('rms_lift_coefficient'))} |")
+    L.append("\n**Statistical reliability of every study member** (same measures as the verifier's statistics check; "
+             "the truth uncertainty carries these through the extrapolation weights):\n")
+    L.append("| run | stationary cycles | MSER at cap | u_stat Cd | u_stat St | Cd drift in window |\n|---|---|---|---|---|---|")
+    seen = []
+    for factor in ("mesh", "time", "domain", "longer"):
+        for rid in ch[factor]:
+            if rid in seen:
+                continue
+            seen.append(rid)
+            e = store.load(rid).evidence or {}
+            sw_ = (e.get("forces") or {}).get("stationary_window") or {}
+            ucd, _ = statistical_uncertainty(e, "mean_drag_coefficient")
+            ust, _ = statistical_uncertainty(e, "strouhal_number")
+            L.append(f"| `{rid}` | {sw_.get('n_cycles')} | {(e.get('temporal_behavior') or {}).get('mser_hit_cap')} | "
+                     f"{fmt(ucd, '.2e')} | {fmt(ust, '.2e')} | {fmt(sw_.get('mean_cd_relative_drift'), '+.2e')} |")
     L.append("\n### Richardson extrapolation per factor and combined in-house reference\n")
     L.append("| quantity | factor | method | extrapolated | correction vs baseline |\n|---|---|---|---|---|")
-    for q in QS:
+    QT = [q for q in QS if q in truth]
+    for q, why in skipped.items():
+        L.append(f"| {q} | — | not computed: {why} | — | — |")
+    for q in QT:
         for factor, c in chains_out[q].items():
             L.append(f"| {q} | {factor} | {c['method']} | {c['extrapolated']:.5f} | {truth[q]['corrections'][factor]:+.5f} |")
-    L.append("\nMesh levels were run with dt = " + ", ".join(f"{d:.5g}" for d in overlap[QS[0]]["mesh_level_dt"])
+    L.append("\nMesh levels were run with dt = " + ", ".join(f"{d:.5g}" for d in overlap[QT[0]]["mesh_level_dt"])
              + " (Courant control), so each mesh level is shifted to the baseline dt with the time chain's error model "
                "C·dt^p before extrapolation (otherwise part of the time error would be counted twice):\n")
     L.append("| quantity | p (time) | shifts applied to mesh levels | T without the shift | T with the shift | difference |\n|---|---|---|---|---|---|")
-    for q in QS:
+    for q in QT:
         o = overlap[q]
         L.append(f"| {q} | {o['time_error_model']['p']:.2f} | " + ", ".join(f"{x:+.2e}" for x in o["shift_applied"])
                  + f" | {o['truth_without_shift']:.5f} | {truth[q]['value']:.5f} | "
                  f"{(truth[q]['value'] - o['truth_without_shift']) / truth[q]['value']:+.3%} |")
-    L.append("\n| quantity | baseline (stationary) | in-house reference T | uncertainty of T | literature band | T in band |\n|---|---|---|---|---|---|")
-    for q in QS:
+    L.append("\n| quantity | baseline (stationary) | in-house reference T | uncertainty of T (of which statistical) | "
+             "literature band | T in band | T in band widened by τ |\n|---|---|---|---|---|---|---|")
+    for q in QT:
         tq = truth[q]
-        L.append(f"| {q} | {tq['root_value']:.4f} | **{tq['value']:.4f}** | ±{tq['uncertainty_rel']:.2%} | "
-                 f"{tq['literature_band'][0]}–{tq['literature_band'][1]} | {tq['in_band']} |")
+        stat_rel = sum(u**2 for u in tq["statistical_terms"].values()) ** 0.5 / abs(tq["value"])
+        L.append(f"| {q} | {tq['root_value']:.4f} | **{tq['value']:.4f}** | ±{tq['uncertainty_rel']:.2%} ({stat_rel:.2%}) | "
+                 f"{tq['literature_band'][0]}–{tq['literature_band'][1]} | {tq['in_band']} | {tq.get('in_widened_band', '—')} |")
     L.append("\n### Deterministic verification of the baseline\n")
     L.append(f"- Static verifier (baseline run only): **{static.verdict}**; missing components: {static.missing_components}.")
     L.append(f"- With the full study ({len(all_runs) - 1} extra runs): **{v.verdict}**.")

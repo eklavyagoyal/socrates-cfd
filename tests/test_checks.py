@@ -320,3 +320,26 @@ def test_very_fast_convergence_uses_above_band_rule():
     res = assess_sequence(check="m", component="mesh", qoi="q", values=[1.3400, 1.3346, 1.33447],
                           sizes=[1.0, 1 / r, 0.5], run_ids=["a", "b", "c"], formal_order=2.0, tau=0.03, cfg=CFG, noise=2e-5)
     assert res.status == Status.PASS and "outside" in res.details["method"]
+
+
+def test_truth_extrapolation_never_uses_a_faster_order_than_observed():
+    from socrates.orchestration.truth import extrapolate_chain
+
+    h = [1.0, 2 ** -0.5, 0.5]
+    vals = [1.0 + 0.01 * x**0.6 for x in h]  # slow, pre-asymptotic convergence to 1.0 (p = 0.6 < band)
+    out = extrapolate_chain(vals, h, 2.0)
+    assert abs(out["order_used"] - 0.6) < 1e-6 and abs(out["extrapolated"] - 1.0) < 1e-9
+    assert out["uncertainty"] >= abs(out["extrapolated"] - vals[-1]) * 2.9  # Fs = 3 outside the band
+
+
+def test_label_unstable_only_when_the_truth_interval_can_change_the_label():
+    from socrates.orchestration.truth import label_case
+
+    tol = {"cd": 0.03, "st": 0.03}
+    T = {"cd": 1.0, "st": 1.0}
+    u = {"cd": 0.005, "st": 0.005}
+    # st straddles tau/2 but cd is clearly beyond tau: flawed whatever the truth, so not 'unstable'
+    lab = label_case({"cd": 1.06, "st": 1.015}, T, tol, truth_uncertainty=u)
+    assert lab["label"] == "flawed" and lab["label_unstable"] == [] and lab["threshold_straddled"] == ["st"]
+    lab = label_case({"cd": 1.0, "st": 1.015}, T, tol, truth_uncertainty=u)
+    assert lab["label"] == "ambiguous" and lab["label_unstable"] == ["st"]

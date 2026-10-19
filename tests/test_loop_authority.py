@@ -145,3 +145,16 @@ def test_planner_failures_are_counted_and_classified_as_infrastructure(monkeypat
     assert res2["n_planner_failures"] == 0 and not is_infrastructure_error(res2)
     assert is_infrastructure_error({"verdict": "ERROR"})
     assert is_infrastructure_error({"final_verdict": "INCONCLUSIVE", "stop_reason": "verifier error: boom"})
+
+
+def test_outage_after_an_invalid_proposal_is_still_an_infrastructure_error(monkeypatch):
+    from socrates.orchestration.evaluation import is_infrastructure_error
+
+    monkeypatch.setattr(loop_mod, "verify", _verdicts(["INCONCLUSIVE"]))
+    p = Scripted([_more(parent="nope")])  # one invalid proposal, then the LLM fails on every call
+    res = run_adaptive("root", FakeStore(), SPEC, p, Budget(max_invalid_actions=3), vcfg={}).to_dict()
+    assert res["stop_reason"] == "repeated planner failures" and res["n_planner_failures"] == 2
+    assert is_infrastructure_error(res)
+    p2 = Scripted([_more(parent="nope"), _more(parent="nope"), _more(parent="nope")])
+    res2 = run_adaptive("root", FakeStore(), SPEC, p2, Budget(max_invalid_actions=3), vcfg={}).to_dict()
+    assert not is_infrastructure_error(res2)  # the planner's own invalid proposals are a verification outcome

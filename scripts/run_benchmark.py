@@ -22,11 +22,11 @@ sys.path.insert(0, str(REPO / "src"))
 
 from socrates.case_generation.catalog import load_case_definition  # noqa: E402
 from socrates.case_generation.spec import CaseConfig, ProblemSpec  # noqa: E402
+from socrates.orchestration.evaluation import is_infrastructure_error, make_stamp, staleness  # noqa: E402
 from socrates.orchestration.loop import Budget  # noqa: E402
 from socrates.orchestration.store import RunStore  # noqa: E402
 from socrates.orchestration.systems import (  # noqa: E402
     decision_code_fingerprint,
-    is_infrastructure_error,
     llm_judge,
     system_a,
     system_b,
@@ -59,13 +59,14 @@ def _git(*args: str) -> str | None:
 
 
 BENCH_COMMIT = _git("rev-parse", "HEAD")
-BENCH_SRC_DIRTY = bool(_git("status", "--porcelain", "--", "src", "configs"))
+_porcelain = _git("status", "--porcelain", "--", "src", "configs")
+BENCH_SRC_DIRTY = None if _porcelain is None else bool(_porcelain)  # None: git unavailable, state unknown
 
 
-def stamp(root) -> dict:
-    return {"decision_code": FINGERPRINT, "root_config_hash": root.provenance.get("config_hash"),
-            "benchmark_git_commit": BENCH_COMMIT, "benchmark_src_dirty": BENCH_SRC_DIRTY,
-            "root_git_commit": (root.provenance.get("software") or {}).get("socrates_git_commit")}
+def stamp(store: RunStore, res: dict, root) -> dict:
+    return make_stamp(store, res, FINGERPRINT, root_config_hash=root.provenance.get("config_hash"),
+                      benchmark_git_commit=BENCH_COMMIT, benchmark_src_dirty=BENCH_SRC_DIRTY,
+                      root_git_commit=(root.provenance.get("software") or {}).get("socrates_git_commit"))
 
 
 def run_one(system: str, case: dict, store: RunStore, spec: ProblemSpec, budget: Budget) -> dict:
@@ -73,11 +74,11 @@ def run_one(system: str, case: dict, store: RunStore, spec: ProblemSpec, budget:
     root = root_for(store, spec, case)
     if f.exists():
         old = json.loads(f.read_text())
-        st = old.get("stamp") or {}
-        if (not is_infrastructure_error(old) and st.get("decision_code") == FINGERPRINT
-                and st.get("root_config_hash") == root.provenance.get("config_hash")):
+        why = staleness(old, f, store, FINGERPRINT, root.run_id)
+        if not is_infrastructure_error(old) and why is None:
             return old
-        # stale (produced by different decision code or another root) or a recorded error: recompute
+        # stale (other decision code, other root, or evidence changed since) or a recorded error: recompute
+        print(f"{system:8s} {case['id']:24s} recomputing: {why or 'infrastructure error'}", flush=True)
     if system == "A":
         res = system_a(root.evidence or {})
     elif system == "B":
@@ -95,16 +96,17 @@ def run_one(system: str, case: dict, store: RunStore, spec: ProblemSpec, budget:
         raise ValueError(system)
     res["case"] = case["id"]
     res["root_run"] = root.run_id
-    res["stamp"] = stamp(root)
+    res["stamp"] = stamp(store, res, root)
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(json.dumps(res, indent=1, default=str))
     if system in ("C-rule", "C-llm", "Bexh") or system.startswith("C-llm-r"):
         rep = REPO / "reports" / "cases" / f"{case['id']}__{system}.md"
         try:
-            write_case_report(rep, store, spec,
-                              res if system != "Bexh" else {"verdict": res["verifier"], "root_run": root.run_id,
-                                                             "runs": res["runs"], "final_verdict": res["verdict"]},
-                              title=f"{case['id']} ({system})")
+            bexh_view = {"verdict": res.get("verifier"), "root_run": root.run_id, "runs": res.get("runs"),
+                         "final_verdict": res.get("verdict"),
+                         "experiments": [{**e, "parent_run": e["parent"]} for e in res.get("experiments") or []
+                                         if e.get("run_id")]}
+            write_case_report(rep, store, spec, res if system != "Bexh" else bexh_view, title=f"{case['id']} ({system})")
         except Exception:  # noqa: BLE001 -- a report failure must not discard the stored result
             rep.with_suffix(".report_error.txt").write_text(traceback.format_exc())
             print(f"report for {case['id']} {system} failed; see {rep.with_suffix('.report_error.txt')}", flush=True)

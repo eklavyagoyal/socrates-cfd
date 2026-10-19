@@ -11,7 +11,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
+from socrates.orchestration.evaluation import is_infrastructure_error, staleness  # noqa: E402
 from socrates.orchestration.store import RunStore  # noqa: E402
+from socrates.orchestration.systems import decision_code_fingerprint  # noqa: E402
 
 BENCH = REPO / "results" / "benchmark"
 ATT = REPO / "results" / "attacks"
@@ -23,6 +25,10 @@ def fmt(x, nd=4):
     if isinstance(x, float):
         return f"{x:.{nd}g}"
     return str(x)
+
+
+def verdict_of(r: dict) -> str:
+    return "ERROR" if is_infrastructure_error(r) else (r.get("final_verdict") or r.get("verdict") or "—")
 
 
 def loop_trace(store: RunStore, r: dict, qs: list[str]) -> list[str]:
@@ -68,41 +74,49 @@ def main() -> None:
             continue
         e = lab.get("errors", {})
         rep = lab.get("reported", {})
-        note = "; ".join(lab.get("setup_problems") or []) or (("unstable: " + ",".join(lab["label_unstable"]))
+        note = "; ".join(lab.get("setup_problems") or []) or (("label unstable under the truth uncertainty: "
+                                                                  + ",".join(lab["label_unstable"]))
                                                                  if lab.get("label_unstable") else "")
         L.append(f"| {cid} | {lab['intended']} | **{lab['label']}** | {fmt(rep.get(qs[0]))} | {fmt(rep.get(qs[1]))} | "
                  f"{fmt(e.get(qs[0]) and 100 * e[qs[0]], 3)}% | {fmt(e.get(qs[1]) and 100 * e[qs[1]], 3)}% | {note} |")
     L += ["", "## Verdicts and pre-registered rates", "", tables, "",
           "![verdict matrix](figures/verdict_matrix.png)", "", "![rates](figures/rates.png)", "",
           "![cost vs detection](figures/cost_vs_detection.png)", "", "## Adaptive-loop traces", ""]
-    for cid in labels["cases"]:
+    fp = decision_code_fingerprint()
+    for cid, lab in labels["cases"].items():
         for s in ("C-rule", "C-llm"):
             f = BENCH / s / f"{cid}.json"
             if not f.exists():
                 continue
             r = json.loads(f.read_text())
-            L.append(f"**{cid} — {s}: {r.get('final_verdict') or r.get('verdict')}** "
+            why = staleness(r, f, store, fp, lab.get("root_run"))
+            if why:
+                L.append(f"**{cid} — {s}: stale result, not shown** ({why})")
+                L.append("")
+                continue
+            L.append(f"**{cid} — {s}: {verdict_of(r)}** "
                      f"({r.get('stop_reason', '')}; {len([e for e in r.get('experiments') or [] if e.get('run_id')])} experiments, "
                      f"{fmt((r.get('cost') or {}).get('relative_to_root'), 3)}× root compute)")
             L += loop_trace(store, r, qs)
             L.append("")
-    L += ["## LLM judge (evidence only, no experiments, no checks) — reasoning excerpts", ""]
+    L += ["## LLM judge (evidence only, no experiments, no checks) — reasoning excerpts", "",
+          "_First two points of each judgement (the judge states its main reason first); full text in "
+          "`results/benchmark/L-judge/`._", ""]
     for cid in labels["cases"]:
         f = BENCH / "L-judge" / f"{cid}.json"
         if f.exists():
             r = json.loads(f.read_text())
-            first = (r.get("reasoning_summary") or [""])[-1]
-            L.append(f"- **{cid}: {r.get('verdict')}** ({r.get('confidence')}) — {first[:300]}")
+            pts = [x[:220] for x in (r.get("reasoning_summary") or [])[:2]]
+            L.append(f"- **{cid}: {verdict_of(r)}** ({r.get('confidence')}) — " + " / ".join(pts))
     if ATT.exists():
-        L += ["", "## Attacks on the verifier", "", "| attack | " + " | ".join(
-            s for s in ["B-v1", "C-rule-v1", "C-llm-v1", "C-llm-v1+review", "B-v2", "C-rule-v2"]) + " |",
-              "|---|" + "---|" * 6]
+        att_systems = ["B-v1", "L-judge", "C-rule-v1", "C-llm-v1", "C-llm-v1+review", "B-v2", "C-rule-v2"]
+        L += ["", "## Attacks on the verifier", "", "| attack | " + " | ".join(att_systems) + " |",
+              "|---|" + "---|" * len(att_systems)]
         for f in sorted((REPO / "cases" / "attacks").glob("*.yaml")):
             row = []
-            for s in ["B-v1", "C-rule-v1", "C-llm-v1", "C-llm-v1+review", "B-v2", "C-rule-v2"]:
+            for s in att_systems:
                 g = ATT / s / f"{f.stem}.json"
-                row.append((json.loads(g.read_text()).get("final_verdict") or json.loads(g.read_text()).get("verdict"))
-                           if g.exists() else "—")
+                row.append(verdict_of(json.loads(g.read_text())) if g.exists() else "—")
             L.append(f"| {f.stem} | " + " | ".join(row) + " |")
     (REPO / "reports" / "benchmark_results.md").write_text("\n".join(L) + "\n")
     print("wrote reports/benchmark_results.md")

@@ -6,6 +6,7 @@ Systems (results/attacks/<system>/<case>.json):
   B-v1, C-rule-v1, C-llm-v1     pre-registered verifier (configs/verification.yaml)
   C-llm-v1+review               same, plus the LLM acceptance review (veto-only)
   B-v2, C-rule-v2               verifier v2 (configs/verification_v2.yaml: geometry + inlet consistency)
+  L-judge                       evidence-only LLM judge (the strongest no-experiment baseline on the benchmark)
 Also: review-only and B-v2 applied to every benchmark case, to measure false vetoes / false rejections
 introduced by the extensions (no new simulations).
 """
@@ -26,7 +27,8 @@ from socrates.checks.base import load_config  # noqa: E402
 from socrates.checks.verifier import RunGraph, RunNode, verify  # noqa: E402
 from socrates.orchestration.loop import Budget, LLMPlanner, RuleBasedPlanner, run_adaptive  # noqa: E402
 from socrates.orchestration.store import RunStore  # noqa: E402
-from socrates.orchestration.systems import review_only  # noqa: E402
+from socrates.orchestration.evaluation import is_infrastructure_error  # noqa: E402
+from socrates.orchestration.systems import llm_judge, review_only  # noqa: E402
 from socrates.reporting.report import write_case_report  # noqa: E402
 
 OUT = REPO / "results" / "attacks"
@@ -57,13 +59,16 @@ def main() -> None:
     def job(args):
         system, path = args
         cid = path.stem
-        if (OUT / system / f"{cid}.json").exists():
+        f = OUT / system / f"{cid}.json"
+        if f.exists() and not is_infrastructure_error(json.loads(f.read_text())):
             return
         try:
             _, r = root(path)
             if system in ("B-v1", "B-v2"):
                 g = RunGraph([RunNode(r.run_id, r.config, r.evidence or {}, ok=r.ok)], r.run_id)
                 res = verify(g, spec, V1 if system == "B-v1" else V2).to_dict()
+            elif system == "L-judge":
+                res = llm_judge(store, spec, r.run_id)
             else:
                 planner = LLMPlanner() if "llm" in system else RuleBasedPlanner()
                 res = run_adaptive(r.run_id, store, spec, planner, Budget(), vcfg=V2 if system.endswith("v2") else V1,
@@ -76,7 +81,7 @@ def main() -> None:
         except Exception:  # noqa: BLE001
             print(f"{system:16s} {cid:28s} -> ERROR\n{traceback.format_exc()}", flush=True)
 
-    systems = ["B-v1", "B-v2", "C-rule-v1", "C-llm-v1", "C-llm-v1+review", "C-rule-v2"]
+    systems = ["B-v1", "B-v2", "L-judge", "C-rule-v1", "C-llm-v1", "C-llm-v1+review", "C-rule-v2"]
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
         list(ex.map(job, [(s, p) for s in systems for p in attacks]))
 

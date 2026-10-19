@@ -1,0 +1,90 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 38.450696910998886,
+    "cost_usd": 0.05404291,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13381,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 27,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "F1_upwind_convection-e460c39ac86c": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed, and there is no measured FAIL to justify REJECT.",
+    "Mesh, time and domain uncertainty components are unmeasured for both mean_drag_coefficient and strouhal_number. Absence of evidence is not a pass.",
+    "R0 uses 'Gauss upwind', which is formally first order. The convection_scheme_order check is INCONCLUSIVE and says diffusion must be shown negligible by mesh refinement.",
+    "The mesh is coarse for a first-order scheme: representative_cell_size_D 0.45745, 30580 cells, wall_first_cell_D 0.005, wake_last_cell_D 1.0209. Numerical diffusion could shift Strouhal and drag by more than the 0.03 tolerance.",
+    "R0 statistics are acceptable: drag ci95 0.0034414, Strouhal 0.12581 (window) vs 0.12605 (FFT). Statistical uncertainty is 0.01069 (drag) and 0.01474 (Strouhal), and the latter is already near the 1.50% limit.",
+    "The Strouhal frequency resolution is 0.013333. This is large compared with the 3% tolerance on a value of about 0.126, so the refinement comparison must be read with that noise in mind.",
+    "physics_regime is INCONCLUSIVE: lift amplitude changes +11.3% across the analysed window. stationary_window_start_is_mser_cap is true (67.226). The record may not be a sustained limit cycle, so RUN_LONGER is a likely follow-up.",
+    "Mesh refinement is chosen first because the first-order scheme on a coarse mesh is the most likely flaw to move both quantities by more than tolerance. It is also the only experiment that can resolve the convection_scheme_order check.",
+    "Budget is ample: 0 of 6 experiments used and 0.0 of 12.0 relative compute used. The REFINE_MESH estimate from R0 is 1691 s, against a root cost of 1373.7 s."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error (no EXPAND_DOMAIN run)",
+    "Confirmation that the lift oscillation is a sustained limit cycle (+11.3% amplitude change in the analysed window; MSER cap hit)",
+    "Demonstration that first-order upwind numerical diffusion is negligible"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "First-order upwind numerical diffusion on the coarse R0 mesh biases the drag and Strouhal number by more than the 3% tolerance.",
+     "test": "REFINE_MESH from R0 with factor 2.0. Compare mean_drag_coefficient and strouhal_number between R0 and the refined run. A change above the 0.03 tolerance would confirm the hypothesis and give a FAIL. A change well below tolerance, relative to the statistical noise, would refute it."
+    },
+    {
+     "hypothesis": "The R0 lift record has not yet reached a saturated limit cycle, so the reported statistics are biased by the transient.",
+     "test": "RUN_LONGER on R0 and check that the lift amplitude change in the analysed window falls to near zero."
+    },
+    {
+     "hypothesis": "The artificial boundaries have a non-negligible effect (blockage_ratio 0.0125, symmetry lateral boundaries).",
+     "test": "EXPAND_DOMAIN from R0 with factor 2.0 and compare the two quantities."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "F1_upwind_convection-e460c39ac86c",
+    "reason": "R0 uses first-order Gauss upwind on a coarse mesh (representative_cell_size_D 0.45745), and the mesh error is entirely unmeasured. This is the flaw most likely to change drag or Strouhal number by more than 3%. The largest allowed factor gives the clearest signal for a first-order scheme, and the budget allows it (0 of 6 experiments and 0.0 of 12.0 relative compute used).",
+    "expected_outcome": "If the drag and Strouhal changes between R0 and the refined run are well below 0.03, the mesh component can be quantified and the next steps are time-step and domain checks plus a longer run. If either quantity changes by more than 0.03 beyond the noise, the verifier records a FAIL and R0 should be REJECTED."
+   },
+   "outcome": "executed -> F1_upwind_convection.m2-a5b11786bf96 (completed)"
+  }
+ ]
+}

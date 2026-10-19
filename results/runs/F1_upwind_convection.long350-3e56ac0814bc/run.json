@@ -1,0 +1,169 @@
+{
+  "run_id": "F1_upwind_convection.long350-3e56ac0814bc",
+  "status": "running",
+  "owner_pid": 10692,
+  "created": "2026-10-19T21:14:39+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "F1_upwind_convection.long350",
+    "description": "RUN_LONGER {'additional_convective_times': 200.0} from F1_upwind_convection-e460c39ac86c",
+    "mesh": {
+      "refinement": 1.0,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 35,
+      "n_downstream": 111,
+      "n_lateral": 45,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 30.0,
+      "downstream": 50.0,
+      "half_height": 40.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "backward",
+      "div_U": "Gauss upwind",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 1,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.01,
+      "end_time": 350.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 75.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "d8708e35298d97d1",
+  "parent_run": "F1_upwind_convection-e460c39ac86c",
+  "launch_reason": "The verifier blocks mesh_sensitivity because R0 is not statistically reliable. R0 also has an INCONCLUSIVE physics_regime (+11.3% lift-amplitude change, MSER cap hit). R0 is the cheapest run to extend (916 s estimated at the default length, against 5959 s for R1). It tests the most likely benign explanation for the large R0-R1 Strouhal difference, which is a transient and a coarse frequency resolution (0.013333). It also tests whether the difference is real numerical diffusion.",
+  "launched_by": "llm_critic",
+  "experiment": {
+    "action": "RUN_LONGER",
+    "params": {
+      "additional_convective_times": 200.0
+    },
+    "parent_run": "F1_upwind_convection-e460c39ac86c",
+    "changes": {
+      "time.end_time": {
+        "from": 150.0,
+        "to": 350.0
+      }
+    },
+    "notes": [],
+    "initialisation": {
+      "kind": "restart",
+      "source_run": "F1_upwind_convection-e460c39ac86c"
+    },
+    "estimated_cell_steps": 611600000.0
+  },
+  "config_changes_from_parent": {
+    "time.end_time": {
+      "from": 150.0,
+      "to": 350.0
+    }
+  },
+  "initialisation": {
+    "kind": "restart",
+    "source_run": "F1_upwind_convection-e460c39ac86c",
+    "consistent": true
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  },
+  "restart_from_time_s": 10.0000000005
+}

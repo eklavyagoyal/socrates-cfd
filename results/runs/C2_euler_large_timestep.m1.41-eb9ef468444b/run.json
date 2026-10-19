@@ -1,6 +1,6 @@
 {
   "run_id": "C2_euler_large_timestep.m1.41-eb9ef468444b",
-  "status": "running",
+  "status": "failed",
   "owner_pid": 10692,
   "created": "2026-10-19T09:08:42+00:00",
   "problem_spec": {
@@ -183,5 +183,34 @@
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4
+  },
+  "started": "2026-10-19T09:08:52+00:00",
+  "finished": "2026-10-19T17:02:32+00:00",
+  "failure_kind": "solver",
+  "failure": {
+    "step": "pimpleFoam",
+    "returncode": -8,
+    "log_tail": "ExecutionTime = 324.85 s  ClockTime = 438 s\n\nCourant Number mean: 5.834834624e+101 max: 3.197809744e+103\nTime = 0.1946666667\n\nPIMPLE: iteration 1\nsmoothSolver:  Solving for Ux, Initial residual = 0.8168198056, Final residual = 9.81114733e-09, No Iterations 320\nsmoothSolver:  Solving for Uy, Initial residual = 0.7764505529, Final residual = 9.669261194e-09, No Iterations 380\nGAMG:  Solving for p, Initial residual = 0.9669471171, Final residual = 0.009111683472, No Iterations 15\ntime step continuity errors : sum local = 2.257870726e+99, global = -1.757646385e+98, cumulative = -1.990594834e+98\nGAMG:  Solving for p, Initial residual = 0.08878457016, Final residual = 6.851734441e-08, No Iterations 52\ntime step continuity errors : sum local = 2.514513931e+95, global = 1.311187368e+94, cumulative = -1.990463715e+98\nPIMPLE: iteration 2\nsmoothSolver:  Solving for Ux, Initial residual = 0.7566876178, Final residual = 9.385388549e-09, No Iterations 180\nsmoothSolver:  Solving for Uy, Initial residual = 0.7638418629, Final residual = 9.923396176e-09, No Iterations 198\n[stack trace]\n=============\n#1  Foam::sigFpe::sigHandler(int) in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libOpenFOAM.so\n#2  ? in /lib/x86_64-linux-gnu/libc.so.6\n#3  Foam::GAMGSolver::scale(Foam::Field<double>&, Foam::Field<double>&, Foam::lduMatrix const&, Foam::FieldField<Foam::Field, double> const&, Foam::UPtrList<Foam::lduInterfaceField const> const&, Foam::Field<double> const&, unsigned char) const in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libOpenFOAM.so\n#4  Foam::GAMGSolver::Vcycle(Foam::PtrList<Foam::lduMatrix::smoother> const&, Foam::Field<double>&, Foam::Field<double> const&, Foam::Field<double>&, Foam::Field<double>&, Foam::Field<double>&, Foam::Field<double>&, Foam::Field<double>&, Foam::PtrList<Foam::Field<double> >&, Foam::PtrList<Foam::Field<double> >&, unsigned char) const in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libOpenFOAM.so\n#5  Foam::GAMGSolver::solve(Foam::Field<double>&, Foam::Field<double> const&, unsigned char) const in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libOpenFOAM.so\n#6  Foam::fvMatrix<double>::solveSegregated(Foam::dictionary const&) in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libfiniteVolume.so\n#7  ? in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libfiniteVolume.so\n#8  Foam::fvMesh::solve(Foam::fvMatrix<double>&, Foam::dictionary const&) const in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libfiniteVolume.so\n#9  ? in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/bin/pimpleFoam\n#10  ? in /lib/x86_64-linux-gnu/libc.so.6\n#11  __libc_start_main in /lib/x86_64-linux-gnu/libc.so.6\n#12  ? in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/bin/pimpleFoam\n=============\n"
+  },
+  "raw_output_sha256": {
+    "log.blockMesh": "c78685bc25418eb0f90c13be42e6ae4c67402f4e512b6ad674cb950736e8c080",
+    "log.checkMesh": "d0f25562e2983a4df0eb1f133051677f398905bbfc875953d6e6137cc1a9fdce",
+    "log.mapFields": "c59ec90198f7db6734b19ead75ddff93c9dd09a8c7e077c36b3b6dbcb3a96fa5",
+    "log.pimpleFoam": "6ca3c506a6cc316f6546966ceaa2b53e463396f308673be1a35bc2f39b20f746"
+  },
+  "postprocessing_sha256": {
+    "flux_bottom/0/surfaceFieldValue.dat": "87708276c0949e59ed7a64d1b8dba39b2687eec1ab6031b61e4697dda2e13638",
+    "flux_inlet/0/surfaceFieldValue.dat": "54d3a5f8eb5bf3cca2d00fe33c945f0698498fa6230b8e7b9ea63f362a7b30fb",
+    "flux_outlet/0/surfaceFieldValue.dat": "659d1d076179b6b02d0ccf831fbb47264ce53f6f5768764a3e55cf588c5d1757",
+    "flux_top/0/surfaceFieldValue.dat": "51d047c520122cb696f3bfdd4503b5ad55eb37807a4eb2602e9766c90682e173",
+    "forceCoeffs1/0/coefficient.dat": "7935b808c7603f4d8c7bc709849e471afb6921f68c9682894901dec5e102f5ae",
+    "solverInfo1/0/solverInfo.dat": "454656cdf43d2fcc5a24b0316f2bf2a3cb21af363d61c51cea0b5c77097e8650"
+  },
+  "final_fields_sha256": {
+    "time": "0",
+    "files": {
+      "U": "5df2e0347f7cdeefd94e3082a2e1c5b2113f216d79fea4a7d81005d5315b51db",
+      "p": "2d14556838f34fc433c72188c764fc754d960f564dda2a2bebf0988a605cd1d8"
+    }
   }
 }

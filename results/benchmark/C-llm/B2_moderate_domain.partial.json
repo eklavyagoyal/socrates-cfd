@@ -1,0 +1,87 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 40.23899766100112,
+    "cost_usd": 0.05369631,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13243,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 41,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "B2_moderate_domain-55b85b2cd33e": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so I can't ACCEPT. Nothing invalidates R0, so I can't REJECT.",
+    "Measured components for R0 are tiny. Averaging and statistics uncertainty for mean_drag_coefficient are 1.858e-06 and 2.492e-05. For strouhal_number they are 7.006e-06 and 9.904e-06. Both are far below the 0.03 tolerance. The stationary window has 13 cycles. Sampling is therefore not the limiting factor.",
+    "Mesh, time and domain components are all unmeasured for both quantities, so combined_uncertainty is null. Each is INCONCLUSIVE because no experiment has been run.",
+    "The time-step evidence is moderately reassuring. R0 has time_step_convective_units 0.01, max Courant 0.73526 and 598.66 steps per shedding period. It also uses a second-order backward scheme. I rank time error as the least likely of the three to exceed 3%.",
+    "The domain is the most suspect. R0 has blockage_ratio 0.05, half_height_D 10 with symmetryPlane lateral boundaries, upstream_D 15 and downstream_D 25. The question asks for an unbounded stream. Symmetry walls at 5% blockage can plausibly shift both mean drag and Strouhal number by a few percent.",
+    "The mesh is fairly coarse, with 19160 cells, representative_cell_size_D 0.20424 and wake_last_cell_D 0.55293. Mesh error is a real candidate. EXPAND_DOMAIN costs less (763 s versus 1258 s for REFINE_MESH). It also tests the assumption the question states explicitly, that the stream is unbounded.",
+    "Budget is ample: 0 of 6 experiments used and 0 of 12 relative compute used. Mesh and time experiments can follow."
+   ],
+   "missing_evidence": [
+    "Domain truncation/blockage error for mean_drag_coefficient and strouhal_number (no EXPAND_DOMAIN run)",
+    "Mesh discretisation error for both quantities (no REFINE_MESH run)",
+    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run)",
+    "Combined uncertainty against the 0.03 tolerance and the 0.5*tolerance per-component rule"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The 5% blockage with symmetry lateral walls at 10D, plus the 15D inlet and 25D outlet, biases mean Cd and St by more than 1.5% (half the tolerance) relative to an unbounded stream.",
+     "test": "EXPAND_DOMAIN with factor 2.0 from R0. Compare mean Cd and St with R0 (1.3713 and 0.16704). A relative change above 1.5% on either quantity confirms the hypothesis. A change within noise (about 1e-5) refutes it."
+    },
+    {
+     "hypothesis": "The coarse mesh (cell size 0.20424 D, wake_last_cell 0.55293 D) shifts St or Cd by more than 1.5%.",
+     "test": "A later REFINE_MESH run (factor about 1.4142) from R0, if the domain run does not already show a significant effect."
+    },
+    {
+     "hypothesis": "The time step (0.01 D/U, 598.66 steps per period) is small enough that temporal error is negligible.",
+     "test": "A later REDUCE_TIME_STEP run (factor 2) from R0."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "B2_moderate_domain-55b85b2cd33e",
+    "reason": "R0 has 5% blockage with symmetry lateral boundaries (half height 10 D), and the question requires an unbounded stream. Artificial-boundary truncation is the error source most likely to move mean Cd and St by more than the 3% tolerance. It is also the cheapest experiment (763 s), because the near-field mesh is unchanged.",
+    "expected_outcome": "If the boundary effect is small, mean Cd and St stay within about 1.5% of R0 (1.3713 and 0.16704), which clears the domain component. If either shifts by more than 3%, the verifier can mark domain sensitivity as a FAIL and R0 is rejected. An intermediate shift means a further expansion or a larger factor is needed."
+   },
+   "outcome": "executed -> B2_moderate_domain.D2x-44c88f366919 (completed)"
+  }
+ ]
+}

@@ -6,7 +6,7 @@ This report asks two questions:
 
 Numbers come from `results/runs/` via `scripts/make_baseline_report.py`. The full generated tables are in
 [`baseline_generated.md`](baseline_generated.md); the reference and its chains are in `results/baseline/truth.json`.
-Two adversarial fact-checks of earlier drafts led to three further study stages (§3) and to corrections throughout.
+Three adversarial fact-checks of earlier drafts led to further study stages (§3) and to corrections throughout.
 
 **Question** (`configs/problem_cylinder_re100.yaml`): the time-mean drag coefficient and the Strouhal number of a
 10 mm rod in a uniform 0.15 m/s air stream (Re = 100), per unit span, to within 3 % each. The stream is to be treated
@@ -25,14 +25,17 @@ as unbounded.
 - **Drag: plausibly credible, not demonstrably.**
   - The baseline's best-estimate drag error (+1.20 %) is within τ/2 = 1.5 %.
   - The interval [0.27 %, 2.14 %] straddles τ/2, so under the pre-registered uncertainty mitigation its label is
-    ambiguous. Under the §19 rule applied verbatim (point estimates) it is credible.
+    ambiguous. Under the §19 rule applied verbatim (point estimates) it is credible. That verbatim label depends on
+    the stage-4 choice of domain chain (§3): with the standard-far-field chain (T = 1.3046) the baseline's drag error
+    would be 2.04 % and its label ambiguous.
   - The interval stays below τ, so the baseline's drag meets the requested 3 % for every reference value inside U(T).
   - St (−0.31 %) is well within τ/2.
 - **The reference is consistent with the literature within about 1 %.**
-  - T_Cd lies inside the narrow literature drag band. T_St lies 0.04 % below the St band, within 0.22–0.46 % of the
-    experimental fit and of Qu et al.
-  - At matched domain size, this work is within −0.1 … +0.8 % of the published drag values (§5). About 1 % of scatter
-    between codes remains, and it limits how precisely the literature can confirm T.
+  - T_Cd lies inside the narrow literature drag band. T_St lies 0.04 % below the St band.
+  - At matched domain size, this work is within −0.1 … +0.8 % of the published drag values and −0.2 … +0.3 % of the St
+    values (§5). About 1 % of scatter between codes remains, and it limits how precisely the literature can confirm T.
+  - The literature cannot test the far-field decision of stage 4. At the literature's domain sizes the refined and
+    standard chains agree to 0.04 %; they differ only when extrapolated beyond them.
 - **Building this reference took four stages, and the drag value moved by up to 2 %.** The largest single lesson:
   the EXPAND_DOMAIN primitive coarsens the far field as it enlarges the domain, and that confounds a domain study
   (§3). The reference uncertainty carries this as a model-form term.
@@ -46,7 +49,7 @@ as unbounded.
 
 | item | choice | note |
 |---|---|---|
-| domain | 30 D upstream, 50 D downstream, ±40 D laterally (blockage 1.25 %) | the domain study (§3) shows a −1.2 % drag correction to an unbounded stream; inlet, outlet and side distances were varied together, so the study cannot say which dominates; Behr et al.'s lateral-only data suggest the sides are not the main term |
+| domain | 30 D upstream, 50 D downstream, ±40 D laterally (blockage 1.25 %) | the domain study (§3) estimates a −1.2 % drag correction to an unbounded stream (−2.0 % with the standard-far-field chain; the difference is carried in U(T)); inlet, outlet and side distances were varied together, so the study cannot say which dominates; Behr et al.'s lateral-only data suggest the sides are not the main term |
 | mesh | 30,580 hexahedra; O-grid with 160 cells around the cylinder; first cell 0.005 D, radial growth 1.07 | about 12 cells inside D/√Re = 0.1 D |
 | solver | `pimpleFoam` in PISO mode (1 outer, 2 pressure correctors) | |
 | schemes | backward (BDF2) time; `linearUpwind` convection; linear gradients and Laplacian | second-order formal accuracy |
@@ -70,8 +73,9 @@ Every level was initialised by mapping a periodic state:
 - dt/8 was mapped from dt/4;
 - the ×2 domain level was mapped from the baseline, and the ×3 and ×4 levels from ×2.
 
-Mapped levels first run 80 D/U. MSER hit its 50 % cap on every mapped level, so the "stationary window" is simply the
-second half of the record; stationarity is judged from the drift and half-window measures. The reference uses each
+Mapped levels first run 80 D/U. MSER hit its 50 % cap on every 80 D/U mapped level, so their "stationary window" is
+simply the second half of the record; stationarity is judged from the drift and half-window measures. The far-field
+test runs (mapped, 120–200 D/U) did not hit the cap. The reference uses each
 member's longest continuation. Child run names record only the step's own factor: the ×4 run is
 `baseline.D2x-4312…`, and the domain continuations are `baseline.long180/200/280-…`.
 
@@ -80,29 +84,37 @@ member's longest continuation. Child run names record only the step's own factor
 | 1 | mesh f = √2, 2; dt/2, dt/4; domain ×2, ×4; baseline +100 D/U | pre-registered one-factor chains |
 | 2 | domain ×2 → 180 D/U and ×4 → 280 D/U; dt/8 | the domain levels had not reached a limit cycle in 80 D/U (the wake had not crossed the enlarged domain); St time behaviour unresolved |
 | 3 | domain ×3 (half-height 120 D) → 200 D/U | test the conditioning of the domain extrapolation |
-| 4 | the ×4 domain with far-field cell counts ×1.5 (`scripts/farfield_resolution_test.py`) | the four-level chain did not converge like a power law |
+| 4 | the ×4 domain, and the ×1 domain as a control, with outer-block cell counts ×1.5 (`scripts/farfield_resolution_test.py`) | the four-level chain did not converge like a power law |
 
 Stage 2 effects:
 - ×2 settled at Cd 1.32189 (1.32259 at 80 D/U).
 - ×4 settled at 1.31577 (1.31789 at 80 D/U). Its per-cycle mean varies by about 3 × 10⁻⁵ over the last 120 D/U.
 
 **Stage 3 showed the domain chain was not asymptotic.** Cd at half-height 40 / 80 / 120 / 160 D was 1.33117 / 1.32189 /
-1.31820 / 1.31577. The slope dCd/d(1/half-height) *grew* as the domain grew (0.74, 0.89, 1.17). Extrapolations from
-the finest and from the coarsest three levels differed by 1.7 %.
+1.31815 / 1.31577. The slope dCd/d(1/half-height) *grew* as the domain grew (0.74, 0.90, 1.15). Extrapolations from
+the finest and from the coarsest three levels differed by 1.3 %.
 
-**Stage 4 identified the cause.**
+**Stage 4 points to the cause.**
 - EXPAND_DOMAIN keeps the near-field mesh and the per-cell growth rate, so the far field coarsens as the domain
   grows. The last wake cell is about 1.0 D at ×1, 2.0 D at ×2 and 3.9 D at ×4.
-- Refining the ×4 far field (counts ×1.5, 97k cells, settled after about 65 D/U, 19 cycles) raised Cd by 0.16 %
-  (1.31577 → 1.31785) and Cl rms by 2.1 %. St changed by 0.02 %.
-- With the refined ×4 member, the domain chain behaves as blockage theory suggests (wake blockage ∝ D/H): observed
-  order 1.20 for Cd and 1.30 for St.
+- On the ×4 domain, multiplying the cell counts of the outer blocks by 1.5 (97k cells, settled after about 65 D/U,
+  19 cycles) raised Cd by 0.16 % (1.31577 → 1.31785) and Cl rms by 2.1 %. St changed by 0.02 %.
+- Those outer blocks start at the near-field square, so the refinement also refines the wake inside the baseline's
+  own extent. A control run applies the same ×1.5 refinement to the baseline-size (×1) domain. There it changes Cd by
+  only +0.03 %, St by +0.04 % and Cl rms by −0.08 %. So about 80 % of the ×4 drag change, and nearly all of the
+  Cl rms change, comes from the coarse far field beyond the baseline's extent. The remaining ~0.03 % is wake
+  resolution that the mesh chain already counts; removing it would shift the domain extrapolation by about 0.1 %,
+  well inside the far-field model-form term (§4).
+- With the refined ×4 member, the observed orders are 1.20 (Cd) and 1.30 (St), close to the first-order decay
+  expected of far-field disturbances. Inlet, outlet and side distances were varied together, so this does not
+  identify blockage specifically. The member was replaced after the chain had been seen, so this is consistency,
+  not confirmation.
 
 | factor | values used, Cd | values used, St | observed order (Cd / St) | correction (Cd / St, relative to the baseline) |
 |---|---|---|---|---|
 | mesh, h = 0.457 → 0.323 → 0.229 D (30.6k → 61.4k → 122.3k cells) | 1.3312 → 1.3359 → 1.3377 (after the time-overlap shift) | 0.1634 → 0.1644 → 0.1647 (shifted) | 2.69 / 2.88 | +0.58 % / +0.92 % |
 | time, dt = 0.005 → 0.0025 → 0.00125 (finest three of four) | 1.3275 → 1.3258 → 1.3250 | 0.16356 → 0.16367 → 0.16372 | 1.03 / 1.00 | −0.52 % / +0.21 % |
-| domain, half-height 40 → 80 → 160 D (×4 with refined far field) | 1.3312 → 1.3219 → 1.3179 | 0.1634 → 0.1627 → 0.1623 | 1.20 / 1.30 | −1.24 % / −0.81 % |
+| domain, half-height 40 → 80 → 160 D (×4 with refined far field) | 1.3312 → 1.3219 → 1.3178 | 0.1634 → 0.1626 → 0.1623 | 1.20 / 1.30 | −1.24 % / −0.81 % |
 
 What else the study shows, and what it does not:
 
@@ -132,13 +144,15 @@ What else the study shows, and what it does not:
   this solver-specific behaviour.
 - **Mesh refinement raises St and Cl rms.** Reduced numerical dissipation on finer meshes is one possible
   explanation; it was not tested.
-- **checkMesh flags the larger domains.** The ×2, ×4 and refined ×4 domain meshes fail checkMesh's `-allGeometry`
-  determinant check (152 / 264 / 228 cells), the same check that fails case J1.
-  - `scripts/locate_flagged_cells.py` locates them (`results/posthoc/flagged_cells.txt`). In the domain meshes the
-    flagged cells sit 57–155 D from the cylinder, at the far-field corners and sides.
+- **checkMesh flags every enlarged domain.** The ×2, ×3, ×4 and refined ×4 domain meshes fail checkMesh's
+  `-allGeometry` determinant check (152 / 216 / 264 / 228 cells), the same check that fails case J1.
+  - `scripts/locate_flagged_cells.py` locates them (`results/posthoc/flagged_cells.txt`; ×2 and ×4 meshes, and J1).
+  - In the ×2 and ×4 meshes the flagged cells sit 57–155 D from the cylinder: at the far-field corners and sides,
+    and on the inlet-side centreline.
   - In J1 all 48 flagged cells sit at x ≈ 47 D, next to the outlet.
-  - The check therefore reacts to stretched cells far from the body, which cannot plausibly affect the forces. J1 is
-    rejected by every system because of this check (§7).
+  - The determinant flag reacts to stretched cells far from the body, and is unlikely to affect the forces itself.
+    Far-field resolution does affect them (stage 4), but by tenths of a percent, not the errors that matter at τ.
+    J1 is rejected by every system because of this flag (§7).
 
 ## 4. In-house reference T
 
@@ -160,13 +174,17 @@ U(T) combines, by root-sum-square:
 | **far-field model form**: the refined-×4 chain against the standard chain (1.31472 vs 1.30389) | **0.82 %** | 0.07 % |
 | time-overlap model form (full effect of the shift) | 0.30 % | 0.16 % |
 | time conditioning (finest vs coarser three levels) | 0.02 % | **0.36 %** |
-| mesh, time extrapolation | 0.11 %, 0.08 % | 0.16 %, 0.04 % |
+| mesh, time extrapolation | 0.11 %, 0.08 % | 0.15 %, 0.04 % |
 | statistics of the members | 0.01 % | 0.02 % |
 | **U(T)** | **0.94 %** | **0.46 %** |
 
-The far-field term is deliberately conservative. The ×2 level's own far-field bias was not measured; it is smaller
-than ×4's, because its far-field cells are about half the size. One refinement of the ×4 far field does not show
-far-field convergence either.
+The far-field term is the gap between the refined and standard three-level chains. It covers the possibility that
+the stage-4 change was entirely a mesh effect and the standard chain applies (T = 1.3046); the ×1 control makes that
+unlikely. It is not derived from a model of the residual far-field error:
+- the ×2 level's own far-field bias was not measured;
+- one refinement of the ×4 far field does not show far-field convergence;
+- it does not cover the stage-3 four-level standard-chain result (1.290), which the far-field diagnosis explains
+  rather than bounds.
 
 **History of the reference** (each change was made before any benchmark result was interpreted):
 
@@ -178,7 +196,7 @@ far-field convergence either.
 | **stage 4 (final)** | **1.3155 ± 0.94 %** | **0.1639 ± 0.46 %** | far-field-refined ×4 level; model-form terms |
 
 **Cl rms (not a requested quantity) has no reliable reference.** With the standard ×4 level its domain chain
-diverges. With the refined ×4 level it extrapolates to 0.2217, and the time-overlap shift moves it by 2.5 %. No value
+diverges. With the refined ×4 level it extrapolates to 0.2217, and the time-overlap shift moves it by 2.4 %. No value
 is used in any verdict or label.
 
 ## 5. Validation against the literature
@@ -195,15 +213,21 @@ proportions differ between the studies, and Posdziech & Grundmann's primary valu
 | Mittal 2005 (slip sides) | H = 100 D | 1.322 | 1.328 | +0.5 % |
 | Qu et al. 2013 D3 / D2 / D1 (Dirichlet sides, Δt = 0.02) | H = 100 / 120 / 200 D | 1.317 / 1.315 / 1.310 | 1.328 / 1.326 / 1.321 | +0.8 % (≈ +0.5 % after Qu's own Δt correction) |
 
-| St | value | vs T (0.1639) |
-|---|---|---|
-| Williamson 1989 fit (experiments) | 0.1643 | −0.2 % |
-| Qu et al. D1 (H = 200 D) | 0.1647 | −0.5 % (at the edge of T + U(T)) |
+| St source | domain | source St | this work at the same lateral extent | difference |
+|---|---|---|---|---|
+| Qu et al. 2013 D1 | H = 200 D | 0.1647 | 0.1643 | −0.2 % |
+| Posdziech & Grundmann 2007 | H = 140 D | 0.1644 | 0.1646 | +0.1 % |
+| Mittal 2005 | H = 100 D | 0.1644 | 0.1649 | +0.3 % |
+| Williamson 1989 fit (experiments, unbounded) | — | 0.1643 | T = 0.1639 | −0.2 % |
 
-Qu et al.'s domain series extrapolated to an unbounded domain gives Cd ≈ 1.302 and St ≈ 0.1644. Rounding of the
-three-decimal published values alone allows 1.286–1.307 for that drag extrapolation, so it cannot confirm T to better
-than about ±1 %. The literature therefore supports T at the ~1 % level, the inter-code scatter at fixed domain size,
-but not at the τ/2 level.
+What the comparison can and cannot say:
+- Qu et al.'s domain series extrapolated to an unbounded domain gives Cd ≈ 1.302 and St ≈ 0.1644. Rounding of the
+  three-decimal published values alone allows 1.286–1.307 for that drag extrapolation, so it cannot confirm T to
+  better than about ±1 %. That estimate lies wholly below T_Cd, contains the standard-chain value (1.3046), and is
+  consistent with T only through U(T).
+- At the literature's domain sizes (H = 100–200 D) the refined and standard chains differ by at most 0.04 %. The
+  comparison therefore supports the finite-domain values and the mesh and time corrections to within the ~1 %
+  inter-code scatter. It does not test the far-field decision, nor T at the τ/2 level.
 
 ## 6. What the deterministic verifier concludes about the baseline
 
@@ -223,11 +247,12 @@ not the refined test run.
 | domain | **2.62 % INCONCLUSIVE** | 1.12 % PASS |
 
 Reading this:
-- **The verifier's domain U for Cd is inflated by the far-field confound.** U = 1.25 × the root's estimated domain
-  error from the standard chain (2.05 %). Computed from the reference's domain correction instead (1.24 %), it would
-  be 1.25 × 1.24 % = 1.55 %. That is still just above τ/2, so the domain component would still narrowly fail.
-- **No further EXPAND_DOMAIN step can make the verifier ACCEPT this drag.** Larger domains only coarsen the far field
-  further.
+- **The verifier's domain U for Cd is inflated by the far-field confound** (stage 4 and its ×1 control). U = 1.25 ×
+  the root's estimated domain error from the standard chain, 2.09 % relative to the extrapolated value, which gives
+  2.62 %. From the refined chain it would be 1.25 × 1.25 % = 1.56 %. That is still just above τ/2, so the domain
+  component would remain INCONCLUSIVE.
+- **The verifier cannot ACCEPT this drag within the primitives.** ×4 is EXPAND_DOMAIN's hard limit, so no further step
+  is available, and even the refined chain would give U above τ/2.
 - **The confound is a design flaw of the EXPAND_DOMAIN primitive, not of the decision rule.** It makes the verifier
   conservative here: it inflates the domain change, which is safe for acceptance. It could also inflate a domain FAIL
   on a borderline case. A primitive that enlarges the domain at constant far-field resolution should replace it
@@ -245,33 +270,38 @@ Labels use the pre-registered §19 rule, e = |reported − T|/T:
 
 The pre-registered risk mitigation ("label near-boundary cases ambiguous") was operationalised in review R18, before
 any result, as follows: a case is ambiguous when [e − U(T), e + U(T)] straddles τ or τ/2, unless it is flawed for
-every T in that interval. A1 and F1 are flawed through that exception, because their St errors are far beyond τ. H1
-is flawed by its set-up (it solves Re = 83.3). The analysis reports both label sets.
+every T in that interval. A1, B2 and F1 are flawed through that exception: A1 and F1 because their St errors, and B2
+because its drag error, are beyond τ even after subtracting U(T). H1 is flawed by its set-up (it solves Re = 83.3).
+The analysis reports both label sets.
 
 | case | Cd error | St error | §19 rule (verbatim) | with the mitigation |
 |---|---|---|---|---|
 | baseline | +1.20 % | −0.31 % | credible | ambiguous |
-| K1 (central scheme) | +1.90 % | | ambiguous | ambiguous |
+| K1 (central scheme) | +1.90 % | | ambiguous (even on point estimates) | ambiguous |
 | K2 (finer mesh, larger domain) | +0.94 % | | credible | ambiguous |
-| A2, C1, J1 | 0.5–0.6 % | ≤ 1.5 % | credible | ambiguous |
+| A2, C1, J1 | 0.5–0.64 % | ≤ 1.5 % | credible | ambiguous |
 | E1, G1, G2 | | | ambiguous | ambiguous |
 | C2 | | 3.33 % | flawed | ambiguous |
 | A1, B1, B2, D1, F1, H1, I1 | | | flawed | flawed |
 
 Two consequences:
 - With U(T) = 0.94 % (Cd) and 0.46 % (St), the mitigated view can label a case credible only if its drag error is
-  below 0.56 % *and* its St error is below 1.04 %. No case meets both: A2 and G2 meet the drag bound but not the St
-  bound. So that view has no credible cases.
-- Several cases designed to be flawed are credible or ambiguous at τ = 3 % (C1, J1, G2, G1, E1). Two designed to be
-  credible are not robustly credible (baseline, K1). On this benchmark, the difference between "plausible but
-  wrong" and "careful" is often smaller than the uncertainty of an unbounded-domain reference.
+  below 0.565 % *and* its St error is below 1.04 %. No case meets both: A2, G2 and J1 (0.564 %) meet the drag bound but
+  not the St bound. So that view has no credible cases.
+- Several cases designed to be flawed are credible or ambiguous at τ = 3 %: C1, J1, G2, G1 and E1, plus C2 under the
+  mitigation.
+- None of the three cases designed to be credible is robustly credible. K1 is ambiguous even on point estimates
+  (Cd 1.90 %). The baseline (1.20 %) and K2 (0.94 %) are credible only on point estimates, and that depends on the
+  stage-4 choice: with the standard chain they would be 2.04 % and 1.78 %, both ambiguous.
+- On this benchmark, the difference between "plausible but wrong" and "careful" is often smaller than the
+  uncertainty of an unbounded-domain reference.
 
 ## 8. Limitations
 
 - **Additivity.** The reference assumes additive, independent mesh, time and domain errors, from one-factor chains
   around a single point. The time-overlap shift's mesh dependence is measured at only one mesh, and only partly.
-- **Far field.** The far-field model-form term rests on one refinement of one domain level. A domain chain at
-  constant far-field resolution is the clean fix.
+- **Far field.** The far-field model-form term rests on one refinement of one domain level, plus one control at
+  ×1. A domain chain at constant far-field resolution is the clean fix.
 - **Mapped initialisation.** It was assumed to reach the same limit cycle as a fresh start; this was not tested.
   Mapped domain levels needed 100–150 D/U to settle, far more than the 80 D/U the primitives give mapped children.
   That is another primitive design issue: the verifier's domain levels for the benchmark cases are 80 D/U runs.

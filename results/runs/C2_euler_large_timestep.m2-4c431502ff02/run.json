@@ -1,0 +1,200 @@
+{
+  "run_id": "C2_euler_large_timestep.m2-4c431502ff02",
+  "status": "failed",
+  "owner_pid": 31264,
+  "created": "2026-10-19T17:02:32+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "C2_euler_large_timestep.m2",
+    "description": "REFINE_MESH {'factor': 1.4142135623730951} from C2_euler_large_timestep.m1.41-eb9ef468444b",
+    "mesh": {
+      "refinement": 2.0000000000000004,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 35,
+      "n_downstream": 111,
+      "n_lateral": 45,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 30.0,
+      "downstream": 50.0,
+      "half_height": 40.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "Euler",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 2,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.04,
+      "end_time": 80.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 40.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "a4201d99958ed19a",
+  "parent_run": "C2_euler_large_timestep.m1.41-eb9ef468444b",
+  "launch_reason": "exhaustive protocol: REFINE_MESH",
+  "launched_by": "exhaustive",
+  "experiment": {
+    "action": "REFINE_MESH",
+    "params": {
+      "factor": 1.4142135623730951
+    },
+    "parent_run": "C2_euler_large_timestep.m1.41-eb9ef468444b",
+    "changes": {
+      "mesh.refinement": {
+        "from": 1.4142135623730951,
+        "to": 2.0000000000000004
+      }
+    },
+    "notes": [
+      "parent max Co 31978097439999998144948350728483780656328431700846495343930666770159667608695587733842728980594343018496.00 already exceeds 1.0; time step kept so that only the mesh changes",
+      "parent has no periodic stationary state: fresh perturbed start with the parent's run length (mapping a non-shedding field could suppress shedding the child would develop)"
+    ],
+    "initialisation": {
+      "kind": "fresh",
+      "source_run": null
+    },
+    "estimated_cell_steps": 244640000.0
+  },
+  "config_changes_from_parent": {
+    "mesh.refinement": {
+      "from": 1.4142135623730951,
+      "to": 2.0000000000000004
+    }
+  },
+  "initialisation": {
+    "kind": "fresh",
+    "source_run": null,
+    "consistent": true
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "b6a58c68336aa3664ea969ca03d373675c2be162",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  },
+  "started": "2026-10-19T17:02:32+00:00",
+  "finished": "2026-10-19T17:15:37+00:00",
+  "failure_kind": "solver",
+  "failure": {
+    "step": "pimpleFoam",
+    "returncode": -8,
+    "log_tail": "ExecutionTime = 704.54 s  ClockTime = 761 s\n\nCourant Number mean: 4.838888575e+101 max: 3.085071455e+103\nTime = 0.1706666667\n\nPIMPLE: iteration 1\nsmoothSolver:  Solving for Ux, Initial residual = 0.7814468582, Final residual = 1.364359794e-07, No Iterations 1000\nsmoothSolver:  Solving for Uy, Initial residual = 0.7642468929, Final residual = 6.576354552e-07, No Iterations 1000\nGAMG:  Solving for p, Initial residual = 0.9558659832, Final residual = 0.006793331957, No Iterations 24\ntime step continuity errors : sum local = 9.074721163e+98, global = -1.931851565e+97, cumulative = -1.684742008e+97\nGAMG:  Solving for p, Initial residual = 0.09934761263, Final residual = 8.833961424e-08, No Iterations 67\ntime step continuity errors : sum local = 2.239288103e+95, global = -8.518224067e+93, cumulative = -1.68559383e+97\nPIMPLE: iteration 2\nsmoothSolver:  Solving for Ux, Initial residual = 0.7467107469, Final residual = 9.917716452e-09, No Iterations 952\nsmoothSolver:  Solving for Uy, Initial residual = 0.7473931627, Final residual = 1.590675888e-08, No Iterations 1000\n[stack trace]\n=============\n#1  Foam::sigFpe::sigHandler(int) in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libOpenFOAM.so\n#2  ? in /lib/x86_64-linux-gnu/libc.so.6\n#3  Foam::GAMGSolver::scale(Foam::Field<double>&, Foam::Field<double>&, Foam::lduMatrix const&, Foam::FieldField<Foam::Field, double> const&, Foam::UPtrList<Foam::lduInterfaceField const> const&, Foam::Field<double> const&, unsigned char) const in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libOpenFOAM.so\n#4  Foam::GAMGSolver::Vcycle(Foam::PtrList<Foam::lduMatrix::smoother> const&, Foam::Field<double>&, Foam::Field<double> const&, Foam::Field<double>&, Foam::Field<double>&, Foam::Field<double>&, Foam::Field<double>&, Foam::Field<double>&, Foam::PtrList<Foam::Field<double> >&, Foam::PtrList<Foam::Field<double> >&, unsigned char) const in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libOpenFOAM.so\n#5  Foam::GAMGSolver::solve(Foam::Field<double>&, Foam::Field<double> const&, unsigned char) const in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libOpenFOAM.so\n#6  Foam::fvMatrix<double>::solveSegregated(Foam::dictionary const&) in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libfiniteVolume.so\n#7  ? in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libfiniteVolume.so\n#8  Foam::fvMesh::solve(Foam::fvMatrix<double>&, Foam::dictionary const&) const in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/lib/libfiniteVolume.so\n#9  ? in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/bin/pimpleFoam\n#10  ? in /lib/x86_64-linux-gnu/libc.so.6\n#11  __libc_start_main in /lib/x86_64-linux-gnu/libc.so.6\n#12  ? in /usr/lib/openfoam/openfoam2412/platforms/linux64GccDPInt32Opt/bin/pimpleFoam\n=============\n"
+  },
+  "raw_output_sha256": {
+    "log.blockMesh": "26269c3c6caecd219e2dbfa8488bf85ac3d26ffdd7c5cc10ba37b1b831f1e791",
+    "log.checkMesh": "a25015f4f8da376a52e089b7ff1da9132221c4c4b45850697956bc7816dc3675",
+    "log.pimpleFoam": "0f4ca048b59097de3bc06affb5ac25692d5a58cde99fb31af179782446bd64a7",
+    "log.setFields": "4d7d2786480b2862444e5eb6895a77feea9b03a3f9ceb641e3017ef08f7f3fbf"
+  },
+  "postprocessing_sha256": {
+    "flux_bottom/0/surfaceFieldValue.dat": "c16089319cf60babd9741133bd95c98bfb12a1b53c6e81bd89555af50d7cc0b2",
+    "flux_inlet/0/surfaceFieldValue.dat": "de2b093a49dd7fcd6c2d1ebb8e9973ab9d71cb818811c419731373a1cd2b186d",
+    "flux_outlet/0/surfaceFieldValue.dat": "9503c650b73e3178662ef026cae5492a2a25eb46dd7b5810534875675785b7ac",
+    "flux_top/0/surfaceFieldValue.dat": "4e03dfe202d992ccfba20bcdf674ff4bf9e5fe2970e0675744fa5808d24beeca",
+    "forceCoeffs1/0/coefficient.dat": "e9a924f652779b490f818854974e32536de8ae431c29e39818980435294ac5e7",
+    "solverInfo1/0/solverInfo.dat": "06582ba16bdad5fa7993342a6328fa9f970b955321b7644d4c2ffddcb48f3c80"
+  },
+  "final_fields_sha256": {
+    "time": "0",
+    "files": {
+      "U": "54aa616dc359eef30612a2d78cfffa6e11fdb6f8517fc486ae8361716ca1816e",
+      "p": "0c9e063a8f5f513da9ae3e3105832dbd7a5cfcd537b5dc20a3d3b06ca95fe881"
+    }
+  }
+}

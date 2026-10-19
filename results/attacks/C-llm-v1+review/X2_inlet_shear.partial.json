@@ -82,6 +82,180 @@
     "expected_outcome": "If Cd and St change by less than about 1.5% relative to R0 (Cd 1.3306, St 0.16318 in the stationary window), the boundary and inlet contribution is acceptable. If they change by more than 3% beyond noise, that is a demonstrated FAIL and the root run is rejected. Otherwise the result sets the domain uncertainty, and mesh and time steps follow."
    },
    "outcome": "executed -> X2_inlet_shear.D2x-8d92db3cbed0 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 26.131677580997348,
+    "cost_usd": 0.088251175,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 20553,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 52,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "X2_inlet_shear-32168bfbca6b": "R0",
+     "X2_inlet_shear.D2x-8d92db3cbed0": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. I cannot ACCEPT. I cannot REJECT either, because no FAIL has been measured. Mesh, time and domain components are still INCONCLUSIVE for both Cd and St.",
+    "R0 is well sampled. It has 11 stationary cycles, a Cd CI95 of 0.00097218, a Cd statistics uncertainty of 0.002267 and an St statistics uncertainty of 0.002498. RUN_LONGER on R0 would add little.",
+    "R1 (EXPAND_DOMAIN x2 of R0) gives a stationary-window Cd of 1.4857 against 1.3306 for R0, and St of 0.17529 (FFT 0.16948) against 0.16318 for R0. This must not be read as a domain effect, because R1 is not statistically reliable.",
+    "R1's Cd drift_rel is 0.27794, its half_diff_rel is 0.11656 and its Cd CI95 is 0.10446. Its stationary window starts at 4.0695 convective units, with stationary_window_start_is_mser_cap false. The window therefore still contains the start-up transient. R1's own reported-setup values (Cd 1.5627, St 0.18326) differ from its window values. The verifier states that R1 must be run longer first.",
+    "R1 is also confounded. Its checkMesh_ok is false, although max non-orthogonality 43.313 and max skewness 0.53384 are identical to R0. Its representative cell size is 0.79405 D against 0.45745 D for R0, and its wake_last_cell_D is 1.9729 against 1.0209. EXPAND_DOMAIN was meant to leave the near field unchanged, so R1 may mix mesh and domain effects.",
+    "R1 has a long downstream length (100 D) and was run only to 80 convective units. Transient length probably scales with domain size, so a longer R1 is the most direct way to get a usable domain comparison.",
+    "Both R0 and R1 record a non-uniform inlet: ux_min 0.1125, ux_max 0.1875, mean 0.15, ux_nonuniformity 0.5. The question specifies a uniform stream. Expanding the domain did not remove this, and no menu primitive can change it. The verifier has no check for it, so it is not a FAIL, but it remains an unquantified risk to the requested Cd and St. It must be flagged to the submitter.",
+    "Time-step error (0.01 convective units, max Courant 0.7323, 612.82 steps per period) and mesh error (0.45745 D representative cell size) are still unmeasured. They are lower priority than making the domain comparison valid. Budget is ample: 1 of 6 experiments used and 0.71 of 12.0 compute."
+   ],
+   "missing_evidence": [
+    "A statistically reliable R1 (post-transient stationary window, small drift, small CI) so the R0 to R1 domain sensitivity of Cd and St can be evaluated",
+    "Mesh discretisation uncertainty for Cd and St (no REFINE_MESH run)",
+    "Temporal discretisation uncertainty for Cd and St (no REDUCE_TIME_STEP run)",
+    "Explanation of why R1 has checkMesh_ok false and a coarser representative size and wake cells than R0, which confounds the domain comparison",
+    "Effect of the non-uniform inlet (ux 0.1125 to 0.1875) relative to the specified uniform 0.15 m/s stream, and the inlet profile shape. No menu primitive can measure this.",
+    "Domain error tied to the artificial boundaries (symmetryPlane sides, blockage 0.0125 for R0 and 0.00625 for R1)"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "R1's large apparent change in Cd (1.4857 vs 1.3306) and St (0.17529 vs 0.16318) is a start-up transient artifact in a short, early-windowed record (window start 4.0695, drift 0.27794), not a true domain effect.",
+     "test": "RUN_LONGER on R1. Confirm that the new stationary window starts well after the transient (not at 4.07), drift_rel falls well below 0.0113, and the Cd CI95 shrinks. If R1's stationary Cd and St then agree with R0 within about 1.5%, the domain error is acceptable."
+    },
+    {
+     "hypothesis": "A true domain or blockage effect exceeds the 3% tolerance, which would make R0 invalid.",
+     "test": "After R1 is statistically reliable, compare R1 and R0 stationary-window Cd and St. A change beyond 3% and beyond 2x noise gives a deterministic FAIL, and R0 would be rejected."
+    },
+    {
+     "hypothesis": "The non-uniform inlet or the coarser, checkMesh-failing R1 mesh biases the comparison independently of domain size.",
+     "test": "Inspect the R1 checkMesh failure. If the longer R1 still disagrees with R0, follow up with REFINE_MESH on R0 to separate mesh from domain effects."
+    }
+   ],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {
+     "additional_convective_times": 150.0
+    },
+    "parent_run": "X2_inlet_shear.D2x-8d92db3cbed0",
+    "reason": "The domain-sensitivity check for both quantities is INCONCLUSIVE because R1 is not statistically reliable (Cd drift_rel 0.27794, CI95 0.10446, window start 4.0695, not an MSER cap). The verifier says to run it longer first. R1's record of 79.99 convective units is too short for its larger domain (100 D downstream). Extending R1 gives a valid R0 vs R1 comparison. That comparison is the only available handle on the boundary and blockage error, and a demonstrated change above tolerance would be a FAIL. RUN_LONGER on R1 is cheaper than REFINE_MESH or REDUCE_TIME_STEP on any parent, and it unblocks the verdict.",
+    "expected_outcome": "R1's stationary window moves past the transient with drift_rel and CI95 well below tolerance. The verifier can then compute the domain component from R0 vs R1. If Cd and St differ by less than about 1.5%, domain error is within budget and REFINE_MESH and REDUCE_TIME_STEP follow. If they differ by more than 3% beyond 2x noise, that is a deterministic FAIL and R0 is rejected. If R1 stays unreliable or disagrees, the confound with R1's coarser mesh and failed checkMesh needs investigating."
+   },
+   "outcome": "executed -> X2_inlet_shear.long230-1a1e9e99a483 (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 30.59675873699598,
+    "cost_usd": 0.097978375,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 29281,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 57,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "X2_inlet_shear-32168bfbca6b": "R0",
+     "X2_inlet_shear.D2x-8d92db3cbed0": "R1",
+     "X2_inlet_shear.long230-1a1e9e99a483": "R2"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. I can't ACCEPT, because the mesh, time and domain components are unmeasured for both Cd and St. I can't REJECT, because no FAIL has been measured.",
+    "R0 is well sampled. It has 11 stationary cycles, a Cd CI95 of 0.00097218, and statistics uncertainty of 0.002267 (Cd) and 0.002498 (St). Averaging bias is 0.0004734 (Cd) and 0.000352 (St). More run time on R0 would add little.",
+    "R2 (R1 run to 230 convective units, 20 cycles) gives a stationary-window Cd of 1.329 and St of 0.16325. R0 gives Cd 1.3306 and St 0.16318. The two domains agree closely, which is encouraging for the domain component.",
+    "The verifier still marks the domain check INCONCLUSIVE. R2 is not statistically reliable: Cd drift_rel is -0.02625, the Cd uncertainty is 0.026250161373716333, and the St uncertainty is 0.019654541917742144. R2's reported-setup Cd of 1.3922 differs from its window Cd of 1.329, so its transient is slow. The R2 agreement is therefore indicative only, not a certified domain uncertainty.",
+    "R1 and R2 are confounded. Their representative cell size is 0.79405 D against 0.45745 D for R0, wake_last_cell_D is 1.9729 against 1.0209, and checkMesh_ok is false. Near-field settings are identical to R0: 160 cells around the cylinder and wall_first_cell_D 0.005. Even so, the domain comparison mixes in far-field mesh differences.",
+    "Mesh error is the largest unmeasured risk to the 0.03 tolerance. R0 has only 30580 cells and a wake_last_cell_D of 1.0209. REFINE_MESH from R0 has not been run. It is the experiment most likely to expose an error larger than the tolerance, and it also gives a clean same-domain comparison.",
+    "Time resolution looks adequate on paper: time step 0.01, max Courant 0.7323, 612.82 steps per shedding period, backward scheme. It is still unmeasured, so REDUCE_TIME_STEP stays in the plan.",
+    "All runs record a non-uniform inlet: ux_min 0.1125, ux_max 0.1875, mean 0.15, ux_nonuniformity 0.5. The question specifies a uniform stream. No menu primitive can change or measure this, and the verifier has no check for it. It is not a FAIL, but it is an unquantified risk and should be flagged to the submitter.",
+    "Budget is sufficient. 2 of 6 experiments are used and compute is 2.04 of 12.0. Mesh, time and a longer R2 can all still be afforded."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation uncertainty for Cd and St (no REFINE_MESH run)",
+    "Temporal discretisation uncertainty for Cd and St (no REDUCE_TIME_STEP run)",
+    "A statistically reliable domain family member: R2 has Cd drift_rel -0.02625 and an uncertainty above 0.015, so the verifier can't compute the domain component",
+    "Why R1 and R2 have checkMesh_ok false and a coarser far-field mesh than R0, which confounds the domain comparison",
+    "Effect of the non-uniform inlet (ux 0.1125 to 0.1875, mean 0.15) versus the specified uniform stream. The profile shape is not recorded and no menu primitive can measure it.",
+    "Combined uncertainty for Cd and St against the 0.03 tolerance"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The R0 mesh (30580 cells, 0.45745 D representative size, last wake cell 1.0209 D) causes a spatial error in Cd or St larger than 0.015 (half the tolerance).",
+     "test": "REFINE_MESH on R0 with factor 1.4142. If the Cd and St stationary-window values stay within about 0.015 of R0 (Cd 1.3306, St 0.16318) and the run has enough cycles, mesh error is within budget. A change above 0.03 beyond 2x noise would be a deterministic FAIL."
+    },
+    {
+     "hypothesis": "The domain effect is negligible. The R2 versus R0 agreement (Cd 1.329 vs 1.3306, St 0.16325 vs 0.16318) is real, and R2's large drift is only a slow start-up transient.",
+     "test": "Later, RUN_LONGER on R2 so that drift_rel and the uncertainty fall below the verifier's reliability threshold. The verifier can then compute the domain component."
+    },
+    {
+     "hypothesis": "Temporal error at 0.01 convective units is negligible.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2. Cd and St should change by much less than 0.015."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "X2_inlet_shear-32168bfbca6b",
+    "reason": "Mesh error is unmeasured and is the most likely remaining flaw to move Cd or St by more than the 0.03 tolerance. R0 is coarse (0.45745 D representative size, last wake cell 1.0209 D). The domain evidence from R2 already looks consistent with R0, though it is not yet certified. Refining R0 isolates mesh effects on the same domain, avoiding the confounding in R1 and R2.",
+    "expected_outcome": "If the refined run is statistically reliable and its Cd and St stay within about 0.015 of R0 (Cd 1.3306, St 0.16318), mesh uncertainty is within budget. Time and a longer R2 follow. A demonstrated change above 0.03 beyond 2x noise is a deterministic FAIL, and R0 is rejected."
+   },
+   "outcome": "executed -> X2_inlet_shear.m1.41-ca5c50f2e498 (completed)"
   }
  ]
 }

@@ -281,9 +281,12 @@ class RunStore:
             # regenerate system/ and constant/ from the new config (e.g. endTime)
             tmp = d / "_gen"
             write_case(cfg, tmp)
-            for sub in ("system", "constant"):
-                shutil.rmtree(case / sub)
-                shutil.copytree(tmp / sub, case / sub)
+            # replace dictionaries only; constant/polyMesh (the mesh) must be kept
+            shutil.rmtree(case / "system")
+            shutil.copytree(tmp / "system", case / "system")
+            for f in (tmp / "constant").iterdir():
+                if f.is_file():
+                    shutil.copy(f, case / "constant" / f.name)
             shutil.copy(tmp / "case_config.json", case / "case_config.json")
             shutil.rmtree(tmp)
             # keep the source logs so the parsed history is complete

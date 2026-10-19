@@ -146,3 +146,14 @@ def test_cylinder_scale_only_changes_geometry():
     a, b = resolve_layout(BASE), resolve_layout(BASE.with_changes({"mesh.cylinder_scale": 1.05}))
     assert math.isclose(b.R, 0.525) and (a.nq, a.nra, a.E_ra) == (b.nq, b.nra, b.E_ra)
     assert BASE.with_changes({"mesh.cylinder_scale": 1.0}).content_hash() == BASE.content_hash()
+
+
+def test_fields_written_exactly_at_end_time(tmp_path):
+    """Regression: restarts and mapped children must start from the true final state."""
+    import re
+    cfg = BASE.with_changes({"time.end_time": 40.0})
+    write_case(cfg, tmp_path / "c")
+    cd = (tmp_path / "c/system/controlDict").read_text()
+    end = float(re.search(r"^endTime\s+([\d.eE+-]+);", cd, re.M).group(1))
+    wi = float(re.search(r"^writeInterval\s+([\d.eE+-]+);", cd, re.M).group(1))
+    assert math.isclose(end, wi)

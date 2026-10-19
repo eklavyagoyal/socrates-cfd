@@ -226,6 +226,11 @@ timePrecision   8;
 runTimeModifiable false;
 """
     else:
+        # Fields are written exactly once, at endTime (writeInterval = endTime
+        # is a write time both for fresh runs and for restarts that extend
+        # endTime).  OpenFOAM does not otherwise write at endTime, and restarts
+        # / mapped children must start from the true final state.  Writing does
+        # not affect the solution, so time.write_interval is not used.
         adjust = "yes" if t.adjust_time_step else "no"
         body = f"""
 application     pimpleFoam;
@@ -238,7 +243,7 @@ adjustTimeStep  {adjust};
 maxCo           {_g(t.max_co)};
 maxDeltaT       {_g(t.delta_t * tc)};
 writeControl    {'adjustable' if t.adjust_time_step else 'runTime'};
-writeInterval   {_g(t.write_interval * tc)};
+writeInterval   {_g(t.end_time * tc)};
 purgeWrite      0;
 writeFormat     ascii;
 writePrecision  10;

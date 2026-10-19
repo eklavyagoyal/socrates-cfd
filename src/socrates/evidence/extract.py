@@ -113,6 +113,7 @@ def solver_evidence(case_dir: Path, cfg: CaseConfig) -> dict:
     co_mean = np.concatenate([p.courant_mean for p in parsed]) if parsed else np.empty(0)
     c_loc = np.concatenate([p.cont_sum_local for p in parsed])
     c_cum = np.concatenate([p.cont_cumulative for p in parsed])
+    p_last = np.concatenate([p.p_last_final for p in parsed])
     # skip first steps: the impulsive start / setFields perturbation produce
     # a non-representative Courant spike that the solver immediately damps
     skip = min(10, max(len(co_max) - 1, 0))
@@ -137,6 +138,9 @@ def solver_evidence(case_dir: Path, cfg: CaseConfig) -> dict:
         "continuity_sum_local_median": _finite(np.nanmedian(c_loc[skip:])) if c_loc.size > skip else None,
         "continuity_cumulative_final": _finite(c_cum[-1]) if c_cum.size else None,
         "max_linear_solver_iteration_hits": int(sum(p.max_solver_iterations_hit for p in parsed)),
+        "p_last_solve_final_residual_max": _finite(np.nanmax(p_last[skip:])) if p_last.size > skip else None,
+        "p_last_solve_final_residual_p99": _finite(np.nanpercentile(p_last[skip:], 99)) if p_last.size > skip else None,
+        "p_last_solve_unconverged_fraction_1e-7": _finite(np.mean(p_last[skip:] > 1.0001e-7)) if p_last.size > skip else None,
         "steady_converged_iteration": last.steady_converged_iteration,
     }
 

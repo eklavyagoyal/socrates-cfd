@@ -136,6 +136,22 @@ class RunStore:
         ev = json.loads(ev_file.read_text()) if ev_file.exists() else None
         return RunResult(run_id, d, prov["status"], prov, ev, CaseConfig.model_validate(prov["case_config"]))
 
+    def reextract(self, run_id: str) -> RunResult:
+        """Recompute evidence from the retained raw outputs (after extractor changes)."""
+        d = self.root / run_id
+        prov = json.loads((d / "run.json").read_text())
+        cfg = CaseConfig.model_validate(prov["case_config"])
+        spec = ProblemSpec.model_validate(prov["problem_spec"])
+        ev, series = extract_evidence(d / "case", cfg, spec)
+        old = json.loads((d / "evidence.json").read_text()) if (d / "evidence.json").exists() else {}
+        ev["run_id"] = run_id
+        ev["cost"] = old.get("cost", {})
+        ev["extraction"] = {"reextracted": _now()}
+        if series:
+            np.savez_compressed(d / "series.npz", **{k: v.astype(np.float64) for k, v in series.items()})
+        (d / "evidence.json").write_text(json.dumps(ev, indent=2, default=_json_default))
+        return self.load(run_id)
+
     def list_runs(self) -> list[str]:
         return sorted(d.name for d in self.root.iterdir() if (d / "run.json").exists())
 

@@ -28,27 +28,34 @@ def check_solver_completion(ev: dict) -> CheckResult:
 
 
 def check_mesh_quality(ev: dict, cfg: dict) -> CheckResult:
+    """checkMesh validity.  checkMesh always exits 0, so its log verdict is parsed.
+
+    '***' items (failed checks, e.g. skewness > 4, aspect ratio > 1000) -> FAIL.
+    Non-orthogonality > 70 deg is only a '*' warning in OpenFOAM -> INCONCLUSIVE.
+    """
     cm = (ev.get("mesh") or {}).get("checkMesh")
-    if not cm:
-        return CheckResult("mesh_quality", I, "checkMesh output missing", source="checkMesh")
+    if not cm or not cm.get("completed"):
+        return CheckResult("mesh_quality", I, "checkMesh output missing or incomplete", source="checkMesh")
     limits = {
         "max_non_orthogonality": thr(cfg, "mesh_quality", "max_non_orthogonality_deg"),
         "max_skewness": thr(cfg, "mesh_quality", "max_skewness"),
         "max_aspect_ratio": thr(cfg, "mesh_quality", "max_aspect_ratio"),
     }
     vals = {k: cm.get(k) for k in limits}
-    if any(v is None for v in vals.values()):
-        return CheckResult("mesh_quality", I, f"checkMesh statistics missing: {vals}", value=vals, source="checkMesh")
-    bad = {k: v for k, v in vals.items() if v > limits[k][0]}
-    src = "; ".join(f"{k}: {s}" for k, (_, s) in limits.items())
+    src = "checkMesh log ('Mesh OK' / 'Failed N mesh checks'); limits: " + "; ".join(f"{k}: {s}" for k, (_, s) in limits.items())
     thr_vals = {k: v for k, (v, _) in limits.items()}
-    if not cm.get("mesh_ok") or bad:
-        return CheckResult("mesh_quality", F,
-                           f"checkMesh failed ({cm.get('failed_checks')} failed checks) or limits exceeded: {bad}",
+    if not cm.get("mesh_ok"):
+        return CheckResult("mesh_quality", F, f"checkMesh reports {cm.get('failed_checks')} failed check(s): {cm.get('error_lines')[:3]}",
+                           value=vals, threshold=thr_vals, source=src)
+    if any(v is None for v in vals.values()):
+        return CheckResult("mesh_quality", I, f"checkMesh statistics missing: {vals}", value=vals, source=src)
+    warn = {k: v for k, v in vals.items() if v > thr_vals[k]}
+    if warn:
+        return CheckResult("mesh_quality", I, f"checkMesh passes but reports warnings above OpenFOAM limits: {warn}",
                            value=vals, threshold=thr_vals, source=src)
     return CheckResult("mesh_quality", P,
-                       "checkMesh reports 'Mesh OK' and non-orthogonality, skewness, aspect ratio are within OpenFOAM's own limits. "
-                       "This says the mesh is valid, NOT that it resolves the flow.",
+                       "checkMesh reports 'Mesh OK'; non-orthogonality, skewness and aspect ratio within OpenFOAM's limits. "
+                       "This shows the mesh is valid, NOT that it resolves the flow.",
                        value=vals, threshold=thr_vals, source=src)
 
 
@@ -72,26 +79,28 @@ def check_mass_conservation(ev: dict, spec: ProblemSpec, cfg: dict) -> CheckResu
 
 
 def check_linear_solvers(ev: dict, cfg: dict) -> CheckResult:
-    r = ev.get("residuals", {})
     s = ev.get("solver", {})
-    if not r.get("found"):
-        return CheckResult("linear_solver_convergence", I, "solverInfo output missing", source="solverInfo")
     if ev.get("configuration", {}).get("solver") == "simpleFoam":
         return check_steady_convergence(ev)
     lim = cfg["linear_solvers"]
-    pf = r.get("p_final_max_last_10pct")
+    frac = s.get("p_last_solve_unconverged_fraction_1e-7")
+    pmax = s.get("p_last_solve_final_residual_max")
     hits = s.get("max_linear_solver_iteration_hits", 0)
-    if pf is None:
-        return CheckResult("linear_solver_convergence", I, "final pressure residual not recorded", source="solverInfo")
-    # last p solve of each step uses relTol 0: it must reach the absolute tolerance
-    ok = pf <= lim["p_tolerance"] * 1.0001 and hits == 0
-    return CheckResult(
-        "linear_solver_convergence", P if ok else F,
-        ("final pressure solve of every recorded step reached the configured tolerance"
-         if ok else f"pressure solves did not reach the configured tolerance (max final residual {pf:.2e}; iteration-limit hits {hits})"),
-        value={"p_final_max_last_10pct": pf, "iteration_limit_hits": hits},
-        threshold=lim["p_tolerance"], source="solverInfo.dat p_final; threshold = configured solver tolerance",
-    )
+    if frac is None:
+        return CheckResult("linear_solver_convergence", I, "final pressure solves not found in the solver log",
+                           source="solver log (last 'Solving for p' line of each step)")
+    ok = frac <= lim["allowed_fraction_unconverged_steps"] and hits == 0
+    src = ("solver log, last pressure solve of each time step (relTol 0, so it must reach the configured absolute "
+           "tolerance); solverInfo is not used because it records only the first solve of a step")
+    val = {"fraction_of_steps_above_tolerance": frac, "max_final_residual": pmax, "iteration_limit_hits": hits}
+    if ok:
+        return CheckResult("linear_solver_convergence", P,
+                           f"final pressure solve reached the configured tolerance in {1 - frac:.1%} of steps",
+                           value=val, threshold=lim["allowed_fraction_unconverged_steps"], source=src)
+    return CheckResult("linear_solver_convergence", F,
+                       f"final pressure solve missed the configured tolerance in {frac:.1%} of steps "
+                       f"(max final residual {pmax:.2e}; iteration-limit hits {hits})",
+                       value=val, threshold=lim["allowed_fraction_unconverged_steps"], source=src)
 
 
 def check_steady_convergence(ev: dict) -> CheckResult:
@@ -316,6 +325,22 @@ def check_statistics(ev: dict, spec: ProblemSpec, cfg: dict) -> list[CheckResult
     return out
 
 
+def check_scheme_order(ev: dict) -> CheckResult:
+    conf = ev.get("configuration", {})
+    conv = conf.get("convection_scheme")
+    if not conv:
+        return CheckResult("convection_scheme_order", I, "convection scheme not recorded", source="configuration")
+    toks = conv.replace("bounded", "").split()
+    src = ("J. Fluids Eng. editorial policy on numerical accuracy (published with Celik et al. 2008): at least "
+           "second-order spatial schemes; first-order numerical diffusion called 'devastating'")
+    if len(toks) >= 2 and toks[1] == "upwind":
+        return CheckResult("convection_scheme_order", I,
+                           f"convection scheme '{conv}' is formally first order; numerical diffusion must be shown "
+                           "negligible by mesh refinement before the result can be trusted",
+                           value=conv, source=src)
+    return CheckResult("convection_scheme_order", P, f"convection scheme '{conv}' is nominally second order", value=conv, source=src)
+
+
 def run_static_checks(ev: dict, spec: ProblemSpec, cfg: dict) -> list[CheckResult]:
     res = [
         check_solver_completion(ev),
@@ -326,6 +351,7 @@ def run_static_checks(ev: dict, spec: ProblemSpec, cfg: dict) -> list[CheckResul
         check_reynolds_consistency(ev, cfg),
         check_force_reference(ev, cfg),
         check_physics_regime(ev, spec, cfg),
+        check_scheme_order(ev),
     ]
     res += check_averaging_window(ev, spec, cfg)
     res += check_statistics(ev, spec, cfg)

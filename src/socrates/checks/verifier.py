@@ -230,7 +230,20 @@ def aggregate(checks: list[CheckResult], spec: ProblemSpec) -> Verdict:
                       "component_uncertainty": us, "combined_uncertainty": u_total}
         if need:
             missing[q] = need
-    gate_ok = all(c.status == Status.PASS or (c.check == "courant_number" and c.status == Status.INCONCLUSIVE) for c in gates)
+    mesh_ok_all = all(v["component_status"].get("mesh") == "PASS" for v in per_qoi.values())
+    time_ok_all = all(v["component_status"].get("time") == "PASS" for v in per_qoi.values())
+
+    def gate_pass(c: CheckResult) -> bool:
+        if c.status == Status.PASS:
+            return True
+        # policy concerns that measured evidence can discharge
+        if c.check == "courant_number" and c.status == Status.INCONCLUSIVE:
+            return time_ok_all
+        if c.check == "convection_scheme_order" and c.status == Status.INCONCLUSIVE:
+            return mesh_ok_all
+        return False
+
+    gate_ok = all(gate_pass(c) for c in gates)
     if failed:
         verdict = "REJECT"
     elif gate_ok and all(v["verdict"] == "ACCEPT" for v in per_qoi.values()):

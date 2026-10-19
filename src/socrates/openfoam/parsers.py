@@ -85,6 +85,11 @@ class SolverLog:
     steady_converged_iteration: int | None = None  # simpleFoam residualControl
     max_solver_iterations_hit: int = 0
     n_steps: int = 0
+    # final residual / iterations of the LAST pressure solve of each step
+    # (solverInfo only records the first solve of a step, so this must come
+    # from the log)
+    p_last_final: np.ndarray = field(default_factory=lambda: np.empty(0))
+    p_last_iters: np.ndarray = field(default_factory=lambda: np.empty(0))
 
 
 _RE_TIME = re.compile(rf"^Time = ({_FLOAT})s?\s*$")
@@ -94,6 +99,7 @@ _RE_CONT = re.compile(
 )
 _RE_EXEC = re.compile(rf"^ExecutionTime = ({_FLOAT}) s\s+ClockTime = ({_FLOAT}) s")
 _RE_ITERS = re.compile(r"No Iterations (\d+)")
+_RE_PSOLVE = re.compile(rf"Solving for p, Initial residual = ({_FLOAT}), Final residual = ({_FLOAT}), No Iterations (\d+)")
 
 
 def parse_solver_log(text: str, max_iter_limit: int = 1000) -> SolverLog:
@@ -112,6 +118,9 @@ def parse_solver_log(text: str, max_iter_limit: int = 1000) -> SolverLog:
     c_cum: list[float] = []
     pending_co: tuple[float, float] | None = None
     step_cont: tuple[float, float, float] | None = None
+    p_fin: list[float] = []
+    p_it: list[float] = []
+    step_p: tuple[float, int] | None = None
     exec_t = clock_t = None
     fatal: list[str] = []
     warns: list[str] = []
@@ -143,7 +152,10 @@ def parse_solver_log(text: str, max_iter_limit: int = 1000) -> SolverLog:
                 c_loc.append(step_cont[0]); c_glob.append(step_cont[1]); c_cum.append(step_cont[2])
             elif times:
                 c_loc.append(np.nan); c_glob.append(np.nan); c_cum.append(np.nan)
+            if times:
+                p_fin.append(step_p[0] if step_p else np.nan); p_it.append(step_p[1] if step_p else np.nan)
             step_cont = None
+            step_p = None
             times.append(float(m.group(1)))
             if pending_co is not None:
                 co_mean.append(pending_co[0]); co_max.append(pending_co[1])
@@ -152,6 +164,9 @@ def parse_solver_log(text: str, max_iter_limit: int = 1000) -> SolverLog:
         m = _RE_CONT.match(ln)
         if m:
             step_cont = (float(m.group(1)), float(m.group(2)), float(m.group(3)))
+        mp = _RE_PSOLVE.search(ln)
+        if mp:
+            step_p = (float(mp.group(2)), int(mp.group(3)))
         m = _RE_EXEC.match(ln)
         if m:
             exec_t, clock_t = float(m.group(1)), float(m.group(2))
@@ -172,6 +187,7 @@ def parse_solver_log(text: str, max_iter_limit: int = 1000) -> SolverLog:
             c_loc.append(step_cont[0]); c_glob.append(step_cont[1]); c_cum.append(step_cont[2])
         else:
             c_loc.append(np.nan); c_glob.append(np.nan); c_cum.append(np.nan)
+        p_fin.append(step_p[0] if step_p else np.nan); p_it.append(step_p[1] if step_p else np.nan)
     completed = bool(re.search(r"^End\s*$", text, re.M)) and not fatal
     return SolverLog(
         application=app,
@@ -192,6 +208,8 @@ def parse_solver_log(text: str, max_iter_limit: int = 1000) -> SolverLog:
         steady_converged_iteration=steady_conv,
         max_solver_iterations_hit=max_hits,
         n_steps=len(times),
+        p_last_final=np.asarray(p_fin, dtype=float),
+        p_last_iters=np.asarray(p_it, dtype=float),
     )
 
 

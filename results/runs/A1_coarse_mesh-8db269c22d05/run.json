@@ -1,0 +1,181 @@
+{
+  "run_id": "A1_coarse_mesh-8db269c22d05",
+  "status": "completed",
+  "created": "2026-10-19T07:02:08+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "A1_coarse_mesh",
+    "description": "Coarse mesh (half resolution in every direction)",
+    "mesh": {
+      "refinement": 0.5,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 35,
+      "n_downstream": 111,
+      "n_lateral": 45,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0
+    },
+    "domain": {
+      "upstream": 30.0,
+      "downstream": 50.0,
+      "half_height": 40.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip"
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "backward",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 1,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.01,
+      "end_time": 150.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 75.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "220b53526b8c17e9",
+  "parent_run": null,
+  "launch_reason": "benchmark root case: Coarse mesh (half resolution in every direction)",
+  "launched_by": "benchmark",
+  "experiment": null,
+  "config_changes_from_parent": null,
+  "initialisation": {
+    "kind": "fresh",
+    "source_run": null,
+    "consistent": true
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc",
+    "socrates_src_dirty": true,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  },
+  "started": "2026-10-19T07:02:09+00:00",
+  "commands": [
+    {
+      "step": "blockMesh",
+      "command": "blockMesh",
+      "returncode": 0,
+      "wall_seconds": 0.6768842500000574,
+      "log_file": "log.blockMesh"
+    },
+    {
+      "step": "checkMesh",
+      "command": "checkMesh -allGeometry -allTopology",
+      "returncode": 0,
+      "wall_seconds": 0.632758431999946,
+      "log_file": "log.checkMesh"
+    },
+    {
+      "step": "setFields",
+      "command": "setFields",
+      "returncode": 0,
+      "wall_seconds": 0.42263002000004235,
+      "log_file": "log.setFields"
+    },
+    {
+      "step": "pimpleFoam",
+      "command": "pimpleFoam",
+      "returncode": 0,
+      "wall_seconds": 282.1111764509999,
+      "log_file": "log.pimpleFoam"
+    }
+  ],
+  "wall_seconds": 283.84344915299994,
+  "finished": "2026-10-19T07:06:53+00:00",
+  "raw_output_sha256": {
+    "log.blockMesh": "e6e0e70af2deea5933e770674552dcc39ffd9755bfa7e6fb04d429da1bc19d35",
+    "log.checkMesh": "607dfbc1ebd3881f03a89b48a47ecd24199fcac4f4e3823f0568cb6eb597d55a",
+    "log.pimpleFoam": "08df96920026b754b3533cd32abf0c760989ac6d11068bdfb2e7e01024860a73",
+    "log.setFields": "92ca7f6494e1a804e693de5263d3bf85df37911ff9c8c5c9c628ea8378084c95"
+  }
+}

@@ -124,13 +124,20 @@ cycle in 80 D/U: drag was still falling and the wake had not crossed the enlarge
   counting from Courant-controlled dt in the mesh chain; the shift moved T_Cd by +0.31 %.
 - Members' statistical uncertainties are carried through the extrapolation weights.
 
-**Final values (after stage 2): Cd T = 1.3046 ± 1.15 %, St T = 0.1638 ± 0.28 %.**
-- Domain order 0.60 for Cd, so the domain correction is −2.05 %. Extrapolating Qu et al.'s own domain series the same
-  way gives ≈ 1.302.
-- With dt/8, the St time order is 1.00, which removed the large St uncertainty.
-- Both values sit just below the narrow literature bands (compiled from finite domains) and inside the bands widened
-  by τ.
-- Stage-1 values were Cd 1.3133 ± 0.72 %, St 0.1647 ± 1.06 %.
+**Final values (stage 4): Cd T = 1.3155 ± 0.94 %, St T = 0.1639 ± 0.46 %.**
+- Stage 3 added a ×3 domain level (half-height 120 D; `baseline.D1.5x` continued to 200 D/U as `baseline.long200-…`).
+  It showed the standard domain chain is not asymptotic.
+- Stage 4 (`scripts/farfield_resolution_test.py` → `results/baseline/farfield_test.json`) re-ran the ×4 domain with
+  far-field counts ×1.5 (`baseline.D4x.ff1.5-949b19f791f0`): Cd +0.16 %.
+- So EXPAND_DOMAIN's far-field coarsening confounds the domain chain. The reference uses the refined ×4 member
+  (domain order 1.20, correction −1.24 %) and carries the difference from the standard chain (0.82 % of Cd) as a
+  far-field model-form term.
+- Other U(T) terms:
+  - time-overlap model form: the finest-mesh dt pair shows the shift's mesh dependence;
+  - time conditioning: the finest three versus the coarser three time levels.
+- History of T_Cd: 1.3133 (stage 1) → 1.3046 (stage 2) → 1.290 ± 6 % (stage 3, four-level standard chain) →
+  1.3155 (stage 4).
+- The full write-up is `reports/baseline_validation.md` (final, after two fact-checks; a third is running).
 
 **Main baseline findings so far:**
 - **Domain size is the largest error component** (−1.4 % on Cd).
@@ -142,8 +149,7 @@ cycle in 80 D/U: drag was still falling and the wake had not crossed the enlarge
   - Qu et al. report the opposite dt trend for Cd, St and Cl′; this is unexplained.
 - **The pre-registered verifier cannot ACCEPT the baseline's drag, even with all 10 study runs.** The Cd domain U
   is 2.62 % > τ/2. St reaches ACCEPT (combined U 1.86 %).
-- **The baseline itself is not credible at τ = 3 %:** its drag error is +2.04 %, between τ/2 and τ, caused by the
-  40 D domain.
+- **The baseline is plausibly credible:** its drag error is +1.20 % (interval 0.27–2.14 % with U(T)).
 
 **Open (task #14):** `reports/baseline_validation.md` is a draft. An adversarial fact-check found 43 issues; the
 corrections to apply are listed in section "Open tasks" below.
@@ -326,16 +332,17 @@ pre-registered success criteria (`docs/design.md` §19).
   - LLM-variance table.
 - `scripts/make_reports.py` assembles `reports/benchmark_results.md`.
 
-**Labels with the final reference:**
-- Pre-registered labels:
+**Labels with the final reference (stage 4).** Both views are pre-registered: the §19 rule verbatim, and the risk
+mitigation as operationalised in R18.
+- With the mitigation:
   - flawed: A1, B1, B2, D1, F1, H1, I1;
   - ambiguous: the other 10;
-  - **credible: none.**
-- Point-estimate labels:
-  - credible: A2, C1, J1, G2 (all intended ambiguous or flawed);
+  - credible: none.
+- §19 verbatim:
+  - credible: baseline (Cd +1.20 %), K2, A2, C1, J1;
   - flawed: the 7 above plus C2;
-  - ambiguous: baseline (Cd +2.04 %), K1 (+2.75 %), K2 (+1.78 %), E1, G1.
-- So the "credible" cases are not credible, because of the domain; and several "flawed" cases are within τ/2.
+  - ambiguous: K1, E1, G1, G2.
+- Several intended-flawed cases are not flawed at τ = 3 % (C1, J1, G1, G2, E1).
 
 ## 16. Compare three systems: running
 

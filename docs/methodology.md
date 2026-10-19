@@ -187,3 +187,7 @@ tuned to a case. All happened before any system evaluation.
 **They do not establish** that any simulation is physically right. That is the job
 of the verification evidence and of the validation against literature in
 `reports/baseline_validation.md`.
+
+### Observations logged during the evaluation (not changed in the pre-registered verifier)
+
+- **J1 (coarse wake):** `checkMesh -allGeometry` reports "Cells with small determinant (< 0.001): 48", which OpenFOAM counts as a failed check, so `mesh_quality` FAILs and every system REJECTs J1. Its reported Cd/St are within ~1 % of the baseline, so if the measured label is *credible*, this is a false rejection caused by an extended-geometry quality heuristic rather than by an accuracy problem. A post-hoc variant that treats `-allGeometry`-only failures as INCONCLUSIVE (to be discharged by mesh refinement) is evaluated separately and reported as a protocol deviation.

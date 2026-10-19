@@ -87,6 +87,7 @@ def run_summary(graph: RunGraph, rid: str) -> dict:
             "configured_reynolds": conf.get("configured_reynolds"),
             "force_reference_used": conf.get("force_reference"),
             "domain_D": ev.get("domain"),
+            "inlet_velocity_measured": ev.get("inlet"),
         },
         "mesh": {
             "cells": mesh.get("n_cells"),
@@ -175,3 +176,35 @@ def menu_entries(graph: RunGraph, estimate) -> list[dict]:
 
 def render_user_prompt(package: dict) -> str:
     return ("Evidence package (JSON). Decide according to the rules.\n\n" + json.dumps(package, indent=1, default=str))
+
+
+REVIEW_SYSTEM_PROMPT = """You are the acceptance reviewer in an automated CFD verification system.
+
+The deterministic verifier's verdict for the root run is ACCEPT: every numerical-uncertainty component it knows
+about (averaging, statistics, mesh, time step, domain) was measured and is within the error budget.
+
+Your task: look for any reason, visible in the recorded evidence, why the answer should still NOT be trusted that
+the deterministic checks do not cover. In particular compare what was actually simulated with what the engineering
+question and specification ask for (for example measured geometry, measured inlet conditions, boundary-condition
+types, physical parameters, the requested quantities).
+
+Rules:
+- You cannot REJECT and you cannot request simulations. You can only concur, or raise blocking concerns that send the
+  result to human review.
+- Raise a blocking concern only if you can point to specific recorded evidence fields. Do not raise generic concerns
+  (e.g. "2D laminar modelling", "tolerance choice") that apply to every simulation of this problem.
+- Never use remembered literature values of any quantity for this problem. Every number you write must appear in the
+  evidence package.
+Output a single JSON object matching the schema."""
+
+REVIEW_SCHEMA = {
+    "type": "object", "additionalProperties": False,
+    "required": ["concur", "blocking_concerns", "reasoning_summary"],
+    "properties": {
+        "concur": {"type": "boolean"},
+        "blocking_concerns": {"type": "array", "items": {
+            "type": "object", "additionalProperties": False, "required": ["concern", "evidence_fields"],
+            "properties": {"concern": {"type": "string"}, "evidence_fields": {"type": "array", "items": {"type": "string"}}}}},
+        "reasoning_summary": {"type": "array", "items": {"type": "string"}},
+    },
+}

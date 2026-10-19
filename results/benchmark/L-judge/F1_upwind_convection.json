@@ -1,0 +1,28 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 9.451273388000118,
+ "cost_usd": 0.035993409999999997,
+ "errors": [],
+ "verdict": "INCONCLUSIVE",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "The run completed cleanly. Mass conservation, linear-solver convergence, Courant number (0.732), Reynolds and force-reference consistency, and the physics-regime check all pass. The flow shows sustained periodic shedding.",
+  "Sampling uncertainty is acceptable. The averaging and statistics components are small (drag: 0.001038 and 0.01069; Strouhal: 0.002589 and 0.003824), and each is below half the 0.03 tolerance. The reported and stationary-window values agree: Cd 1.2687 vs 1.2674, St 0.12614 vs 0.12581.",
+  "The convection scheme is Gauss upwind, which is first order. The verifier flags that its numerical diffusion must be shown negligible by mesh refinement. The mesh is coarse for this purpose, with a representative cell size of 0.45745 D and a last wake cell of 1.0209 D.",
+  "No mesh-refinement, time-step or domain-expansion study exists. The mesh, time and domain uncertainty components are all missing, so no combined uncertainty can be formed. The error-budget rule therefore cannot be satisfied.",
+  "The evidence shows no demonstrated change larger than the 0.03 tolerance, so I cannot call it a FAIL. The first-order scheme on a coarse mesh is a real risk. Without sensitivity data, though, I cannot confirm that either quantity is within 3 %. The verdict is INCONCLUSIVE."
+ ],
+ "numeric_audit": {
+  "traced": 13,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "F1_upwind_convection",
+ "root_run": "F1_upwind_convection-e460c39ac86c"
+}

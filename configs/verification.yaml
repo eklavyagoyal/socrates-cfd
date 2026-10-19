@@ -82,3 +82,14 @@ physics_regime:
   # (classification threshold far above round-off, far below O(0.1) shedding
   # lift; it only separates 'oscillating' from 'not oscillating')
   oscillation_cl_rms: 1.0e-3
+
+# Post-hoc extensions added after the attack phase (docs/methodology.md §7).
+# OFF in the pre-registered evaluation; enabled in configs/verification_v2.yaml.
+extensions:
+  geometry_consistency: false
+  # measured (checkMesh patch bounding box) vs specified cylinder diameter;
+  # rounding-level tolerance (mesh points are written with ~10 significant digits)
+  geometry_relative_tolerance: 1.0e-3
+  inlet_uniformity: false
+  # (max-min)/mean of inlet Ux; uniform stream required by the spec (rounding level)
+  inlet_nonuniformity_tolerance: 1.0e-6

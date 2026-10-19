@@ -355,6 +355,52 @@ def check_scheme_order(ev: dict) -> CheckResult:
     return CheckResult("convection_scheme_order", P, f"convection scheme '{conv}' is nominally second order", value=conv, source=src)
 
 
+def check_geometry_consistency(ev: dict, spec: ProblemSpec, cfg: dict) -> CheckResult:
+    """Measured cylinder diameter (checkMesh patch bounding box) vs the specification.
+
+    Added after attack X1: refinement studies cannot detect a geometry that is
+    consistently wrong, so the solved geometry must be measured, not assumed.
+    """
+    tol = cfg["extensions"]["geometry_relative_tolerance"]
+    mg = (ev.get("mesh") or {}).get("measured_geometry")
+    if not mg:
+        return CheckResult("geometry_consistency", I, "cylinder patch geometry not measured", source="checkMesh -allTopology")
+    D = spec.geometry.cylinder_diameter
+    dx, dy = mg["cylinder_diameter_x_m"], mg["cylinder_diameter_y_m"]
+    rel = max(abs(dx - D), abs(dy - D)) / D
+    src = "checkMesh patch bounding box of 'cylinder' vs problem specification"
+    val = {"measured_x": dx, "measured_y": dy, "specified": D}
+    if rel > tol:
+        return CheckResult("geometry_consistency", F,
+                           f"meshed cylinder is {dx * 1e3:.4g} x {dy * 1e3:.4g} mm but the problem specifies {D * 1e3:.4g} mm "
+                           f"({rel:.2%} mismatch): the simulation solves a different geometry", value=val, threshold=tol, source=src)
+    return CheckResult("geometry_consistency", P, f"meshed cylinder diameter matches the specification within {tol:.0e}",
+                       value=val, threshold=tol, source=src)
+
+
+def check_inlet_uniformity(ev: dict, spec: ProblemSpec, cfg: dict) -> CheckResult:
+    """The spec asks for a uniform stream: the solved inlet profile must be uniform.
+
+    Added after attack X2: no refinement primitive varies the inlet profile, so a
+    wrong profile is invisible to sensitivity studies and must be measured.
+    """
+    tol = cfg["extensions"]["inlet_nonuniformity_tolerance"]
+    inl = ev.get("inlet") or {}
+    if not inl.get("measured"):
+        return CheckResult("inlet_uniformity", I, "inlet velocity profile not measured", source="latest U field")
+    nu = inl.get("ux_nonuniformity") or 0.0
+    U = spec.operating_conditions.inlet_velocity
+    mean_err = abs(inl["ux_mean_unweighted"] - U) / U
+    val = {"nonuniformity": nu, "ux_min": inl["ux_min"], "ux_max": inl["ux_max"], "uy_max_abs": inl["uy_max_abs"]}
+    src = "inlet patch values of the latest written U field vs the specified uniform free stream"
+    if nu > tol or inl["uy_max_abs"] > tol * U or (inl["n_faces_or_uniform"] == 1 and mean_err > tol):
+        return CheckResult("inlet_uniformity", F, f"inlet velocity is not the specified uniform stream "
+                           f"(Ux {inl['ux_min']:.4g}..{inl['ux_max']:.4g} m/s, non-uniformity {nu:.2%})",
+                           value=val, threshold=tol, source=src)
+    return CheckResult("inlet_uniformity", P, "inlet velocity is uniform and equals the specified free stream",
+                       value=val, threshold=tol, source=src)
+
+
 def run_static_checks(ev: dict, spec: ProblemSpec, cfg: dict) -> list[CheckResult]:
     res = [
         check_solver_completion(ev),
@@ -367,6 +413,10 @@ def run_static_checks(ev: dict, spec: ProblemSpec, cfg: dict) -> list[CheckResul
         check_physics_regime(ev, spec, cfg),
         check_scheme_order(ev),
     ]
+    if (cfg.get("extensions") or {}).get("geometry_consistency"):
+        res.append(check_geometry_consistency(ev, spec, cfg))
+    if (cfg.get("extensions") or {}).get("inlet_uniformity"):
+        res.append(check_inlet_uniformity(ev, spec, cfg))
     res += check_averaging_window(ev, spec, cfg)
     res += check_statistics(ev, spec, cfg)
     return res

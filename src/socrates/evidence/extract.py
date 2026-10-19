@@ -63,6 +63,49 @@ def mesh_evidence(case_dir: Path, cfg: CaseConfig) -> dict:
     return out
 
 
+def _patch_vectors(field_text: str, patch: str) -> list[tuple[float, float, float]] | None:
+    """Values of a vector field on one patch from an OpenFOAM ASCII field file."""
+    import re
+
+    i = field_text.find(f"\n    {patch}\n")
+    if i < 0:
+        return None
+    j = field_text.find("\n    }", i)
+    block = field_text[i:j]
+    m = re.search(r"\bvalue\s+uniform\s+\(([^)]*)\)", block)
+    if m:
+        return [tuple(float(x) for x in m.group(1).split())]
+    m = re.search(r"\bvalue\s+nonuniform\s+List<vector>\s*\n?\s*(\d+)\s*\(", block)
+    if m:
+        vals = re.findall(r"\(([-\d.eE+]+) ([-\d.eE+]+) ([-\d.eE+]+)\)", block[m.end():])
+        return [tuple(float(x) for x in v) for v in vals]
+    return None
+
+
+def inlet_evidence(case_dir: Path) -> dict:
+    """Measured inlet velocity profile from the latest written U field."""
+    times = []
+    for d in case_dir.iterdir():
+        try:
+            if d.is_dir() and (d / "U").exists():
+                times.append((float(d.name), d))
+        except ValueError:
+            continue
+    if not times:
+        return {"measured": False}
+    t, d = max(times)
+    vals = _patch_vectors((d / "U").read_text(), "inlet")
+    if not vals:
+        return {"measured": False, "time": t}
+    ux = np.array([v[0] for v in vals])
+    uy = np.array([v[1] for v in vals])
+    mean = float(ux.mean())
+    return {"measured": True, "time": t, "n_faces_or_uniform": len(vals), "ux_min": float(ux.min()),
+            "ux_max": float(ux.max()), "ux_mean_unweighted": mean,
+            "ux_nonuniformity": float((ux.max() - ux.min()) / mean) if mean else None,
+            "uy_max_abs": float(np.abs(uy).max())}
+
+
 def domain_evidence(cfg: CaseConfig) -> dict:
     d = cfg.domain
     return {
@@ -219,6 +262,7 @@ def extract_evidence(case_dir: str | Path, cfg: CaseConfig, spec: ProblemSpec) -
         "solver": solver_evidence(case_dir, cfg),
         "residuals": residual_evidence(case_dir, cfg),
         "conservation": conservation_evidence(case_dir),
+        "inlet": inlet_evidence(case_dir),
     }
     tc = cfg.convective_time
     D, U = cfg.physical.diameter, cfg.physical.inlet_velocity

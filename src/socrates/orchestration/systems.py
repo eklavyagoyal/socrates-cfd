@@ -52,6 +52,22 @@ def system_c(store: RunStore, spec: ProblemSpec, root: str, planner: str = "llm"
     return run_adaptive(root, store, spec, p, **kw).to_dict()
 
 
+def review_only(store: RunStore, spec: ProblemSpec, result: dict, vcfg: dict | None = None) -> dict:
+    """Apply the LLM acceptance review to a finished adaptive result (same runs, no new simulations)."""
+    from .loop import graph_for
+
+    g = graph_for(store, result["root_run"], result["runs"])
+    v = verify(g, spec, vcfg or load_config())
+    if v.verdict != "ACCEPT":
+        return {"verdict": v.verdict, "review": None, "note": "no ACCEPT to review"}
+    rv = LLMPlanner().review(spec, g, v, result.get("history") or [])
+    if rv.get("failure"):
+        verdict = "INCONCLUSIVE"
+    else:
+        verdict = "ACCEPT" if rv.get("concur") else "INCONCLUSIVE"
+    return {"verdict": verdict, "review": rv}
+
+
 EXHAUSTIVE_PROTOCOL = [
     ("RUN_LONGER", {}, "root"),
     ("REFINE_MESH", {}, "root"),

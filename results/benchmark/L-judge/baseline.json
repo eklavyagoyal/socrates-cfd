@@ -1,0 +1,29 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 10.366656884999884,
+ "cost_usd": 0.035279010000000006,
+ "errors": [],
+ "verdict": "INCONCLUSIVE",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "The run is clean. The solver completed, mass imbalance is 8.3333e-11, and linear solvers converged in 100% of steps. Max Courant number is 0.73373, and the case Reynolds number of 100 matches the spec.",
+  "The sampling is good. There are 12 stationary cycles. The reported drag is 1.3313 against 1.3311 in the stationary window, and the reported Strouhal number is 0.16344 against 0.16343. The averaging and statistical uncertainties are about 1e-4 or less, far below the 0.03 tolerance.",
+  "The discretisation errors are unquantified, and the error budget needs mesh, time and domain components. No mesh-refinement, time-step-reduction or domain-expansion run exists, so all three are missing.",
+  "The grid is moderate. It has 30580 cells, 160 cells around the cylinder, a representative cell size of 0.45745 D, and a last wake cell of 1.0209 D. Coarse wake resolution can shift shedding frequency and drag, but the evidence does not show by how much.",
+  "The domain is finite, with 30 D upstream, 50 D downstream, a blockage ratio of 0.0125 and symmetry lateral boundaries. The problem asks for an unbounded stream, and the effect of this domain on drag and Strouhal number is unknown.",
+  "Nothing in the evidence shows a failure or a change larger than the tolerance, so REJECT is not justified. Acceptance also fails the error-budget rule without the missing components, so the verdict is INCONCLUSIVE."
+ ],
+ "numeric_audit": {
+  "traced": 18,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "baseline",
+ "root_run": "baseline-408129116207"
+}

@@ -26,7 +26,14 @@ from ..checks.base import load_config
 from ..checks.verifier import RunGraph, RunNode, Verdict, verify
 from ..critic.audit import audit_numbers
 from ..critic.backends import ClaudeCLIBackend
-from ..critic.prompt import SYSTEM_PROMPT, build_package, menu_entries, render_user_prompt
+from ..critic.prompt import (
+    REVIEW_SCHEMA,
+    REVIEW_SYSTEM_PROMPT,
+    SYSTEM_PROMPT,
+    build_package,
+    menu_entries,
+    render_user_prompt,
+)
 from ..critic.rule_based import rule_based_decision
 from ..critic.schema import CriticDecision, json_schema
 from ..experiments.primitives import ActionRejected, Limits, plan_experiment
@@ -92,6 +99,22 @@ class LLMPlanner:
         meta["numeric_audit"] = audit_numbers(texts, package)
         return d, meta
 
+    def review(self, spec, graph, verdict, history) -> dict:
+        """Acceptance review: may only concur or raise evidence-cited blocking concerns."""
+        package = build_package(spec, graph, verdict, history, [], {"note": "review only; no experiments"})
+        package.pop("experiment_menu", None)
+        call = self.backend.complete(REVIEW_SYSTEM_PROMPT, render_user_prompt(package), REVIEW_SCHEMA)
+        out = {"latency_s": call.latency_s, "cost_usd": call.cost_usd, "attempts": call.attempts, "errors": call.errors}
+        if not call.ok or not isinstance(call.output, dict) or "concur" not in call.output:
+            out["failure"] = "review call failed or malformed"
+            return out
+        o = call.output
+        concerns = [c for c in o.get("blocking_concerns", []) if c.get("evidence_fields")]
+        texts = list(o.get("reasoning_summary", [])) + [c["concern"] for c in concerns]
+        out.update(concur=bool(o["concur"]) and not concerns, blocking_concerns=concerns,
+                   reasoning_summary=o.get("reasoning_summary", []), numeric_audit=audit_numbers(texts, package))
+        return out
+
 
 @dataclass
 class LoopResult:
@@ -150,6 +173,7 @@ def run_adaptive(
     limits: Limits | None = None,
     vcfg: dict | None = None,
     log_path: Path | None = None,
+    acceptance_review: bool = False,
 ) -> LoopResult:
     budget = budget or Budget()
     limits = limits or Limits()
@@ -173,6 +197,18 @@ def run_adaptive(
 
     while True:
         verdict = verify(graph, spec, vcfg)
+        if verdict.verdict == "ACCEPT" and acceptance_review and hasattr(planner, "review"):
+            rv = planner.review(spec, graph, verdict, history)
+            calls += 1
+            history.append({"iteration": calls, "deterministic_verdict": "ACCEPT", "review": rv,
+                            "outcome": "acceptance review"})
+            if rv.get("failure"):
+                final, stop_reason = "INCONCLUSIVE", "acceptance review failed (fail-safe: no unreviewed ACCEPT)"
+            elif rv.get("concur"):
+                final, stop_reason = "ACCEPT", "deterministic ACCEPT; acceptance review concurred"
+            else:
+                final, stop_reason = "INCONCLUSIVE", "acceptance review raised blocking concern(s): human review required"
+            break
         if verdict.verdict in ("ACCEPT", "REJECT"):
             final, stop_reason = verdict.verdict, "deterministic verifier verdict is decisive"
             break

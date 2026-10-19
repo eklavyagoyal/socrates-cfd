@@ -189,3 +189,16 @@ def test_averaging_check_needs_reliable_reference():
     ev["qoi"]["stationary"]["strouhal_number_fft"] = 0.1606
     res = check_averaging_window(ev, SPEC, CFG)
     assert all(r.status == Status.PASS for r in res)
+
+
+def test_geometry_consistency_extension():
+    from socrates.checks.static import check_geometry_consistency
+    cfg2 = load_config("configs/verification_v2.yaml")
+    ev = {"mesh": {"measured_geometry": {"cylinder_diameter_x_m": 0.0105, "cylinder_diameter_y_m": 0.0105}}}
+    assert check_geometry_consistency(ev, SPEC, cfg2).status == Status.FAIL
+    ev["mesh"]["measured_geometry"].update(cylinder_diameter_x_m=0.01, cylinder_diameter_y_m=0.01)
+    assert check_geometry_consistency(ev, SPEC, cfg2).status == Status.PASS
+    assert check_geometry_consistency({}, SPEC, cfg2).status == Status.INCONCLUSIVE
+    # v1 (pre-registered) configuration does not run it
+    assert "geometry_consistency" not in [c.check for c in run_static_checks(ev, SPEC, CFG)]
+    assert "geometry_consistency" in [c.check for c in run_static_checks(ev, SPEC, cfg2)]

@@ -1,0 +1,53 @@
+# Verification configuration v2 = pre-registered v1 + post-attack extensions.
+error_budget:
+  component_pass_fraction: 0.5
+  combine: rss
+mesh_quality:
+  max_non_orthogonality_deg:
+    value: 70.0
+    source: OpenFOAM primitiveMesh::nonOrthThreshold_ default (70 deg); checkMesh
+      reports '***' above it
+  max_skewness:
+    value: 4.0
+    source: OpenFOAM primitiveMesh::skewThreshold_ default (4)
+  max_aspect_ratio:
+    value: 1000.0
+    source: OpenFOAM primitiveMesh::aspectThreshold_ default (1000)
+courant:
+  piso_max_co:
+    value: 1.0
+    source: OpenFOAM User Guide (cavity tutorial); Issa (1986) J. Comput. Phys. 62:40
+conservation:
+  imbalance_fraction_of_tolerance: 0.05
+linear_solvers:
+  allowed_fraction_unconverged_steps: 0.01
+  p_tolerance: 1.0e-07
+  U_tolerance: 1.0e-08
+consistency:
+  reynolds_relative: 0.001
+  force_reference_relative: 0.001
+statistics:
+  min_cycles: 4
+sensitivity:
+  safety_factor_two_level: 3.0
+  safety_factor_three_level: 1.25
+  min_refinement_ratio: 1.3
+  observed_order_band:
+  - 0.5
+  - 2.0
+  domain_error_order: 1.0
+physics_regime:
+  shedding_onset_re:
+    value: 47.0
+    source: Provansal, Mathis & Boyer (1987) JFM 182:1 (Re_c ~ 47); Williamson (1996)
+      Annu. Rev. Fluid Mech. 28:477
+  three_d_transition_re:
+    value: 188.5
+    source: Barkley & Henderson (1996) JFM 322:215 (mode A at Re ~ 188.5); Williamson
+      (1996)
+  oscillation_cl_rms: 0.001
+extensions:
+  geometry_consistency: true
+  geometry_relative_tolerance: 0.001
+  inlet_uniformity: true
+  inlet_nonuniformity_tolerance: 1.0e-06

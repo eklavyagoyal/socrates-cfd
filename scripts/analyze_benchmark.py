@@ -59,6 +59,43 @@ def outcome(label: str, verdict: str) -> str:
     return {"ACCEPT": "correct", "REJECT": "correct"}.get(verdict, "undecided")
 
 
+def variance_table(bench: Path, cases: list[str], labels: dict) -> list[str]:
+    """Independent repeats of C-llm (C-llm-r2, C-llm-r3, ...): verdict and experiment-sequence agreement."""
+    reps = ["C-llm"] + sorted(d.name for d in bench.glob("C-llm-r*") if d.is_dir())
+    if len(reps) < 2:
+        return []
+    out = ["", "### LLM run-to-run variance (independent repeats of C-llm)", "",
+           "| case | label | " + " | ".join(reps) + " | same verdict | same experiment sequence |",
+           "|---|---|" + "---|" * len(reps) + "---|---|"]
+    n_same_v = n_same_seq = n = 0
+    for cid in cases:
+        rows = []
+        for s in reps:
+            f = bench / s / f"{cid}.json"
+            r = json.loads(f.read_text()) if f.exists() else None
+            if r is None or is_infrastructure_error(r):
+                rows.append(None)
+                continue
+            seq = tuple((e["action"], json.dumps(e.get("params") or e.get("parameters") or {}, sort_keys=True))
+                        for e in (r.get("experiments") or []) if e.get("run_id"))
+            rows.append((r.get("final_verdict") or r.get("verdict"), seq))
+        if any(x is None for x in rows):
+            out.append(f"| {cid} | {labels[cid]['label']} | " + " | ".join("—" if x is None else x[0] for x in rows)
+                       + " | incomplete | incomplete |")
+            continue
+        n += 1
+        sv = len({x[0] for x in rows}) == 1
+        ss = len({x[1] for x in rows}) == 1
+        n_same_v += sv
+        n_same_seq += ss
+        cell = [f"{v} ({' → '.join(a[0].split('_')[0] for a in q) or 'none'})" for v, q in rows]
+        out.append(f"| {cid} | {labels[cid]['label']} | " + " | ".join(cell) + f" | {'yes' if sv else '**no**'} | "
+                   f"{'yes' if ss else 'no'} |")
+    out += ["", f"Complete repeat sets: {n}; identical verdict in {n_same_v}/{n}; identical experiment sequence in "
+                f"{n_same_seq}/{n}."]
+    return out
+
+
 def _rate(num: int, den: int):
     return None if den == 0 else num / den
 
@@ -213,6 +250,7 @@ def main() -> None:
             else:
                 vals.append("—" if x is None else (f"{x:.2f}" if isinstance(x, float) else str(x)))
         L.append(f"| {name} | " + " | ".join(vals) + " |")
+    L += variance_table(bench, cases, labels)
     (REPO / "reports" / "benchmark_tables.md").write_text("\n".join(L) + "\n")
 
     # ---------------- figures ----------------

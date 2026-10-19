@@ -8,34 +8,31 @@
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 37.572111230999326,
- "cost_usd": 0.030048609999999996,
+ "latency_s": 38.30137538999952,
+ "cost_usd": 0.03272931,
  "errors": [],
  "model_fingerprint": "6ad399b27406",
  "verdict": "REJECT",
  "confidence": "MEDIUM",
  "reasoning_summary": [
-  "The Reynolds number is consistent: 0.15 \u00d7 0.01 / 1.5e-5 = 100. The force reference values (magUInf 0.15, lRef 0.01, Aref 0.0001) and the uniform inlet (ux_nonuniformity 0.0) are also consistent with the problem.",
-  "The numerics look healthy. Max Courant is 0.73526, mass imbalance is 3e-10, and checkMesh passes. The record has 13 stationary cycles after a detected transient end at 69.5, which is before the declared averaging start of 75.0. Statistical noise is negligible: Cd 95% CI is 9.3372e-06, drift is 2.4921e-05, and the FFT Strouhal number equals the time-domain value at 0.16704. Sampling error is therefore not the concern.",
-  "The question requires an unbounded stream, but the domain is confined. Blockage ratio is 0.05, with symmetryPlane lateral boundaries at half-height 10 D, upstream 15 D and downstream 25 D. This confinement directly accelerates the flow past the rod and biases both mean Cd (1.3713) and St (0.16704). Nothing in the evidence bounds that bias to within 3 %, and no run with a larger domain is available.",
-  "The mesh is coarse for resolving the wake. There are 19160 cells, a representative cell size of 0.20424 D, and wake cells stretch to 0.55293 D at the last cell. The convection scheme is linearUpwind, which is dissipative, and there is no mesh or time-step refinement study. Discretisation error in Cd and St is unquantified. St is also reported with a frequency resolution of 0.013333, which is about 8 % of St 0.16704. The period-based estimate of 598.66 steps per period is finer than that, but the resolution figure itself is larger than the 3 % tolerance.",
-  "Because both known systematic error sources, blockage and coarse mesh, are unquantified and plausibly comparable to the 3 % tolerance, and the tight statistics only show the run is repeatable, the quantities cannot be trusted to 3 %. I lean towards REJECT. Confidence is medium because the evidence has no reference value or sensitivity run that would give the size of the bias."
+  "Temporal statistics are clean: 13 stationary cycles, mean-drag CI95 9.3372e-06, drift_rel 2.4921e-05, and rms Cl 0.23904 matches the Cl amplitude 0.33874 divided by \u221a2. Re = 0.15*0.01/1.5e-5 = 100 matches the specification, and the force references are consistent. Statistical noise is therefore not the problem.",
+  "The question asks for an unbounded stream, but the domain is confined. Blockage_ratio is 0.05, with symmetryPlane lateral boundaries at half_height 10 D. Confinement speeds up the flow past the rod and biases both mean drag and Strouhal number. Nothing in the evidence shows the bias is below the 3 % tolerance, and 5 % blockage is large enough that it plausibly is not.",
+  "Spatial resolution has no supporting evidence. The mesh has only 19160 cells, a representative size of 0.20424 D, and a wake that coarsens to 0.55293 D in its last cell. The scheme is linearUpwind, which adds numerical diffusion. This can shift shedding frequency and drag, and the 3 % tolerance leaves little room for that.",
+  "Only one run exists, so there is no mesh, domain-size, or time-step sensitivity check. The stationary window start (69.5) sits at the MSER cap, and the declared averaging start is 75.0. The reported St of 0.16704 matches the FFT value, and the FFT frequency resolution of 0.013333 is about 8 % of St. St therefore rests on period counting (598.66 steps per period) rather than on spectral resolution.",
+  "The systematic, non-statistical error sources (blockage, wake and mesh resolution, numerical diffusion) are unquantified and likely comparable to the 3 % target. The unbounded-stream requirement is also not met by the setup, so the results are not trustworthy to the requested tolerance."
  ],
  "numeric_audit": {
-  "traced": 27,
-  "untraced": [
-   {
-    "token": "95%",
-    "context": "veraging start of 75.0. Statistical noise is negligible: Cd 95% CI is 9.3372e-06, drift is 2.4921e-05, "
-   }
-  ],
-  "n_untraced": 1
+  "traced": 19,
+  "untraced": [],
+  "n_untraced": 0
  },
  "case": "B2_moderate_domain",
  "root_run": "B2_moderate_domain-55b85b2cd33e",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "e6b780dacd168e94",
-  "git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
  }
 }

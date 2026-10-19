@@ -1,8 +1,8 @@
 {
   "run_id": "B1_small_domain.D2x-1e192fc39a3e",
   "status": "running",
-  "owner_pid": 23063,
-  "created": "2026-10-19T08:25:58+00:00",
+  "owner_pid": 10692,
+  "created": "2026-10-19T09:09:23+00:00",
   "problem_spec": {
     "problem": {
       "id": "cylinder2d_re100",
@@ -118,7 +118,7 @@
   },
   "config_hash": "d6665b477a06888a",
   "parent_run": "B1_small_domain-a69ffb97a2e6",
-  "launch_reason": "The domain component is unmeasured. R0 has 12.5 % blockage and a close lateral boundary at 4D, and the question requires an unbounded stream. This is the most likely flaw to change Cd or St by more than the 3 % tolerance, and it is cheaper than a mesh refinement.",
+  "launch_reason": "The requested stream is unbounded, but R0 has 12.5% blockage with symmetry lateral boundaries at 4D, upstream 8D and downstream 15D. This confinement is the most likely source of an error larger than the 3% tolerance. The near-field mesh is unchanged, so the run isolates the boundary effect. It is also the cheapest experiment on the menu, at about 397 s.",
   "launched_by": "llm_critic",
   "experiment": {
     "action": "EXPAND_DOMAIN",
@@ -218,7 +218,7 @@
     "python": "3.13.16",
     "numpy": "2.5.3",
     "scipy": "1.18.1",
-    "socrates_git_commit": "4639ddbeae95e92525dcfff8aa45297ecbe6eb5b",
+    "socrates_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4

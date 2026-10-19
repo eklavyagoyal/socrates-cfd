@@ -8,29 +8,32 @@
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 33.29819690500062,
- "cost_usd": 0.017212810000000002,
+ "latency_s": 28.353330827998434,
+ "cost_usd": 0.017698909999999998,
  "errors": [],
  "model_fingerprint": "6ad399b27406",
  "verdict": "REJECT",
  "confidence": "HIGH",
  "reasoning_summary": [
-  "The run used simpleFoam with steadyState time scheme. At the configured Reynolds number of 100.0 the wake is expected to shed vortices, and a steady solver cannot capture this unsteady behaviour.",
-  "The Strouhal number was not obtained (strouhal_number is null). The rms lift coefficient is 0.0, so no oscillation was resolved. One requested quantity is therefore missing entirely.",
-  "The reported mean drag coefficient of 1.0921 is the steady-solver value. It is not a time-mean over shedding cycles. The evidence has no stationary window, no averaging, and no stationary cycles (all null), so it cannot be trusted to 3 %.",
-  "The mesh is coarse for this problem. The representative cell size is 0.45745 D, the wake last cell is 1.0209 D, and the first wall cell is 0.005 D. The wake is under-resolved, and the first-order-like upwinding-dominated steady solution is further smeared.",
-  "The outlet pressure is fixedValue and the inlet pressure is zeroGradient, which is standard. The inlet is uniform and the blockage is 0.0125, so the setup is not the main problem. The steady-versus-unsteady mismatch and the missing Strouhal number are enough to reject."
+  "The submitted run R0 used simpleFoam with steadyState time scheme at Re = 100. This is a steady solver, so it cannot resolve vortex shedding. It reports rms_lift_coefficient 0.0 and strouhal_number null.",
+  "The Strouhal number is a requested output and was not obtained at all (null). There is no oscillating record, no stationary window and no shedding cycles, so it cannot be trusted.",
+  "The mean drag coefficient of 1.0921 comes from a steady solution. A steady solution suppresses the unsteady wake, so it is not a time-mean of the shedding flow. It is not valid to the 3 % tolerance.",
+  "The mesh is coarse for this problem. The representative cell size is 0.45745 D and the wake last cell is 1.0209 D. The domain is 50 D downstream with 111 wake cells, which cannot convect shed vortices. The first wall cell is 0.005 D.",
+  "The convergence evidence is weak. steady_converged_iteration is null, and the run ended at 4000 iterations with mass imbalance 4.7698e-05. There is no demonstration of convergence.",
+  "The setup, such as the force reference (magUInf 0.15, lRef 0.01) and the uniform inlet, is consistent. That does not fix the use of a steady solver and the missing unsteady statistics, so both requested quantities are not trustworthy."
  ],
  "numeric_audit": {
-  "traced": 6,
+  "traced": 11,
   "untraced": [],
   "n_untraced": 0
  },
  "case": "D1_steady_solver",
  "root_run": "D1_steady_solver-9cd0391edef9",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "5e15ea2b5873f91b",
-  "git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
  }
 }

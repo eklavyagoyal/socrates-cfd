@@ -8,28 +8,40 @@
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 27.211062564000713,
- "cost_usd": 0.040212575,
+ "latency_s": 40.77821632999985,
+ "cost_usd": 0.03723151000000001,
  "errors": [],
  "model_fingerprint": "6ad399b27406",
- "verdict": "REJECT",
+ "verdict": "INCONCLUSIVE",
  "confidence": "LOW",
  "reasoning_summary": [
-  "Setup checks pass. Re = 0.15*0.01/1.5e-5 = 100 matches the specification. The force references (magUInf 0.15, lRef 0.01, Aref 0.0001) are consistent. Blockage is 0.0125, with 30D upstream, 50D downstream and 40D half-height, so the unbounded treatment is reasonable. Mass imbalance is 2.5e-10.",
-  "Statistical checks pass. The record has 12 stationary cycles, and the transient ends at 73.298 against a declared averaging start of 75.0. Mean-drag CI95 is 5.2336e-05, drift is 0.00016636 and half-window difference is 7.1618e-05. The time-domain St (0.15848) matches the FFT St (0.15849). Sampling error is therefore negligible, and the averaging window is not the problem.",
-  "Discretisation error cannot be bounded, and it is the main risk against a 3 % tolerance. The evidence has one mesh (30580 cells) and one time step (0.04 convective units). There is no refinement or time-step study. The 'representative_cell_size_D' of 0.45745 is only a domain-average size. The wake mesh ends at 1.0209 D cells (111 streamwise cells), so the wake is coarse. The scheme is first-order Euler in time with max Courant 2.9248 and 2 outer correctors. Numerical dissipation of that kind would damp shedding and bias both mean drag (1.2901) and St (0.15849).",
-  "Both reported quantities sit slightly low in the same direction, which fits an under-resolved, dissipative wake. This is only a suspicion, not proof. Nothing in the evidence shows grid or time-step independence, and the St frequency resolution of 0.013333 is itself about 8 % of St. I therefore do not trust either quantity to 3 %. Confidence is low because no hard defect is recorded."
+  "Statistical quality is good. The stationary window holds 12 cycles. Mean Cd is 1.2901 with a 95% CI of 5.2336e-05 and relative drift of 0.00016636. St is 0.15848 from the time-domain estimate and 0.15849 from the FFT. The Cl amplitude of 0.25631 against an rms of 0.18121 is consistent with a sinusoid.",
+  "The setup is sound. Re is 100 with a uniform inlet (ux_nonuniformity 0.0). The domain is 30D upstream, 50D downstream and 40D half-height, so blockage is 0.0125. The outlet and pressure BCs are standard. The force reference values (magUInf 0.15, lRef 0.01, Aref 0.0001) match the problem. checkMesh passes, and mass imbalance is 2.5e-10.",
+  "These checks only show that the run was run correctly. They do not show that it is accurate to 3%. There is only one run, so there is no mesh or time-step refinement study and no independent reference in the evidence. Discretisation bias is therefore unquantified.",
+  "Several features could cause a bias of a few percent. The mesh is modest at 30580 cells with a representative size of 0.45745 D. The wake is coarse at its far end (wake_last_cell_D 1.0209). Time integration is first-order Euler with a max Courant number of 2.9248. The FFT frequency resolution is 0.013333, which is about 8% of St, so the St figure relies on the time-domain estimate. The stationary-window start sits at the MSER cap (73.298), which is a minor flag.",
+  "I see no clear defect that would justify REJECT, and no convergence evidence that would justify ACCEPT. Confidence in either direction is low."
  ],
  "numeric_audit": {
-  "traced": 29,
-  "untraced": [],
-  "n_untraced": 0
+  "traced": 24,
+  "untraced": [
+   {
+    "token": "95%",
+    "context": "stationary window holds 12 cycles. Mean Cd is 1.2901 with a 95% CI of 5.2336e-05 and relative drift of "
+   },
+   {
+    "token": "8%",
+    "context": "8. The FFT frequency resolution is 0.013333, which is about 8% of St, so the St figure relies on the t"
+   }
+  ],
+  "n_untraced": 2
  },
  "case": "C2_euler_large_timestep",
  "root_run": "C2_euler_large_timestep-268eddd71f94",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "5647f98705fd23b3",
-  "git_commit": "e49066d28e05f04de06f791e61fb5af260879589"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "e49066d28e05f04de06f791e61fb5af260879589"
  }
 }

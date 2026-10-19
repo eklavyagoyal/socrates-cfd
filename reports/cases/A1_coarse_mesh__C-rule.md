@@ -26,12 +26,12 @@ Stop reason: deterministic verifier verdict is decisive.
 - **PASS** force_reference_consistency — magUInf equals inlet velocity and Aref equals D x mesh span
 - **PASS** physics_regime — sustained periodic lift oscillation present, as expected for 47.0 < Re=100.0 < 188.5
 - **PASS** convection_scheme_order — convection scheme 'Gauss linearUpwind grad(U)' is nominally second order
-- **PASS** averaging_window [mean_drag_coefficient] — reported mean_drag_coefficient within 0.005% of the stationary-window value
-- **PASS** averaging_window [strouhal_number] — reported strouhal_number within 0.002% of the stationary-window value
+- **PASS** averaging_window [mean_drag_coefficient] — reported mean_drag_coefficient is biased by 0.005% relative to the stationary-window value (measured bias, added linearly to the error budget)
+- **PASS** averaging_window [strouhal_number] — reported strouhal_number is biased by 0.002% relative to the stationary-window value (measured bias, added linearly to the error budget)
 - **PASS** statistical_uncertainty [mean_drag_coefficient] — statistical/stationarity uncertainty 1.88e-04 <= 1.50%
 - **PASS** statistical_uncertainty [strouhal_number] — statistical/stationarity uncertainty 1.62e-04 <= 1.50%
 - **INCONCLUSIVE** mesh_sensitivity [mean_drag_coefficient] — estimated mesh uncertainty of mean_drag_coefficient = 10.88% > 1.50% but the demonstrated change 1.81% <= tau; more refinement would be needed [two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.8e-04)]
-- **FAIL** mesh_sensitivity [strouhal_number] — strouhal_number of the run under verification changes by 3.28% under mesh refinement (> tau=3%); its value is not converged to the requested tolerance [two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.1e-04)]
+- **FAIL** mesh_sensitivity [strouhal_number] — strouhal_number of the run under verification changes by 3.28% under mesh refinement (> tau=3%); its value is not converged to the requested tolerance
 - **INCONCLUSIVE** time_sensitivity [mean_drag_coefficient] — no REDUCE_TIME_STEP experiment has been run; time error of mean_drag_coefficient is unknown
 - **INCONCLUSIVE** time_sensitivity [strouhal_number] — no REDUCE_TIME_STEP experiment has been run; time error of strouhal_number is unknown
 - **INCONCLUSIVE** domain_sensitivity [mean_drag_coefficient] — no EXPAND_DOMAIN experiment has been run; domain error of mean_drag_coefficient is unknown
@@ -94,7 +94,7 @@ CLAIM: strouhal_number of run A1_coarse_mesh-8db269c22d05 is reliable to within 
 │   └── A1_coarse_mesh-8db269c22d05
 ├── Temporal statistics (stationarity, cycles): PASS U=0.000162
 │   └── A1_coarse_mesh-8db269c22d05
-├── Spatial discretisation (mesh sensitivity): FAIL U=0.197
+├── Spatial discretisation (mesh sensitivity): FAIL
 │   └── A1_coarse_mesh-8db269c22d05
 │   └── A1_coarse_mesh.m0.707-a67b9e3443d4
 ├── Temporal discretisation (time-step sensitivity): INCONCLUSIVE
@@ -135,4 +135,4 @@ Failed checks (measured): mesh_sensitivity[strouhal_number].
 - `A1_coarse_mesh-8db269c22d05` status=completed parent=None created=2026-10-19T07:02:08+00:00 wall=283.8 s; record: results/runs/A1_coarse_mesh-8db269c22d05/run.json
 - `A1_coarse_mesh.m0.707-a67b9e3443d4` status=completed parent=A1_coarse_mesh-8db269c22d05 created=2026-10-19T08:25:17+00:00 wall=379.7 s; record: results/runs/A1_coarse_mesh.m0.707-a67b9e3443d4/run.json
 - OpenFOAM v2412 (package 2412.260127-1); problem specification and full configuration embedded in each run.json.
-- Experiment cost: {"experiment_cell_steps": 121504000.0, "relative_to_root": 1.0635854341736695, "experiment_wall_seconds": 379.7396539909996, "n_experiments": 1, "planner_calls": 1, "planner_cost_usd": 0, "loop_wall_seconds": 1405.4375645999999}
+- Experiment cost: {"experiment_cell_steps": 121504000.0, "relative_to_root": 1.0635854341736695, "experiment_wall_seconds": 379.7396539909996, "n_experiments": 1, "planner_calls": 1, "planner_cost_usd": 0, "loop_wall_seconds": 0.40297924199876434}

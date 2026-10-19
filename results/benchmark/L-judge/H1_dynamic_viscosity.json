@@ -8,42 +8,40 @@
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 35.68179202900046,
- "cost_usd": 0.020761409999999998,
+ "latency_s": 26.241704206999202,
+ "cost_usd": 0.020622509999999997,
  "errors": [],
  "model_fingerprint": "6ad399b27406",
  "verdict": "REJECT",
  "confidence": "HIGH",
  "reasoning_summary": [
-  "The problem specifies Re = 100 (0.15 m/s \u00d7 0.01 m / 1.5e-5 m\u00b2/s), but the run's configured_reynolds is 83.333. The solver was therefore run at a different Reynolds number than the one requested, probably because of a wrong viscosity. A viscosity of 1.8e-5 would give 83.333.",
-  "Drag coefficient and Strouhal number both depend on Reynolds number in this regime. The reported mean Cd of 1.3486 and St of 0.15402 belong to the Re = 83.333 flow, not the Re = 100 flow. The 3 % tolerance leaves no room for a 17 % error in Re.",
-  "The run's statistics look clean: 12 stationary cycles, drag CI95 of 4.5407e-05, drift of 0.00014629, max Courant of 0.71754, and a uniform inlet. These show the run is internally consistent and well converged. They do not fix the wrong operating condition.",
-  "The mesh is also modest. It has 30580 cells and a representative cell size of 0.45745 D. The strouhal_frequency_resolution is 0.013333, which is about 8.7 % of St = 0.15402 and is coarse against a 3 % tolerance. This is secondary to the Reynolds-number mismatch.",
-  "The requested quantities cannot be trusted for the specified problem, so the result is REJECT."
+  "The problem specification gives Re = 100 (0.15 m/s, D = 0.01 m, nu = 1.5e-05). The run's configured_reynolds is 83.333, so the simulation solved a different flow from the one requested.",
+  "With U = 0.15 and D = 0.01 fixed, Re = 83.333 implies nu of about 1.8e-05. That does not match the specified 1.5e-05, so the viscosity was configured wrongly.",
+  "Drag coefficient and Strouhal number both depend on Re. A 20% error in Re is far larger than the 0.03 tolerance, so mean_drag_coefficient (1.3486) and strouhal_number (0.15402) belong to the wrong Reynolds number.",
+  "The run's internal statistics are good. The drag confidence interval is 4.5407e-05, drift is 0.00014629, there are 12 stationary cycles, and max Courant is 0.71754. Good statistics only show the wrong-Re flow was resolved precisely. They do not make it the requested flow.",
+  "The wake-window start is flagged as an MSER cap (stationary_window_start_is_mser_cap: true), and the mesh is moderate (30580 cells, representative size 0.45745 D). These add some uncertainty, but the Re mismatch alone is enough to reject."
  ],
  "numeric_audit": {
   "traced": 18,
   "untraced": [
    {
-    "token": "1.8e-5",
-    "context": "sted, probably because of a wrong viscosity. A viscosity of 1.8e-5 would give 83.333."
+    "token": "1.8e-05",
+    "context": " = 0.15 and D = 0.01 fixed, Re = 83.333 implies nu of about 1.8e-05. That does not match the specified 1.5e"
    },
    {
-    "token": "17",
-    "context": "t the Re = 100 flow. The 3 % tolerance leaves no room for a 17 % error in Re."
-   },
-   {
-    "token": "8.7",
-    "context": "e strouhal_frequency_resolution is 0.013333, which is about 8.7 % of St = 0.15402 and is coarse against"
+    "token": "20%",
+    "context": "Drag coefficient and Strouhal number both depend on Re. A 20% error in Re is far larger than the 0.03"
    }
   ],
-  "n_untraced": 3
+  "n_untraced": 2
  },
  "case": "H1_dynamic_viscosity",
  "root_run": "H1_dynamic_viscosity-4ab90bfffff4",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "e5fbdb19d23f3b83",
-  "git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
  }
 }

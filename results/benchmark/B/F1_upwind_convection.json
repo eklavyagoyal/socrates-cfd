@@ -180,10 +180,10 @@
   },
   {
    "check": "physics_regime",
-   "status": "PASS",
-   "reason": "sustained periodic lift oscillation present, as expected for 47.0 < Re=100.0 < 188.5",
-   "value": 100.0,
-   "threshold": null,
+   "status": "INCONCLUSIVE",
+   "reason": "lift oscillation present but its amplitude changes by +11.3% across the analysed window: not yet a sustained limit cycle (decaying or still growing); a longer record is needed",
+   "value": 0.11303726249742532,
+   "threshold": 0.03,
    "source": "Provansal, Mathis & Boyer (1987) JFM 182:1 (Re_c ~ 47); Williamson (1996) Annu. Rev. Fluid Mech. 28:477; Barkley & Henderson (1996) JFM 322:215 (mode A at Re ~ 188.5); Williamson (1996)",
    "qoi": null,
    "component": null,
@@ -211,9 +211,9 @@
   {
    "check": "averaging_window",
    "status": "PASS",
-   "reason": "reported mean_drag_coefficient within 0.104% of the stationary-window value",
+   "reason": "reported mean_drag_coefficient is biased by 0.104% relative to the stationary-window value (measured bias, added linearly to the error budget)",
    "value": 0.0010378165861053348,
-   "threshold": 0.015,
+   "threshold": 0.03,
    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
    "qoi": "mean_drag_coefficient",
    "component": "averaging",
@@ -226,15 +226,16 @@
     "stationary": 1.2673969306271433,
     "declared_start_convective": 75.0,
     "transient_end_convective": 67.22610473673542,
-    "declared_window_cycles": 9
+    "declared_window_cycles": 9,
+    "kind": "bias"
    }
   },
   {
    "check": "averaging_window",
    "status": "PASS",
-   "reason": "reported strouhal_number within 0.259% of the stationary-window value",
+   "reason": "reported strouhal_number is biased by 0.259% relative to the stationary-window value (measured bias, added linearly to the error budget)",
    "value": 0.0025888333815454086,
-   "threshold": 0.015,
+   "threshold": 0.03,
    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
    "qoi": "strouhal_number",
    "component": "averaging",
@@ -247,7 +248,8 @@
     "stationary": 0.12581088924524692,
     "declared_start_convective": 75.0,
     "transient_end_convective": 67.22610473673542,
-    "declared_window_cycles": 9
+    "declared_window_cycles": 9,
+    "kind": "bias"
    }
   },
   {
@@ -391,8 +393,10 @@
  "case": "F1_upwind_convection",
  "root_run": "F1_upwind_convection-e460c39ac86c",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "42166599e5817247",
-  "git_commit": "e49066d28e05f04de06f791e61fb5af260879589"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "e49066d28e05f04de06f791e61fb5af260879589"
  }
 }

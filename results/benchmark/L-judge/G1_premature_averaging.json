@@ -8,39 +8,36 @@
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 41.633949943000516,
- "cost_usd": 0.02636981,
+ "latency_s": 32.93564790599885,
+ "cost_usd": 0.02455991,
  "errors": [],
  "model_fingerprint": "6ad399b27406",
  "verdict": "REJECT",
  "confidence": "MEDIUM",
  "reasoning_summary": [
-  "The configuration is sound. Re is 100, the inlet is uniform (ux_nonuniformity 0.0), blockage is 0.0125, the upstream distance is 30 D, mass imbalance is 8.3333e-11, and max Courant is 0.73373. The problem is how the quantities were sampled and how well they are resolved.",
-  "Drag statistics are too weak for a 3 % tolerance. The stationary window has only 3 cycles. The mean drag 95 % CI is 0.044509, which is about 3.4 % of 1.3039 and already above 3 %. Relative drift of mean drag is 0.040105, which is above 3 %. The half-window difference is null, so stationarity of the mean was not demonstrated.",
-  "The declared averaging start (10 convective units) is before the detected end of the transient (15.276). The submitted-setup mean drag (1.2961) therefore includes transient data. It differs from the stationary-window value (1.3039), so the result depends on window choice.",
-  "Strouhal frequency resolution is 0.033333, about 20 % of St (about 0.16). The 3 % tolerance is about 0.005. The three estimates (0.16129, 0.16058, 0.16169) agree within about 1 %, but with only 3 cycles and this resolution the 3 % claim is not supported by the spectral evidence.",
-  "Spatial resolution is modest and was not checked. The mesh has 30580 cells, a representative cell size of 0.45745 D, a last wake cell of 1.0209 D, and max non-orthogonality of 43.313 deg. Only one run exists, so there is no mesh or time-step sensitivity evidence.",
-  "Overall, the statistical uncertainty on mean drag already exceeds the requested tolerance, and Strouhal is under-resolved with a short record. I do not consider the two quantities trustworthy to 3 % from this evidence."
+  "Mean drag is not statistically settled to the 3 % tolerance. The stationary window has only 3 cycles. The 95 % CI on mean Cd is 0.044509, which is about 3.4 % of 1.3039 and already above 3 %. The relative drift of mean Cd is 0.040105, also above 3 %.",
+  "The stationary-window start (15.276 convective units) is flagged as the MSER cap. The record may therefore still contain transient, and the averaging window is not reliably identified. The declared averaging start was 10.0. The Cd means differ between the submitted setup (1.2961) and the window (1.3039), which shows sensitivity to window choice.",
+  "The Strouhal frequency resolution is 0.033333, about 20 % of the reported St of about 0.16. That is far coarser than the 3 % tolerance. The two estimates, 0.16058 (window) and 0.16169 (FFT), agree with each other, and the submitted setup gave 0.16129. Their agreement is on the order of 1 %, which is finer than the stated resolution, so this does not demonstrate 3 % accuracy. With only 3 cycles in 40 convective units, St is weakly constrained.",
+  "The mesh is coarse for resolving the wake and shear layers. It has a representative cell size of 0.45745 D, a wake last cell of 1.0209 D, and 30580 cells. No mesh or time-step refinement evidence is available, so discretisation error on Cd and St cannot be bounded to 3 %. The linearUpwind scheme with 1 outer corrector adds further uncertainty.",
+  "The setup is otherwise sound: the inlet is uniform, blockage is 0.0125, the force reference matches the problem specification, Courant is 0.73373, and mass imbalance is negligible. These points do not offset the unquantified statistical and discretisation uncertainty, so neither quantity can be trusted to 3 %."
  ],
  "numeric_audit": {
-  "traced": 23,
+  "traced": 20,
   "untraced": [
    {
-    "token": "95",
-    "context": "nce. The stationary window has only 3 cycles. The mean drag 95 % CI is 0.044509, which is about 3.4 % "
-   },
-   {
     "token": "3.4",
-    "context": "3 cycles. The mean drag 95 % CI is 0.044509, which is about 3.4 % of 1.3039 and already above 3 %. Rela"
+    "context": " cycles. The 95 % CI on mean Cd is 0.044509, which is about 3.4 % of 1.3039 and already above 3 %. The "
    }
   ],
-  "n_untraced": 2
+  "n_untraced": 1
  },
  "case": "G1_premature_averaging",
  "root_run": "G1_premature_averaging-17c0143468d7",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "97623e2549ed6fe5",
-  "git_commit": "667dd6c4da4f4ac0d83b746b86b7ac2da321e288"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "667dd6c4da4f4ac0d83b746b86b7ac2da321e288"
  }
 }

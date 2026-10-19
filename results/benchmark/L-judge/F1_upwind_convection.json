@@ -8,18 +8,18 @@
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 36.162179814999945,
- "cost_usd": 0.027137110000000002,
+ "latency_s": 31.038303819001158,
+ "cost_usd": 0.023415810000000002,
  "errors": [],
  "model_fingerprint": "6ad399b27406",
  "verdict": "REJECT",
  "confidence": "MEDIUM",
  "reasoning_summary": [
-  "The run is mechanically sound. It completed, the Courant number is 0.73198, the inlet is uniform, the blockage ratio is 0.0125 and the force reference matches the problem. The record shows 10 stationary cycles, after a transient that ended at 67.226 convective units. The mean-drag CI95 is 0.0034414 and the half-window difference is 0.0048991. The drift of 0.010692 is still about a third of the 3 % tolerance.",
-  "The convection scheme is Gauss upwind, which is first-order. The cell size is coarse: representative size 0.45745 D, 30580 cells in total, and the last wake cell is 1.0209 D. First-order upwind adds numerical diffusion that is not small relative to the physical viscosity at this Reynolds number (100.0). The effective Reynolds number is therefore lower than the configured one. That would bias both the mean drag and the shedding frequency.",
-  "The evidence has no mesh-refinement or scheme-sensitivity study. There is only one run, R0. The small statistical scatter measures the sampling error in time. It says nothing about the spatial and scheme discretization error, which is the dominant risk against a 3 % target on two quantities.",
-  "The Strouhal estimates agree with each other (0.12614, 0.12581, FFT 0.12605). The reported-setup frequency resolution is 0.013333, about 10 % of St. That is far coarser than the 3 % tolerance, so it cannot confirm 3 % accuracy for the reported value. The FFT agreement only shows internal consistency. It does not show that the shedding frequency of the upwind-damped solution matches the true one.",
-  "Because of the first-order scheme, the coarse wake and the missing verification, I cannot trust mean_drag_coefficient (1.2674) or strouhal_number (0.12581) to within 3 %. Medium confidence, since the discretization error is not quantified in the evidence."
+  "The convection scheme is first-order Gauss upwind. It adds numerical diffusion that damps the wake and shear layers. That directly biases the mean drag and the shedding frequency, and nothing in the evidence bounds the bias at 3 %.",
+  "The mesh is coarse for resolving the wake. It has 30580 cells, a representative cell size of 0.45745 D, and a last wake cell of 1.0209 D. Together with first-order upwind, this makes strong discretisation error likely. The evidence has no mesh or scheme refinement to show the results are converged.",
+  "The reported Strouhal frequency resolution is 0.013333. Against St = 0.12614 that is about 10 % of the value. The FFT and zero-crossing estimates (0.12605 and 0.12581) agree closely, but the frequency-resolution limit is still much coarser than the 3 % target.",
+  "Statistical stationarity is only marginal. The stationary window start is the MSER cap (67.226), and the drag drift is 0.010692 relative. That is about a third of the 3 % budget before any discretisation error. The 95 % confidence interval on mean drag is small (0.0034414), so sampling noise is not the main problem.",
+  "Setup items are acceptable: blockage ratio 0.0125, uniform inlet at 0.15, reference quantities consistent with D = 0.01 and U = 0.15, Courant number 0.73198, checkMesh ok, 10 stationary cycles, and mass imbalance 0.0. These do not offset the first-order scheme on a coarse mesh with no verification evidence, so the quantities cannot be trusted to 3 %."
  ],
  "numeric_audit": {
   "traced": 18,
@@ -29,8 +29,10 @@
  "case": "F1_upwind_convection",
  "root_run": "F1_upwind_convection-e460c39ac86c",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "42166599e5817247",
-  "git_commit": "e49066d28e05f04de06f791e61fb5af260879589"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "e49066d28e05f04de06f791e61fb5af260879589"
  }
 }

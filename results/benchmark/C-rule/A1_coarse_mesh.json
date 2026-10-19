@@ -35,8 +35,7 @@
     },
     "component_uncertainty": {
      "averaging": 2.3528906955550157e-05,
-     "statistics": 0.00016162247738844948,
-     "mesh": 0.19743746672302356
+     "statistics": 0.00016162247738844948
     },
     "combined_uncertainty": null
    }
@@ -220,9 +219,9 @@
    {
     "check": "averaging_window",
     "status": "PASS",
-    "reason": "reported mean_drag_coefficient within 0.005% of the stationary-window value",
+    "reason": "reported mean_drag_coefficient is biased by 0.005% relative to the stationary-window value (measured bias, added linearly to the error budget)",
     "value": 4.998019960636458e-05,
-    "threshold": 0.015,
+    "threshold": 0.03,
     "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
     "qoi": "mean_drag_coefficient",
     "component": "averaging",
@@ -235,15 +234,16 @@
      "stationary": 1.2950548038706824,
      "declared_start_convective": 75.0,
      "transient_end_convective": 67.59825598465088,
-     "declared_window_cycles": 10
+     "declared_window_cycles": 10,
+     "kind": "bias"
     }
    },
    {
     "check": "averaging_window",
     "status": "PASS",
-    "reason": "reported strouhal_number within 0.002% of the stationary-window value",
+    "reason": "reported strouhal_number is biased by 0.002% relative to the stationary-window value (measured bias, added linearly to the error budget)",
     "value": 2.3528906955550157e-05,
-    "threshold": 0.015,
+    "threshold": 0.03,
     "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
     "qoi": "strouhal_number",
     "component": "averaging",
@@ -256,7 +256,8 @@
      "stationary": 0.155608383098754,
      "declared_start_convective": 75.0,
      "transient_end_convective": 67.59825598465088,
-     "declared_window_cycles": 10
+     "declared_window_cycles": 10,
+     "kind": "bias"
     }
    },
    {
@@ -335,21 +336,21 @@
      "refinement_ratios": [
       1.412169540873779
      ],
+     "noise": 0.0002804044346486417,
      "estimated_root_error": 0.03626626322929352,
-     "method": "two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.8e-04)",
-     "noise": 0.0002804044346486417
+     "method": "two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.8e-04)"
     }
    },
    {
     "check": "mesh_sensitivity",
     "status": "FAIL",
-    "reason": "strouhal_number of the run under verification changes by 3.28% under mesh refinement (> tau=3%); its value is not converged to the requested tolerance [two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.1e-04)]",
+    "reason": "strouhal_number of the run under verification changes by 3.28% under mesh refinement (> tau=3%); its value is not converged to the requested tolerance",
     "value": 0.03281091631207959,
     "threshold": 0.03,
     "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
     "qoi": "strouhal_number",
     "component": "mesh",
-    "uncertainty": 0.19743746672302356,
+    "uncertainty": null,
     "runs": [
      "A1_coarse_mesh-8db269c22d05",
      "A1_coarse_mesh.m0.707-a67b9e3443d4"
@@ -369,8 +370,6 @@
      "refinement_ratios": [
       1.412169540873779
      ],
-     "estimated_root_error": 0.06581248890767452,
-     "method": "two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.1e-04)",
      "noise": 0.0002113295710870717
     }
    },
@@ -521,15 +520,19 @@
   "n_experiments": 1,
   "planner_calls": 1,
   "planner_cost_usd": 0,
-  "loop_wall_seconds": 1405.4375645999999
+  "loop_wall_seconds": 0.40297924199876434
  },
  "authority_violations": [],
- "started": "2026-10-19T08:25:15+00:00",
- "finished": "2026-10-19T08:48:41+00:00",
+ "n_planner_failures": 0,
+ "n_invalid_events": 0,
+ "started": "2026-10-19T09:08:42+00:00",
+ "finished": "2026-10-19T09:08:42+00:00",
  "case": "A1_coarse_mesh",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "220b53526b8c17e9",
-  "git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
  }
 }

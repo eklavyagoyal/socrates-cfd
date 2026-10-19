@@ -8,38 +8,45 @@
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 38.06130202900022,
- "cost_usd": 0.026224010000000002,
+ "latency_s": 36.68584450199887,
+ "cost_usd": 0.03218211,
  "errors": [],
  "model_fingerprint": "6ad399b27406",
  "verdict": "REJECT",
  "confidence": "MEDIUM",
  "reasoning_summary": [
-  "The run's internal statistics look clean. It has 12 stationary cycles, a drag drift of 0.00018797, a drag 95% CI of 5.8758e-05, and max Courant number 0.38878. The inlet is uniform and blockage is 0.0125. Statistical convergence is therefore not the problem.",
-  "The mesh is very coarse for a vortex-shedding wake. It has only 7616 cells, a representative cell size of 0.91664 D, 56 streamwise wake cells, and a last wake cell of 2.0173 D. A cell of about one diameter or more cannot resolve the shed vortices. Together with linearUpwind convection, this probably adds numerical dissipation that shifts the shedding frequency and the wake-dependent mean drag.",
-  "The wall-adjacent resolution is also modest: 80 cells around the cylinder, with max non-orthogonality 41.56 deg and skewness 0.51811. The 3% tolerance on both Cd and St needs a demonstrated mesh-converged wake.",
-  "The St uncertainty is not shown to be below 3%. The stated strouhal_frequency_resolution is 0.013333, about 8.6% of the reported St of 0.15561. Any sub-bin precision comes from interpolation or cycle counting, which this evidence does not validate.",
-  "The evidence contains only one run, with no mesh or time-step refinement and no independent reference. The reported Cd of 1.2951 and St of 0.15561 are therefore unverified for discretisation error. The tight statistical metrics only show the run is self-consistent. The coarse wake mesh makes the 3% accuracy unlikely, so I reject."
+  "The statistics are clean. The run completed with max Courant 0.38878. The drag record shows 12 stationary cycles, a mean-drag drift of 0.00018797 and a 95% CI of 5.8758e-05. The inlet is uniform and blockage is 0.0125. None of this shows the answer is converged in space.",
+  "The mesh is very coarse for a vortex-shedding problem: 7616 cells over a domain extending 30D upstream, 50D downstream and 40D half-height. The representative cell size is 0.91664 D. The wake has only 56 streamwise cells, and the last wake cell is 2.0173 D. The shed vortices have a period of about 6.4 convective units, so the far wake cannot carry them without heavy numerical damping.",
+  "The convection scheme is linearUpwind on this coarse grid, so numerical dissipation in the wake can shift shedding frequency and mean drag. There is only one mesh, with no refinement or second-run comparison. The 3% tolerance on Cd and St is therefore unsupported.",
+  "The Strouhal frequency resolution is 0.013333, which is about 8.6% of the reported St of 0.15561. That is well above the 3% tolerance. The FFT value equals the reported value exactly, so it gives no independent check. The 642.64 steps per period give a finer estimate, but it carries the same mesh-resolution risk.",
+  "The stationary window starts at 67.598, which is flagged as the MSER cap. It is earlier than the declared averaging start of 75.0, so the transient removal is not clearly confirmed. This is a minor concern next to the mesh issue.",
+  "The tight statistical error bars measure only temporal sampling noise on this one mesh. Spatial and numerical-scheme error is unquantified and likely larger than 3% given the 0.92 D representative cell size and the coarse wake. I judge both quantities untrustworthy at the requested tolerance."
  ],
  "numeric_audit": {
-  "traced": 19,
+  "traced": 21,
   "untraced": [
    {
     "token": "95%",
-    "context": "as 12 stationary cycles, a drag drift of 0.00018797, a drag 95% CI of 5.8758e-05, and max Courant numbe"
+    "context": "12 stationary cycles, a mean-drag drift of 0.00018797 and a 95% CI of 5.8758e-05. The inlet is uniform "
+   },
+   {
+    "token": "6.4",
+    "context": " cell is 2.0173 D. The shed vortices have a period of about 6.4 convective units, so the far wake canno"
    },
    {
     "token": "8.6%",
-    "context": "The stated strouhal_frequency_resolution is 0.013333, about 8.6% of the reported St of 0.15561. Any sub-"
+    "context": "e Strouhal frequency resolution is 0.013333, which is about 8.6% of the reported St of 0.15561. That is "
    }
   ],
-  "n_untraced": 2
+  "n_untraced": 3
  },
  "case": "A1_coarse_mesh",
  "root_run": "A1_coarse_mesh-8db269c22d05",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "220b53526b8c17e9",
-  "git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
  }
 }

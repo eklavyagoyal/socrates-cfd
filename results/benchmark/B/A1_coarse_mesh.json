@@ -211,9 +211,9 @@
   {
    "check": "averaging_window",
    "status": "PASS",
-   "reason": "reported mean_drag_coefficient within 0.005% of the stationary-window value",
+   "reason": "reported mean_drag_coefficient is biased by 0.005% relative to the stationary-window value (measured bias, added linearly to the error budget)",
    "value": 4.998019960636458e-05,
-   "threshold": 0.015,
+   "threshold": 0.03,
    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
    "qoi": "mean_drag_coefficient",
    "component": "averaging",
@@ -226,15 +226,16 @@
     "stationary": 1.2950548038706824,
     "declared_start_convective": 75.0,
     "transient_end_convective": 67.59825598465088,
-    "declared_window_cycles": 10
+    "declared_window_cycles": 10,
+    "kind": "bias"
    }
   },
   {
    "check": "averaging_window",
    "status": "PASS",
-   "reason": "reported strouhal_number within 0.002% of the stationary-window value",
+   "reason": "reported strouhal_number is biased by 0.002% relative to the stationary-window value (measured bias, added linearly to the error budget)",
    "value": 2.3528906955550157e-05,
-   "threshold": 0.015,
+   "threshold": 0.03,
    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
    "qoi": "strouhal_number",
    "component": "averaging",
@@ -247,7 +248,8 @@
     "stationary": 0.155608383098754,
     "declared_start_convective": 75.0,
     "transient_end_convective": 67.59825598465088,
-    "declared_window_cycles": 10
+    "declared_window_cycles": 10,
+    "kind": "bias"
    }
   },
   {
@@ -391,8 +393,10 @@
  "case": "A1_coarse_mesh",
  "root_run": "A1_coarse_mesh-8db269c22d05",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "220b53526b8c17e9",
-  "git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
  }
 }

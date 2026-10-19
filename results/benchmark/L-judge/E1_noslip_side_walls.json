@@ -8,26 +8,26 @@
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 50.61985230500068,
- "cost_usd": 0.043798675,
+ "latency_s": 45.05211959600092,
+ "cost_usd": 0.039793010000000004,
  "errors": [],
  "model_fingerprint": "6ad399b27406",
  "verdict": "ACCEPT",
  "confidence": "MEDIUM",
  "reasoning_summary": [
-  "Setup matches the question. Inlet 0.15 m/s, D = 0.01 m and nu = 1.5e-5 give the configured Re of 100. The inlet profile was measured and is uniform (ux_nonuniformity 0.0). The force reference values (lRef 0.01, Aref 0.0001, magUInf 0.15) are consistent with the geometry.",
-  "Domain is adequate for an unbounded stream. Blockage is 0.0125, with 30D upstream, 50D downstream and 40D half-height. Outlet BCs are standard. The no-slip lateral walls sit 40D from the cylinder, which is far enough to leave the cylinder flow essentially unaffected.",
-  "Temporal resolution and convergence are good. Max Courant is 0.73374, with 608.73 steps per shedding period. Mass imbalance is 8.3333e-11. The run reached 150 convective units, and the transient ended at 70.549, before the declared averaging start of 75.",
-  "Statistics are well converged. The stationary window has 13 cycles. The Cd 95% CI is 0.00029469, drift is 0.0011988 and half-window difference is 0.00060692, all far below the 3% tolerance. The reported and stationary-window values agree: Cd 1.3403 vs 1.3402, St 0.16429 vs 0.16428.",
-  "St is robust. The FFT (0.16428) and the reported value (0.16429) agree. The stated frequency resolution of 0.013333 is coarse, but the two independent estimates match to about 1e-5, so the resolution does not limit the result.",
-  "Residual risk: no mesh or scheme sensitivity evidence exists. The mesh has 30580 cells, a representative size of 0.45745D, and wake cells growing to 1.0209D. The wake is coarse with a linearUpwind scheme. The near-body mesh is fine (160 cells around the cylinder, first cell 0.005D, checkMesh ok). Because of this I rate confidence MEDIUM rather than HIGH."
+  "Setup matches the question. Re = 0.15*0.01/1.5e-5 = 100, which equals the configured 100. The force reference (magUInf 0.15, lRef 0.01, Aref 0.0001, rho 1.2) is consistent with the geometry, and the cylinder patch extent is 0.01 m in x and y.",
+  "The inlet was measured as uniform (ux_nonuniformity 0.0, uy_max_abs 0.0). checkMesh passed, with max non-orthogonality 43.313 deg and max skewness 0.53384. Mass imbalance is tiny (8.3333e-11), and max Courant is 0.73374 with an implicit backward scheme.",
+  "The record is long enough and stationary. The stationary window covers 13 cycles with 608.73 steps per period. Mean Cd drift is 0.0011988 relative, the half-window difference is 0.00060692, and the 95% CI is 0.00029469. All are far below the 3% tolerance. The window start is at the MSER cap (70.549) and the declared start is 75.0, but the drift and half-difference statistics show no residual transient.",
+  "St is consistent across methods: 0.16429 from the submitted setup, 0.16428 from the stationary window, and 0.16428 from the FFT. The nominal frequency resolution (0.013333) is coarse, but the identical 5-digit values suggest a time-domain estimate that is much finer than the grid. Mean Cd also agrees between the submitted setup (1.3403) and the stationary window (1.3402).",
+  "The domain is large (30D upstream, 50D downstream, 40D half-height), and blockage is 0.0125. The main reservation is that the lateral boundaries are noSlipWall, which does not match 'unbounded'. At 40D from the body and 1.25% blockage, the effect is likely small against a 3% tolerance. I cannot quantify it from this evidence, and no mesh or domain sensitivity run is available.",
+  "The wake is moderately coarse (representative cell 0.45745 D, last wake cell 1.0209 D). The near-body resolution is reasonable (160 cells around the cylinder, first cell 0.005 D). Overall the evidence is internally consistent with no red flags, so I accept with medium confidence."
  ],
  "numeric_audit": {
-  "traced": 36,
+  "traced": 39,
   "untraced": [
    {
     "token": "95%",
-    "context": "well converged. The stationary window has 13 cycles. The Cd 95% CI is 0.00029469, drift is 0.0011988 an"
+    "context": "relative, the half-window difference is 0.00060692, and the 95% CI is 0.00029469. All are far below the"
    }
   ],
   "n_untraced": 1
@@ -35,8 +35,10 @@
  "case": "E1_noslip_side_walls",
  "root_run": "E1_noslip_side_walls-88a7cd5812e8",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "688a6ec0ec66c891",
-  "git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
  }
 }

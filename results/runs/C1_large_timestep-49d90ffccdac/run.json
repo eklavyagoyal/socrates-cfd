@@ -1,6 +1,6 @@
 {
   "run_id": "C1_large_timestep-49d90ffccdac",
-  "status": "running",
+  "status": "completed",
   "created": "2026-10-19T07:09:37+00:00",
   "problem_spec": {
     "problem": {
@@ -139,5 +139,43 @@
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4
   },
-  "owner_pid": 14393
+  "started": "2026-10-19T07:09:38+00:00",
+  "commands": [
+    {
+      "step": "blockMesh",
+      "command": "blockMesh",
+      "returncode": 0,
+      "wall_seconds": 1.0745359689999532,
+      "log_file": "log.blockMesh"
+    },
+    {
+      "step": "checkMesh",
+      "command": "checkMesh -allGeometry -allTopology",
+      "returncode": 0,
+      "wall_seconds": 1.5258842000002915,
+      "log_file": "log.checkMesh"
+    },
+    {
+      "step": "setFields",
+      "command": "setFields",
+      "returncode": 0,
+      "wall_seconds": 1.0216067679994012,
+      "log_file": "log.setFields"
+    },
+    {
+      "step": "pimpleFoam",
+      "command": "pimpleFoam",
+      "returncode": 0,
+      "wall_seconds": 1155.0242580489994,
+      "log_file": "log.pimpleFoam"
+    }
+  ],
+  "wall_seconds": 1158.646284985999,
+  "finished": "2026-10-19T09:07:59+00:00",
+  "raw_output_sha256": {
+    "log.blockMesh": "5475e729d199417ea74d5ba4f4d90445bdaa51b23b58f6d7b356c9db568d9968",
+    "log.checkMesh": "09c2fa6ebf64cabb4ec087cd7c2e8c341802599517f9292c0074f1750e3697a3",
+    "log.pimpleFoam": "7d7d65a060813963d8f696053851a88420e7ccaf33d36cf5a611d3658e33dd73",
+    "log.setFields": "bd996c412ef98ea8d645ee7bb75fc8b09633902e8e6a2fd4181e07889454d9fa"
+  }
 }

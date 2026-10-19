@@ -1,8 +1,8 @@
 {
   "run_id": "F1_upwind_convection.m2-a5b11786bf96",
   "status": "running",
-  "owner_pid": 23063,
-  "created": "2026-10-19T08:25:59+00:00",
+  "owner_pid": 10692,
+  "created": "2026-10-19T09:09:23+00:00",
   "problem_spec": {
     "problem": {
       "id": "cylinder2d_re100",
@@ -118,7 +118,7 @@
   },
   "config_hash": "635d6f5f3900c097",
   "parent_run": "F1_upwind_convection-e460c39ac86c",
-  "launch_reason": "R0 combines first-order upwind convection with a coarse mesh (representative_cell_size_D 0.45745, wake_last_cell_D 1.0209). The convection_scheme_order and mesh_sensitivity checks are both INCONCLUSIVE. Mesh/scheme error is the component most likely to shift St and Cd by more than 3%, and no mesh evidence exists yet. A factor of 2.0 gives the largest signal-to-noise ratio for the discretisation error.",
+  "launch_reason": "R0 uses first-order Gauss upwind on a coarse mesh (representative_cell_size_D 0.45745), and the mesh error is entirely unmeasured. This is the flaw most likely to change drag or Strouhal number by more than 3%. The largest allowed factor gives the clearest signal for a first-order scheme, and the budget allows it (0 of 6 experiments and 0.0 of 12.0 relative compute used).",
   "launched_by": "llm_critic",
   "experiment": {
     "action": "REFINE_MESH",
@@ -187,7 +187,7 @@
     "python": "3.13.16",
     "numpy": "2.5.3",
     "scipy": "1.18.1",
-    "socrates_git_commit": "4639ddbeae95e92525dcfff8aa45297ecbe6eb5b",
+    "socrates_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4

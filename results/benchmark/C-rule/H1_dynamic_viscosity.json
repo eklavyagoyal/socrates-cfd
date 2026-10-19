@@ -218,9 +218,9 @@
    {
     "check": "averaging_window",
     "status": "PASS",
-    "reason": "reported mean_drag_coefficient within 0.000% of the stationary-window value",
+    "reason": "reported mean_drag_coefficient is biased by 0.000% relative to the stationary-window value (measured bias, added linearly to the error budget)",
     "value": 2.136581530041319e-06,
-    "threshold": 0.015,
+    "threshold": 0.03,
     "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
     "qoi": "mean_drag_coefficient",
     "component": "averaging",
@@ -233,15 +233,16 @@
      "stationary": 1.3486182504519175,
      "declared_start_convective": 75.0,
      "transient_end_convective": 68.25570531522465,
-     "declared_window_cycles": 10
+     "declared_window_cycles": 10,
+     "kind": "bias"
     }
    },
    {
     "check": "averaging_window",
     "status": "PASS",
-    "reason": "reported strouhal_number within 0.002% of the stationary-window value",
+    "reason": "reported strouhal_number is biased by 0.002% relative to the stationary-window value (measured bias, added linearly to the error budget)",
     "value": 2.312481677566328e-05,
-    "threshold": 0.015,
+    "threshold": 0.03,
     "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
     "qoi": "strouhal_number",
     "component": "averaging",
@@ -254,7 +255,8 @@
      "stationary": 0.15401340339007388,
      "declared_start_convective": 75.0,
      "transient_end_convective": 68.25570531522465,
-     "declared_window_cycles": 10
+     "declared_window_cycles": 10,
+     "kind": "bias"
     }
    },
    {
@@ -408,15 +410,19 @@
   "n_experiments": 0,
   "planner_calls": 0,
   "planner_cost_usd": 0,
-  "loop_wall_seconds": 0.0004937290004818351
+  "loop_wall_seconds": 0.0004258110002410831
  },
  "authority_violations": [],
- "started": "2026-10-19T08:25:17+00:00",
- "finished": "2026-10-19T08:25:17+00:00",
+ "n_planner_failures": 0,
+ "n_invalid_events": 0,
+ "started": "2026-10-19T09:08:42+00:00",
+ "finished": "2026-10-19T09:08:42+00:00",
  "case": "H1_dynamic_viscosity",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "e5fbdb19d23f3b83",
-  "git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
  }
 }

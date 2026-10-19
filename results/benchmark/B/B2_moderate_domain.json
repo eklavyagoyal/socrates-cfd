@@ -211,9 +211,9 @@
   {
    "check": "averaging_window",
    "status": "PASS",
-   "reason": "reported mean_drag_coefficient within 0.000% of the stationary-window value",
+   "reason": "reported mean_drag_coefficient is biased by 0.000% relative to the stationary-window value (measured bias, added linearly to the error budget)",
    "value": 1.8581236036513182e-06,
-   "threshold": 0.015,
+   "threshold": 0.03,
    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
    "qoi": "mean_drag_coefficient",
    "component": "averaging",
@@ -226,15 +226,16 @@
     "stationary": 1.3712792238693414,
     "declared_start_convective": 75.0,
     "transient_end_convective": 69.50008093579945,
-    "declared_window_cycles": 12
+    "declared_window_cycles": 12,
+    "kind": "bias"
    }
   },
   {
    "check": "averaging_window",
    "status": "PASS",
-   "reason": "reported strouhal_number within 0.001% of the stationary-window value",
+   "reason": "reported strouhal_number is biased by 0.001% relative to the stationary-window value (measured bias, added linearly to the error budget)",
    "value": 7.006427276056601e-06,
-   "threshold": 0.015,
+   "threshold": 0.03,
    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
    "qoi": "strouhal_number",
    "component": "averaging",
@@ -247,7 +248,8 @@
     "stationary": 0.1670397434722989,
     "declared_start_convective": 75.0,
     "transient_end_convective": 69.50008093579945,
-    "declared_window_cycles": 12
+    "declared_window_cycles": 12,
+    "kind": "bias"
    }
   },
   {
@@ -391,8 +393,10 @@
  "case": "B2_moderate_domain",
  "root_run": "B2_moderate_domain-55b85b2cd33e",
  "stamp": {
-  "decision_code": "fa4a465206b4a958",
+  "decision_code": "6406c53bb2011ef5",
   "root_config_hash": "e6b780dacd168e94",
-  "git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
  }
 }

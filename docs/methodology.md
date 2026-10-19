@@ -174,7 +174,7 @@ tuned to a case. All happened before any system evaluation.
 
 ## 8. What the software tests do and do not establish
 
-`tests/` (61+ tests) cover:
+`tests/` (95 unit tests plus 8 OpenFOAM integration tests, `pytest -m openfoam`) cover:
 - parsers, on real OpenFOAM v2412 output fixtures, including a diverged run;
 - signal analysis, on synthetic signals with known answers and a real history;
 - every check's status logic and the missing-evidence rule;
@@ -229,7 +229,22 @@ Second-round findings from the same review (latest lens to finish), also fixed b
 | R24 | A decaying (or still growing) oscillation passed the regime check as "sustained shedding" | Amplitude drift > τ across the window → INCONCLUSIVE (→ RUN_LONGER) |
 | R25 | MSER hits its 50 % cap on every run here (exponential approach to the limit cycle), so "transient end detected" overstated what was detected | Reported as "stationary-window start" with an explicit cap flag; stationarity is judged by the drift/half-difference measures |
 
-The fixes were themselves re-reviewed by a second adversarial pass.
+The fixes were themselves re-reviewed by a second adversarial pass. That fix-verification pass found the following,
+also fixed before any result was used (the benchmark was relaunched from scratch afterwards; the stamp of every
+result records the decision-code fingerprint and the git commit it was produced with):
+
+| # | Defect in a fix | Fix |
+|---|---|---|
+| R26 | The FAIL test sat after the "no observed order" and "divergent" branches, so a change ≫ τ on a non-monotone or divergent sequence came back INCONCLUSIVE | FAIL (change − 2·noise > τ) is tested first, for every sequence shape |
+| R27 | An observed-order root above the search bracket returned "no order", so *very fast* convergence was INCONCLUSIVE | Above-bracket roots return an ∞ sentinel and take the above-band rule (formal order, Fs = 3) |
+| R28 | The member-reliability gate used a different threshold from the noise floor in U, so a member could be "reliable" for one and not the other | One rule: a member is unreliable when Fs₂·u > frac·τ; unreliable members are listed for RUN_LONGER |
+| R29 | A RUN_LONGER restart computed `writeInterval` from the parent's nominal end time, not the time actually restarted from | The actual restart time is persisted (`restart_from_time_s`) and used; the final-state check allows dt/2 and requires progress past the start; a final-state failure is not cached as a solver failure |
+| R30 | Orphan adoption accepted a run whose only solver log was copied history, and finalized a continuation that never ran | Adoption requires a log produced by this run (not in the source run), the right `Case:` header and a written final state |
+| R31 | Numeric audit: "1.50 %" in the package did not match "1.50 %" in critic text; numbers inside dict keys were unknown; excluding the whole history block also hid system-written outcomes | Percent strings contribute v and v/100; key digits are known; only critic-authored history fields are excluded |
+| R32 | A loop that stopped because every LLM call failed was recorded as a verification INCONCLUSIVE, and resume kept it | Planner failures are counted separately from invalid actions; "all events were planner failures" is an infrastructure error, recomputed on resume and excluded from rate denominators |
+| R33 | The decision-code fingerprint omitted case generation, primitives, the run store, parsers and the problem spec, and hashed base names only | Widened to every verdict-relevant file, hashed with relative paths; results also stamped with the benchmark commit and a dirty flag |
+| R34 | An exception while writing a case report discarded the finished result | Report failures are written to `<case>.report_error.txt`; the result is kept |
+| R35 | The analysis took the root run from System B only (crash when B errored) and counted errors in rate denominators | Root run taken from any system's result (must agree); errors excluded from denominators and reported per label |
 
 ### Observations logged during the evaluation (not changed in the pre-registered verifier)
 

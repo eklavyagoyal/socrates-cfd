@@ -50,6 +50,7 @@ Values used for the reference are those of each member's longest continuation (r
 | domain | ↳ `baseline.long200-a7dac050dbe5` | 0.008333 | 200 | 1.3182 | 0.1623 | 0.2238 |
 | domain | `baseline.D2x-4312d7d8fec3` | 0.00625 | 80 | 1.3179 | 0.1625 | 0.2206 |
 | domain | ↳ `baseline.long280-3b986ef1d905` | 0.00625 | 280 | 1.3158 | 0.1623 | 0.2199 |
+| domain | `baseline.D4x.ff1.5-949b19f791f0` | 0.00625 | 200 | 1.3178 | 0.1623 | 0.2244 |
 
 **Statistical reliability of every study member** (same measures as the verifier's statistics check; the truth uncertainty carries these through the extrapolation weights):
 
@@ -68,6 +69,7 @@ Values used for the reference are those of each member's longest continuation (r
 | `baseline.long180-94a31bca23fd` | 15 | True | 4.16e-05 | 3.67e-05 | -4.16e-05 |
 | `baseline.long200-a7dac050dbe5` | 16 | True | 3.74e-05 | 2.28e-05 | -3.74e-05 |
 | `baseline.long280-3b986ef1d905` | 23 | True | 2.19e-05 | 1.75e-05 | -2.19e-05 |
+| `baseline.D4x.ff1.5-949b19f791f0` | 19 | False | 3.59e-06 | 1.37e-05 | -3.59e-06 |
 
 ### Richardson extrapolation per factor and combined in-house reference
 
@@ -75,35 +77,35 @@ Values used for the reference are those of each member's longest continuation (r
 |---|---|---|---|---|
 | mean_drag_coefficient | time | Richardson with observed order 1.03, Fs=1.25 | 1.32419 | -0.00698 |
 | mean_drag_coefficient | mesh | Richardson with observed order 2.69, Fs=1.25 | 1.33889 | +0.00772 |
-| mean_drag_coefficient | domain | observed order 0.3012276381193722 outside band; p = min(observed, formal) = 0.30 with Fs=3 | 1.28940 | -0.04177 |
+| mean_drag_coefficient | domain | Richardson with observed order 1.20, Fs=1.25 | 1.31472 | -0.01645 |
 | strouhal_number | time | Richardson with observed order 1.00, Fs=1.25 | 0.16377 | +0.00034 |
 | strouhal_number | mesh | Richardson with observed order 2.88, Fs=1.25 | 0.16493 | +0.00150 |
-| strouhal_number | domain | observed order 6.371522214315026 outside band; p = min(observed, formal) = 1.00 with Fs=3 | 0.16222 | -0.00122 |
+| strouhal_number | domain | Richardson with observed order 1.30, Fs=1.25 | 0.16211 | -0.00133 |
 | rms_lift_coefficient | time | Richardson with observed order 1.06, Fs=1.25 | 0.21687 | -0.01171 |
 | rms_lift_coefficient | mesh | Richardson with observed order 3.49, Fs=1.25 | 0.23466 | +0.00608 |
-| rms_lift_coefficient | domain | non-monotone, divergent or exact: finest value | 0.21988 | -0.00870 |
+| rms_lift_coefficient | domain | Richardson with observed order 0.68, Fs=1.25 | 0.22173 | -0.00685 |
 
 Mesh levels were run with dt = 0.01, 0.0086734, 0.006133 (Courant control), so each mesh level is shifted to the baseline dt with the time chain's error model C·dt^p before extrapolation (otherwise part of the time error would be counted twice):
 
 | quantity | p (time) | shifts applied to mesh levels | T without the shift | T with the shift | difference |
 |---|---|---|---|---|---|
-| mean_drag_coefficient | 1.03 | +0.00e+00, -9.50e-04, -2.76e-03 | 1.28621 | 1.29014 | +0.305% |
-| strouhal_number | 1.00 | -0.00e+00, +4.45e-05, +1.30e-04 | 0.16432 | 0.16405 | -0.162% |
-| rms_lift_coefficient | 1.06 | +0.00e+00, -1.63e-03, -4.72e-03 | 0.20899 | 0.21425 | +2.457% |
+| mean_drag_coefficient | 1.03 | +0.00e+00, -9.50e-04, -2.76e-03 | 1.31153 | 1.31546 | +0.299% |
+| strouhal_number | 1.00 | -0.00e+00, +4.45e-05, +1.30e-04 | 0.16421 | 0.16394 | -0.162% |
+| rms_lift_coefficient | 1.06 | +0.00e+00, -1.63e-03, -4.72e-03 | 0.21083 | 0.21610 | +2.436% |
 
-Terms of U(T) (absolute, combined by RSS): mean_drag_coefficient: discretisation time 9.88e-04, mesh 1.50e-03, domain 7.91e-02, root 6.67e-06, time 5.71e-05, mesh 2.20e-05, domain 6.46e-04, time_conditioning 2.15e-04, domain_conditioning 1.68e-02, time_overlap_model_form 3.93e-03; strouhal_number: discretisation time 6.63e-05, mesh 2.54e-04, domain 2.07e-04, root 2.02e-06, time 2.36e-05, mesh 1.17e-05, domain 1.59e-05, time_conditioning 5.85e-04, domain_conditioning 1.18e-03, time_overlap_model_form 2.66e-04; rms_lift_coefficient: discretisation time 1.63e-03, mesh 6.76e-04, domain 6.12e-03, root 4.60e-06, time 5.45e-05, mesh 3.25e-05, domain 8.42e-06, time_conditioning 2.38e-05, domain_conditioning 1.54e-03, time_overlap_model_form 5.26e-03.
+Terms of U(T) (absolute, combined by RSS): mean_drag_coefficient: discretisation time 9.88e-04, mesh 1.50e-03, domain 3.91e-03, root 6.67e-06, time 5.71e-05, mesh 2.20e-05, domain 4.33e-05, time_conditioning 2.15e-04, domain_farfield_model_form 1.08e-02, time_overlap_model_form 3.93e-03; strouhal_number: discretisation time 6.63e-05, mesh 2.54e-04, domain 2.72e-04, root 2.02e-06, time 2.36e-05, mesh 1.17e-05, domain 5.51e-06, time_conditioning 5.85e-04, domain_farfield_model_form 1.17e-04, time_overlap_model_form 2.66e-04; rms_lift_coefficient: discretisation time 1.63e-03, mesh 6.76e-04, domain 3.34e-03, root 4.60e-06, time 5.45e-05, mesh 3.25e-05, domain 6.49e-05, time_conditioning 2.38e-05, domain_farfield_model_form 1.85e-03, time_overlap_model_form 5.26e-03.
+- far-field model form, mean_drag_coefficient: domain chain with the far-field-refined x4 level → 1.31472; standard chain (baseline-408129116207, baseline.D2x-efba395f6c27, baseline.D2x-4312d7d8fec3) → 1.30389 (Richardson with observed order 0.60, Fs=1.25); difference 1.08e-02 added to U(T)
 - conditioning, mean_drag_coefficient time: finest three → 1.32419; next-coarser three (baseline-408129116207, baseline.dt0.005-693742b868bc, baseline.dt0.0025-f1e9eaf0cd2a) → 1.32441 (Richardson with observed order 1.14, Fs=1.25); difference 2.15e-04 added to U(T)
-- conditioning, mean_drag_coefficient domain: finest three → 1.28940; next-coarser three (baseline-408129116207, baseline.D2x-efba395f6c27, baseline.D1.5x-ed421affd588) → 1.30617 (Richardson with observed order 0.67, Fs=1.25); difference 1.68e-02 added to U(T)
+- far-field model form, strouhal_number: domain chain with the far-field-refined x4 level → 0.16211; standard chain (baseline-408129116207, baseline.D2x-efba395f6c27, baseline.D2x-4312d7d8fec3) → 0.16199 (Richardson with observed order 1.14, Fs=1.25); difference 1.17e-04 added to U(T)
 - conditioning, strouhal_number time: finest three → 0.16377; next-coarser three (baseline-408129116207, baseline.dt0.005-693742b868bc, baseline.dt0.0025-f1e9eaf0cd2a) → 0.16436 (observed order 0.2066519222496308 outside band; p = min(observed, formal) = 0.21 with Fs=3); difference 5.85e-04 added to U(T)
-- conditioning, strouhal_number domain: finest three → 0.16222; next-coarser three (baseline-408129116207, baseline.D2x-efba395f6c27, baseline.D1.5x-ed421affd588) → 0.16104 (Richardson with observed order 0.58, Fs=1.25); difference 1.18e-03 added to U(T)
+- far-field model form, rms_lift_coefficient: domain chain with the far-field-refined x4 level → 0.22173; standard chain (baseline-408129116207, baseline.D2x-efba395f6c27, baseline.D2x-4312d7d8fec3) → 0.21988 (non-monotone, divergent or exact: finest value); difference 1.85e-03 added to U(T)
 - conditioning, rms_lift_coefficient time: finest three → 0.21687; next-coarser three (baseline-408129116207, baseline.dt0.005-693742b868bc, baseline.dt0.0025-f1e9eaf0cd2a) → 0.21685 (Richardson with observed order 1.05, Fs=1.25); difference 2.38e-05 added to U(T)
-- conditioning, rms_lift_coefficient domain: finest three → 0.21988; next-coarser three (baseline-408129116207, baseline.D2x-efba395f6c27, baseline.D1.5x-ed421affd588) → 0.22143 (Richardson with observed order 1.66, Fs=1.25); difference 1.54e-03 added to U(T)
 
 | quantity | baseline (stationary) | in-house reference T | uncertainty of T (of which statistical) | literature band | T in band | T in band widened by τ |
 |---|---|---|---|---|---|---|
-| mean_drag_coefficient | 1.3312 | **1.2901** | ±6.28% (0.05%) | 1.31–1.33 | False | True |
-| strouhal_number | 0.1634 | **0.1641** | ±0.84% (0.02%) | 0.164–0.166 | True | True |
-| rms_lift_coefficient | 0.2286 | **0.2143** | ±3.92% (0.03%) | 0.222–0.235 | False | — |
+| mean_drag_coefficient | 1.3312 | **1.3155** | ±0.94% (0.01%) | 1.31–1.33 | True | True |
+| strouhal_number | 0.1634 | **0.1639** | ±0.46% (0.02%) | 0.164–0.166 | False | True |
+| rms_lift_coefficient | 0.2286 | **0.2161** | ±3.12% (0.04%) | 0.222–0.235 | False | — |
 
 ### Deterministic verification of the baseline
 

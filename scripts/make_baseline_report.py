@@ -64,6 +64,13 @@ def main() -> None:
         cont[root] = ch["longer"][-1]
     rb = store.load(root)
     ev = rb.evidence
+    # far-field resolution test (scripts/farfield_resolution_test.py): the x4 domain level with a refined far field.
+    # EXPAND_DOMAIN coarsens the far field as the domain grows, which biases the coarse-far-field x4 level; when the
+    # test exists, the domain chain uses the refined x4 member and the difference to the standard chain's
+    # extrapolation is carried as a far-field model-form uncertainty (the x2 level's own, smaller bias is not measured).
+    fft = REPO / "results" / "baseline" / "farfield_test.json"
+    ff = json.loads(fft.read_text()) if fft.exists() else None
+    ff_run = ff["test"] if ff and ff.get("status") == "completed" else None
 
     def val_run(rid):
         return cont.get(rid, rid)
@@ -96,8 +103,15 @@ def main() -> None:
         conditioning = {}
         for factor, order in (("time", 2.0), ("mesh", 2.0), ("domain", 1.0)):
             rids = ch[factor][-3:]  # the finest three levels (time and domain chains have four after stages 2-3)
+            if factor == "domain" and ff_run:
+                std_ids = [ch["domain"][0], ch["domain"][1], ch["domain"][-1]]
+                rids = [ch["domain"][0], ch["domain"][1], ff_run]
             vals = [sta_c(store, r, cont).get(q) for r in rids]
-            if len(ch[factor]) > 3 and factor != "mesh":
+            if factor == "domain" and ff_run:
+                std = extrapolate_chain([sta_c(store, r, cont).get(q) for r in std_ids], [size(factor, r) for r in std_ids], order)
+                conditioning["domain_farfield"] = {"standard_chain": std_ids, "extrapolated_standard": std["extrapolated"],
+                                                   "method_standard": std["method"]}
+            elif len(ch[factor]) > 3 and factor != "mesh":
                 # conditioning check: extrapolation from the next-coarser three levels; their difference is added
                 # to U(T) (a simple stand-in for the fit uncertainty of multi-grid least squares, Eca & Hoekstra 2014)
                 alt_ids = ch[factor][-4:-1]
@@ -120,6 +134,10 @@ def main() -> None:
                               "shift_applied": shift, "mesh_extrapolated_without_shift": raw["extrapolated"]}
             per[factor] = extrapolate_chain(vals, [size(factor, r) for r in rids], order)
             per[factor]["runs"] = rids
+            if factor == "domain" and "domain_farfield" in conditioning:
+                c_ = conditioning.pop("domain_farfield")
+                c_["difference"] = abs(c_["extrapolated_standard"] - per[factor]["extrapolated"])
+                per[factor]["farfield_model_form"] = c_
             if factor in conditioning:
                 conditioning[factor]["difference"] = abs(conditioning[factor]["extrapolated_coarser_three"]
                                                          - per[factor]["extrapolated"])
@@ -134,6 +152,8 @@ def main() -> None:
         extra = dict(stat)
         for factor, c in conditioning.items():
             extra[f"{factor}_conditioning"] = c["difference"]
+        if per["domain"].get("farfield_model_form"):
+            extra["domain_farfield_model_form"] = per["domain"]["farfield_model_form"]["difference"]
         if q in overlap:
             # model-form term: the shift assumes a mesh-independent time error; the finest-mesh dt pair
             # (baseline.m2-476115cbbf20 vs -93c9ab8d6f2d) shows the dt sensitivity there is smaller, so the full
@@ -230,8 +250,12 @@ def main() -> None:
     L.append("Values used for the reference are those of each member's longest continuation (rows marked ↳). "
              "The time chain is extrapolated from its finest three levels.\n")
     L.append("| factor | run | size | run length (D/U) | Cd | St | Cl rms |\n|---|---|---|---|---|---|---|")
+    if ff_run:
+        ch_table_domain_extra = [ff_run]
+    else:
+        ch_table_domain_extra = []
     for factor in ("mesh", "time", "domain"):
-        for rid in ch[factor]:
+        for rid in ch[factor] + (ch_table_domain_extra if factor == "domain" else []):
             for i, r in enumerate([rid] + ([cont[rid]] if rid in cont else [])):
                 x = sta(store, r)
                 L.append(f"| {factor} | {'↳ ' if i else ''}`{r}` | {size(factor, rid):.4g} | "
@@ -243,7 +267,7 @@ def main() -> None:
     L.append("| run | stationary cycles | MSER at cap | u_stat Cd | u_stat St | Cd drift in window |\n|---|---|---|---|---|---|")
     seen = []
     for factor in ("mesh", "time", "domain", "longer"):
-        for rid in ch[factor] + [cont[r] for r in ch[factor] if r in cont]:
+        for rid in ch[factor] + [cont[r] for r in ch[factor] if r in cont] + (ch_table_domain_extra if factor == "domain" else []):
             if rid in seen:
                 continue
             seen.append(rid)
@@ -275,6 +299,11 @@ def main() -> None:
         + ", " + ", ".join(f"{k} {v:.2e}" for k, v in truth[q]["statistical_terms"].items() if v > 0)
         for q in QT) + ".")
     for q in QT:
+        fm = chains_out[q]["domain"].get("farfield_model_form")
+        if fm:
+            L.append(f"- far-field model form, {q}: domain chain with the far-field-refined x4 level → "
+                     f"{chains_out[q]['domain']['extrapolated']:.5f}; standard chain ({', '.join(fm['standard_chain'])}) → "
+                     f"{fm['extrapolated_standard']:.5f} ({fm['method_standard']}); difference {fm['difference']:.2e} added to U(T)")
         for f, c in chains_out[q].items():
             if c.get("conditioning"):
                 cd_ = c["conditioning"]

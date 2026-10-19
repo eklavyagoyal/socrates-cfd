@@ -83,6 +83,117 @@
     "expected_outcome": "The lift amplitude saturates and the physics_regime check resolves. Cd and St are measured over many more stationary cycles with smaller averaging and statistical uncertainty. This gives a clean baseline for REFINE_MESH, REDUCE_TIME_STEP and EXPAND_DOMAIN. If Cd or St move by more than the tolerance, the R0 window was contaminated."
    },
    "outcome": "executed -> G2_average_from_start.long160-24e243b2227c (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 21.665687370999876,
+    "cost_usd": 0.070915875,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 20528,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 48,
+     "untraced": [
+      {
+       "token": "2.1%",
+       "context": " root-sum-square of mesh, time and domain must fit in about 2.1% (Cd) and 1.8% (St). Any large discretis"
+      },
+      {
+       "token": "1.8%",
+       "context": "re of mesh, time and domain must fit in about 2.1% (Cd) and 1.8% (St). Any large discretisation error wo"
+      },
+      {
+       "token": "3.1",
+       "context": "units used. The mesh refinement costs about 1963 s, roughly 3.1 root runs, which fits."
+      },
+      {
+       "token": "1.8%",
+       "context": " biases Cd or St by more than the remaining margin of about 1.8% to 2.1%."
+      },
+      {
+       "token": "2.1%",
+       "context": "Cd or St by more than the remaining margin of about 1.8% to 2.1%."
+      },
+      {
+       "token": "613",
+       "context": "Temporal error is negligible at 613 steps per period with a second-order ba"
+      }
+     ],
+     "n_untraced": 6
+    },
+    "run_aliases": {
+     "G2_average_from_start-e7384e5a2c24": "R0",
+     "G2_average_from_start.long160-24e243b2227c": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and failed_checks is empty. I cannot ACCEPT, and I have no FAIL to support REJECT.",
+    "Mesh, time and domain uncertainty are still unmeasured for both mean_drag_coefficient and strouhal_number. No REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run exists.",
+    "RUN_LONGER (R1, 160 convective units, 13 stationary cycles) fixed the averaging and statistics components. For Cd, averaging is 0.008643 and statistics 5.59e-05. For St, averaging is 0.01219 and statistics 4.525e-05. All are within the 0.5*0.03 component limit.",
+    "R1 stationary-window values are Cd 1.3311 and St 0.16344. R0 stationary values were 1.3266 and 0.163, so the earlier window was only slightly off. R1 drift is 5.59e-05 and the Cd CI95 is 1.5832e-05, so the record is stationary.",
+    "Averaging bias already uses 0.864% (Cd) and 1.219% (St) of the 3% tolerance. The root-sum-square of mesh, time and domain must fit in about 2.1% (Cd) and 1.8% (St). Any large discretisation error would break the budget.",
+    "The physics_regime check is still INCONCLUSIVE in the package. It cites a +6.7% lift-amplitude change for R0. The package has no explicit re-evaluation for R1. R1 shows rms Cl 0.22857, and stationary_window_start_is_mser_cap is still true.",
+    "The mesh is the most likely source of an error larger than the tolerance. The representative cell size is 0.45745 D, the wake last cell is 1.0209 D, and the cylinder has 160 cells around it with a first cell of 0.005 D.",
+    "Time resolution looks adequate: 611.86 steps per shedding period and max Courant 0.73373.",
+    "Domain extents are large: 30 D upstream, 50 D downstream, 40 D half height, blockage 0.0125. The domain is therefore the least likely dominant error.",
+    "Budget is available: 1 of 6 experiments and 1.67 of 12 compute units used. The mesh refinement costs about 1963 s, roughly 3.1 root runs, which fits."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error for Cd and St (no REFINE_MESH run)",
+    "Temporal discretisation error for Cd and St (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error for Cd and St (no EXPAND_DOMAIN run)",
+    "Explicit physics_regime result for R1, i.e. confirmation of a saturated limit cycle (the only recorded amplitude drift, +6.7%, refers to R0)"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse mesh (0.45745 D representative cell, 1.0209 D wake last cell) biases Cd or St by more than the remaining margin of about 1.8% to 2.1%.",
+     "test": "REFINE_MESH from R1 with factor 2.0. Confirmed if Cd or St change by more than about 1% relative to R1 (Cd 1.3311, St 0.16344). Refuted if both change by much less than 1%."
+    },
+    {
+     "hypothesis": "Temporal error is negligible at 613 steps per period with a second-order backward scheme.",
+     "test": "Run REDUCE_TIME_STEP next, from the refined run if possible. Refuted if Cd or St shift by more than 0.5*tolerance."
+    },
+    {
+     "hypothesis": "Boundary truncation is negligible at the current extents (30 D, 50 D, 40 D).",
+     "test": "Run EXPAND_DOMAIN with factor 2.0 and compare Cd and St with R1."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "G2_average_from_start.long160-24e243b2227c",
+    "reason": "R1 gives a long, stationary baseline (13 cycles, drift 5.59e-05), so a difference against it reflects spatial discretisation and not transient or statistical noise. The mesh is the coarsest recorded resolution and the most likely source of an error above 3%. A factor of 2.0 gives the largest signal-to-noise for the mesh error estimate at the same listed cost (1963 s).",
+    "expected_outcome": "If Cd and St change by well under 1% relative to R1 (Cd 1.3311, St 0.16344), the mesh component fits the budget and time and domain checks can follow. If they change by more than 3%, the verifier will record a FAIL for the root mesh. If they change by 1% to 3%, further refinement or time-step checks are needed."
+   },
+   "outcome": "executed -> G2_average_from_start.m2-6c5d2e554b4f (completed)"
   }
  ]
 }

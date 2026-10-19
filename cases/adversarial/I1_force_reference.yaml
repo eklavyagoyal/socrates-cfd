@@ -1,0 +1,7 @@
+id: I1_force_reference
+title: "Stale magUInf in the force-coefficient definition"
+changes:
+  forces.mag_u_inf: 0.16
+flaw: "forceCoeffs magUInf = 0.16 m/s while the inlet velocity is 0.15 m/s (left over from an earlier setup)."
+why_plausible: "Coefficients still look like cylinder values (Cd ~ 1.17); the flow solution itself is correct."
+expected_mechanism: "Coefficients scaled by (0.15/0.16)^2 = 0.879."

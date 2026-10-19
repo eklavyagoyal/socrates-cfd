@@ -1,0 +1,7 @@
+id: D1_steady_solver
+title: "Steady-state solver for an inherently periodic flow"
+changes:
+  numerics.solver: simpleFoam
+flaw: "simpleFoam (steady SIMPLE) on the baseline mesh at Re = 100."
+why_plausible: "Steady RANS-style workflow habit; residuals may converge to tolerance and fields look smooth and symmetric."
+expected_mechanism: "Converges (if at all) to the unstable symmetric branch; Fornberg (1980) steady Cd = 1.058 vs time-mean ~1.32 (-20 %); no St."

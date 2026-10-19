@@ -1,0 +1,7 @@
+id: E1_noslip_side_walls
+title: "Lateral far-field boundaries declared as no-slip walls"
+changes:
+  boundaries.lateral: noSlipWall
+flaw: "The free-stream side boundaries 40 D away are no-slip walls (a 'wind-tunnel' default) although the problem is unbounded."
+why_plausible: "Wall is a natural default patch type; boundaries are far away; the run is indistinguishable in diagnostics."
+expected_mechanism: "Wall boundary layers grow from the inlet and accelerate the core flow by their displacement thickness, biasing Cd/St high."

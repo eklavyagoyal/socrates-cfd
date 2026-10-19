@@ -1,0 +1,9 @@
+id: C2_euler_large_timestep
+title: "First-order Euler time stepping with a large time step"
+changes:
+  numerics.ddt: Euler
+  time.delta_t: 0.04
+  numerics.n_outer_correctors: 2
+flaw: "Euler implicit (first order in time) with dt 4x the baseline (max Co ~ 3, ~150 steps per period) and 2 outer correctors."
+why_plausible: "Euler is the default in many tutorials (including OpenFOAM's own cylinder2D); implicit Euler is very robust, so the run is clean."
+expected_mechanism: "First-order temporal error adds numerical damping: lower lift amplitude, shifted frequency, biased drag."

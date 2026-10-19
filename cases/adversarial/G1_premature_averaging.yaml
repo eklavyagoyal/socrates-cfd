@@ -1,0 +1,8 @@
+id: G1_premature_averaging
+title: "Short run averaged from inside the start-up transient"
+changes:
+  time.end_time: 40.0
+  averaging.start_time: 10.0
+flaw: "Run stops at 40 D/U and the mean is taken over 10-40 D/U, during start-up growth of the shedding."
+why_plausible: "Solver completes, signal already looks periodic by eye, ~5 cycles averaged."
+expected_mechanism: "Averaging window contains the transient; mean drag and lift statistics biased."

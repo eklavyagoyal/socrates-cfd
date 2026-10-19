@@ -1,0 +1,7 @@
+id: A1_coarse_mesh
+title: "Coarse mesh (half resolution in every direction)"
+changes:
+  mesh.refinement: 0.5
+flaw: "All cell counts halved (80 cells around the cylinder, first cell ~0.01 D, coarse wake)."
+why_plausible: "Runs fast and cleanly, checkMesh passes, Courant number lower, Cd looks textbook-like."
+expected_mechanism: "Spatial discretisation error biases St and lift; may stay hidden in Cd."

@@ -1,0 +1,8 @@
+id: C1_large_timestep
+title: "Large time step stabilised with PIMPLE outer correctors"
+changes:
+  time.delta_t: 0.05
+  numerics.n_outer_correctors: 3
+flaw: "Time step 5x the baseline (max Co ~ 3.7, ~120 steps per shedding period), kept stable with 3 PIMPLE outer correctors."
+why_plausible: "Raising maxCo with outer correctors 'for speed' is common advice; the run is stable and every step converges."
+expected_mechanism: "Temporal discretisation error damps lift amplitude and shifts frequency and mean drag."

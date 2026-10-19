@@ -1,0 +1,228 @@
+{
+  "run_id": "C2_euler_large_timestep.dt0.01-f9cf9b35455e",
+  "status": "completed",
+  "owner_pid": 10692,
+  "created": "2026-10-19T19:14:28+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "C2_euler_large_timestep.dt0.01",
+    "description": "REDUCE_TIME_STEP {'factor': 2.0} from C2_euler_large_timestep.dt0.02-2f2ce6b4d241",
+    "mesh": {
+      "refinement": 1.0,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 35,
+      "n_downstream": 111,
+      "n_lateral": 45,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 30.0,
+      "downstream": 50.0,
+      "half_height": 40.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "Euler",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 2,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.01,
+      "end_time": 80.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 40.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "6591ce02a35005e3",
+  "parent_run": "C2_euler_large_timestep.dt0.02-2f2ce6b4d241",
+  "launch_reason": "time uncertainty component is unmeasured or not yet within budget",
+  "launched_by": "rule_based",
+  "experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "params": {
+      "factor": 2.0
+    },
+    "parent_run": "C2_euler_large_timestep.dt0.02-2f2ce6b4d241",
+    "changes": {
+      "time.delta_t": {
+        "from": 0.02,
+        "to": 0.01
+      }
+    },
+    "notes": [
+      "initialised by mapping the parent's final periodic state; run 80 D/U"
+    ],
+    "initialisation": {
+      "kind": "map",
+      "source_run": "C2_euler_large_timestep.dt0.02-2f2ce6b4d241"
+    },
+    "estimated_cell_steps": 244640000.0
+  },
+  "config_changes_from_parent": {
+    "time.delta_t": {
+      "from": 0.02,
+      "to": 0.01
+    }
+  },
+  "initialisation": {
+    "kind": "map",
+    "source_run": "C2_euler_large_timestep.dt0.02-2f2ce6b4d241",
+    "consistent": true
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  },
+  "started": "2026-10-19T19:14:28+00:00",
+  "commands": [
+    {
+      "step": "blockMesh",
+      "command": "blockMesh",
+      "returncode": 0,
+      "wall_seconds": 1.4539716340004816,
+      "log_file": "log.blockMesh"
+    },
+    {
+      "step": "checkMesh",
+      "command": "checkMesh -allGeometry -allTopology",
+      "returncode": 0,
+      "wall_seconds": 1.2884585120045813,
+      "log_file": "log.checkMesh"
+    },
+    {
+      "step": "mapFields",
+      "command": "mapFields /home/user/socrates-cfd/results/runs/C2_euler_large_timestep.dt0.02-2f2ce6b4d241/case -consistent -sourceTime latestTime",
+      "returncode": 0,
+      "wall_seconds": 1.1757997860040632,
+      "log_file": "log.mapFields"
+    },
+    {
+      "step": "pimpleFoam",
+      "command": "pimpleFoam",
+      "returncode": 0,
+      "wall_seconds": 1414.3506924320027,
+      "log_file": "log.pimpleFoam"
+    }
+  ],
+  "wall_seconds": 1418.2689223640118,
+  "finished": "2026-10-19T19:42:56+00:00",
+  "raw_output_sha256": {
+    "log.blockMesh": "fc9c8fb00463978d9860bf94c8488e10430913474958cb01f757b390cca8c36a",
+    "log.checkMesh": "54cb035dbf434a4fe97ec5879ebce7fdb4564d6c7f11a7a70917af0e94e624b4",
+    "log.mapFields": "2f58d8a7e2fb153c7ad4aae22618b7cd13dba6643678c8058766a4aaa7b9ce9f",
+    "log.pimpleFoam": "203a32cc25d19003eaf5a8ef66778c7211883049d3f8da306ea575ad7ae7bcdc"
+  },
+  "postprocessing_sha256": {
+    "flux_bottom/0/surfaceFieldValue.dat": "b5de819f7190c12ac678fac0f6a13ed20d247239d950d51bbe14a7b9ffe0cb74",
+    "flux_inlet/0/surfaceFieldValue.dat": "f337ed1c7d3643f0845bdce2148e66ab3cdfc96e4ce6fde2ede4b0df5d5ccc22",
+    "flux_outlet/0/surfaceFieldValue.dat": "e2a09125fe01fe052416b3418b443d73c8bce359374e706debf269b37800fd28",
+    "flux_top/0/surfaceFieldValue.dat": "fa91b610a38b3ca8f4b685567ad905da1b06d8feb75cdcf17efba96be7063d2b",
+    "forceCoeffs1/0/coefficient.dat": "431c63eedc17bab9a64b86bb68cc2ca1d21f7fdc9c336b10f886b9846be2e99e",
+    "solverInfo1/0/solverInfo.dat": "077c113f94eef7bb2395422c4269c8a47b246a837fb131657504f272e84e0702"
+  },
+  "final_fields_sha256": {
+    "time": "5.3333333336",
+    "files": {
+      "U": "125832229447747562731d914c8d82685b3ceea1b35ee386f42d0844dde1a26d",
+      "p": "5644785cc4bb56332af77737f2eed3f8cacc1bcbe99bbfaa0435f354ff1945be",
+      "phi": "a6ddbeb4a678f49b8d1297d851f74459252466f82012030ae1c934cf3d169e5a",
+      "uniform/cumulativeContErr": "b7ed77910c5d9cf140a87b33af954a1fef87ceb2dc6fb509022c6f8c176b39bd",
+      "uniform/functionObjects/functionObjectProperties": "02f45553dfc756b95e3cb61db25e427fcae003f0822ed6e4af8a9d81cdd439e6",
+      "uniform/time": "82ce8017dfac0a6b1f1b578c6face9bfcd78237e41e698e11ce7f7f2912539ce"
+    }
+  }
+}

@@ -1,8 +1,8 @@
 {
   "run_id": "E1_noslip_side_walls.D2x-1620b1098386",
   "status": "running",
-  "owner_pid": 23412,
-  "created": "2026-10-19T07:48:08+00:00",
+  "owner_pid": 10692,
+  "created": "2026-10-19T20:14:34+00:00",
   "problem_spec": {
     "problem": {
       "id": "cylinder2d_re100",
@@ -118,7 +118,7 @@
   },
   "config_hash": "a3195ea862a2acac",
   "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
-  "launch_reason": "The root's no-slip lateral walls at 40D and finite boundary distances conflict with the 'unbounded stream' requirement. This is the cheapest experiment and tests the most distinctive suspected flaw.",
+  "launch_reason": "The domain component is unmeasured for both quantities. R0 uses a noSlipWall lateral boundary at 40 D, which does not represent the requested unbounded stream. This experiment can expose a bias larger than the 3% tolerance. It is also the cheapest menu entry (1311 s from R0). The R0 mesh and dt are unchanged near the cylinder, so the comparison isolates the boundary effect.",
   "launched_by": "llm_critic",
   "experiment": {
     "action": "EXPAND_DOMAIN",
@@ -218,7 +218,7 @@
     "python": "3.13.16",
     "numpy": "2.5.3",
     "scipy": "1.18.1",
-    "socrates_git_commit": "6133c4a22cc822d542b377097f065c471675ba03",
+    "socrates_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4

@@ -82,6 +82,89 @@
     "expected_outcome": "If Cd and St change by less than about 0.5% relative to R0 (1.3402 and 0.16428), mesh uncertainty is within budget. A change above 3% would show a demonstrated mesh dependence, which is a FAIL."
    },
    "outcome": "executed -> E1_noslip_side_walls.m2-39a4571e43e5 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 26.185986748998403,
+    "cost_usd": 0.07524990999999999,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 20387,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 41,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "E1_noslip_side_walls-88a7cd5812e8": "R0",
+     "E1_noslip_side_walls.m2-39a4571e43e5": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "HIGH",
+   "reasoning_summary": [
+    "Verifier verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed, and REJECT has no measured basis. The demonstrated R0->R1 changes (0.76% for Cd, 1.23% for St) are below the 0.03 tolerance.",
+    "R0 averaging and statistics pass. Cd: 9.319e-05 and 0.001199. St: 6.507e-05 and 0.0009705. These are not the limiting components.",
+    "Mesh uncertainty is the largest unresolved component and exceeds the 0.015 per-component budget. It is 0.03044 for Cd and 0.0491 for St. The St value alone exceeds the 0.03 tolerance. It rests on a two-level Richardson estimate with an assumed order p=2 and Fs=3.",
+    "R0 (30580 cells) gave Cd 1.3402 and St 0.16428. R1 (122320 cells) gave Cd 1.3505 and St 0.16632. Both quantities rose with refinement, so the change is systematic rather than noise. The verifier's noise floors are 1.7e-03 for Cd and 1.2e-03 for St.",
+    "A third mesh level is needed to measure the observed order of convergence. This replaces the assumed p=2 and may shrink or confirm the mesh uncertainty. R1 cannot be refined further, because cumulative refinement 2.83 would exceed the limit of 2.0. The only way to add a level is to refine the parent R0 by a factor below 2.",
+    "Time and domain uncertainties are also unmeasured. R0 has dt of 0.01 D/U, Courant 0.73374 and 608.73 steps per period. It has a noSlipWall lateral boundary at 40 D. These are lower-priority checks, and budget remains for them: 1 of 6 experiments and 3.48 of 12 compute used.",
+    "R1 is already costly. EXPAND_DOMAIN and RUN_LONGER on R1 are unavailable or expensive (12876 s for REDUCE_TIME_STEP, 8048 s for RUN_LONGER). R0 is the right parent for the remaining checks."
+   ],
+   "missing_evidence": [
+    "A third mesh level, so the observed convergence order and the mesh uncertainty for Cd and St are measured rather than assumed (p=2)",
+    "Temporal discretisation uncertainty for Cd and St (no REDUCE_TIME_STEP run)",
+    "Domain truncation and blockage uncertainty for Cd and St, including the noSlipWall lateral boundary (no EXPAND_DOMAIN run)",
+    "Combined uncertainty, which cannot be computed until mesh, time and domain are all measured"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "Cd and St are monotonically converging with refinement at roughly second order, so the R0 mesh error is close to the R0->R1 difference and the 4.91% St estimate is pessimistic.",
+     "test": "REFINE_MESH on R0 with factor 1.4142 gives an intermediate level. Confirmed if its Cd and St lie between R0 (1.3402, 0.16428) and R1 (1.3505, 0.16632) and the observed order is near 2 or higher. Refuted if the intermediate values are non-monotonic or the observed order is well below 2."
+    },
+    {
+     "hypothesis": "The noSlipWall lateral boundaries at 40 D and the finite upstream and downstream extents bias Cd and St by more than 1.5%.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2.0 after the mesh study. Compare Cd and St with R0."
+    },
+    {
+     "hypothesis": "The time-step error is small at dt of 0.01 D/U with 608.73 steps per period and a second-order backward scheme.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2.0. Cd and St should change by less than about 0.5%."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
+    "reason": "Mesh uncertainty is the largest component and is unmeasured beyond a two-level estimate with an assumed order. St mesh uncertainty is 0.0491 and Cd is 0.03044. R1 cannot be refined further because of the cumulative-refinement limit. A factor of 1.4142 on R0 adds a third geometrically similar level between R0 and R1. This gives an observed order and a better Richardson estimate. It should cost less than the factor-2.0 run.",
+    "expected_outcome": "Cd and St fall between the R0 and R1 values (Cd 1.3402 to 1.3505, St 0.16428 to 0.16632), with an observed order that supports a mesh uncertainty at or below about 1.5% for each quantity. If the values are non-monotonic or the order is low, the mesh uncertainty stays above budget and the root cannot be accepted without a finer-mesh strategy."
+   },
+   "outcome": "executed -> E1_noslip_side_walls.m1.41-f15d7e2db685 (completed)"
   }
  ]
 }

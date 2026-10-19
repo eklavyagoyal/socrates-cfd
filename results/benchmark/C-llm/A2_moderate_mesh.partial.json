@@ -1,0 +1,180 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 17.26384177699947,
+    "cost_usd": 0.050319674999999994,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13257,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 34,
+     "untraced": [
+      {
+       "token": "1.25",
+       "context": "The 1.25 % blockage and the 30 D / 50 D / 40 D b"
+      }
+     ],
+     "n_untraced": 1
+    },
+    "run_aliases": {
+     "A2_moderate_mesh-1c5ea01594aa": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "HIGH",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so I can't ACCEPT. Nothing measured justifies REJECT.",
+    "R0 passes the checks on its own run: completion, mesh quality, mass conservation, linear-solver convergence, Courant 0.56482, Re consistency, force reference, regime and scheme order.",
+    "R0's averaging and statistics components are tiny. Cd: averaging 4.434e-05, statistics 7.165e-05. St: averaging 8.516e-06, statistics 5.21e-05. The window has 12 stationary cycles and the Cd CI95 is 2.1297e-05. RUN_LONGER would add little.",
+    "Mesh, time and domain uncertainties are all unmeasured, so every requested quantity (mean_drag_coefficient, strouhal_number) is INCONCLUSIVE. No experiment has been run yet.",
+    "R0's mesh is coarse for resolving the wake: 17162 cells, representative cell size 0.61063 D, wake_last_cell_D 1.3639, 120 cells around the cylinder, and wall_first_cell_D 0.0067892. Its 83 wake cells streamwise are spread over 50 D downstream. This can change both Cd and St, and it is the most likely flaw to exceed the 0.03 tolerance.",
+    "Domain: blockage_ratio is 0.0125 with 30 D upstream, 50 D downstream and 40 D half-height. Time step is 0.01 convective units with 618.93 steps per shedding period, which is likely adequate. Both are lower-priority suspects than the mesh.",
+    "I chose REFINE_MESH with factor 2.0, the maximum. It gives a larger, more detectable signal than the 1.4142 default, and the compute budget (12x root) can afford it. Estimated cost is about 2266 s at the default factor, and more at 2.0."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error of mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error of both quantities (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error of both quantities (no EXPAND_DOMAIN run)",
+    "Combined uncertainty for each quantity against the 0.03 tolerance"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse wake and near-cylinder resolution of R0 biases Cd and/or St by more than 3 %.",
+     "test": "REFINE_MESH from R0 with factor 2.0. If both quantities change by well under 1.5 % relative to R0, the mesh component passes. A change above 3 % refutes mesh adequacy and gives a FAIL or the need for a further refinement."
+    },
+    {
+     "hypothesis": "The 1.25 % blockage and the 30 D / 50 D / 40 D boundaries bias Cd and St.",
+     "test": "EXPAND_DOMAIN in a later step if the mesh passes."
+    },
+    {
+     "hypothesis": "Time-step error is negligible at 0.01 D/U with a second-order backward scheme.",
+     "test": "REDUCE_TIME_STEP in a later step, only if budget allows."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "A2_moderate_mesh-1c5ea01594aa",
+    "reason": "Mesh error is unmeasured and the R0 mesh is coarse (representative cell size 0.61063 D, wake_last_cell_D 1.3639). It is the most likely source of a Cd or St error above the 3 % tolerance. The other components (averaging, statistics) are already negligible.",
+    "expected_outcome": "If Cd and St change by less than about 1.5 % relative to R0 (Cd 1.3222, St 0.16157), the mesh component can be bounded within budget. A larger change shows R0 is not mesh-converged and the sequence must continue."
+   },
+   "outcome": "executed -> A2_moderate_mesh.m1.5-773c4ec70534 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 30.041654557993752,
+    "cost_usd": 0.079464875,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 20109,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 40,
+     "untraced": [
+      {
+       "token": "1.25",
+       "context": "The 1.25 % blockage and the 30 D / 50 D / 40 D b"
+      }
+     ],
+     "n_untraced": 1
+    },
+    "run_aliases": {
+     "A2_moderate_mesh-1c5ea01594aa": "R0",
+     "A2_moderate_mesh.m1.5-773c4ec70534": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "HIGH",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. I cannot ACCEPT, and nothing measured supports REJECT.",
+    "R0 passes every run-level check: completion, mesh quality, mass imbalance 8.3333e-11, Courant 0.56482, Re consistency, force reference, regime and scheme order. Its averaging and statistics components are negligible. For Cd they are 4.434e-05 and 7.165e-05. For St they are 8.516e-06 and 5.21e-05. RUN_LONGER would add little.",
+    "R1 is the REFINE_MESH run from R0. Cd goes from 1.3222 (R0) to 1.335 (R1), a demonstrated change of 0.96 %. St goes from 0.16157 (R0) to 0.16454 (R1), a demonstrated change of 1.80 %. Both changes are below the 0.03 tolerance, so there is no FAIL.",
+    "The mesh component is still INCONCLUSIVE: 0.03828 for Cd and 0.07206 for St. Both exceed 0.5*tolerance = 0.015. These values come from a two-level Richardson estimate with an ASSUMED order p=2 and Fs=3. No observed convergence order exists.",
+    "Mesh is the largest remaining uncertainty and the only one with a measured signal. St moved 1.80 % between R0 and R1. R1 also used a time step of 0.0079672 and a Courant number of 0.71246, so its change mixes spatial and temporal effects.",
+    "A further REFINE_MESH from R1 is not allowed, because the cumulative refinement of 2.83 exceeds the limit of 2.0. REFINE_MESH from R0 at the default factor 1.4142 is allowed and gives a third level between R0 and R1. That allows an observed order and a Fs below 3, which could tighten or invalidate the mesh bound.",
+    "Time and domain are still unmeasured. The budget allows them afterwards: 1 of 6 experiments used and 2.69 of 12 compute units used. Time-step and domain runs from R0 cost 2266 s and 1498 s. They are lower priority because the mesh bound is currently the blocking component."
+   ],
+   "missing_evidence": [
+    "Observed mesh convergence order for Cd and St. Only two levels (R0, R1) exist and the order was assumed.",
+    "Temporal discretisation error of Cd and St. No REDUCE_TIME_STEP run exists.",
+    "Domain truncation and blockage error of Cd and St. No EXPAND_DOMAIN run exists.",
+    "Combined uncertainty for each quantity against the 0.03 tolerance."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "R0 and R1 are in the asymptotic range, so Cd and St converge monotonically with refinement at roughly second order. The assumed p=2 and Fs=3 are then too conservative, and the mesh uncertainty of R0 falls below the 0.015 component budget, at least for Cd.",
+     "test": "REFINE_MESH from R0 with factor 1.4142. If the R0, R2, R1 values are monotone and the observed order is near 2 with a small Richardson residual, the mesh component can be bounded. If the order is far from 2 or the sequence is non-monotone, the mesh bound stays inconclusive. If the extrapolated change from R0 exceeds 0.03, it becomes a FAIL."
+    },
+    {
+     "hypothesis": "The St change between R0 and R1 (1.80 %) is partly a time-step effect, because R1 used a different time step and Courant number.",
+     "test": "Later, REDUCE_TIME_STEP on R0, and compare it with the mesh-driven change."
+    },
+    {
+     "hypothesis": "The 1.25 % blockage and the 30 D / 50 D / 40 D boundaries bias Cd and St.",
+     "test": "Later, EXPAND_DOMAIN from R0 with the default factor."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "A2_moderate_mesh-1c5ea01594aa",
+    "reason": "Mesh uncertainty is the dominant unresolved component (Cd 0.03828, St 0.07206, both above 0.015). It rests on an assumed order p=2 and Fs=3 from only two levels. R1 cannot be refined further (cumulative 2.83 > 2.0). A 1.4142 level between R0 and R1 gives a three-level sequence with an observed order, at about 2266 s, within budget.",
+    "expected_outcome": "If R0, the new run and R1 give monotone Cd and St with an observed order near 2, the Richardson mesh uncertainty can be reduced and may fall within 0.015. If the sequence is non-monotone or the order is erratic, the mesh bound remains inconclusive. If the extrapolated error of R0 exceeds 0.03, the result becomes a FAIL."
+   },
+   "outcome": "executed -> A2_moderate_mesh.m1.06-c5d153eb41a5 (completed)"
+  }
+ ]
+}

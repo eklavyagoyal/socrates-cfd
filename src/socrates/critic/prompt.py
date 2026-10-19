@@ -181,8 +181,9 @@ def build_package(spec: ProblemSpec, graph: RunGraph, verdict: Verdict, history:
             "per_quantity": _round_tree(verdict.per_qoi, 4),
             "missing_uncertainty_components": verdict.missing_components,
             "checks": check_table(verdict),
-            "error_budget_rule": "each component must have estimated uncertainty <= 0.5*tolerance and the root-sum-square "
-                                 "of all components <= tolerance; a demonstrated change > tolerance is a FAIL",
+            "error_budget_rule": "each component must have estimated uncertainty <= 0.5*tolerance, and the averaging "
+                                 "bias (added linearly) plus the root-sum-square of the other components must be "
+                                 "<= tolerance; a demonstrated change > tolerance (beyond 2x noise) is a FAIL",
         },
         "previous_critic_decisions": [{k: v for k, v in h.items() if k != "meta"} for h in history],
         "experiment_menu": menu,

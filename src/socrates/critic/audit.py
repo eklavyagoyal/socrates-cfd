@@ -4,9 +4,11 @@ Each numeric token is matched at its *printed precision*: "1.33" matches a
 package value v only if |v - 1.33| <= 0.005; "5.88e-05" uses half a unit of its
 last mantissa digit.  Percent tokens are compared with 100 x package values;
 plain tokens only with package values (no percent expansion, which made
-almost any 3-digit number 'traceable').  The pool of known numbers excludes
-the critic's own previous decisions, so a value it invented earlier cannot
-become 'traced' by repetition.
+almost any 3-digit number 'traceable').  Percent strings in the package
+contribute both their number and number/100, so "1.50%" in a critic text
+matches "1.50%" in the package.  Numbers inside dict keys count as known.  The
+pool excludes the critic-authored fields of earlier iterations, so a value it
+invented earlier cannot become 'traced' by repetition.
 
 Limitations: a fabricated or remembered value that happens to coincide with a
 recorded value at printed precision is not detected; the audit detects
@@ -20,7 +22,9 @@ import math
 import re
 
 _NUM = re.compile(r"(?<![\w.])[-+]?(?:\d+\.\d+|\d+)(?:[eE][-+]?\d+)?%?")
-EXCLUDED_KEYS = {"previous_critic_decisions"}
+# critic-authored fields of earlier iterations: a value the critic invented cannot become
+# "traced" by repetition.  System-written fields of those iterations (outcome, verdict) stay.
+EXCLUDED_KEYS = {"reasoning_summary", "missing_evidence", "hypotheses", "next_experiment", "meta", "review"}
 
 
 def _collect_numbers(obj, out: list[float]) -> None:
@@ -31,17 +35,24 @@ def _collect_numbers(obj, out: list[float]) -> None:
             out.append(float(obj))
     elif isinstance(obj, dict):
         for k, v in obj.items():
-            if k not in EXCLUDED_KEYS:
-                _collect_numbers(v, out)
+            if k in EXCLUDED_KEYS:
+                continue
+            for m in re.finditer(r"\d+(?:\.\d+)?", str(k)):  # numbers in keys, e.g. "drag_change_f1.41"
+                out.append(float(m.group()))
+            _collect_numbers(v, out)
     elif isinstance(obj, list):
         for v in obj:
             _collect_numbers(v, out)
     elif isinstance(obj, str):
         for m in _NUM.finditer(obj):
+            tok = m.group()
             try:
-                out.append(float(m.group().rstrip("%")))
+                v = float(tok.rstrip("%"))
             except ValueError:
-                pass
+                continue
+            out.append(v)
+            if tok.endswith("%"):
+                out.append(v / 100.0)  # percent tokens are matched against 100x pool values
 
 
 def _half_unit(token: str) -> float:

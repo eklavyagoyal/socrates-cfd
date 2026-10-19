@@ -8,6 +8,7 @@ adaptive systems in reports/cases/.
 
 import argparse
 import json
+import subprocess
 import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
@@ -24,6 +25,7 @@ from socrates.orchestration.loop import Budget  # noqa: E402
 from socrates.orchestration.store import RunStore  # noqa: E402
 from socrates.orchestration.systems import (  # noqa: E402
     decision_code_fingerprint,
+    is_infrastructure_error,
     llm_judge,
     system_a,
     system_b,
@@ -47,9 +49,22 @@ def root_for(store: RunStore, spec: ProblemSpec, case: dict):
 FINGERPRINT = decision_code_fingerprint()
 
 
+def _git(*args: str) -> str | None:
+    try:
+        out = subprocess.run(["git", *args], cwd=REPO, capture_output=True, text=True, timeout=30, check=True)
+        return out.stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+BENCH_COMMIT = _git("rev-parse", "HEAD")
+BENCH_SRC_DIRTY = bool(_git("status", "--porcelain", "--", "src", "configs"))
+
+
 def stamp(root) -> dict:
     return {"decision_code": FINGERPRINT, "root_config_hash": root.provenance.get("config_hash"),
-            "git_commit": (root.provenance.get("software") or {}).get("socrates_git_commit")}
+            "benchmark_git_commit": BENCH_COMMIT, "benchmark_src_dirty": BENCH_SRC_DIRTY,
+            "root_git_commit": (root.provenance.get("software") or {}).get("socrates_git_commit")}
 
 
 def run_one(system: str, case: dict, store: RunStore, spec: ProblemSpec, budget: Budget) -> dict:
@@ -58,7 +73,7 @@ def run_one(system: str, case: dict, store: RunStore, spec: ProblemSpec, budget:
     if f.exists():
         old = json.loads(f.read_text())
         st = old.get("stamp") or {}
-        if (old.get("verdict") != "ERROR" and st.get("decision_code") == FINGERPRINT
+        if (not is_infrastructure_error(old) and st.get("decision_code") == FINGERPRINT
                 and st.get("root_config_hash") == root.provenance.get("config_hash")):
             return old
         # stale (produced by different decision code or another root) or a recorded error: recompute
@@ -83,10 +98,15 @@ def run_one(system: str, case: dict, store: RunStore, spec: ProblemSpec, budget:
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(json.dumps(res, indent=1, default=str))
     if system in ("C-rule", "C-llm", "Bexh"):
-        write_case_report(REPO / "reports" / "cases" / f"{case['id']}__{system}.md", store, spec,
-                          res if system != "Bexh" else {"verdict": res["verifier"], "root_run": root.run_id,
-                                                         "runs": res["runs"], "final_verdict": res["verdict"]},
-                          title=f"{case['id']} ({system})")
+        rep = REPO / "reports" / "cases" / f"{case['id']}__{system}.md"
+        try:
+            write_case_report(rep, store, spec,
+                              res if system != "Bexh" else {"verdict": res["verifier"], "root_run": root.run_id,
+                                                             "runs": res["runs"], "final_verdict": res["verdict"]},
+                              title=f"{case['id']} ({system})")
+        except Exception:  # noqa: BLE001 -- a report failure must not discard the stored result
+            rep.with_suffix(".report_error.txt").write_text(traceback.format_exc())
+            print(f"report for {case['id']} {system} failed; see {rep.with_suffix('.report_error.txt')}", flush=True)
     return res
 
 

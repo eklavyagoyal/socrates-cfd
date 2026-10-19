@@ -147,12 +147,6 @@ class LLMPlanner:
                    uncited_concerns=[c for c in concerns if not c["evidence_fields"]],
                    reasoning_summary=o.reasoning_summary, numeric_audit=audit_numbers(texts, package))
         return out
-        o = call.output
-        concerns = [c for c in o.get("blocking_concerns", []) if c.get("evidence_fields")]
-        texts = list(o.get("reasoning_summary", [])) + [c["concern"] for c in concerns]
-        out.update(concur=bool(o["concur"]) and not concerns, blocking_concerns=concerns,
-                   reasoning_summary=o.get("reasoning_summary", []), numeric_audit=audit_numbers(texts, package))
-        return out
 
 
 @dataclass
@@ -167,6 +161,8 @@ class LoopResult:
     experiments: list[dict]
     cost: dict
     authority_violations: list[dict] = field(default_factory=list)
+    n_planner_failures: int = 0  # LLM call / schema failures (infrastructure), not decisions
+    n_invalid_events: int = 0  # all events counted against max_invalid_actions
     started: str = ""
     finished: str = ""
 
@@ -229,6 +225,7 @@ def run_adaptive(
     spent = 0.0
     calls = 0
     invalid = 0
+    planner_failures = 0
     feedback: str | None = None
     stop_reason = ""
     final = "INCONCLUSIVE"
@@ -275,6 +272,7 @@ def run_adaptive(
             entry["outcome"] = "planner failure"
             history.append(entry)
             invalid += 1
+            planner_failures += 1
             if invalid >= budget.max_invalid_actions:
                 stop_reason = "repeated planner failures"
                 break
@@ -377,7 +375,8 @@ def run_adaptive(
               "n_experiments": len(experiments), "planner_calls": calls,
               "planner_cost_usd": sum((h.get("meta") or {}).get("cost_usd") or 0 for h in history),
               "loop_wall_seconds": time.monotonic() - t0},
-        authority_violations=violations, started=started,
+        authority_violations=violations, n_planner_failures=planner_failures, n_invalid_events=invalid,
+        started=started,
         finished=_dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
     )
     if log_path:

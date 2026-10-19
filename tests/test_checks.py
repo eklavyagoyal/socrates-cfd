@@ -303,3 +303,20 @@ def test_decaying_oscillation_is_not_sustained_shedding():
     assert check_physics_regime(ev, SPEC, CFG).status == Status.INCONCLUSIVE
     ev["forces"]["stationary_window"]["cl_amplitude_relative_drift"] = -0.001
     assert check_physics_regime(ev, SPEC, CFG).status == Status.PASS
+
+
+# ---- fix-verification round ----
+
+def test_fail_not_hidden_by_missing_order_or_divergence():
+    r = 2 ** 0.5
+    for vals in ([1.40, 1.330, 1.329], [1.40, 1.401, 1.450]):
+        res = assess_sequence(check="m", component="mesh", qoi="q", values=vals, sizes=[1.0, 1 / r, 0.5],
+                              run_ids=["a", "b", "c"], formal_order=2.0, tau=0.03, cfg=CFG, noise=1e-4)
+        assert res.status == Status.FAIL, vals
+
+
+def test_very_fast_convergence_uses_above_band_rule():
+    r = 2 ** 0.5
+    res = assess_sequence(check="m", component="mesh", qoi="q", values=[1.3400, 1.3346, 1.33447],
+                          sizes=[1.0, 1 / r, 0.5], run_ids=["a", "b", "c"], formal_order=2.0, tau=0.03, cfg=CFG, noise=2e-5)
+    assert res.status == Status.PASS and "outside" in res.details["method"]

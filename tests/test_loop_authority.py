@@ -129,3 +129,19 @@ def test_acceptance_review_can_only_downgrade(monkeypatch, review, expected):
     p.review = lambda *a, **k: review
     res = run_adaptive("root", FakeStore(), SPEC, p, Budget(), vcfg={}, acceptance_review=True)
     assert res.final_verdict == expected
+
+
+def test_planner_failures_are_counted_and_classified_as_infrastructure(monkeypatch):
+    from socrates.orchestration.systems import is_infrastructure_error
+
+    monkeypatch.setattr(loop_mod, "verify", _verdicts(["INCONCLUSIVE"]))
+    res = run_adaptive("root", FakeStore(), SPEC, Scripted([]), Budget(max_invalid_actions=2), vcfg={}).to_dict()
+    assert res["stop_reason"] == "repeated planner failures"
+    assert res["n_planner_failures"] == res["n_invalid_events"] == 2
+    assert is_infrastructure_error(res)
+    # a planner that proposed invalid actions is a verification outcome, not an infrastructure error
+    p = Scripted([_more(params={"factor": 9.0}), _more(parent="nope")])
+    res2 = run_adaptive("root", FakeStore(), SPEC, p, Budget(max_invalid_actions=2), vcfg={}).to_dict()
+    assert res2["n_planner_failures"] == 0 and not is_infrastructure_error(res2)
+    assert is_infrastructure_error({"verdict": "ERROR"})
+    assert is_infrastructure_error({"final_verdict": "INCONCLUSIVE", "stop_reason": "verifier error: boom"})

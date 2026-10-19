@@ -315,9 +315,13 @@ class RunStore:
         if init.kind == "restart":
             src = self.root / init.source_run / "case"
             shutil.copytree(src, case, ignore=shutil.ignore_patterns("log.*"))
-            # regenerate system/ and constant/ from the new config (e.g. endTime)
+            # OpenFOAM restarts from the latest WRITTEN time (which can overshoot the source's
+            # configured end by up to dt/2) and counts write intervals from there
+            restart_s = max(float(x.name) for x in case.iterdir() if x.is_dir() and _is_time(x.name))
+            prov["restart_from_time_s"] = restart_s
+            (d / "run.json").write_text(json.dumps(prov, indent=2))  # adoption reads it from disk
             tmp = d / "_gen"
-            write_case(cfg, tmp, segment_start=self.load(init.source_run).config.time.end_time)
+            write_case(cfg, tmp, segment_start=restart_s / cfg.convective_time)
             # replace dictionaries only; constant/polyMesh (the mesh) must be kept
             shutil.rmtree(case / "system")
             shutil.copytree(tmp / "system", case / "system")
@@ -352,7 +356,7 @@ class RunStore:
                 failure = exc
         prov["finished"] = _now()
         if failure is None and cfg.numerics.solver == "pimpleFoam":
-            failure = _check_final_state_written(case, cfg)
+            failure = _check_final_state_written(case, cfg, prov.get("restart_from_time_s", 0.0))
         offset = 0
         if init.kind == "restart":
             src_ev = self.load(init.source_run).evidence or {}
@@ -364,7 +368,8 @@ class RunStore:
         """Extract evidence, hash/compress raw logs, prune fields, write the provenance record."""
         if failure is not None:
             prov["status"] = "failed"
-            prov["failure_kind"] = "solver" if failure.step not in ("blockMesh", "checkMesh") else "mesh"
+            prov["failure_kind"] = ("mesh" if failure.step in ("blockMesh", "checkMesh") else
+                                    "final_state" if failure.step == "final_state_write" else "solver")
             prov["failure"] = {"step": failure.step, "returncode": failure.returncode, "log_tail": failure.log_tail}
         else:
             prov["status"] = "completed"
@@ -436,17 +441,25 @@ class RunStore:
         cfg = CaseConfig.model_validate(prov["case_config"])
         spec = ProblemSpec.model_validate(prov["problem_spec"])
         logs = sorted(case.glob(f"log.{cfg.numerics.solver}*"))
-        if not logs:
+        init = prov.get("initialisation") or {}
+        if init.get("kind") == "restart":
+            # copied history logs do not count: the produced log is the one the source run did not have
+            src_case = self.root / init["source_run"] / "case"
+            src_names = {x.name for x in src_case.glob(f"log.{cfg.numerics.solver}*")}
+            logs = [lp for lp in logs if lp.name not in src_names]
+        if len(logs) != 1:
             return None
-        text = logs[-1].read_text(errors="replace")
-        if not re.search(r"^End\s*$", text, re.M):
+        text = logs[0].read_text(errors="replace")
+        hdr = re.search(r"^Case\s*:\s*(\S+)", text, re.M)
+        if not re.search(r"^End\s*$", text, re.M) or not hdr or Path(hdr.group(1)).resolve() != case.resolve():
+            return None
+        if cfg.numerics.solver == "pimpleFoam" and _check_final_state_written(case, cfg, prov.get("restart_from_time_s", 0.0)):
             return None
         m = re.findall(r"ExecutionTime = ([\d.eE+-]+) s\s+ClockTime = ([\d.eE+-]+) s", text)
         prov["wall_seconds"] = float(m[-1][1]) if m else None
         prov["adopted_orphan"] = {"note": "owner process died; solver output completed and was finalized", "time": _now()}
         prov["finished"] = _now()
         offset = 0
-        init = prov.get("initialisation") or {}
         if init.get("kind") == "restart":
             src_ev = self.load(init["source_run"]).evidence or {}
             offset = int((src_ev.get("solver") or {}).get("n_steps") or 0)
@@ -461,19 +474,21 @@ def _is_time(name: str) -> bool:
         return False
 
 
-def _check_final_state_written(case: Path, cfg: CaseConfig) -> RunFailure | None:
-    """Children restart from / map the latest time directory: it must be endTime."""
-    times = []
-    for d in case.iterdir():
-        try:
-            if d.is_dir():
-                times.append(float(d.name))
-        except ValueError:
-            continue
-    end = cfg.time.end_time * cfg.convective_time
+def _check_final_state_written(case: Path, cfg: CaseConfig, start_s: float = 0.0) -> RunFailure | None:
+    """Children restart from / map the latest time directory: it must be this segment's end.
+
+    With a fixed time step OpenFOAM stops at the first step with t >= endTime - dt/2, so the
+    final time can differ from endTime by up to dt/2.  The state must also have advanced
+    beyond the segment start (a restart that wrote nothing would otherwise pass).
+    """
+    times = [float(x.name) for x in case.iterdir() if x.is_dir() and _is_time(x.name)]
+    tc = cfg.convective_time
+    end = cfg.time.end_time * tc
+    tol = 0.5 * cfg.time.delta_t * tc * (1 + 1e-6) + 1e-12
     latest = max(times) if times else None
-    if latest is None or abs(latest - end) > 1e-6 * max(end, 1e-12):
-        return RunFailure("final_state_write", -1, f"latest written time {latest} != endTime {end}")
+    if latest is None or latest <= start_s + tol or abs(latest - end) > tol:
+        return RunFailure("final_state_write", -1,
+                          f"latest written time {latest} is not this segment's end (endTime {end}, tol {tol:.3g}, start {start_s})")
     return None
 
 

@@ -32,15 +32,33 @@ def decision_code_fingerprint() -> str:
 
     src = Path(__file__).resolve().parents[1]
     repo = src.parents[1]
-    files = sorted([*src.joinpath("checks").glob("*.py"), *src.joinpath("critic").glob("*.py"),
-                    *src.joinpath("evidence").glob("*.py"), src / "orchestration" / "loop.py",
-                    src / "orchestration" / "systems.py", src / "experiments" / "primitives.py",
-                    repo / "configs" / "verification.yaml"])
+    files = sorted({*src.joinpath("checks").glob("*.py"), *src.joinpath("critic").glob("*.py"),
+                    *src.joinpath("evidence").glob("*.py"), *src.joinpath("case_generation").glob("*.py"),
+                    *src.joinpath("experiments").glob("*.py"), src / "openfoam" / "parsers.py",
+                    src / "orchestration" / "loop.py", src / "orchestration" / "systems.py",
+                    src / "orchestration" / "store.py", repo / "configs" / "verification.yaml",
+                    repo / "configs" / "verification_v2.yaml", repo / "configs" / "problem_cylinder_re100.yaml"})
     h = hashlib.sha256()
     for f in files:
-        h.update(f.name.encode())
+        h.update(str(f.relative_to(repo)).encode())
         h.update(f.read_bytes())
     return h.hexdigest()[:16]
+
+
+def is_infrastructure_error(result: dict) -> bool:
+    """True when a stored result reflects a failure of the harness, not a verification outcome.
+
+    Such results are excluded from rate denominators and are recomputed on resume: an ERROR verdict, a
+    verifier exception inside the loop, or a loop that stopped only because every planner call failed
+    (LLM unavailable / unparseable), as opposed to the planner proposing invalid actions.
+    """
+    if (result.get("final_verdict") or result.get("verdict")) == "ERROR":
+        return True
+    reason = str(result.get("stop_reason") or "")
+    if reason.startswith("verifier error"):
+        return True
+    n_fail, n_inv = result.get("n_planner_failures", 0), result.get("n_invalid_events", 0)
+    return reason == "repeated planner failures" and n_inv > 0 and n_fail == n_inv
 
 
 def system_a(ev: dict) -> dict:

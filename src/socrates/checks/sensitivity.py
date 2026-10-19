@@ -76,6 +76,9 @@ def observed_order(eps32: float, eps21: float, r21: float, r32: float, p0: float
                     return 0.5 * (a + b), it
             return 0.5 * (a + b), 200
         prev_p, prev_g = p, gp
+    g_end = g(p_max)
+    if g_end is not None and g_end < 0 and g(p_max * 2) is not None and g(p_max * 2) > g_end:
+        return math.inf, len(grid)  # root lies beyond the search range: very fast convergence
     return None, len(grid)
 
 
@@ -117,11 +120,23 @@ def assess_sequence(
     if any(r < sens["min_refinement_ratio"] for r in ratios):
         details["notes"].append(f"refinement ratio below {sens['min_refinement_ratio']} (Celik et al. 2008)")
 
-    method = ""
+    src = "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001"
+    details["noise"] = noise
+    # A demonstrated change beyond tau (and beyond the statistical noise of the runs) FAILs the root
+    # whatever the shape of the sequence; only a PASS needs a valid error model.
+    if change - 2.0 * noise > tau:
+        return CheckResult(check, Status.FAIL,
+                           f"{qoi} of the run under verification changes by {change:.2%} under {component} refinement "
+                           f"(> tau={tau:.0%}); its value is not converged to the requested tolerance",
+                           value=change, threshold=tau, source=src, qoi=qoi, component=component,
+                           runs=run_ids, details=details)
+
+    def inconclusive(reason: str, u: float | None = None) -> CheckResult:
+        return CheckResult(check, Status.INCONCLUSIVE, reason, value=u, threshold=frac * tau, source=src, qoi=qoi,
+                           component=component, uncertainty=u, runs=run_ids, details=details)
+
     if any(r <= 1.0 + 1e-6 for r in ratios):
-        return CheckResult(check, Status.INCONCLUSIVE,
-                           f"degenerate {component} family: two runs at the same refinement level ({ratios})",
-                           qoi=qoi, component=component, runs=run_ids, details=details)
+        return inconclusive(f"degenerate {component} family: two runs at the same refinement level ({ratios})")
     if len(values) == 2:
         r = ratios[0]
         p = formal_order
@@ -145,29 +160,24 @@ def assess_sequence(
             details["oscillatory"] = True
         elif abs(eps21) >= abs(eps32):
             # monotone DIVERGENCE (Eca & Hoekstra 2014: R = eps21/eps32 >= 1): differences grow under
-            # refinement, so the sequence is not in the asymptotic range; Celik's |.| would hide this
+            # refinement; Celik's |.| would hide this.  No extrapolation.
             details.update(divergent=True, convergence_ratio=eps21 / eps32)
-            status = Status.FAIL if change - 2.0 * noise > tau else Status.INCONCLUSIVE
-            return CheckResult(check, status,
-                               f"{component} sequence of {qoi} diverges under refinement "
-                               f"(R = eps21/eps32 = {eps21 / eps32:.2f} >= 1); root-to-finest change {change:.2%}; "
-                               "not in the asymptotic range, no extrapolation",
-                               value=change, threshold=tau, source="Eca & Hoekstra (2014) J. Comput. Phys. 262:104",
-                               qoi=qoi, component=component, runs=run_ids, details=details)
+            return inconclusive(f"{component} sequence of {qoi} diverges under refinement (R = eps21/eps32 = "
+                                f"{eps21 / eps32:.2f} >= 1; Eca & Hoekstra 2014); root-to-finest change {change:.2%}; "
+                                "not in the asymptotic range, no extrapolation")
         else:
             p_obs, n_it = observed_order(eps32, eps21, r21, r32, formal_order)
-            details.update(observed_order=p_obs, iterations=n_it)
+            details.update(observed_order=p_obs if p_obs is None or math.isfinite(p_obs) else "above search range",
+                           iterations=n_it)
             if p_obs is None:
-                return CheckResult(check, Status.INCONCLUSIVE,
-                                   f"monotone {component} sequence but no positive observed order solves the Celik "
-                                   f"equation: not in the asymptotic range", qoi=qoi, component=component,
-                                   runs=run_ids, details=details)
+                return inconclusive(f"monotone {component} sequence but no positive observed order solves the Celik "
+                                    "equation: not in the asymptotic range")
             if lo * formal_order <= p_obs <= hi * formal_order:
                 p, fs = p_obs, fs3
                 method = f"three-level Celik procedure, observed order p={p_obs:.2f}, Fs={fs3:g}"
             else:
-                # outside the asymptotic band: use the SMALLER of observed and formal order
-                # (slow convergence must not be extrapolated with a fast order) and Fs=3
+                # outside the asymptotic band: the SMALLER of observed and formal order (slow convergence must
+                # not be extrapolated with a fast order), Fs = 3
                 p, fs = min(p_obs, formal_order), fs2
                 method = (f"three-level, observed order {p_obs:.2f} outside [{lo}, {hi}]x formal; "
                           f"p=min(observed, formal)={p:.2f} with Fs={fs2:g}")
@@ -176,22 +186,11 @@ def assess_sequence(
             u_root = max(fs * e_root, fs2 * noise)
             details.update(extrapolated_value=q_ext, estimated_root_error=e_root)
     details["method"] = method
-    src = "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001"
-    details["noise"] = noise
-    if change - 2.0 * noise > tau:  # demonstrated beyond the statistical noise of the two runs
-        return CheckResult(check, Status.FAIL,
-                           f"{qoi} of the run under verification changes by {change:.2%} under {component} refinement "
-                           f"(> tau={tau:.0%}); its value is not converged to the requested tolerance [{method}]",
-                           value=change, threshold=tau, source=src, qoi=qoi, component=component,
-                           uncertainty=u_root, runs=run_ids, details=details)
     if u_root <= frac * tau:
         return CheckResult(check, Status.PASS,
                            f"estimated {component} uncertainty of {qoi} = {u_root:.2%} <= {frac*tau:.2%} "
                            f"(root-to-finest change {change:.3%}) [{method}]",
                            value=u_root, threshold=frac * tau, source=src, qoi=qoi, component=component,
                            uncertainty=u_root, runs=run_ids, details=details)
-    return CheckResult(check, Status.INCONCLUSIVE,
-                       f"estimated {component} uncertainty of {qoi} = {u_root:.2%} > {frac*tau:.2%} but the demonstrated "
-                       f"change {change:.2%} <= tau; more refinement would be needed [{method}]",
-                       value=u_root, threshold=frac * tau, source=src, qoi=qoi, component=component,
-                       uncertainty=u_root, runs=run_ids, details=details)
+    return inconclusive(f"estimated {component} uncertainty of {qoi} = {u_root:.2%} > {frac*tau:.2%} but the "
+                        f"demonstrated change {change:.2%} <= tau; more refinement would be needed [{method}]", u_root)

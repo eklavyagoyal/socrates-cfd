@@ -182,12 +182,15 @@ def sensitivity_checks(graph: RunGraph, spec: ProblemSpec, vcfg: dict) -> list[C
             sizes = [_size(factor, n) for n in fam]
             # every member must itself be a statistically reliable estimate
             frac = vcfg["error_budget"]["component_pass_fraction"]
+            fs2 = vcfg["sensitivity"]["safety_factor_two_level"]
             min_cyc = vcfg["statistics"]["min_cycles"]
             unreliable = []
             for n in fam:
                 sw = ((n.evidence.get("forces") or {}).get("stationary_window") or {})
                 u, _ = statistical_uncertainty(n.evidence, q)
-                if (sw.get("n_cycles") or 0) < min_cyc or u is None or u > frac * tau:
+                # consistent with the noise floor in assess_sequence (U >= fs2 * noise): a member whose
+                # statistical uncertainty alone would exceed the component budget must be run longer first
+                if (sw.get("n_cycles") or 0) < min_cyc or u is None or fs2 * u > frac * tau:
                     unreliable.append((n.run_id, sw.get("n_cycles"), u))
             if unreliable:
                 out.append(CheckResult(name, Status.INCONCLUSIVE,

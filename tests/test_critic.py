@@ -77,3 +77,13 @@ def test_audit_printed_precision_and_no_percent_laundering():
     a = audit_numbers(["literature Cd = 1.33 (Williamson 1996)", "domain 20 D", "Cd 1.30", "1.3% resolution"], pkg)
     toks = sorted(u["token"] for u in a["untraced"])
     assert toks == ["1.33", "1996"], toks  # 1.30 matches 1.2951 at printed precision; 1.3% = 100*0.013333
+
+
+def test_audit_percent_strings_key_digits_and_system_outcomes_count_as_known():
+    pkg = {"runs": [{"summary": "drag changed by 1.50% after refinement", "levels": {"f1.41": 7}}],
+           "previous_critic_decisions": [{"outcome": "executed -> R2 (completed); Cd 1.3127",
+                                          "reasoning_summary": ["guess Cd 1.4421"],
+                                          "next_experiment": {"reason": "expect 2.75% change"}}]}
+    a = audit_numbers(["the 1.50% change", "level 1.41", "R2 gave 1.3127", "earlier guess 1.4421", "2.75%"], pkg)
+    toks = sorted(u["token"] for u in a["untraced"])
+    assert toks == ["1.4421", "2.75%"], toks  # critic-authored fields of history do not launder numbers

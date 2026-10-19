@@ -28,6 +28,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 from socrates.case_generation.spec import ProblemSpec  # noqa: E402
 from socrates.orchestration.store import RunStore  # noqa: E402
+from socrates.orchestration.systems import is_infrastructure_error  # noqa: E402
 from socrates.orchestration.truth import label_case  # noqa: E402
 
 SYSTEMS = ["A", "B", "L-judge", "C-rule", "C-llm", "Bexh"]
@@ -71,13 +72,21 @@ def main() -> None:
     store = RunStore(REPO / "results" / "runs")
     bench = REPO / "results" / "benchmark"
 
-    labels = {}
+    labels, problems = {}, []
     for case in man["cases"]:
-        f = bench / "B" / f"{case['id']}.json"
-        if not f.exists():
+        roots = set()
+        for s in SYSTEMS:
+            f = bench / s / f"{case['id']}.json"
+            if f.exists():
+                rr = json.loads(f.read_text()).get("root_run")
+                if rr:
+                    roots.add(rr)
+        if len(roots) != 1:
             labels[case["id"]] = {"label": "unrun", "intended": case["intended"]}
+            problems.append(f"{case['id']}: " + ("no result with a root run" if not roots
+                                                 else f"results disagree on the root run {sorted(roots)}"))
             continue
-        root = json.loads(f.read_text())["root_run"]
+        root = roots.pop()
         ev = store.load(root).evidence or {}
         rep = (ev.get("qoi") or {}).get("reported") or {}
         lab = label_case(rep, T, spec.verification.requested_tolerance, setup_problems(ev), truth_uncertainty=uT)
@@ -89,7 +98,7 @@ def main() -> None:
         {"truth": T, "truth_uncertainty_rel": uT, "rule": man["tolerance_rule"], "cases": labels}, indent=1))
     cases = [c for c, v in labels.items() if v["label"] != "unrun"]
 
-    metrics, matrix, problems = {}, {}, []
+    metrics, matrix = {}, {}
     for s in SYSTEMS:
         if not (bench / s).exists():
             continue
@@ -104,9 +113,7 @@ def main() -> None:
             r = json.loads(f.read_text())
             if r.get("root_run") and r["root_run"] != labels[cid]["root_run"]:
                 problems.append(f"{s}/{cid}: stale (root {r['root_run']} != {labels[cid]['root_run']})")
-            v = r.get("final_verdict") or r.get("verdict")
-            if s in ("C-rule", "C-llm") and r.get("stop_reason", "").startswith(("repeated planner failures", "verifier error")):
-                v = "ERROR"
+            v = "ERROR" if is_infrastructure_error(r) else (r.get("final_verdict") or r.get("verdict"))
             lab = labels[cid]["label"]
             o = outcome(lab, v)
             matrix[(s, cid)] = (v, o)
@@ -134,16 +141,20 @@ def main() -> None:
                 llm_cost += r.get("cost_usd") or 0.0
                 untraced += (r.get("numeric_audit") or {}).get("n_untraced", 0)
 
-        def count(label, verdicts):
-            return sum(1 for c in per_case.values() if c["label"] == label and c["verdict"] in verdicts)
+        decided = [c for c in per_case.values() if c["outcome"] != "error"]  # rate denominators exclude errors
 
-        nf = sum(1 for c in per_case.values() if c["label"] == "flawed")
-        nc = sum(1 for c in per_case.values() if c["label"] == "credible")
-        na = sum(1 for c in per_case.values() if c["label"] == "ambiguous")
-        n_err = sum(1 for c in per_case.values() if c["outcome"] == "error")
-        decided = [c for c in per_case.values() if c["outcome"] != "error"]
+        def count(label, verdicts):
+            return sum(1 for c in decided if c["label"] == label and c["verdict"] in verdicts)
+
+        nf = sum(1 for c in decided if c["label"] == "flawed")
+        nc = sum(1 for c in decided if c["label"] == "credible")
+        na = sum(1 for c in decided if c["label"] == "ambiguous")
+        n_err = len(per_case) - len(decided)
+        errors_by_label = {lb: sum(1 for c in per_case.values() if c["outcome"] == "error" and c["label"] == lb)
+                           for lb in ("flawed", "credible", "ambiguous")}
         metrics[s] = {"cases": per_case, "summary": {
             "n": len(per_case), "n_flawed": nf, "n_credible": nc, "n_ambiguous": na, "n_error": n_err,
+            "errors_by_label": errors_by_label,
             "false_acceptance_rate": _rate(count("flawed", {"ACCEPT"}), nf),
             "detection_rate": _rate(count("flawed", {"REJECT"}), nf),
             "missed_but_safe_rate": _rate(count("flawed", {"INCONCLUSIVE"}), nf),
@@ -180,12 +191,14 @@ def main() -> None:
                  f"{','.join(lab['label_unstable']) or ''} | " + " | ".join(cells) + " |")
     L += ["", "✓ correct · ✗✗ **false acceptance** · ✗ false rejection · `·` INCONCLUSIVE (safe, undecided) · E error · ? missing",
           ""]
-    keys = [("n", "cases"), ("n_flawed", "flawed cases"), ("n_credible", "credible cases"), ("n_ambiguous", "ambiguous cases"),
+    keys = [("n", "cases"), ("n_flawed", "flawed cases (decided)"), ("n_credible", "credible cases (decided)"),
+            ("n_ambiguous", "ambiguous cases (decided)"),
             ("false_acceptance_rate", "**false acceptance** (flawed → ACCEPT)"), ("detection_rate", "detection (flawed → REJECT)"),
             ("missed_but_safe_rate", "missed but safe (flawed → INCONCLUSIVE)"),
             ("correct_acceptance_rate", "correct acceptance (credible → ACCEPT)"),
             ("false_rejection_rate", "false rejection (credible → REJECT)"), ("inconclusive_rate", "inconclusive (all decided)"),
-            ("ambiguous_verdicts", "ambiguous cases: verdicts"), ("n_error", "errors"),
+            ("ambiguous_verdicts", "ambiguous cases: verdicts"), ("n_error", "errors (excluded from rates)"),
+            ("errors_by_label", "errors by label"),
             ("mean_experiments", "mean extra simulations / case"), ("mean_compute_relative_to_root", "mean extra compute / case (× root)"),
             ("total_experiment_wall_hours", "total experiment wall time (h)"), ("llm_cost_usd", "LLM cost (USD)"),
             ("authority_violations", "authority violations"), ("untraced_numbers", "untraceable numbers in LLM text"),

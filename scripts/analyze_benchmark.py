@@ -113,6 +113,47 @@ def variance_table(bench: Path, cases: list[str], labels: dict, store: RunStore,
     return out
 
 
+def calibration_table(bench: Path, cases: list[str], labels: dict, uT: dict, store: RunStore, fp: str) -> list[str]:
+    """Are the verifier's uncertainty estimates honest?  For every adaptive/exhaustive result in which all three
+    discretisation components (mesh, time, domain) carry an estimate, compare the verifier's total
+    U = averaging bias + RSS(other components) for the ROOT's reported value with that value's error against the
+    in-house reference (an independent estimate: the reference uses chains around the baseline, not around the case)."""
+    rows, n = [], {"covered": 0, "covered_within_truth_unc": 0, "total": 0}
+    for s in ("C-rule", "C-llm", "Bexh"):
+        for cid in cases:
+            f = bench / s / f"{cid}.json"
+            if not f.exists():
+                continue
+            r = json.loads(f.read_text())
+            if staleness(r, f, store, fp, labels[cid]["root_run"]) or is_infrastructure_error(r):
+                continue
+            v = r.get("verdict") if s != "Bexh" else r.get("verifier")
+            for q, pq in ((v or {}).get("per_qoi") or {}).items():
+                cu = pq.get("component_uncertainty") or {}
+                if not all(k in cu for k in ("mesh", "time", "domain")):
+                    continue
+                bias = cu.get("averaging", 0.0)
+                rss = sum(x**2 for k, x in cu.items() if k != "averaging") ** 0.5
+                U = bias + rss
+                e = labels[cid]["errors"].get(q)
+                if e is None:
+                    continue
+                cov = e <= U
+                cov2 = e <= (U**2 + uT.get(q, 0.0) ** 2) ** 0.5
+                n["total"] += 1
+                n["covered"] += cov
+                n["covered_within_truth_unc"] += cov2
+                rows.append(f"| {cid} | {s} | {q} | {e:.2%} | {U:.2%} | {pq['verdict']} | {'yes' if cov else ('within U(T)' if cov2 else '**NO**')} |")
+    if not rows:
+        return []
+    return ["", "### Calibration: the verifier's uncertainty estimate vs the error against the reference", "",
+            "_Cases where mesh, time and domain all carry an estimate. U = averaging bias + RSS(components). "
+            "'within U(T)': not covered by U alone, but by U combined with the reference's own uncertainty._", "",
+            "| case | system | quantity | error vs reference | verifier U | verdict | covered |",
+            "|---|---|---|---|---|---|---|", *rows, "",
+            f"Covered by U: {n['covered']}/{n['total']}; by U combined with U(T): {n['covered_within_truth_unc']}/{n['total']}."]
+
+
 def _rate(num: int, den: int):
     return None if den == 0 else num / den
 
@@ -306,6 +347,7 @@ def main() -> None:
         vals = [metrics[s]["summary_point_estimate_labels"].get(k) for s in systems]
         L.append(f"| {name} | " + " | ".join("—" if x is None else (f"{x:.2f}" if isinstance(x, float) else str(x))
                                               for x in vals) + " |")
+    L += calibration_table(bench, cases, labels, uT, store, fp)
     L += var_lines
     (REPO / "reports" / "benchmark_tables.md").write_text("\n".join(L) + "\n")
 

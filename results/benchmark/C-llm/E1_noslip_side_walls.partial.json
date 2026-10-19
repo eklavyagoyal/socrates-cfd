@@ -165,6 +165,91 @@
     "expected_outcome": "Cd and St fall between the R0 and R1 values (Cd 1.3402 to 1.3505, St 0.16428 to 0.16632), with an observed order that supports a mesh uncertainty at or below about 1.5% for each quantity. If the values are non-monotonic or the order is low, the mesh uncertainty stays above budget and the root cannot be accepted without a finer-mesh strategy."
    },
    "outcome": "executed -> E1_noslip_side_walls.m1.41-f15d7e2db685 (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 21.002117614996678,
+    "cost_usd": 0.08225797500000001,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 27629,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 48,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "E1_noslip_side_walls-88a7cd5812e8": "R0",
+     "E1_noslip_side_walls.m2-39a4571e43e5": "R1",
+     "E1_noslip_side_walls.m1.41-f15d7e2db685": "R2"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "HIGH",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and no check has failed. ACCEPT is not allowed, and REJECT has no measured basis.",
+    "R0 passes averaging and statistics. Cd: 9.319e-05 and 0.001199. St: 6.507e-05 and 0.0009705.",
+    "The three-level mesh study (R0, R2, R1) is now measured. Cd mesh uncertainty is 0.01143 (PASS, observed p=2.57). St mesh uncertainty is 0.0212, which is above the 0.015 component budget. The demonstrated R0-to-R1 St change is only 1.23%, so this is not a FAIL.",
+    "R0, R2 and R1 move monotonically. Cd is 1.3402, 1.3475 and 1.3505. St is 0.16428, 0.16562 and 0.16632. This supports a systematic mesh trend rather than noise.",
+    "The time and domain components are still INCONCLUSIVE for both quantities. No REDUCE_TIME_STEP or EXPAND_DOMAIN run exists. No combined uncertainty can be formed without them.",
+    "The domain is the highest-risk unmeasured component. R0 uses a noSlipWall lateral boundary at half_height_D 40.0, with 30.0 D upstream, 50.0 D downstream and blockage 0.0125. The problem asks for an unbounded stream. This is a configuration mismatch that could bias Cd and St.",
+    "Time-step error looks less likely to matter. R0 has dt of 0.01 D/U, max Courant 0.73374, 608.73 steps per shedding period and a second-order backward scheme. It is still unmeasured.",
+    "EXPAND_DOMAIN on R0 costs 1311 s, the cheapest option on the menu. Another refinement from R2 costs 5280 s. Budget is ample: 2 of 6 experiments and 4.71 of 12 compute used.",
+    "R1 cannot be used as the parent, because its expanded child would have 162400 cells and the limit is 160000. R0 is the right parent. R2 costs 3034 s as a parent."
+   ],
+   "missing_evidence": [
+    "Domain truncation and blockage uncertainty for Cd and St, including the effect of the noSlipWall lateral boundary (no EXPAND_DOMAIN run)",
+    "Temporal discretisation uncertainty for Cd and St (no REDUCE_TIME_STEP run)",
+    "St mesh uncertainty of 0.0212 exceeds the 0.015 component budget, and a finer mesh level may be needed to bring it down",
+    "Combined uncertainty, which cannot be computed until time and domain are measured"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The noSlipWall lateral boundaries at 40 D and the finite 30 D upstream and 50 D downstream extents bias Cd and St by more than 1.5%.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2.0. Compare Cd and St to R0 (1.3402 and 0.16428). A change above about 1.5% means the domain term breaks the budget. A change above 3% is a demonstrated FAIL. A change below about 0.5% means the domain is adequate."
+    },
+    {
+     "hypothesis": "The time-step error is small at dt of 0.01 D/U with a second-order backward scheme and 608.73 steps per period.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2.0. Cd and St should change by less than about 0.5% relative to R0."
+    },
+    {
+     "hypothesis": "The St mesh uncertainty of 0.0212 comes from the coarse R0 level. It would fall below 0.015 if a finer level confirmed the trend with order near 1.84 or higher.",
+     "test": "Evaluate REFINE_MESH on R2 (cost 5280 s) after the domain and time checks, if budget allows."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
+    "reason": "The domain component is unmeasured for both quantities. R0 uses a noSlipWall lateral boundary at 40 D, which does not represent the requested unbounded stream. This experiment can expose a bias larger than the 3% tolerance. It is also the cheapest menu entry (1311 s from R0). The R0 mesh and dt are unchanged near the cylinder, so the comparison isolates the boundary effect.",
+    "expected_outcome": "If Cd and St change by less than about 0.5% relative to R0 (1.3402 and 0.16428), the domain uncertainty is within budget and the time step is the last unmeasured component. If either changes by more than 1.5%, the domain term dominates the budget. A change above 3% is a demonstrated FAIL for the root."
+   },
+   "outcome": "executed -> E1_noslip_side_walls.D2x-1620b1098386 (completed)"
   }
  ]
 }

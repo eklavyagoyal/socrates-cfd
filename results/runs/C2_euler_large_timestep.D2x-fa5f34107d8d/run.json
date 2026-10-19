@@ -1,6 +1,6 @@
 {
   "run_id": "C2_euler_large_timestep.D2x-fa5f34107d8d",
-  "status": "running",
+  "status": "completed",
   "owner_pid": 10692,
   "created": "2026-10-19T20:56:36+00:00",
   "problem_spec": {
@@ -206,5 +206,63 @@
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4
+  },
+  "started": "2026-10-19T20:56:36+00:00",
+  "commands": [
+    {
+      "step": "blockMesh",
+      "command": "blockMesh",
+      "returncode": 0,
+      "wall_seconds": 1.0248424329984118,
+      "log_file": "log.blockMesh"
+    },
+    {
+      "step": "checkMesh",
+      "command": "checkMesh -allGeometry -allTopology",
+      "returncode": 0,
+      "wall_seconds": 1.4714629309964948,
+      "log_file": "log.checkMesh"
+    },
+    {
+      "step": "mapFields",
+      "command": "mapFields /home/user/socrates-cfd/results/runs/C2_euler_large_timestep.D2x-a912f88e2d43/case -sourceTime latestTime",
+      "returncode": 0,
+      "wall_seconds": 1.6230509420056478,
+      "log_file": "log.mapFields"
+    },
+    {
+      "step": "pimpleFoam",
+      "command": "pimpleFoam",
+      "returncode": 0,
+      "wall_seconds": 794.3668372890024,
+      "log_file": "log.pimpleFoam"
+    }
+  ],
+  "wall_seconds": 798.486193595003,
+  "finished": "2026-10-19T23:45:12+00:00",
+  "raw_output_sha256": {
+    "log.blockMesh": "67c86c087588d811eac80a7aa9f853ce08612d80c1babf246cc72edb7eedbb7c",
+    "log.checkMesh": "027b0b63cd49066d884abe15a3a374507ae38ae9441e51eed16e0e32b277edbc",
+    "log.mapFields": "15ffd6ccfc4160f2a523c249084d331348a428865c804141bdc866c1c62ca09f",
+    "log.pimpleFoam": "f9e4be8ad9dcbf3dc49115852cd6b51782b41a355e351fa1abe0357964604280"
+  },
+  "postprocessing_sha256": {
+    "flux_bottom/0/surfaceFieldValue.dat": "e7bb557285f48b20fbcd75c99227caf1abd4298bb86ab3e54eb51236389662f9",
+    "flux_inlet/0/surfaceFieldValue.dat": "c0377889934b9d3aab40401613781589984f726b1aa191979972698da5bc33a3",
+    "flux_outlet/0/surfaceFieldValue.dat": "923faff7c5c241b0cf7071d0530935cde102edad337ccc3762689e1c3ec4d352",
+    "flux_top/0/surfaceFieldValue.dat": "e10f544d646e3bcf186f04dc4783b26a9f7235cecd8b64bfe9719fb0af0e0a42",
+    "forceCoeffs1/0/coefficient.dat": "d20d28b13b4c3150c1ff61279721b07173e1d097f667e605ae602ae35854dd5e",
+    "solverInfo1/0/solverInfo.dat": "802c4a5501f844a24d107b27d4f333ac13c1a4b84d0873d46e00411f38dd976c"
+  },
+  "final_fields_sha256": {
+    "time": "5.333333334",
+    "files": {
+      "U": "910063946f3a6dbd55ece8b9a5119c519f1cf5b6c5529f7fa65a91dd9e41a25e",
+      "p": "cfbad2d7d17c8c9fab6241f00ef042dfab771e88fcaed0b649f83e2f29c60f56",
+      "phi": "0d4dcb239ab517e6089211dee4b50adfa98b919ae6ae4a082463c8e0ca5584eb",
+      "uniform/cumulativeContErr": "3475e9dfd3bf4124cb5c487b9e91575764b81778b14fccdefc5d87ad0f7a7e2b",
+      "uniform/functionObjects/functionObjectProperties": "e224f403439ec1804fcf1c8ceb2766bbab2878a3467c0f1f8c03cb7ca127ee78",
+      "uniform/time": "5b5e79748f74aa5e9cbf693a3f2fe5216681c49818215967c9d0d0ffdfb136b0"
+    }
   }
 }

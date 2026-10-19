@@ -1,0 +1,87 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 38.075787092999235,
+    "cost_usd": 0.05025891,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13256,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 37,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "baseline-408129116207": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict for R0 is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed. REJECT is not justified either.",
+    "Mesh, time and domain uncertainty components are all unmeasured for both requested quantities, so no combined uncertainty exists.",
+    "The averaging and statistics components are small and PASS. Drag: averaging 9.366e-05, statistics 8.229e-05. Strouhal: averaging 1.551e-05, statistics 6.605e-05. R0 has 12 stationary cycles. Running longer would not reduce the dominant unknowns.",
+    "R0 mesh is coarse: 30580 cells, representative_cell_size_D 0.45745, wake_last_cell_D 1.0209. These are the most likely source of a spatial error larger than 3% in drag and Strouhal number, because wake and shear-layer resolution drive both.",
+    "R0 time step is 0.01 convective units with 611.87 steps per shedding period, max Courant 0.73373, and a second-order backward scheme. Temporal error is likely less important than spatial error.",
+    "R0 domain extents are 30 D upstream, 50 D downstream and 40 D half-height, with a blockage ratio of 0.0125. These are fairly generous, so domain error is less likely to be the largest unknown.",
+    "Budget is ample: 0 of 6 experiments used and 0 of 12 compute units used. A mesh refinement costs about 1779 s, against 1441.6 s for the root run."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error of mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error of both quantities (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error of both quantities (no EXPAND_DOMAIN run)",
+    "Combined uncertainty against the 0.03 tolerance"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "R0's coarse mesh (representative_cell_size_D 0.45745, wake_last_cell_D 1.0209) causes a spatial error in mean Cd and St that is comparable to or larger than the 3% tolerance, or larger than 1.5% (0.5*tolerance).",
+     "test": "REFINE_MESH on R0 with factor 2.0. Compare mean_drag_coefficient and strouhal_number between R0 and the refined run. A relative change above 1.5% in either quantity refutes mesh adequacy, and a change above 3% (beyond 2x noise) is a FAIL. Changes well below 1.5% support mesh adequacy."
+    },
+    {
+     "hypothesis": "Temporal error is small at 611.87 steps per period with a second-order scheme.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2 and compare Cd and St."
+    },
+    {
+     "hypothesis": "A 1.25% blockage with symmetry-plane lateral boundaries and a 30 D inlet gives a domain error below 1.5%.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2 and compare Cd and St."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "baseline-408129116207",
+    "reason": "Mesh resolution is the most likely unmeasured error source that could shift mean Cd or St by more than the 3% tolerance. R0 is a single coarse mesh with 30580 cells and a representative cell size of 0.45745 D, so its mesh error is entirely unquantified. The largest factor gives the clearest signal above the very small statistical noise, which is about 1e-4.",
+    "expected_outcome": "If mean Cd and St change by less than about 1.5% between R0 and the refined run, the mesh component can be bounded and later REDUCE_TIME_STEP and EXPAND_DOMAIN checks can proceed. A change above 3% would be a measured FAIL. A change between 1.5% and 3% would call for another refinement."
+   },
+   "outcome": "executed -> baseline.m2-93c9ab8d6f2d (completed)"
+  }
+ ]
+}

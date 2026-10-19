@@ -87,11 +87,16 @@ Mesh levels were run with dt = 0.01, 0.0086734, 0.006133 (Courant control), so e
 | strouhal_number | 1.00 | -0.00e+00, +4.45e-05, +1.30e-04 | 0.16409 | 0.16382 | -0.162% |
 | rms_lift_coefficient | 1.06 | +0.00e+00, -1.63e-03, -4.72e-03 | 0.20899 | 0.21425 | +2.457% |
 
+Terms of U(T) (absolute, combined by RSS): mean_drag_coefficient: discretisation time 9.88e-04, mesh 1.50e-03, domain 1.49e-02, root 6.67e-06, time 5.71e-05, mesh 2.20e-05, domain 1.36e-04, time_conditioning 2.15e-04, time_overlap_model_form 3.93e-03; strouhal_number: discretisation time 6.63e-05, mesh 2.54e-04, domain 3.71e-04, root 2.02e-06, time 2.36e-05, mesh 1.17e-05, domain 7.17e-06, time_conditioning 5.85e-04, time_overlap_model_form 2.66e-04; rms_lift_coefficient: discretisation time 1.63e-03, mesh 6.76e-04, domain 8.70e-03, root 4.60e-06, time 5.45e-05, mesh 3.25e-05, domain 8.42e-06, time_conditioning 2.38e-05, time_overlap_model_form 5.26e-03.
+- conditioning, mean_drag_coefficient time: finest three → 1.32419; next-coarser three (baseline-408129116207, baseline.dt0.005-693742b868bc, baseline.dt0.0025-f1e9eaf0cd2a) → 1.32441 (Richardson with observed order 1.14, Fs=1.25); difference 2.15e-04 added to U(T)
+- conditioning, strouhal_number time: finest three → 0.16377; next-coarser three (baseline-408129116207, baseline.dt0.005-693742b868bc, baseline.dt0.0025-f1e9eaf0cd2a) → 0.16436 (observed order 0.2066519222496308 outside band; p = min(observed, formal) = 0.21 with Fs=3); difference 5.85e-04 added to U(T)
+- conditioning, rms_lift_coefficient time: finest three → 0.21687; next-coarser three (baseline-408129116207, baseline.dt0.005-693742b868bc, baseline.dt0.0025-f1e9eaf0cd2a) → 0.21685 (Richardson with observed order 1.05, Fs=1.25); difference 2.38e-05 added to U(T)
+
 | quantity | baseline (stationary) | in-house reference T | uncertainty of T (of which statistical) | literature band | T in band | T in band widened by τ |
 |---|---|---|---|---|---|---|
-| mean_drag_coefficient | 1.3312 | **1.3046** | ±1.15% (0.01%) | 1.31–1.33 | False | True |
-| strouhal_number | 0.1634 | **0.1638** | ±0.28% (0.02%) | 0.164–0.166 | False | True |
-| rms_lift_coefficient | 0.2286 | **0.2143** | ±4.14% (0.03%) | 0.222–0.235 | False | — |
+| mean_drag_coefficient | 1.3312 | **1.3046** | ±1.19% (0.01%) | 1.31–1.33 | False | True |
+| strouhal_number | 0.1634 | **0.1638** | ±0.48% (0.02%) | 0.164–0.166 | False | True |
+| rms_lift_coefficient | 0.2286 | **0.2143** | ±4.82% (0.03%) | 0.222–0.235 | False | — |
 
 ### Deterministic verification of the baseline
 

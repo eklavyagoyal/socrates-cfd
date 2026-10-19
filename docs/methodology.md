@@ -246,6 +246,29 @@ result records the decision-code fingerprint and the git commit it was produced 
 | R34 | An exception while writing a case report discarded the finished result | Report failures are written to `<case>.report_error.txt`; the result is kept |
 | R35 | The analysis took the root run from System B only (crash when B errored) and counted errors in rate denominators | Root run taken from any system's result (must agree); errors excluded from denominators and reported per label |
 
+### Review of the evaluation pipeline (truth, labels, metrics, reports), before any number was reported
+
+A further three-lens adversarial review (truth/labels mathematics, metrics, report assembly) targeted the scripts
+that turn results into the reported numbers. None of these files is part of the decision-code fingerprint, so
+fixing them did not invalidate any verdict.
+
+| # | Defect | Fix |
+|---|---|---|
+| E1 | The truth extrapolation still used the formal order when the observed order was *below* the band (the R4 fix had been applied to the verifier only): slow convergence extrapolated with a fast order, truth biased toward the finest level with an uncertainty that may not cover it | Same rule as the verifier: p = min(observed, formal) with Fs = 3; the time-overlap correction uses the order actually used |
+| E2 | Truth uncertainty ignored the statistical uncertainty of the chain members | Each member's statistical uncertainty is carried through the extrapolation weights into the RSS; per-member reliability table in the baseline report |
+| E3 | A result computed before its root's evidence was re-extracted (K1) counted as current; the analysis never compared decision-code stamps | Results are stamped with the evidence digest of every run they used; stale results (other decision code, other root, evidence changed) are recomputed on resume and listed but **not counted** by the analysis |
+| E4 | One disagreeing root among the systems' result files dropped the case from *every* system | The root of each case is the content-addressed run of its manifest definition, independent of results |
+| E5 | An LLM outage preceded by one invalid proposal was scored as a verification INCONCLUSIVE | Classified by the cause of the stop: 'repeated planner failures' is always an infrastructure error (`orchestration/evaluation.py`, superseding `systems.is_infrastructure_error`) |
+| E6 | Verdicts on *ambiguous* cases were painted as "correct" (System A's blanket ACCEPT looked green) | Neutral, unscored outcome classes for ambiguous cases; ACCEPTs of ambiguous cases whose best-estimate error exceeds τ are counted separately |
+| E7 | ERROR results entered the experiment-count, compute and flaw-targeting tallies | Excluded |
+| E8 | 'label unstable' was reported for cases that are flawed under every truth in the interval | Only reported when the interval can change the label |
+| E9 | The baseline's literature check used the narrow band, not the pre-registered band widened by τ | Both shown; criterion 2 uses the widened band |
+| E10 | Report assembly: L-judge excerpt showed a trailing caveat; outages shown as INCONCLUSIVE in attack tables; Bexh case reports omitted the experiments; git dirty flag false when git was unavailable | Fixed |
+
+The review also showed that the evidence-only LLM judge (L-judge) is a strong baseline on the benchmark cases, whose
+flaws are visible in the configuration. It was therefore added to the attack phase, whose cases are built to look
+clean in their configuration.
+
 ### Observations logged during the evaluation (not changed in the pre-registered verifier)
 
 - **J1 (coarse wake):** `checkMesh -allGeometry` reports "Cells with small determinant (< 0.001): 48", which OpenFOAM counts as a failed check, so `mesh_quality` FAILs and every system REJECTs J1. Its reported Cd/St are within ~1 % of the baseline, so if the measured label is *credible*, this is a false rejection caused by an extended-geometry quality heuristic rather than by an accuracy problem. A post-hoc variant that treats `-allGeometry`-only failures as INCONCLUSIVE (to be discharged by mesh refinement) is evaluated separately and reported as a protocol deviation.

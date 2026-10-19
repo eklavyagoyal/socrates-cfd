@@ -2,23 +2,23 @@
 
 | case | label | max err / τ | unstable | point-estimate label (secondary) | A | B | L-judge | C-rule | C-llm | Bexh |
 |---|---|---|---|---|---|---|---|---|---|---|
-| baseline | ambiguous | 0.45 | mean_drag_coefficient,strouhal_number | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | INCONCLUSIVE ~· | — ? | INCONCLUSIVE ~· |
-| K1_central_scheme | ambiguous | 0.69 | mean_drag_coefficient,strouhal_number | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
-| K2_fine_large | ambiguous | 0.37 | mean_drag_coefficient,strouhal_number | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
-| A1_coarse_mesh | flawed | 1.87 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | REJECT ✓ | — ? | — ? |
-| A2_moderate_mesh | ambiguous | 0.66 | strouhal_number | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
-| B1_small_domain | flawed | 4.96 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | — ? | REJECT ✓ | — ? |
-| B2_moderate_domain | flawed | 1.47 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | — ? | — ? | — ? |
-| C1_large_timestep | ambiguous | 0.27 | mean_drag_coefficient,strouhal_number | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
-| C2_euler_large_timestep | ambiguous | 1.29 | mean_drag_coefficient,strouhal_number | flawed | ACCEPT ~ | INCONCLUSIVE ~· | INCONCLUSIVE ~· | — ? | — ? | — ? |
-| D1_steady_solver | flawed | 5.61 |  | flawed | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ |
-| E1_noslip_side_walls | ambiguous | 0.68 | mean_drag_coefficient,strouhal_number | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
-| F1_upwind_convection | flawed | 7.83 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | — ? | — ? | — ? |
-| G1_premature_averaging | ambiguous | 0.72 | mean_drag_coefficient,strouhal_number | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | REJECT ~ | — ? | — ? | — ? |
-| H1_dynamic_viscosity | flawed | 2.19 |  | flawed | ACCEPT ✗✗ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | — ? |
-| I1_force_reference | flawed | 3.64 |  | flawed | ACCEPT ✗✗ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | — ? |
-| J1_coarse_wake | ambiguous | 0.55 | strouhal_number | ambiguous | REJECT ~ | REJECT ~ | REJECT ~ | REJECT ~ | REJECT ~ | — ? |
-| G2_average_from_start | ambiguous | 0.69 | strouhal_number | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
+| baseline | ambiguous | 0.68 | mean_drag_coefficient | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | INCONCLUSIVE ~· | — ? | INCONCLUSIVE ~· |
+| K1_central_scheme | ambiguous | 0.92 | mean_drag_coefficient | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
+| K2_fine_large | ambiguous | 0.59 | mean_drag_coefficient | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
+| A1_coarse_mesh | flawed | 1.67 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | REJECT ✓ | — ? | — ? |
+| A2_moderate_mesh | ambiguous | 0.46 | mean_drag_coefficient,strouhal_number | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
+| B1_small_domain | flawed | 5.22 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | — ? | REJECT ✓ | — ? |
+| B2_moderate_domain | flawed | 1.70 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | — ? | — ? | — ? |
+| C1_large_timestep | ambiguous | 0.49 | mean_drag_coefficient | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
+| C2_euler_large_timestep | ambiguous | 1.09 | mean_drag_coefficient,strouhal_number | flawed | ACCEPT ~ | INCONCLUSIVE ~· | INCONCLUSIVE ~· | — ? | — ? | — ? |
+| D1_steady_solver | flawed | 5.43 |  | flawed | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ |
+| E1_noslip_side_walls | ambiguous | 0.91 | mean_drag_coefficient | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
+| F1_upwind_convection | flawed | 7.67 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | — ? | — ? | — ? |
+| G1_premature_averaging | ambiguous | 0.52 | mean_drag_coefficient,strouhal_number | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | REJECT ~ | — ? | — ? | — ? |
+| H1_dynamic_viscosity | flawed | 2.00 |  | flawed | ACCEPT ✗✗ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | — ? |
+| I1_force_reference | flawed | 3.44 |  | flawed | ACCEPT ✗✗ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | — ? |
+| J1_coarse_wake | ambiguous | 0.47 | mean_drag_coefficient | credible | REJECT ~ | REJECT ~ | REJECT ~ | REJECT ~ | REJECT ~ | — ? |
+| G2_average_from_start | ambiguous | 0.48 | mean_drag_coefficient,strouhal_number | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | — ? | — ? | — ? |
 
 ✓ correct · ✗✗ **false acceptance** · ✗ false rejection · `·` INCONCLUSIVE (safe, undecided) · `~` / `~·` verdict on an ambiguous case (not scored; INCONCLUSIVE expected) · E error · ? missing · S stale (not counted)
 
@@ -55,13 +55,13 @@ _Same verdicts; only the labels change. The pre-registered labels above are prim
 | metric | A | B | L-judge | C-rule | C-llm | Bexh |
 |---|---|---|---|---|---|---|
 | flawed cases | 8 | 8 | 8 | 4 | 4 | 1 |
-| credible cases | 3 | 3 | 3 | 1 | 0 | 1 |
-| ambiguous cases | 6 | 6 | 6 | 1 | 1 | 0 |
+| credible cases | 4 | 4 | 4 | 1 | 1 | 0 |
+| ambiguous cases | 5 | 5 | 5 | 1 | 0 | 1 |
 | **false acceptance** | 0.88 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
 | detection | 0.12 | 0.38 | 0.88 | 1.00 | 1.00 | 1.00 |
 | missed but safe | 0.00 | 0.62 | 0.12 | 0.00 | 0.00 | 0.00 |
-| correct acceptance | 1.00 | 0.00 | 1.00 | 0.00 | — | 0.00 |
-| false rejection | 0.00 | 0.00 | 0.00 | 0.00 | — | 0.00 |
+| correct acceptance | 0.75 | 0.00 | 0.75 | 0.00 | 0.00 | — |
+| false rejection | 0.25 | 0.25 | 0.25 | 1.00 | 1.00 | — |
 
 ### Calibration: the verifier's uncertainty estimate vs the error against the reference
 
@@ -69,9 +69,9 @@ _Cases where mesh, time and domain all carry an estimate. U = averaging bias + R
 
 | case | system | quantity | error vs reference | verifier U | verdict | covered |
 |---|---|---|---|---|---|---|
-| baseline | C-rule | mean_drag_coefficient | 1.36% | 2.42% | INCONCLUSIVE | yes |
-| baseline | C-rule | strouhal_number | 0.86% | 1.59% | ACCEPT | yes |
-| baseline | Bexh | mean_drag_coefficient | 1.36% | 4.21% | INCONCLUSIVE | yes |
-| baseline | Bexh | strouhal_number | 0.86% | 2.96% | INCONCLUSIVE | yes |
+| baseline | C-rule | mean_drag_coefficient | 2.04% | 2.42% | INCONCLUSIVE | yes |
+| baseline | C-rule | strouhal_number | 0.24% | 1.59% | ACCEPT | yes |
+| baseline | Bexh | mean_drag_coefficient | 2.04% | 4.21% | INCONCLUSIVE | yes |
+| baseline | Bexh | strouhal_number | 0.24% | 2.96% | INCONCLUSIVE | yes |
 
 Covered by U: 4/4; by U combined with U(T): 4/4.

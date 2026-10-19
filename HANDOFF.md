@@ -107,14 +107,13 @@ Python package `src/socrates/` orchestrating OpenFOAM v2412 (ESI, package `openf
 | domain | ×2 from the root, ×4 from ×2 | `baseline.D2x-efba395f6c27`, `baseline.D2x-4312d7d8fec3` (the ×4 run is named `D2x` because child names record only the step's own factor) |
 | longer | root continued to 250 D/U | `baseline.long250-8b585d987e4c` |
 
-**Stage 2 is running now (PID 19163).** The reviewers found that the ×2 and ×4 domain levels had not reached a limit
+**Stage 2 is complete.** The reviewers found that the ×2 and ×4 domain levels had not reached a limit
 cycle in 80 D/U: drag was still falling and the wake had not crossed the enlarged domain. Stage 2:
 - continues ×2 to 180 D/U (`baseline.long180-94a31bca23fd`, done: Cd settled at 1.32188, versus 1.32259 at 80 D/U);
-- continues ×4 to 280 D/U (`baseline.long280-3b986ef1d905`, running);
-- adds a fourth time level, dt/8 (`baseline.dt0.00125-f6325a72e9cd`, running).
+- continues ×4 to 280 D/U (`baseline.long280-3b986ef1d905`, done: Cd settled at 1.31576, versus 1.31789 at 80 D/U);
+- adds a fourth time level, dt/8 (`baseline.dt0.00125-f6325a72e9cd`, done).
 
-When stage 2 finishes, `results/baseline/study.json` is written with a `stage2` key; the stage-1 record is
-`results/baseline/study_stage1.json`.
+`results/baseline/study.json` now has a `stage2` key; the stage-1 record is `results/baseline/study_stage1.json`.
 
 **Reference ("truth")** (`scripts/make_baseline_report.py` → `results/baseline/truth.json`,
 `reports/baseline_generated.md`):
@@ -125,9 +124,13 @@ When stage 2 finishes, `results/baseline/study.json` is written with a `stage2` 
   counting from Courant-controlled dt in the mesh chain; the shift moved T_Cd by +0.31 %.
 - Members' statistical uncertainties are carried through the extrapolation weights.
 
-Provisional stage-1 values (root = 150 D/U run): **Cd 1.3133 ± 0.72 %, St 0.1647 ± 1.06 %**, both inside the narrow
-literature band. Taking the root from its 250 D/U continuation gives Cd 1.3134 ± 0.71 %, St 0.1648 ± 1.29 %.
-**Recompute after stage 2** (section 36).
+**Final values (after stage 2): Cd T = 1.3046 ± 1.15 %, St T = 0.1638 ± 0.28 %.**
+- Domain order 0.60 for Cd, so the domain correction is −2.05 %. Extrapolating Qu et al.'s own domain series the same
+  way gives ≈ 1.302.
+- With dt/8, the St time order is 1.00, which removed the large St uncertainty.
+- Both values sit just below the narrow literature bands (compiled from finite domains) and inside the bands widened
+  by τ.
+- Stage-1 values were Cd 1.3133 ± 0.72 %, St 0.1647 ± 1.06 %.
 
 **Main baseline findings so far:**
 - **Domain size is the largest error component** (−1.4 % on Cd).
@@ -137,9 +140,10 @@ literature band. Taking the root from its 250 D/U continuation gives Cd 1.3134 �
     flux and the ddtCorr flux correction.
   - St changes by an almost constant step per dt halving (apparent order 0.25). The dt/8 level tests this.
   - Qu et al. report the opposite dt trend for Cd, St and Cl′; this is unexplained.
-- **The pre-registered verifier cannot ACCEPT the credible baseline, even with all 7 study runs.**
-  - Cd domain U = 1.81 % and St time U = 1.68 %, both above τ/2 = 1.5 %.
-  - Combined uncertainty by RSS is about 2.1 % (Cd) and 2.3 % (St), below τ.
+- **The pre-registered verifier cannot ACCEPT the baseline's drag, even with all 10 study runs.** The Cd domain U
+  is 2.62 % > τ/2. St reaches ACCEPT (combined U 1.86 %).
+- **The baseline itself is not credible at τ = 3 %:** its drag error is +2.04 %, between τ/2 and τ, caused by the
+  40 D domain.
 
 **Open (task #14):** `reports/baseline_validation.md` is a draft. An adversarial fact-check found 43 issues; the
 corrections to apply are listed in section "Open tasks" below.
@@ -322,13 +326,16 @@ pre-registered success criteria (`docs/design.md` §19).
   - LLM-variance table.
 - `scripts/make_reports.py` assembles `reports/benchmark_results.md`.
 
-**Labels with the stage-1 reference (will change after stage 2):**
+**Labels with the final reference:**
 - Pre-registered labels:
   - flawed: A1, B1, B2, D1, F1, H1, I1;
-  - ambiguous: baseline, K1, K2, A2, C1, C2, E1, G1, J1, G2;
-  - **credible: none**, because U(T) is about 1 % and the baseline's own Cd error of 1.37 % straddles τ/2.
-- Point-estimate labels: credible baseline, K2, C1; flawed adds C2.
-- Several intended-flawed cases are not flawed at τ = 3 %: C1, E1, G1, G2, J1 (errors ≤ ~2 %).
+  - ambiguous: the other 10;
+  - **credible: none.**
+- Point-estimate labels:
+  - credible: A2, C1, J1, G2 (all intended ambiguous or flawed);
+  - flawed: the 7 above plus C2;
+  - ambiguous: baseline (Cd +2.04 %), K1 (+2.75 %), K2 (+1.78 %), E1, G1.
+- So the "credible" cases are not credible, because of the domain; and several "flawed" cases are within τ/2.
 
 ## 16. Compare three systems: running
 
@@ -451,7 +458,6 @@ Background processes (kill only by PID: `pkill -f` once killed the agent's own s
 | 10692 | `run_benchmark.py --systems A,B,L-judge,C-rule,C-llm --workers 64` | 3 | `results/logs/benchmark.log` |
 | 19152 | `run_benchmark.py --systems A,B,L-judge,Bexh --workers 24` | 3 | `results/logs/benchmark_bexh.log` |
 | 10959 | `run_attacks.py --workers 12` | 3 | `results/logs/attacks.log` |
-| 19163 | `baseline_study.py` (stage 2) | 5 | `results/logs/baseline_study_stage2.log` |
 
 - The scripts are resumable: completed runs and current results are reused, stale or ERROR results are recomputed.
   A process that dies leaves its solvers running; they are adopted later.
@@ -461,10 +467,8 @@ Background processes (kill only by PID: `pkill -f` once killed the agent's own s
 - If the container restarts: relaunch the four commands above with the same `SOCRATES_CPU_SLOTS`. The benchmark and
   attacks use 3 slots, leaving slot 3 free for the study.
 
-**When stage 2 finishes** (`results/baseline/study.json` gains `stage2`):
-1. `python3 scripts/make_baseline_report.py` (new truth);
-2. `python3 scripts/analyze_benchmark.py` (labels and metrics);
-3. rewrite `reports/baseline_validation.md` (task #14).
+Stage 2 is done. `make_baseline_report.py` and `analyze_benchmark.py` have been run on it; rerun the analysis after
+every batch of results. Still to do: rewrite `reports/baseline_validation.md` (task #14).
 
 ## 37. Attack your own system: running
 

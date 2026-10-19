@@ -410,37 +410,34 @@
      "averaging": 7.174804162382218e-05,
      "statistics": 5.011481831426935e-06,
      "mesh": 0.008511032253001337,
-     "time": 0.0063831446766402,
-     "domain": 0.018081281166082215
+     "time": 0.006543755334099026,
+     "domain": 0.026153953527621496
     },
     "combined_uncertainty": null
    },
    "strouhal_number": {
-    "verdict": "INCONCLUSIVE",
+    "verdict": "ACCEPT",
     "tolerance": 0.03,
     "component_status": {
      "averaging": "PASS",
      "statistics": "PASS",
      "mesh": "PASS",
-     "time": "INCONCLUSIVE",
+     "time": "PASS",
      "domain": "PASS"
     },
     "component_uncertainty": {
      "averaging": 7.466521014575409e-06,
      "statistics": 1.2384785172588668e-05,
      "mesh": 0.01333710698251527,
-     "time": 0.01679122725167482,
-     "domain": 0.008316047126238044
+     "time": 0.006701117665771463,
+     "domain": 0.011163446430657399
     },
-    "combined_uncertainty": null
+    "combined_uncertainty": 0.0186462993768195
    }
   },
   "missing_components": {
    "mean_drag_coefficient": [
     "domain"
-   ],
-   "strouhal_number": [
-    "time"
    ]
   },
   "failed_checks": [],
@@ -789,105 +786,113 @@
    {
     "check": "time_sensitivity",
     "status": "PASS",
-    "reason": "estimated time uncertainty of mean_drag_coefficient = 0.64% <= 1.50% (root-to-finest change 0.405%) [three-level Celik procedure, observed order p=1.14, Fs=1.25]",
-    "value": 0.0063831446766402,
+    "reason": "estimated time uncertainty of mean_drag_coefficient = 0.65% <= 1.50% (root-to-finest change 0.467%) [three-level Celik procedure, observed order p=1.07, Fs=1.25]",
+    "value": 0.006543755334099026,
     "threshold": 0.015,
     "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
     "qoi": "mean_drag_coefficient",
     "component": "time",
-    "uncertainty": 0.0063831446766402,
+    "uncertainty": 0.006543755334099026,
     "runs": [
      "baseline.long250-8b585d987e4c",
      "baseline.dt0.005-693742b868bc",
-     "baseline.dt0.0025-f1e9eaf0cd2a"
+     "baseline.dt0.0025-f1e9eaf0cd2a",
+     "baseline.dt0.00125-f6325a72e9cd"
     ],
     "details": {
      "values": [
       1.3311683486196924,
       1.3274792160249869,
-      1.3258024308463243
+      1.3258024308463243,
+      1.3249805951794964
      ],
      "dt_convective": [
       0.01,
       0.005,
-      0.0025
+      0.0025,
+      0.00125
      ],
      "formal_order": 2.0,
      "notes": [],
-     "root_to_finest_change": 0.004047298186007026,
+     "root_to_finest_change": 0.004670070990253025,
      "refinement_ratios": [
+      2.0,
       2.0,
       2.0
      ],
      "noise": 4.415391200226463e-05,
-     "observed_order": 1.1375837733913015,
+     "observed_order": 1.07292004289115,
      "iterations": 27,
-     "extrapolated_value": 1.324405252350687,
-     "estimated_root_error": 0.00510651574131216,
-     "method": "three-level Celik procedure, observed order p=1.14, Fs=1.25"
+     "extrapolated_value": 1.3242359676780133,
+     "estimated_root_error": 0.005235004267279221,
+     "method": "three-level Celik procedure, observed order p=1.07, Fs=1.25"
     }
    },
    {
     "check": "time_sensitivity",
-    "status": "INCONCLUSIVE",
-    "reason": "estimated time uncertainty of strouhal_number = 1.68% > 1.50% but the demonstrated change 0.14% <= tau; more refinement would be needed [three-level, observed order 0.21 outside [0.5, 2.0]x formal; p=min(observed, formal)=0.21 with Fs=3]",
-    "value": 0.01679122725167482,
+    "status": "PASS",
+    "reason": "estimated time uncertainty of strouhal_number = 0.67% <= 1.50% (root-to-finest change 0.172%) [three-level, observed order 0.71 outside [0.5, 2.0]x formal; p=min(observed, formal)=0.71 with Fs=3]",
+    "value": 0.006701117665771463,
     "threshold": 0.015,
     "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
     "qoi": "strouhal_number",
     "component": "time",
-    "uncertainty": 0.01679122725167482,
+    "uncertainty": 0.006701117665771463,
     "runs": [
      "baseline.long250-8b585d987e4c",
      "baseline.dt0.005-693742b868bc",
-     "baseline.dt0.0025-f1e9eaf0cd2a"
+     "baseline.dt0.0025-f1e9eaf0cd2a",
+     "baseline.dt0.00125-f6325a72e9cd"
     ],
     "details": {
      "values": [
       0.16343701062693017,
       0.16355977747802142,
-      0.16366616058972655
+      0.16366616058972655,
+      0.16371930744930652
      ],
      "dt_convective": [
       0.01,
       0.005,
-      0.0025
+      0.0025,
+      0.00125
      ],
      "formal_order": 2.0,
      "notes": [],
-     "root_to_finest_change": 0.0014001059349758227,
+     "root_to_finest_change": 0.0017242732502014664,
      "refinement_ratios": [
+      2.0,
       2.0,
       2.0
      ],
-     "noise": 3.860710225616088e-05,
-     "observed_order": 0.2066519222496308,
-     "iterations": 25,
-     "extrapolated_value": 0.1643569288075954,
-     "estimated_root_error": 0.005597075750558273,
-     "method": "three-level, observed order 0.21 outside [0.5, 2.0]x formal; p=min(observed, formal)=0.21 with Fs=3"
+     "noise": 6.990217343033843e-05,
+     "observed_order": 0.709995397690989,
+     "iterations": 27,
+     "extrapolated_value": 0.16380289812504026,
+     "estimated_root_error": 0.0022337058885904875,
+     "method": "three-level, observed order 0.71 outside [0.5, 2.0]x formal; p=min(observed, formal)=0.71 with Fs=3"
     }
    },
    {
     "check": "domain_sensitivity",
     "status": "INCONCLUSIVE",
-    "reason": "estimated domain uncertainty of mean_drag_coefficient = 1.81% > 1.50% but the demonstrated change 1.01% <= tau; more refinement would be needed [three-level Celik procedure, observed order p=0.87, Fs=1.25]",
-    "value": 0.018081281166082215,
+    "reason": "estimated domain uncertainty of mean_drag_coefficient = 2.62% > 1.50% but the demonstrated change 1.17% <= tau; more refinement would be needed [three-level Celik procedure, observed order p=0.60, Fs=1.25]",
+    "value": 0.026153953527621496,
     "threshold": 0.015,
     "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
     "qoi": "mean_drag_coefficient",
     "component": "domain",
-    "uncertainty": 0.018081281166082215,
+    "uncertainty": 0.026153953527621496,
     "runs": [
      "baseline.long250-8b585d987e4c",
-     "baseline.D2x-efba395f6c27",
-     "baseline.D2x-4312d7d8fec3"
+     "baseline.long180-94a31bca23fd",
+     "baseline.long280-3b986ef1d905"
     ],
     "details": {
      "values": [
       1.3311683486196924,
-      1.3225881233725172,
-      1.3178865632704366
+      1.3218902233047658,
+      1.3157674891738305
      ],
      "inverse_half_height": [
       0.025,
@@ -898,39 +903,39 @@
      "notes": [
       "domain-size error assumed ~ (D/H)^q with q=1 (EXPERT REVIEW)"
      ],
-     "root_to_finest_change": 0.010078094518465957,
+     "root_to_finest_change": 0.011704848746135293,
      "refinement_ratios": [
       2.0,
       2.0
      ],
-     "noise": 0.0016969897315988454,
-     "observed_order": 0.867875961067891,
+     "noise": 4.159708587426816e-05,
+     "observed_order": 0.5996572941118185,
      "iterations": 27,
-     "extrapolated_value": 1.3121875233774423,
-     "estimated_root_error": 0.01446502493286577,
-     "method": "three-level Celik procedure, observed order p=0.87, Fs=1.25"
+     "extrapolated_value": 1.3038869104899107,
+     "estimated_root_error": 0.020923162822097198,
+     "method": "three-level Celik procedure, observed order p=0.60, Fs=1.25"
     }
    },
    {
     "check": "domain_sensitivity",
     "status": "PASS",
-    "reason": "estimated domain uncertainty of strouhal_number = 0.83% <= 1.50% (root-to-finest change 0.588%) [three-level Celik procedure, observed order p=1.56, Fs=1.25]",
-    "value": 0.008316047126238044,
+    "reason": "estimated domain uncertainty of strouhal_number = 1.12% <= 1.50% (root-to-finest change 0.709%) [three-level Celik procedure, observed order p=1.14, Fs=1.25]",
+    "value": 0.011163446430657399,
     "threshold": 0.015,
     "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
     "qoi": "strouhal_number",
     "component": "domain",
-    "uncertainty": 0.008316047126238044,
+    "uncertainty": 0.011163446430657399,
     "runs": [
      "baseline.long250-8b585d987e4c",
-     "baseline.D2x-efba395f6c27",
-     "baseline.D2x-4312d7d8fec3"
+     "baseline.long180-94a31bca23fd",
+     "baseline.long280-3b986ef1d905"
     ],
     "details": {
      "values": [
       0.16343701062693017,
-      0.16272401584803292,
-      0.1624816678390618
+      0.16264567144554887,
+      0.1622871928177831
      ],
      "inverse_half_height": [
       0.025,
@@ -941,17 +946,17 @@
      "notes": [
       "domain-size error assumed ~ (D/H)^q with q=1 (EXPERT REVIEW)"
      ],
-     "root_to_finest_change": 0.005879695848608886,
+     "root_to_finest_change": 0.0070850804008798255,
      "refinement_ratios": [
       2.0,
       2.0
      ],
-     "noise": 0.0014295702122868958,
-     "observed_order": 1.5568112821851723,
-     "iterations": 28,
-     "extrapolated_value": 0.16235687667675996,
-     "estimated_root_error": 0.006652837700990436,
-     "method": "three-level Celik procedure, observed order p=1.56, Fs=1.25"
+     "noise": 3.6680694543955315e-05,
+     "observed_order": 1.1424090817338208,
+     "iterations": 27,
+     "extrapolated_value": 0.1619903144686453,
+     "estimated_root_error": 0.00893075714452592,
+     "method": "three-level Celik procedure, observed order p=1.14, Fs=1.25"
     }
    }
   ]

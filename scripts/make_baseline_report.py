@@ -135,6 +135,8 @@ def main() -> None:
 
     # full-study verification verdict of the baseline
     all_runs = [root] + [e["run_id"] for v in study["chains"].values() for e in v]
+    all_runs += [r for r in list(cont.values()) + ([stage2["time_level_4"]["run_id"]] if stage2.get("time_level_4") else [])
+                 if r not in all_runs]
     g = graph_for(store, root, all_runs)
     v = verify(g, spec)
     static = verify(graph_for(store, root, [root]), spec)

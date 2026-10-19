@@ -1,0 +1,57 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.303 (Claude Code)",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 20.550937809999596,
+ "cost_usd": 0.034773275,
+ "errors": [],
+ "model_fingerprint": "6ad399b27406",
+ "verdict": "ACCEPT",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "Setup matches the question. Re = 0.15*0.01/1.5e-5 = 100. The force references (magUInf 0.15, lRef 0.01, Aref 1e-4, rho 1.2) are consistent with the geometry. The measured inlet is uniform (ux_nonuniformity 0.0, uy_max_abs 0.0).",
+  "The domain is effectively unbounded: 30D upstream, 50D downstream, half-height 40D, blockage 0.0125. The outlet uses inletOutlet velocity with fixed pressure, and the lateral boundaries are symmetry planes.",
+  "Near-cylinder resolution is adequate. There are 120 cells around the cylinder and the wall-first cell is 0.0067892 D. checkMesh passed, with max non-orthogonality 42.736 deg and max skewness 0.52889.",
+  "Numerics are second-order: backward in time, linearUpwind convection, 2 PISO correctors. Max Courant is 0.56482, with 618.93 steps per shedding period. Mass imbalance is 8.3333e-11. The run completed.",
+  "Statistical convergence is very good. The stationary window has 12 cycles. The mean-Cd 95% CI is 2.1297e-05, drift is 7.1653e-05, and half-window difference is 3.2999e-05. All are far below the 3% tolerance.",
+  "The reported values agree with the stationary-window values: Cd 1.3221 vs 1.3222, and St 0.16157 in both. St is consistent with the period (618.93 steps at dt 0.01 gives about 6.189 convective units, so St is about 0.1616). Cl amplitude 0.3113 over rms 0.21989 is about 1.416, i.e. a clean sinusoidal shedding signal.",
+  "Caveats. The mesh is coarse away from the cylinder (representative size 0.61063 D, wake last cell 1.3639 D). The stationary-window start is flagged as the MSER cap. The FFT frequency resolution of 0.013333 is about 8% of St, so St rests on the cycle-based estimate. No refinement run is available. None of these shows a concrete defect, and the temporal-convergence statistics are very tight, so I accept with medium confidence."
+ ],
+ "numeric_audit": {
+  "traced": 35,
+  "untraced": [
+   {
+    "token": "95%",
+    "context": "very good. The stationary window has 12 cycles. The mean-Cd 95% CI is 2.1297e-05, drift is 7.1653e-05, "
+   },
+   {
+    "token": "6.189",
+    "context": "istent with the period (618.93 steps at dt 0.01 gives about 6.189 convective units, so St is about 0.1616"
+   },
+   {
+    "token": "1.416",
+    "context": "bout 0.1616). Cl amplitude 0.3113 over rms 0.21989 is about 1.416, i.e. a clean sinusoidal shedding signa"
+   },
+   {
+    "token": "8%",
+    "context": "MSER cap. The FFT frequency resolution of 0.013333 is about 8% of St, so St rests on the cycle-based e"
+   }
+  ],
+  "n_untraced": 4
+ },
+ "case": "A2_moderate_mesh",
+ "root_run": "A2_moderate_mesh-1c5ea01594aa",
+ "stamp": {
+  "decision_code": "6406c53bb2011ef5",
+  "root_config_hash": "2e33555a49bb5358",
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+ }
+}

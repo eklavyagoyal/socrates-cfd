@@ -1,0 +1,35 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.303 (Claude Code)",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 27.211062564000713,
+ "cost_usd": 0.040212575,
+ "errors": [],
+ "model_fingerprint": "6ad399b27406",
+ "verdict": "REJECT",
+ "confidence": "LOW",
+ "reasoning_summary": [
+  "Setup checks pass. Re = 0.15*0.01/1.5e-5 = 100 matches the specification. The force references (magUInf 0.15, lRef 0.01, Aref 0.0001) are consistent. Blockage is 0.0125, with 30D upstream, 50D downstream and 40D half-height, so the unbounded treatment is reasonable. Mass imbalance is 2.5e-10.",
+  "Statistical checks pass. The record has 12 stationary cycles, and the transient ends at 73.298 against a declared averaging start of 75.0. Mean-drag CI95 is 5.2336e-05, drift is 0.00016636 and half-window difference is 7.1618e-05. The time-domain St (0.15848) matches the FFT St (0.15849). Sampling error is therefore negligible, and the averaging window is not the problem.",
+  "Discretisation error cannot be bounded, and it is the main risk against a 3 % tolerance. The evidence has one mesh (30580 cells) and one time step (0.04 convective units). There is no refinement or time-step study. The 'representative_cell_size_D' of 0.45745 is only a domain-average size. The wake mesh ends at 1.0209 D cells (111 streamwise cells), so the wake is coarse. The scheme is first-order Euler in time with max Courant 2.9248 and 2 outer correctors. Numerical dissipation of that kind would damp shedding and bias both mean drag (1.2901) and St (0.15849).",
+  "Both reported quantities sit slightly low in the same direction, which fits an under-resolved, dissipative wake. This is only a suspicion, not proof. Nothing in the evidence shows grid or time-step independence, and the St frequency resolution of 0.013333 is itself about 8 % of St. I therefore do not trust either quantity to 3 %. Confidence is low because no hard defect is recorded."
+ ],
+ "numeric_audit": {
+  "traced": 29,
+  "untraced": [],
+  "n_untraced": 0
+ },
+ "case": "C2_euler_large_timestep",
+ "root_run": "C2_euler_large_timestep-268eddd71f94",
+ "stamp": {
+  "decision_code": "fa4a465206b4a958",
+  "root_config_hash": "5647f98705fd23b3",
+  "git_commit": "e49066d28e05f04de06f791e61fb5af260879589"
+ }
+}

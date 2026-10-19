@@ -265,3 +265,41 @@ def test_label_uses_truth_uncertainty():
     rep = {"mean_drag_coefficient": 1.33 * 1.015, "strouhal_number": 0.165 * 1.08}
     assert label_case(rep, T, tol, truth_uncertainty={"mean_drag_coefficient": 0.005,
                                                       "strouhal_number": 0.005})["label"] == "flawed"
+
+
+# ---- second review round: divergence, bias aggregation, decaying oscillation ----
+
+def test_monotone_divergence_is_not_a_pass():
+    r = 2 ** 0.5
+    res = _seq([1.000, 1.002, 1.008], [1.0, 1 / r, 0.5])
+    assert res.status == Status.INCONCLUSIVE and res.details.get("divergent")
+    res = _seq([1.000, 1.010, 1.040], [1.0, 1 / r, 0.5])
+    assert res.status == Status.FAIL
+
+
+def test_truth_extrapolation_refuses_divergent_chain():
+    from socrates.orchestration.truth import extrapolate_chain
+    out = extrapolate_chain([1.000, 1.002, 1.008], [1.0, 2 ** -0.5, 0.5], 2.0)
+    assert out["order"] is None and out["extrapolated"] == 1.008
+
+
+def test_bias_adds_linearly_to_rss():
+    from socrates.checks.base import CheckResult
+    checks = [CheckResult("gate", Status.PASS, "ok")]
+    for q in SPEC.requested_outputs:
+        checks.append(CheckResult("averaging_window", Status.PASS, "b", qoi=q, component="averaging",
+                                  uncertainty=0.02, details={"kind": "bias"}))
+        for comp in ("statistics", "mesh", "time", "domain"):
+            checks.append(CheckResult(f"{comp}_c", Status.PASS, "ok", qoi=q, component=comp, uncertainty=0.006))
+    v = aggregate(checks, SPEC)
+    # 0.02 + sqrt(4 * 0.006^2) = 0.032 > 0.03 (RSS alone would give 0.0228 and ACCEPT)
+    assert v.verdict == "INCONCLUSIVE"
+    assert abs(v.per_qoi["mean_drag_coefficient"]["combined_uncertainty"] - 0.032) < 1e-9
+
+
+def test_decaying_oscillation_is_not_sustained_shedding():
+    ev = {"configuration": {"solver": "pimpleFoam"}, "temporal_behavior": {"oscillating": True},
+          "forces": {"stationary_window": {"cl_amplitude_relative_drift": -0.2}}}
+    assert check_physics_regime(ev, SPEC, CFG).status == Status.INCONCLUSIVE
+    ev["forces"]["stationary_window"]["cl_amplitude_relative_drift"] = -0.001
+    assert check_physics_regime(ev, SPEC, CFG).status == Status.PASS

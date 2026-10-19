@@ -139,7 +139,7 @@ All checks return PASS, FAIL or INCONCLUSIVE with value, threshold, source and r
 | force_reference_consistency | magUInf = inlet U; Aref = D × mesh span (span measured from the checkMesh bounding box) | consistency |
 | physics_regime | 47 < Re < 188.5 requires sustained oscillation and a transient solver | Provansal 1987; Williamson 1996; Barkley & Henderson 1996. **Qualitative regime knowledge for this geometry (EXPERT REVIEW for generalisation)** |
 | convection_scheme_order | first-order upwind → INCONCLUSIVE until mesh sensitivity PASSes | JFE policy |
-| averaging_window (per quantity) | \|reported − stationary\|/stationary: > τ FAIL, ≤ τ/2 PASS | error budget |
+| averaging_window (per quantity) | b = \|reported − stationary\|/stationary, only against a statistically reliable stationary estimate: > τ FAIL, otherwise PASS as a *measured bias* (no experiment can change the root's declared-window value) | error budget |
 | statistical_uncertainty (per quantity) | max(CI95, drift, half-difference) ≤ τ/2 → PASS, else INCONCLUSIVE | error budget |
 | mesh / time / domain sensitivity (per quantity) | sequence analysis (below) | Roache; Celik et al. |
 
@@ -149,8 +149,9 @@ The quantity estimated is always the uncertainty of the **root** (submitted) run
 
 - **Two levels:** U = 3 · δ · r^p/(r^p − 1).
 - **Three levels:** observed p (Celik iteration). Fs = 1.25 if 0.5 p_f ≤ p ≤ 2 p_f; otherwise Fs = 3 with the formal order. Oscillatory or noise-level sequences use U = 3 × range.
+- **Monotone divergence** (|ε21| ≥ |ε32|, Eça & Hoekstra 2014) is never extrapolated: FAIL if the change exceeds τ, else INCONCLUSIVE.
 - **Decision:**
-  - **FAIL** if the demonstrated root-to-finest change exceeds τ;
+  - **FAIL** if the demonstrated root-to-finest change exceeds τ (by more than twice the statistical noise of the two runs);
   - **PASS** if U ≤ τ/2;
   - otherwise **INCONCLUSIVE**.
 - **Domain error model:** |e| ∝ (D/H)^q with q = 1, the slowest classical blockage scaling (**EXPERT REVIEW**).
@@ -160,7 +161,7 @@ The quantity estimated is always the uncertainty of the **root** (submitted) run
 - **ACCEPT** requires all of the following:
   1. every gate check PASSes (policy INCONCLUSIVEs can be discharged by measured evidence: Courant by a time-step study, scheme order by a mesh study);
   2. every component (averaging, statistics, mesh, time, domain) PASSes for every requested quantity;
-  3. the root-sum-square of the component uncertainties is ≤ τ (ASME V&V 20 style combination).
+  3. the measured averaging bias **plus** the root-sum-square of the independent uncertainty components (statistics, mesh, time, domain) is ≤ τ. A known, signed bias adds linearly; only independent uncertainties combine by RSS (ASME V&V 20 style).
 - **REJECT** when any check FAILs.
 - **INCONCLUSIVE** otherwise.
 

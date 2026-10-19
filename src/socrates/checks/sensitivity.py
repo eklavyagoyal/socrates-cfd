@@ -11,7 +11,9 @@ Two levels (Roache 1998; Celik et al. 2008, J. Fluids Eng. 130:078001):
     U_root  = Fs2 * e_root,   Fs2 = 3
 Three levels (Celik et al. 2008 procedure):
     observed order p (bracketed root of Celik's equation), monotone/oscillatory
-    test via sign(eps32/eps21), extrapolated value q_ext,
+    test via sign(eps32/eps21), monotone divergence (|eps21| >= |eps32|) ->
+    no extrapolation (FAIL if the change exceeds tau, else INCONCLUSIVE),
+    extrapolated value q_ext,
     U_root = Fs*|q_3-q_ext|/|q_ext| with Fs = 1.25 when p is within the band
     around the formal order, otherwise Fs = 3 with p = min(observed, formal)
     (never extrapolate slow convergence with a fast order).  No positive
@@ -141,6 +143,17 @@ def assess_sequence(
             u_root = fs2 * rng
             method = f"oscillatory convergence (sign(eps32/eps21)<0); range-based U with Fs={fs2:g}"
             details["oscillatory"] = True
+        elif abs(eps21) >= abs(eps32):
+            # monotone DIVERGENCE (Eca & Hoekstra 2014: R = eps21/eps32 >= 1): differences grow under
+            # refinement, so the sequence is not in the asymptotic range; Celik's |.| would hide this
+            details.update(divergent=True, convergence_ratio=eps21 / eps32)
+            status = Status.FAIL if change - 2.0 * noise > tau else Status.INCONCLUSIVE
+            return CheckResult(check, status,
+                               f"{component} sequence of {qoi} diverges under refinement "
+                               f"(R = eps21/eps32 = {eps21 / eps32:.2f} >= 1); root-to-finest change {change:.2%}; "
+                               "not in the asymptotic range, no extrapolation",
+                               value=change, threshold=tau, source="Eca & Hoekstra (2014) J. Comput. Phys. 262:104",
+                               qoi=qoi, component=component, runs=run_ids, details=details)
         else:
             p_obs, n_it = observed_order(eps32, eps21, r21, r32, formal_order)
             details.update(observed_order=p_obs, iterations=n_it)

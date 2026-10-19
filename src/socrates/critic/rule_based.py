@@ -33,6 +33,12 @@ def candidate_actions(graph: RunGraph, verdict: Verdict) -> list[NextExperiment]
                 out.append(NextExperiment(action="RUN_LONGER", parameters={}, parent_run=parent,
                                           reason=f"refinement-family member {rid} is not statistically reliable",
                                           expected_outcome="a reliable stationary estimate for the sensitivity study"))
+    for c in verdict.checks:
+        if c.check == "physics_regime" and c.status.value == "INCONCLUSIVE" and ("RUN_LONGER", "regime") not in seen:
+            seen.add(("RUN_LONGER", "regime"))
+            out.append(NextExperiment(action="RUN_LONGER", parameters={}, parent_run=graph.longest_same_config(graph.root).run_id,
+                                      reason="lift oscillation not yet a sustained limit cycle",
+                                      expected_outcome="amplitude settles (sustained) or decays (no shedding)"))
     for comp in ORDER:
         if comp not in missing:
             continue

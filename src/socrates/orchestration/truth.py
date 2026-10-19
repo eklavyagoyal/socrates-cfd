@@ -24,8 +24,8 @@ def extrapolate_chain(values: list[float], sizes: list[float], formal_order: flo
     r32, r21 = h3 / h2, h2 / h1
     e32, e21 = q3 - q2, q2 - q1
     out = {"values": values, "sizes": sizes}
-    if e32 == 0 or e21 == 0 or e32 * e21 < 0:
-        out.update(method="non-monotone or exact: finest value", extrapolated=q1, order=None,
+    if e32 == 0 or e21 == 0 or e32 * e21 < 0 or abs(e21) >= abs(e32):
+        out.update(method="non-monotone, divergent or exact: finest value", extrapolated=q1, order=None,
                    uncertainty=abs(max(values) - min(values)))
         return out
     p, _ = observed_order(e32, e21, r21, r32, formal_order)

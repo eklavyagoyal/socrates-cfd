@@ -220,6 +220,14 @@ def check_physics_regime(ev: dict, spec: ProblemSpec, cfg: dict) -> CheckResult:
                            "(typical causes: excessive numerical diffusion, damping time step, too short a run)",
                            value=ev["forces"].get("cl_rms_last_quarter"),
                            threshold=cfg["physics_regime"]["oscillation_cl_rms"], source=src)
+    sw = (ev.get("forces") or {}).get("stationary_window") or {}
+    amp_drift = sw.get("cl_amplitude_relative_drift")
+    tau = min(spec.verification.requested_tolerance.values())
+    if amp_drift is not None and abs(amp_drift) > tau:
+        return CheckResult("physics_regime", I,
+                           f"lift oscillation present but its amplitude changes by {amp_drift:+.1%} across the analysed window: "
+                           "not yet a sustained limit cycle (decaying or still growing); a longer record is needed",
+                           value=amp_drift, threshold=tau, source=src)
     return CheckResult("physics_regime", P, f"sustained periodic lift oscillation present, as expected for {onset} < Re={re} < {three_d}",
                        value=re, source=src)
 
@@ -267,16 +275,17 @@ def check_averaging_window(ev: dict, spec: ProblemSpec, cfg: dict) -> list[Check
                   "transient_end_convective": tb.get("transient_end_time_convective"),
                   "declared_window_cycles": tb.get("declared_window_cycles")}
         src = "declared-window value vs MSER-truncated integer-cycle value of the same run"
+        detail["kind"] = "bias"  # a measured, signed error of the reported value, not a random uncertainty
         if b > tau:
             out.append(CheckResult(name, F, f"reported {q} differs from the stationary-window value by {b:.2%} > tau={tau:.0%}: "
                                    "the declared averaging window is contaminated or too short",
                                    value=b, threshold=tau, source=src, qoi=q, component="averaging", uncertainty=b, details=detail))
-        elif b <= frac * tau:
-            out.append(CheckResult(name, P, f"reported {q} within {b:.3%} of the stationary-window value",
-                                   value=b, threshold=frac * tau, source=src, qoi=q, component="averaging", uncertainty=b, details=detail))
         else:
-            out.append(CheckResult(name, I, f"averaging bias {b:.2%} is between {frac*tau:.2%} and {tau:.0%}",
-                                   value=b, threshold=frac * tau, source=src, qoi=q, component="averaging", uncertainty=b, details=detail))
+            # no experiment can change the root's declared-window value, so this is not missing evidence:
+            # it is a known bias that the aggregation adds linearly to the other components
+            out.append(CheckResult(name, P, f"reported {q} is biased by {b:.3%} relative to the stationary-window value "
+                                   "(measured bias, added linearly to the error budget)",
+                                   value=b, threshold=tau, source=src, qoi=q, component="averaging", uncertainty=b, details=detail))
     return out
 
 

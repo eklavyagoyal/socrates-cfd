@@ -112,7 +112,8 @@ def run_summary(graph: RunGraph, rid: str) -> dict:
         "temporal_behavior": {
             "oscillating": tb.get("oscillating"),
             "record_length_convective": tb.get("record_length_convective"),
-            "transient_end_detected_convective": tb.get("transient_end_time_convective"),
+            "stationary_window_start_convective": tb.get("transient_end_time_convective"),
+            "stationary_window_start_is_mser_cap": tb.get("mser_hit_cap"),
             "stationary_cycles": tb.get("stationary_cycles"),
             "steps_per_shedding_period": tb.get("steps_per_period"),
         },

@@ -219,7 +219,17 @@ recomputed automatically if that changes).
 | R19 | Provenance hashed only logs; re-extraction unrecorded | QoI source files and child initial fields unverifiable | Hashes of postProcessing and final fields; extractor fingerprint in every evidence file |
 | R20 | Orphaned runs (owner died) were deleted and recomputed | Wasted compute when processes restart | Completed orphans are adopted and finalized |
 
-The fixes were themselves re-reviewed by a second adversarial pass (see the next section).
+Second-round findings from the same review (latest lens to finish), also fixed before results were used:
+
+| # | Defect | Fix |
+|---|---|---|
+| R21 | Monotone *divergence* (differences growing under refinement) passed as convergence: Celik's absolute value hides it | R = ε21/ε32 ≥ 1 → no extrapolation (FAIL if change > τ, else INCONCLUSIVE); same in the truth extrapolation |
+| R22 | Averaging bias in (τ/2, τ] was "missing evidence", so the rule planner requested RUN_LONGER forever, although no experiment can change the root's declared-window value | Treated as a measured bias: PASS up to τ (reliable reference required), FAIL above |
+| R23 | A known, signed bias was RSS-combined as if it were an independent random uncertainty | Bias adds linearly: ACCEPT needs bias + RSS(other components) ≤ τ |
+| R24 | A decaying (or still growing) oscillation passed the regime check as "sustained shedding" | Amplitude drift > τ across the window → INCONCLUSIVE (→ RUN_LONGER) |
+| R25 | MSER hits its 50 % cap on every run here (exponential approach to the limit cycle), so "transient end detected" overstated what was detected | Reported as "stationary-window start" with an explicit cap flag; stationarity is judged by the drift/half-difference measures |
+
+The fixes were themselves re-reviewed by a second adversarial pass.
 
 ### Observations logged during the evaluation (not changed in the pre-registered verifier)
 

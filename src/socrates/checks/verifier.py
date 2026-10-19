@@ -279,7 +279,12 @@ def aggregate(checks: list[CheckResult], spec: ProblemSpec) -> Verdict:
         statuses = {k: (v.status.value if v else "MISSING") for k, v in comp_res.items()}
         us = {k: v.uncertainty for k, v in comp_res.items() if v is not None and v.uncertainty is not None}
         need = [k for k, v in comp_res.items() if v is None or v.status != Status.PASS]
-        u_total = math.sqrt(sum(u * u for u in us.values())) if not need else None
+        # measured biases add linearly; independent uncertainties combine by root-sum-square
+        bias = sum(us[k] for k, v in comp_res.items()
+                   if v is not None and k in us and (v.details or {}).get("kind") == "bias")
+        rss = math.sqrt(sum(us[k] ** 2 for k, v in comp_res.items()
+                            if v is not None and k in us and (v.details or {}).get("kind") != "bias"))
+        u_total = (bias + rss) if not need else None
         if any(v is not None and v.status == Status.FAIL for v in comp_res.values()):
             qv = "REJECT"
         elif not need and u_total is not None and u_total <= tau:

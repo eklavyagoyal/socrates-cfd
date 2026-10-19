@@ -71,3 +71,55 @@ L-judge  K1_central_scheme        -> ACCEPT
 /home/user/socrates-cfd/src/socrates/evidence/extract.py:186: RuntimeWarning: Mean of empty slice
   "courant_mean_avg": _finite(np.nanmean(co_mean[skip:])) if co_mean.size > skip else None,
 Bexh     D1_steady_solver         -> REJECT
+A        K1_central_scheme        -> ACCEPT
+A        baseline                 -> ACCEPT
+A        A1_coarse_mesh           -> ACCEPT
+A        A2_moderate_mesh         -> ACCEPT
+A        C1_large_timestep        -> ACCEPT
+A        C2_euler_large_timestep  -> ACCEPTA        H1_dynamic_viscosity     -> ACCEPT
+
+A        J1_coarse_wake           -> REJECT
+A        K2_fine_large            -> ACCEPT
+B        K1_central_scheme        -> INCONCLUSIVE
+B        baseline                 -> INCONCLUSIVE
+A        F1_upwind_convection     -> ACCEPT
+A        D1_steady_solver         -> REJECT
+A        B1_small_domain          -> ACCEPT
+A        G2_average_from_start    -> ACCEPT
+B        A2_moderate_mesh         -> INCONCLUSIVE
+B        E1_noslip_side_walls     -> INCONCLUSIVE
+B        B1_small_domain          -> INCONCLUSIVEA        I1_force_reference       -> ACCEPT
+B        D1_steady_solver         -> REJECT
+
+B        I1_force_reference       -> REJECT
+B        F1_upwind_convection     -> INCONCLUSIVE
+A        E1_noslip_side_walls     -> ACCEPT
+A        G1_premature_averaging   -> ACCEPT
+B        C1_large_timestep        -> INCONCLUSIVE
+A        B2_moderate_domain       -> ACCEPT
+L-judge  E1_noslip_side_walls     -> ACCEPTB        G1_premature_averaging   -> INCONCLUSIVE
+L-judge  K2_fine_large            -> ACCEPT
+L-judge  B1_small_domain          -> REJECT
+L-judge  C1_large_timestep        -> ACCEPT
+B        J1_coarse_wake           -> REJECT
+L-judge  baseline                 -> ACCEPT
+B        B2_moderate_domain       -> INCONCLUSIVE
+L-judge  K1_central_scheme        -> ACCEPT
+L-judge  F1_upwind_convection     -> REJECT
+B        K2_fine_large            -> INCONCLUSIVE
+
+L-judge  J1_coarse_wake           -> REJECT
+L-judge  G1_premature_averaging   -> REJECT
+B        A1_coarse_mesh           -> INCONCLUSIVE
+L-judge  A2_moderate_mesh         -> ACCEPTBexh     D1_steady_solver         -> REJECT
+L-judge  D1_steady_solver         -> REJECTB        H1_dynamic_viscosity     -> REJECT
+L-judge  H1_dynamic_viscosity     -> REJECT
+
+L-judge  I1_force_reference       -> REJECT
+
+L-judge  G2_average_from_start    -> ACCEPT
+L-judge  A1_coarse_mesh           -> REJECT
+L-judge  C2_euler_large_timestep  -> INCONCLUSIVE
+B        C2_euler_large_timestep  -> INCONCLUSIVE
+L-judge  B2_moderate_domain       -> REJECT
+B        G2_average_from_start    -> INCONCLUSIVE

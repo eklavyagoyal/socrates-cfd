@@ -1,20 +1,21 @@
 {
  "truth": {
   "mean_drag_coefficient": {
-   "value": 1.3046303497433422,
-   "uncertainty_abs": 0.01546951124078589,
-   "uncertainty_rel": 0.011857390289769957,
+   "value": 1.2901417105885191,
+   "uncertainty_abs": 0.08098472535102992,
+   "uncertainty_rel": 0.0627719611623807,
    "corrections": {
     "time": -0.006977757825115782,
     "mesh": 0.007721197078547348,
-    "domain": -0.027281438129781677
+    "domain": -0.0417700772846048
    },
    "statistical_terms": {
     "root": 6.671125993678185e-06,
     "time": 5.7132893533002195e-05,
     "mesh": 2.202798158535356e-05,
-    "domain": 0.0001362970440719402,
+    "domain": 0.0006456850495924502,
     "time_conditioning": 0.00021466155611049587,
+    "domain_conditioning": 0.016773335064141914,
     "time_overlap_model_form": 0.003933913598170857
    },
    "root_value": 1.3311683486196924,
@@ -22,7 +23,7 @@
     "root": 6.671125993678185e-06,
     "time": 5.7132893533002195e-05,
     "mesh": 2.202798158535356e-05,
-    "domain": 0.0001362970440719402
+    "domain": 0.0006456850495924502
    },
    "time_overlap_correction": {
     "mesh_level_dt": [
@@ -40,7 +41,7 @@
      -0.0027580610861660604
     ],
     "mesh_extrapolated_without_shift": 1.3349556321000688,
-    "truth_without_shift": 1.3006964361451714
+    "truth_without_shift": 1.2862077969903483
    },
    "literature_band": [
     1.31,
@@ -54,20 +55,21 @@
    "in_widened_band": true
   },
   "strouhal_number": {
-   "value": 0.1638227647104692,
-   "uncertainty_abs": 0.0007870615169244868,
-   "uncertainty_rel": 0.004804347663864015,
+   "value": 0.1640505866545186,
+   "uncertainty_abs": 0.0013825965297857754,
+   "uncertainty_rel": 0.008427867025537963,
    "corrections": {
     "time": 0.00033535443951626664,
     "mesh": 0.001497095802307613,
-    "domain": -0.0014466961582848548
+    "domain": -0.0012188742142354436
    },
    "statistical_terms": {
     "root": 2.0241322658646214e-06,
     "time": 2.358247611833897e-05,
     "mesh": 1.1658596277269936e-05,
-    "domain": 7.166588294583377e-06,
+    "domain": 1.588364936573037e-05,
     "time_conditioning": 0.0005845637411489579,
+    "domain_conditioning": 0.0011775826922497123,
     "time_overlap_model_form": 0.00026553240295465463
    },
    "root_value": 0.16343701062693017,
@@ -75,7 +77,7 @@
     "root": 2.0241322658646214e-06,
     "time": 2.358247611833897e-05,
     "mesh": 1.1658596277269936e-05,
-    "domain": 7.166588294583377e-06
+    "domain": 1.588364936573037e-05
    },
    "time_overlap_correction": {
     "mesh_level_dt": [
@@ -93,13 +95,13 @@
      0.00012980241192846328
     ],
     "mesh_extrapolated_without_shift": 0.16519963883219244,
-    "truth_without_shift": 0.16408829711342385
+    "truth_without_shift": 0.16431611905747326
    },
    "literature_band": [
     0.164,
     0.166
    ],
-   "in_band": false,
+   "in_band": true,
    "literature_band_widened_by_tau": [
     0.15908,
     0.17098000000000002
@@ -108,8 +110,8 @@
   },
   "rms_lift_coefficient": {
    "value": 0.2142506887016829,
-   "uncertainty_abs": 0.010320998053836485,
-   "uncertainty_rel": 0.04817253151613984,
+   "uncertainty_abs": 0.008408412893273109,
+   "uncertainty_rel": 0.039245674981146804,
    "corrections": {
     "time": -0.01171254982544484,
     "mesh": 0.006078539140880607,
@@ -121,6 +123,7 @@
     "mesh": 3.248832832357364e-05,
     "domain": 8.417913395850011e-06,
     "time_conditioning": 2.384068305780196e-05,
+    "domain_conditioning": 0.0015407492838017955,
     "time_overlap_model_form": 0.0052644149265092255
    },
    "root_value": 0.22858423683727774,
@@ -221,29 +224,39 @@
    },
    "domain": {
     "values": [
-     1.3311683486196924,
      1.3218902233047658,
+     1.3181545211968142,
      1.3157674891738305
     ],
     "sizes": [
-     0.025,
      0.0125,
+     0.008333333333333333,
      0.00625
     ],
-    "method": "Richardson with observed order 0.60, Fs=1.25",
-    "extrapolated": 1.3038869104899107,
-    "order": 0.5996572941118185,
-    "order_used": 0.5996572941118185,
-    "uncertainty": 0.01485072335489973,
+    "method": "observed order 0.3012276381193722 outside band; p = min(observed, formal) = 0.30 with Fs=3",
+    "extrapolated": 1.2893982713350876,
+    "order": 0.3012276381193722,
+    "order_used": 0.3012276381193722,
+    "uncertainty": 0.07910765351622873,
     "weights": {
-     "finest": 2.9404041445949414,
-     "middle": 1.9404041445949411
+     "finest": 12.046863881525168,
+     "middle": 11.046863881525168
     },
     "runs": [
-     "baseline-408129116207",
      "baseline.D2x-efba395f6c27",
+     "baseline.D1.5x-ed421affd588",
      "baseline.D2x-4312d7d8fec3"
-    ]
+    ],
+    "conditioning": {
+     "coarser_three": [
+      "baseline-408129116207",
+      "baseline.D2x-efba395f6c27",
+      "baseline.D1.5x-ed421affd588"
+     ],
+     "extrapolated_coarser_three": 1.3061716063992295,
+     "method_coarser_three": "Richardson with observed order 0.67, Fs=1.25",
+     "difference": 0.016773335064141914
+    }
    }
   },
   "strouhal_number": {
@@ -311,29 +324,39 @@
    },
    "domain": {
     "values": [
-     0.16343701062693017,
      0.16264567144554887,
+     0.1623102116194792,
      0.1622871928177831
     ],
     "sizes": [
-     0.025,
      0.0125,
+     0.008333333333333333,
      0.00625
     ],
-    "method": "Richardson with observed order 1.14, Fs=1.25",
-    "extrapolated": 0.1619903144686453,
-    "order": 1.1424090817338208,
-    "order_used": 1.1424090817338208,
-    "uncertainty": 0.00037109793642221833,
+    "method": "observed order 6.371522214315026 outside band; p = min(observed, formal) = 1.00 with Fs=3",
+    "extrapolated": 0.16221813641269472,
+    "order": 6.371522214315026,
+    "order_used": 1.0,
+    "uncertainty": 0.00020716921526509058,
     "weights": {
-     "finest": 1.8281619213620908,
-     "middle": 0.8281619213620908
+     "finest": 4.000000000000001,
+     "middle": 3.000000000000001
     },
     "runs": [
-     "baseline-408129116207",
      "baseline.D2x-efba395f6c27",
+     "baseline.D1.5x-ed421affd588",
      "baseline.D2x-4312d7d8fec3"
-    ]
+    ],
+    "conditioning": {
+     "coarser_three": [
+      "baseline-408129116207",
+      "baseline.D2x-efba395f6c27",
+      "baseline.D1.5x-ed421affd588"
+     ],
+     "extrapolated_coarser_three": 0.161040553720445,
+     "method_coarser_three": "Richardson with observed order 0.58, Fs=1.25",
+     "difference": 0.0011775826922497123
+    }
    }
   },
   "rms_lift_coefficient": {
@@ -401,29 +424,39 @@
    },
    "domain": {
     "values": [
-     0.22858423683727774,
      0.22600731729550894,
+     0.22376074870075116,
      0.21988469938624713
     ],
     "sizes": [
-     0.025,
      0.0125,
+     0.008333333333333333,
      0.00625
     ],
     "method": "non-monotone, divergent or exact: finest value",
     "extrapolated": 0.21988469938624713,
     "order": null,
     "order_used": null,
-    "uncertainty": 0.008699537451030609,
+    "uncertainty": 0.006122617909261802,
     "weights": {
      "finest": 1.0,
      "middle": 0.0
     },
     "runs": [
-     "baseline-408129116207",
      "baseline.D2x-efba395f6c27",
+     "baseline.D1.5x-ed421affd588",
      "baseline.D2x-4312d7d8fec3"
-    ]
+    ],
+    "conditioning": {
+     "coarser_three": [
+      "baseline-408129116207",
+      "baseline.D2x-efba395f6c27",
+      "baseline.D1.5x-ed421affd588"
+     ],
+     "extrapolated_coarser_three": 0.22142544867004893,
+     "method_coarser_three": "Richardson with observed order 1.66, Fs=1.25",
+     "difference": 0.0015407492838017955
+    }
    }
   }
  },

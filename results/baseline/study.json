@@ -1,0 +1,87 @@
+{
+  "root": "baseline-408129116207",
+  "chains": {
+    "mesh": [
+      {
+        "action": "REFINE_MESH",
+        "parameters": {},
+        "run_id": "baseline.m1.41-807cdf343a51",
+        "parent": "baseline-408129116207",
+        "status": "completed"
+      },
+      {
+        "action": "REFINE_MESH",
+        "parameters": {
+          "factor": 2.0
+        },
+        "run_id": "baseline.m2-93c9ab8d6f2d",
+        "parent": "baseline-408129116207",
+        "status": "completed"
+      }
+    ],
+    "time": [
+      {
+        "action": "REDUCE_TIME_STEP",
+        "parameters": {
+          "factor": 2
+        },
+        "run_id": "baseline.dt0.005-693742b868bc",
+        "parent": "baseline-408129116207",
+        "status": "completed"
+      },
+      {
+        "action": "REDUCE_TIME_STEP",
+        "parameters": {
+          "factor": 4
+        },
+        "run_id": "baseline.dt0.0025-f1e9eaf0cd2a",
+        "parent": "baseline-408129116207",
+        "status": "completed"
+      }
+    ],
+    "domain": [
+      {
+        "action": "EXPAND_DOMAIN",
+        "parameters": {
+          "factor": 2
+        },
+        "run_id": "baseline.D2x-efba395f6c27",
+        "parent": "baseline-408129116207",
+        "status": "completed"
+      },
+      {
+        "action": "EXPAND_DOMAIN",
+        "parameters": {
+          "factor": 2
+        },
+        "run_id": "baseline.D2x-4312d7d8fec3",
+        "parent": "baseline.D2x-efba395f6c27",
+        "status": "completed"
+      }
+    ],
+    "longer": [
+      {
+        "action": "RUN_LONGER",
+        "parameters": {},
+        "run_id": "baseline.long250-8b585d987e4c",
+        "parent": "baseline-408129116207",
+        "status": "completed"
+      }
+    ]
+  },
+  "stage2": {
+    "continuations": {
+      "baseline.D2x-efba395f6c27": "baseline.long180-94a31bca23fd",
+      "baseline.D2x-4312d7d8fec3": "baseline.long280-3b986ef1d905",
+      "baseline.D1.5x-ed421affd588": "baseline.long200-a7dac050dbe5"
+    },
+    "time_level_4": {
+      "run_id": "baseline.dt0.00125-f6325a72e9cd",
+      "parent": "baseline.dt0.0025-f1e9eaf0cd2a"
+    },
+    "domain_level_x3": {
+      "run_id": "baseline.D1.5x-ed421affd588",
+      "continuation": "baseline.long200-a7dac050dbe5"
+    }
+  }
+}

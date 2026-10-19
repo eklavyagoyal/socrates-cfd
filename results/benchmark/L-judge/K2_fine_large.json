@@ -1,0 +1,44 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.303 (Claude Code)",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 25.744794861999253,
+ "cost_usd": 0.040426375,
+ "errors": [],
+ "model_fingerprint": "6ad399b27406",
+ "verdict": "ACCEPT",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "The Reynolds number is consistent. U\u00b7D/\u03bd = 0.15\u00b70.01/1.5e-5 = 100, which matches the configured value of 100. The force reference values (magUInf 0.15, lRef 0.01, Aref 0.0001, rhoInf 1.2) are consistent with the stated setup.",
+  "The inlet was measured as uniform: ux_min = ux_max = 0.15 and uy_max_abs = 0. The domain is large (40D upstream, 60D downstream, 60D half-height). Blockage is 0.0083333 and the stream is treated as unbounded, so confinement effects should be small.",
+  "The mesh is adequate for a laminar 2D case. It has 200 cells around the cylinder and a first wall cell of 0.003957D. checkMesh passed, with max non-orthogonality 43.656 deg and max skewness 0.5375. The scheme is second-order (backward in time, linearUpwind in space) with max Courant 0.64796 and 872.03 steps per shedding period.",
+  "The temporal record is clean. The run is oscillating, with 13 stationary cycles. Mean Cd in the stationary window is 1.3277, against 1.3278 for the submitted setup. The 95% CI is 1.0366e-05, relative drift is -2.9076e-05 and the half-window difference is -1.6483e-05. All are far below the 3% tolerance, so the Cd statistics are well converged.",
+  "St is 0.16382 from both the period count (1/(872.03\u00b70.007)) and the FFT, so the two estimates agree. The nominal frequency resolution is 0.013334, which is coarse against a 3% tolerance. However, the identical non-bin-quantized value from both methods and the 13 clean cycles suggest the peak is well located.",
+  "Caveats keep confidence at MEDIUM. There is no mesh or domain refinement study, since only one run exists. The stationary-window start is at the MSER cap. The coarse wake spacing (last wake cell 0.96749D) is untested. Nothing in the evidence shows a defect, so I accept."
+ ],
+ "numeric_audit": {
+  "traced": 34,
+  "untraced": [
+   {
+    "token": "95%",
+    "context": "ndow is 1.3277, against 1.3278 for the submitted setup. The 95% CI is 1.0366e-05, relative drift is -2."
+   }
+  ],
+  "n_untraced": 1
+ },
+ "case": "K2_fine_large",
+ "root_run": "K2_fine_large-2d999cd1eb7c",
+ "stamp": {
+  "decision_code": "6406c53bb2011ef5",
+  "root_config_hash": "795a31fe113601b4",
+  "benchmark_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+ }
+}

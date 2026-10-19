@@ -209,13 +209,34 @@ class RunStore:
             lock = _LOCKS.setdefault(key, threading.Lock())
         with lock:
             existing = self._find_existing(cfg, init)
+            while existing is not None and self._running_elsewhere(existing):
+                time.sleep(30)  # another process owns this run: wait for it
             if existing is not None:
                 res = self.load(existing.name)
-                if res.ok or res.provenance.get("failure_kind") == "solver":
+                if res.ok or res.provenance.get("failure_kind") in ("solver", "mesh"):
                     self._record_request(existing, launched_by, reason, parent_run, experiment)
                     return res
-                shutil.rmtree(existing)  # infrastructure failure: retry cleanly
+                shutil.rmtree(existing)  # owner died mid-run (infrastructure failure): retry cleanly
             return self._execute(key, cfg, spec, init, parent_run, reason, experiment, launched_by)
+
+    @staticmethod
+    def _running_elsewhere(d: Path) -> bool:
+        try:
+            prov = json.loads((d / "run.json").read_text())
+        except (OSError, json.JSONDecodeError):
+            return False
+        if prov.get("status") != "running":
+            return False
+        pid = prov.get("owner_pid")
+        if pid is None or pid == os.getpid():
+            return False
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            return False
+        except PermissionError:
+            return True
+        return True
 
     def _record_request(self, d: Path, launched_by: str, reason: str, parent: str | None, experiment: dict | None) -> None:
         """Append a cache-hit request to the run's request log (audit of reuse)."""
@@ -232,6 +253,7 @@ class RunStore:
         prov: dict[str, Any] = {
             "run_id": run_id,
             "status": "running",
+            "owner_pid": os.getpid(),
             "created": _now(),
             "problem_spec": spec.model_dump(mode="json"),
             "case_config": cfg.model_dump(mode="json"),

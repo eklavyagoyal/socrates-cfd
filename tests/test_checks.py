@@ -168,3 +168,24 @@ def test_accept_requires_rss_within_tolerance():
             checks.append(CheckResult(f"{comp}_c", Status.PASS, "ok", qoi=q, component=comp, uncertainty=0.014))
     # each component 1.4 % <= 1.5 %, but RSS = 3.1 % > 3 %
     assert aggregate(checks, SPEC).verdict == "INCONCLUSIVE"
+
+
+def test_averaging_check_needs_reliable_reference():
+    """Regression (found on case G1): a small reported-vs-stationary difference must not PASS
+    when the stationary estimate itself comes from too few cycles / a drifting record."""
+    from socrates.checks.static import check_averaging_window
+    ev = {"configuration": {"solver": "pimpleFoam"},
+          "qoi": {"reported": {"mean_drag_coefficient": 1.296, "strouhal_number": 0.1613},
+                  "stationary": {"mean_drag_coefficient": 1.304, "strouhal_number": 0.1606,
+                                 "strouhal_number_fft": 0.1607}},
+          "forces": {"stationary_window": {"n_cycles": 3, "mean_cd_ci95_halfwidth": 0.04,
+                                           "mean_cd_relative_drift": 0.04, "frequency_zero_crossing": 2.4,
+                                           "period_ci95_halfwidth": 0.01}},
+          "temporal_behavior": {}}
+    res = check_averaging_window(ev, SPEC, CFG)
+    assert all(r.status == Status.INCONCLUSIVE for r in res)
+    ev["forces"]["stationary_window"].update(n_cycles=12, mean_cd_ci95_halfwidth=1e-4, mean_cd_relative_drift=1e-4,
+                                             period_ci95_halfwidth=1e-5, mean_cd_half_difference_rel=1e-4)
+    ev["qoi"]["stationary"]["strouhal_number_fft"] = 0.1606
+    res = check_averaging_window(ev, SPEC, CFG)
+    assert all(r.status == Status.PASS for r in res)

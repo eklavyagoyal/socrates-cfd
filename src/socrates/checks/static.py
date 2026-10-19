@@ -248,6 +248,20 @@ def check_averaging_window(ev: dict, spec: ProblemSpec, cfg: dict) -> list[Check
                                    qoi=q, component="averaging"))
             continue
         b = _rel(rep[q], sta[q])
+        # the stationary estimate is only a valid reference if it is itself
+        # statistically reliable (enough cycles, small drift)
+        n_cyc = ((ev.get("forces") or {}).get("stationary_window") or {}).get("n_cycles")
+        u_ref, _ = statistical_uncertainty(ev, q)
+        min_cyc = cfg["statistics"]["min_cycles"]
+        if n_cyc is None or n_cyc < min_cyc or u_ref is None or u_ref > frac * tau:
+            out.append(CheckResult(name, I,
+                                   f"reference (stationary-window) estimate of {q} is itself unreliable "
+                                   f"({n_cyc} cycles, statistical/stationarity uncertainty "
+                                   f"{'n/a' if u_ref is None else f'{u_ref:.2%}'}); averaging bias cannot be assessed",
+                                   value=b, qoi=q, component="averaging",
+                                   details={"reported": rep[q], "stationary": sta[q], "n_cycles": n_cyc,
+                                            "reference_uncertainty": u_ref}))
+            continue
         detail = {"reported": rep[q], "stationary": sta[q],
                   "declared_start_convective": tb.get("declared_averaging_start_convective"),
                   "transient_end_convective": tb.get("transient_end_time_convective"),

@@ -1,0 +1,8 @@
+id: G2_average_from_start
+title: "Mean taken over the whole record including start-up"
+changes:
+  time.end_time: 60.0
+  averaging.start_time: 0.0
+flaw: "Run of 60 D/U averaged from t = 0 (OpenFOAM's fieldAverage default timeStart), so the impulsive start and shedding growth are in the mean."
+why_plausible: "Default averaging start; ~9 shedding cycles; the solver completes cleanly and the lift signal looks periodic by the end."
+expected_mechanism: "Start-up transient biases the mean drag and the spectral St estimate."

@@ -1,0 +1,113 @@
+# Benchmark manifest (pre-registered before evaluating any system).
+#
+# intended:  the author's intent when constructing the case
+# expected_expert_judgement / rationale: what a careful CFD expert should conclude
+# revealing_experiment: the primitive expected to expose the flaw (null = static)
+# The final ground-truth label is computed by scripts/label_benchmark.py from the
+# measured error of each case's *reported* values against the in-house converged
+# reference (rule in docs/design.md); it can differ from `intended`.
+problem_spec: configs/problem_cylinder_re100.yaml
+tolerance_rule: "flawed if max error > tau or set-up answers a different problem; credible if max error <= tau/2; else ambiguous"
+cases:
+  - id: baseline
+    definition: cases/baseline/baseline.yaml
+    intended: credible
+    expected_expert_judgement: ACCEPT
+    rationale: "Second-order schemes, 160 cells around the cylinder, 1.25 % blockage, Co < 1, 12 averaged cycles after a decayed transient."
+    revealing_experiment: null
+  - id: K1_central_scheme
+    definition: cases/variants/K1_central_scheme.yaml
+    intended: credible
+    expected_expert_judgement: ACCEPT
+    rationale: "Same as baseline with central (Gauss linear) convection; still second order."
+    revealing_experiment: null
+  - id: K2_fine_large
+    definition: cases/variants/K2_fine_large.yaml
+    intended: credible
+    expected_expert_judgement: ACCEPT
+    rationale: "Finer mesh, smaller time step, larger domain than the baseline."
+    revealing_experiment: null
+  - id: A1_coarse_mesh
+    definition: cases/adversarial/A1_coarse_mesh.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "80 cells around the cylinder and a coarse wake: St and lift under-resolved even though Cd looks normal."
+    revealing_experiment: REFINE_MESH
+  - id: A2_moderate_mesh
+    definition: cases/variants/A2_moderate_mesh.yaml
+    intended: ambiguous
+    expected_expert_judgement: INCONCLUSIVE
+    rationale: "Borderline resolution; error near the tolerance."
+    revealing_experiment: REFINE_MESH
+  - id: B1_small_domain
+    definition: cases/adversarial/B1_small_domain.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "12.5 % blockage; Behr et al. (1995) report ~+6 % in Cd and St at 11 % blockage."
+    revealing_experiment: EXPAND_DOMAIN
+  - id: B2_moderate_domain
+    definition: cases/variants/B2_moderate_domain.yaml
+    intended: ambiguous
+    expected_expert_judgement: INCONCLUSIVE
+    rationale: "5 % blockage, inside common guidance; effect may be near the tolerance."
+    revealing_experiment: EXPAND_DOMAIN
+  - id: C1_large_timestep
+    definition: cases/adversarial/C1_large_timestep.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "Co ~ 3.7 with outer correctors; temporal accuracy unproven, lift damping expected."
+    revealing_experiment: REDUCE_TIME_STEP
+  - id: C2_euler_large_timestep
+    definition: cases/adversarial/C2_euler_large_timestep.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "First-order time integration with a large step adds numerical damping."
+    revealing_experiment: REDUCE_TIME_STEP
+  - id: D1_steady_solver
+    definition: cases/adversarial/D1_steady_solver.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "Steady formulation at Re = 100 cannot give the time-mean drag of the periodic flow; St undefined."
+    revealing_experiment: null
+  - id: E1_noslip_side_walls
+    definition: cases/adversarial/E1_noslip_side_walls.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "Side boundaries of an unbounded problem modelled as no-slip walls; wall boundary layers accelerate the core flow."
+    revealing_experiment: EXPAND_DOMAIN
+  - id: F1_upwind_convection
+    definition: cases/adversarial/F1_upwind_convection.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "First-order upwind convection: numerical diffusion damps the wake."
+    revealing_experiment: REFINE_MESH
+  - id: G1_premature_averaging
+    definition: cases/adversarial/G1_premature_averaging.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "Mean taken over the start-up transient of a short run."
+    revealing_experiment: RUN_LONGER
+  - id: H1_dynamic_viscosity
+    definition: cases/adversarial/H1_dynamic_viscosity.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "Solves Re = 83.3, a different problem."
+    revealing_experiment: null
+  - id: I1_force_reference
+    definition: cases/adversarial/I1_force_reference.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "Coefficients normalised with the wrong velocity (x0.879)."
+    revealing_experiment: null
+  - id: J1_coarse_wake
+    definition: cases/adversarial/J1_coarse_wake.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "Wake streamwise resolution cut to 30 %; vortex street under-resolved."
+    revealing_experiment: REFINE_MESH
+  - id: G2_average_from_start
+    definition: cases/adversarial/G2_average_from_start.yaml
+    intended: flawed
+    expected_expert_judgement: REJECT
+    rationale: "Averaging window starts at t = 0 and includes the impulsive start-up."
+    revealing_experiment: null

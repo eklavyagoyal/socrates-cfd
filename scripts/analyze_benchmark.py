@@ -140,6 +140,8 @@ def main() -> None:
         ev = store.load(root).evidence or {}
         rep = (ev.get("qoi") or {}).get("reported") or {}
         lab = label_case(rep, T, spec.verification.requested_tolerance, setup_problems(ev), truth_uncertainty=uT)
+        # secondary, post-hoc view: the same rule on point estimates (truth uncertainty ignored)
+        lab["label_point_estimate"] = label_case(rep, T, spec.verification.requested_tolerance, setup_problems(ev))["label"]
         lab.update(intended=case["intended"], expected=case["expected_expert_judgement"], root_run=root,
                    reported={q: rep.get(q) for q in spec.requested_outputs},
                    revealing_experiment=case.get("revealing_experiment"))
@@ -232,6 +234,22 @@ def main() -> None:
             "first_experiment_targets_flaw": f"{hit}/{hit + miss}" if (hit + miss) else None,
         }}
     systems = [s for s in SYSTEMS if s in metrics]
+    for s in systems:  # secondary view: identical verdicts, point-estimate labels
+        pc = [(labels[cid]["label_point_estimate"], c["verdict"]) for cid, c in metrics[s]["cases"].items()
+              if c["outcome"] != "error"]
+
+        def cnt(label, verdicts, pc=pc):
+            return sum(1 for lb, v in pc if lb == label and v in verdicts)
+
+        nf2, nc2 = cnt("flawed", {"ACCEPT", "REJECT", "INCONCLUSIVE"}), cnt("credible", {"ACCEPT", "REJECT", "INCONCLUSIVE"})
+        metrics[s]["summary_point_estimate_labels"] = {
+            "n_flawed": nf2, "n_credible": nc2, "n_ambiguous": len(pc) - nf2 - nc2,
+            "false_acceptance_rate": _rate(cnt("flawed", {"ACCEPT"}), nf2),
+            "detection_rate": _rate(cnt("flawed", {"REJECT"}), nf2),
+            "missed_but_safe_rate": _rate(cnt("flawed", {"INCONCLUSIVE"}), nf2),
+            "correct_acceptance_rate": _rate(cnt("credible", {"ACCEPT"}), nc2),
+            "false_rejection_rate": _rate(cnt("credible", {"REJECT"}), nc2),
+        }
 
     # ---------------- tables ----------------
     var_lines = variance_table(bench, cases, labels, store, fp, problems)
@@ -240,8 +258,8 @@ def main() -> None:
     if problems:
         L += ["**Missing or stale results (NOT counted in the rates of the system concerned; recompute before "
               "drawing conclusions):** " + "; ".join(problems), ""]
-    L += ["| case | label | max err / τ | unstable | " + " | ".join(systems) + " |",
-          "|---|---|---|---|" + "---|" * len(systems)]
+    L += ["| case | label | max err / τ | unstable | point-estimate label (secondary) | " + " | ".join(systems) + " |",
+          "|---|---|---|---|---|" + "---|" * len(systems)]
     for cid in cases:
         lab = labels[cid]
         cells = []
@@ -249,7 +267,7 @@ def main() -> None:
             v, o = matrix.get((s, cid), ("—", "missing"))
             cells.append(f"{v} {MARKS[o]}")
         L.append(f"| {cid} | {lab['label']} | {lab['max_error_over_tolerance']:.2f} | "
-                 f"{','.join(lab['label_unstable']) or ''} | " + " | ".join(cells) + " |")
+                 f"{','.join(lab['label_unstable']) or ''} | {lab['label_point_estimate']} | " + " | ".join(cells) + " |")
     L += ["", "✓ correct · ✗✗ **false acceptance** · ✗ false rejection · `·` INCONCLUSIVE (safe, undecided) · "
               "`~` / `~·` verdict on an ambiguous case (not scored; INCONCLUSIVE expected) · E error · ? missing · "
               "S stale (not counted)", ""]
@@ -278,6 +296,16 @@ def main() -> None:
             else:
                 vals.append("—" if x is None else (f"{x:.2f}" if isinstance(x, float) else str(x)))
         L.append(f"| {name} | " + " | ".join(vals) + " |")
+    L += ["", "### Secondary view (post-hoc): labels from point estimates, truth uncertainty ignored", "",
+          "_Same verdicts; only the labels change. The pre-registered labels above are primary._", "",
+          "| metric | " + " | ".join(systems) + " |", "|---|" + "---|" * len(systems)]
+    for k, name in [("n_flawed", "flawed cases"), ("n_credible", "credible cases"), ("n_ambiguous", "ambiguous cases"),
+                    ("false_acceptance_rate", "**false acceptance**"), ("detection_rate", "detection"),
+                    ("missed_but_safe_rate", "missed but safe"), ("correct_acceptance_rate", "correct acceptance"),
+                    ("false_rejection_rate", "false rejection")]:
+        vals = [metrics[s]["summary_point_estimate_labels"].get(k) for s in systems]
+        L.append(f"| {name} | " + " | ".join("—" if x is None else (f"{x:.2f}" if isinstance(x, float) else str(x))
+                                              for x in vals) + " |")
     L += var_lines
     (REPO / "reports" / "benchmark_tables.md").write_text("\n".join(L) + "\n")
 

@@ -23,7 +23,7 @@ DEFAULT_STORE = REPO / "results" / "runs"
 def _cmd_run_case(a: argparse.Namespace) -> None:
     spec = ProblemSpec.from_yaml(a.spec)
     cfg = CaseConfig.from_yaml(a.case)
-    store = RunStore(a.store, cpu_slots=a.slots)
+    store = RunStore(a.store)
     res = store.get_or_run(cfg, spec, reason=a.reason, launched_by="cli")
     print(json.dumps({"run_id": res.run_id, "status": res.status,
                       "qoi": (res.evidence or {}).get("qoi")}, indent=2, default=str))

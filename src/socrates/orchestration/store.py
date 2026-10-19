@@ -16,7 +16,9 @@ Layout::
 
 from __future__ import annotations
 
+import contextlib
 import datetime as _dt
+import fcntl
 import gzip
 import hashlib
 import json
@@ -26,6 +28,7 @@ import shutil
 import subprocess
 import sys
 import threading
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -111,11 +114,43 @@ class RunResult:
             return {k: z[k] for k in z.files}
 
 
+class CpuSlots:
+    """Machine-wide CPU slots shared by all processes using the same store.
+
+    Each slot is an fcntl lock on a file; a run holds one slot while OpenFOAM
+    executes, so concurrent benchmark processes never oversubscribe cores.
+    """
+
+    def __init__(self, directory: Path, n: int):
+        self.dir = directory
+        self.dir.mkdir(parents=True, exist_ok=True)
+        self.n = n
+
+    @contextlib.contextmanager
+    def acquire(self, poll_s: float = 5.0):
+        while True:
+            for i in range(self.n):
+                fh = open(self.dir / f"slot{i}.lock", "w")
+                try:
+                    fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    fh.close()
+                    continue
+                try:
+                    yield i
+                finally:
+                    fcntl.flock(fh, fcntl.LOCK_UN)
+                    fh.close()
+                return
+            time.sleep(poll_s)
+
+
 class RunStore:
-    def __init__(self, root: str | Path, cpu_slots: int = 4):
+    def __init__(self, root: str | Path, cpu_slots: int | None = None):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
-        self.cpu = threading.BoundedSemaphore(cpu_slots)
+        n = cpu_slots or int(os.environ.get("SOCRATES_CPU_SLOTS", os.cpu_count() or 1))
+        self.cpu = CpuSlots(self.root / ".slots", n)
 
     # ------------------------------------------------------------------
     def run_id_for(self, cfg: CaseConfig, init: Initialisation) -> str:
@@ -233,7 +268,7 @@ class RunStore:
 
         prov["started"] = _now()
         failure: RunFailure | None = None
-        with self.cpu:
+        with self.cpu.acquire():
             try:
                 rec = run_case(
                     case,

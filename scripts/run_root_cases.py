@@ -20,11 +20,11 @@ from socrates.orchestration.store import RunStore  # noqa: E402
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("cases", nargs="+")
-    ap.add_argument("--slots", type=int, default=3)
+    
     ap.add_argument("--store", default=str(REPO / "results" / "runs"))
     a = ap.parse_args()
     spec = ProblemSpec.from_yaml(REPO / "configs" / "problem_cylinder_re100.yaml")
-    store = RunStore(a.store, cpu_slots=a.slots)
+    store = RunStore(a.store)
 
     def one(path: str):
         cfg, meta = load_case_definition(path)

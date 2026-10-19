@@ -82,6 +82,89 @@
     "expected_outcome": "If mean Cd and St change by less than about 1.5% between R0 and the refined run, the mesh component can be bounded and later REDUCE_TIME_STEP and EXPAND_DOMAIN checks can proceed. A change above 3% would be a measured FAIL. A change between 1.5% and 3% would call for another refinement."
    },
    "outcome": "executed -> baseline.m2-93c9ab8d6f2d (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 21.601091468999584,
+    "cost_usd": 0.071970475,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 20232,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 48,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "baseline-408129116207": "R0",
+     "baseline.m2-93c9ab8d6f2d": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed and REJECT is not justified.",
+    "Mesh, R0 vs R1: mean Cd changed from 1.3311 to 1.3349 in the stationary windows (root-to-finest change 0.284%, mesh uncertainty 0.01137, PASS). St changed from 0.16343 to 0.16486 (change 0.87%). The mesh uncertainty for St is 0.03464, above 0.5*tolerance, so the mesh check is INCONCLUSIVE.",
+    "The St mesh uncertainty cannot be reduced by more refinement. R1 cannot be refined further because cumulative refinement 2.83 exceeds the limit of 2.0. R0 to a factor of at most 2.0 has already been done as R1.",
+    "Time and domain components are unmeasured for both quantities, so no combined uncertainty exists. No REDUCE_TIME_STEP or EXPAND_DOMAIN run exists.",
+    "Averaging and statistics are negligible. Cd: 9.366e-05 and 8.229e-05. St: 1.551e-05 and 6.605e-05. R0 has 12 stationary cycles and R1 has 7. RUN_LONGER would not address any open component.",
+    "Time step is probably not the dominant risk. R0 has 611.87 steps per shedding period, max Courant 0.73373 and a backward (second-order) scheme. R0 time step is 0.01 convective units.",
+    "Domain is the least characterised error source. R0 uses lateral symmetryPlane boundaries at 40 D half-height, 30 D upstream, 50 D downstream, blockage 0.0125, inlet pressure zeroGradient and outlet fixedValue. The question asks for an unbounded stream, and St appears sensitive at the 1-3% level (mesh change 0.87%). A domain error is therefore plausible at the budget level of 1.5%.",
+    "EXPAND_DOMAIN on R0 is the cheapest experiment (1021 s) and is allowed. It cannot be run from R1, whose child mesh would have 162400 cells against a limit of 160000. Budget: 1 of 6 experiments used and 3.48 of 12 compute units used."
+   ],
+   "missing_evidence": [
+    "Domain truncation/blockage error of mean_drag_coefficient and strouhal_number (no EXPAND_DOMAIN run)",
+    "Temporal discretisation error of both quantities (no REDUCE_TIME_STEP run)",
+    "A tighter mesh uncertainty for strouhal_number (0.03464 from a two-level Richardson with assumed p=2). No further refinement is allowed, so only a lower assumed-order or other evidence could tighten it.",
+    "Combined uncertainty against the 0.03 tolerance for both quantities"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "Artificial boundaries (symmetry lateral at 40 D, 30 D inlet, 50 D outlet) change mean Cd or St by more than 1.5% relative to an unbounded stream.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2.0, then compare mean_drag_coefficient and strouhal_number. A change below the noise floor and well below 1.5% supports domain adequacy. A change above 3% beyond 2x noise would be a measured FAIL."
+    },
+    {
+     "hypothesis": "Temporal error at 611.87 steps per period with the backward scheme is below 1.5% for both quantities.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2.0 (cost 1538 s). Compare Cd and St."
+    },
+    {
+     "hypothesis": "The St mesh change of 0.87% between R0 and R1 means the true mesh error is well below the Richardson estimate of 0.03464. That estimate is inflated by the assumed order p=2 and Fs=3.",
+     "test": "This cannot be tested with the remaining menu because further refinement is blocked. It could only be argued from the measured change of 0.87%, and the deterministic verifier decides the verdict."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "baseline-408129116207",
+    "reason": "Domain truncation and blockage error is unmeasured for both quantities and is a plausible source of a shift above 1.5%. The question requires an unbounded stream, and the R0 domain uses symmetry lateral boundaries and a zeroGradient inlet pressure. Mesh refinement is exhausted (R1 is at the cumulative limit). EXPAND_DOMAIN on R0 is the cheapest allowed experiment (1021 s) and keeps the near-field mesh unchanged, so the comparison isolates the boundary effect. R1 cannot be the parent because the child mesh would exceed 160000 cells.",
+    "expected_outcome": "If Cd and St change by much less than 1.5% relative to R0 (Cd 1.3311, St 0.16343), the domain component can be bounded and only the REDUCE_TIME_STEP check remains. A change above 1.5% means the domain component fails its budget and needs a further expansion. A change above 3% beyond 2x noise would be a measured FAIL."
+   },
+   "outcome": "executed -> baseline.D2x-efba395f6c27 (completed)"
   }
  ]
 }

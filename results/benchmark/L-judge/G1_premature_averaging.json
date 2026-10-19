@@ -2,41 +2,45 @@
  "backend": {
   "backend": "claude-cli",
   "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.303 (Claude Code)",
   "timeout_s": 300.0,
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 14.842417578000095,
- "cost_usd": 0.03468901,
+ "latency_s": 41.633949943000516,
+ "cost_usd": 0.02636981,
  "errors": [],
- "verdict": "INCONCLUSIVE",
+ "model_fingerprint": "6ad399b27406",
+ "verdict": "REJECT",
  "confidence": "MEDIUM",
  "reasoning_summary": [
-  "Basic checks pass: the solver completed, checkMesh is OK, mass imbalance is 8.3333e-11, the Courant number is 0.73373, Re is consistent, and the force references are consistent. The flow is in the expected periodic shedding regime.",
-  "The stationary window has only 3 cycles. The drag drift is 4.0105% and the 95% CI on mean Cd is 0.044509 (about 3.4% of 1.3039). Both exceed the 3% tolerance, and the statistical uncertainty alone does not meet the 0.5*tolerance budget.",
-  "Strouhal resolution is 0.033333 in frequency, which is about 20% of St = 0.16129. The FFT gives 0.16169 and the windowed estimate gives 0.16058, so the two methods differ by about 0.7%. The verifier puts the St statistical uncertainty at 3.10%, which is above the 3% tolerance.",
-  "The submitted setup averaged from t=10, but the transient ended near 15.276 convective units. The reported Cd of 1.2961 therefore differs from the stationary-window value of 1.3039 (about 0.6%). This is small, but the averaging bias cannot be certified because the reference window is itself unreliable.",
-  "No mesh, time-step or domain sensitivity evidence exists. The mesh is coarse, with about 0.457 D cells, a 0.005 D first cell and a wake last cell of 1.02 D. The domain has 0.0125 blockage and symmetry lateral boundaries. These error components are unknown.",
-  "I can't show the results are within 3%, and I have no evidence that they are outside it. The verdict is INCONCLUSIVE rather than REJECT, because nothing demonstrates a change larger than the tolerance."
+  "The configuration is sound. Re is 100, the inlet is uniform (ux_nonuniformity 0.0), blockage is 0.0125, the upstream distance is 30 D, mass imbalance is 8.3333e-11, and max Courant is 0.73373. The problem is how the quantities were sampled and how well they are resolved.",
+  "Drag statistics are too weak for a 3 % tolerance. The stationary window has only 3 cycles. The mean drag 95 % CI is 0.044509, which is about 3.4 % of 1.3039 and already above 3 %. Relative drift of mean drag is 0.040105, which is above 3 %. The half-window difference is null, so stationarity of the mean was not demonstrated.",
+  "The declared averaging start (10 convective units) is before the detected end of the transient (15.276). The submitted-setup mean drag (1.2961) therefore includes transient data. It differs from the stationary-window value (1.3039), so the result depends on window choice.",
+  "Strouhal frequency resolution is 0.033333, about 20 % of St (about 0.16). The 3 % tolerance is about 0.005. The three estimates (0.16129, 0.16058, 0.16169) agree within about 1 %, but with only 3 cycles and this resolution the 3 % claim is not supported by the spectral evidence.",
+  "Spatial resolution is modest and was not checked. The mesh has 30580 cells, a representative cell size of 0.45745 D, a last wake cell of 1.0209 D, and max non-orthogonality of 43.313 deg. Only one run exists, so there is no mesh or time-step sensitivity evidence.",
+  "Overall, the statistical uncertainty on mean drag already exceeds the requested tolerance, and Strouhal is under-resolved with a short record. I do not consider the two quantities trustworthy to 3 % from this evidence."
  ],
  "numeric_audit": {
-  "traced": 24,
+  "traced": 23,
   "untraced": [
    {
-    "token": "95%",
-    "context": "window has only 3 cycles. The drag drift is 4.0105% and the 95% CI on mean Cd is 0.044509 (about 3.4% o"
+    "token": "95",
+    "context": "nce. The stationary window has only 3 cycles. The mean drag 95 % CI is 0.044509, which is about 3.4 % "
    },
    {
-    "token": "3.4%",
-    "context": "ift is 4.0105% and the 95% CI on mean Cd is 0.044509 (about 3.4% of 1.3039). Both exceed the 3% toleranc"
-   },
-   {
-    "token": "0.7%",
-    "context": " estimate gives 0.16058, so the two methods differ by about 0.7%. The verifier puts the St statistical u"
+    "token": "3.4",
+    "context": "3 cycles. The mean drag 95 % CI is 0.044509, which is about 3.4 % of 1.3039 and already above 3 %. Rela"
    }
   ],
-  "n_untraced": 3
+  "n_untraced": 2
  },
  "case": "G1_premature_averaging",
- "root_run": "G1_premature_averaging-17c0143468d7"
+ "root_run": "G1_premature_averaging-17c0143468d7",
+ "stamp": {
+  "decision_code": "fa4a465206b4a958",
+  "root_config_hash": "97623e2549ed6fe5",
+  "git_commit": "667dd6c4da4f4ac0d83b746b86b7ac2da321e288"
+ }
 }

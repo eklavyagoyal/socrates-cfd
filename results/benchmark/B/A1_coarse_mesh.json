@@ -29,7 +29,7 @@
    },
    "component_uncertainty": {
     "averaging": 2.3528906955550157e-05,
-    "statistics": 5.155158947283842e-05
+    "statistics": 0.00016162247738844948
    },
    "combined_uncertainty": null
   }
@@ -276,19 +276,21 @@
   {
    "check": "statistical_uncertainty",
    "status": "PASS",
-   "reason": "statistical/stationarity uncertainty 5.16e-05 <= 1.50%",
-   "value": 5.155158947283842e-05,
+   "reason": "statistical/stationarity uncertainty 1.62e-04 <= 1.50%",
+   "value": 0.00016162247738844948,
    "threshold": 0.015,
    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
    "qoi": "strouhal_number",
    "component": "statistics",
-   "uncertainty": 5.155158947283842e-05,
+   "uncertainty": 0.00016162247738844948,
    "runs": [
     "A1_coarse_mesh-8db269c22d05"
    ],
    "details": {
     "components": {
      "ci95_period": 5.155158947283842e-05,
+     "period_drift": 0.00016162247738844948,
+     "period_half_difference": 8.368603836318037e-05,
      "fft_vs_zero_crossing": 2.3514176096594808e-05
     },
     "n_cycles": 12,
@@ -387,5 +389,10 @@
   }
  ],
  "case": "A1_coarse_mesh",
- "root_run": "A1_coarse_mesh-8db269c22d05"
+ "root_run": "A1_coarse_mesh-8db269c22d05",
+ "stamp": {
+  "decision_code": "fa4a465206b4a958",
+  "root_config_hash": "220b53526b8c17e9",
+  "git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
+ }
 }

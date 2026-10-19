@@ -29,7 +29,7 @@
    },
    "component_uncertainty": {
     "averaging": 2.312481677566328e-05,
-    "statistics": 2.9088782310817367e-05
+    "statistics": 0.00012773969610079078
    },
    "combined_uncertainty": null
   }
@@ -278,19 +278,21 @@
   {
    "check": "statistical_uncertainty",
    "status": "PASS",
-   "reason": "statistical/stationarity uncertainty 2.91e-05 <= 1.50%",
-   "value": 2.9088782310817367e-05,
+   "reason": "statistical/stationarity uncertainty 1.28e-04 <= 1.50%",
+   "value": 0.00012773969610079078,
    "threshold": 0.015,
    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
    "qoi": "strouhal_number",
    "component": "statistics",
-   "uncertainty": 2.9088782310817367e-05,
+   "uncertainty": 0.00012773969610079078,
    "runs": [
     "H1_dynamic_viscosity-4ab90bfffff4"
    ],
    "details": {
     "components": {
      "ci95_period": 2.9088782310817367e-05,
+     "period_drift": 0.00012773969610079078,
+     "period_half_difference": 6.199285649118537e-05,
      "fft_vs_zero_crossing": 1.928395069720052e-05
     },
     "n_cycles": 12,
@@ -389,5 +391,10 @@
   }
  ],
  "case": "H1_dynamic_viscosity",
- "root_run": "H1_dynamic_viscosity-4ab90bfffff4"
+ "root_run": "H1_dynamic_viscosity-4ab90bfffff4",
+ "stamp": {
+  "decision_code": "fa4a465206b4a958",
+  "root_config_hash": "e5fbdb19d23f3b83",
+  "git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+ }
 }

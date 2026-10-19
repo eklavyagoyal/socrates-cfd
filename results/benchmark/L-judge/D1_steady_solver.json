@@ -2,21 +2,24 @@
  "backend": {
   "backend": "claude-cli",
   "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.303 (Claude Code)",
   "timeout_s": 300.0,
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 13.361955750000106,
- "cost_usd": 0.038394275,
+ "latency_s": 33.29819690500062,
+ "cost_usd": 0.017212810000000002,
  "errors": [],
+ "model_fingerprint": "6ad399b27406",
  "verdict": "REJECT",
  "confidence": "HIGH",
  "reasoning_summary": [
-  "The run used simpleFoam, a steady solver, at Re=100. The verifier's physics_regime check says this is in the periodic-shedding regime, with onset at Re~47.0. A steady solver can only return the unstable symmetric branch. Its drag is not the time-mean drag of the physical flow, so the reported mean_drag_coefficient of 1.0921 cannot be trusted.",
-  "The Strouhal number was not obtained. The setup reports strouhal_number as null and rms_lift_coefficient as 0.0. A steady solution has no shedding, so the requested Strouhal number is missing.",
-  "The steady solver did not satisfy its residualControl before the iteration limit (linear_solver_convergence FAIL). Even the steady solution is therefore not converged.",
-  "The mesh is coarse. It has 30580 cells and a representative cell size of 0.45745 D. The wake last cell is 1.0209 D, so the vortex street is poorly resolved. The mesh, time and domain sensitivity checks are all INCONCLUSIVE because no refinement studies were run.",
-  "Some checks passed: mass conservation, Re consistency, force reference consistency, and mesh validity. These do not fix the wrong-regime formulation. The deterministic verdict is REJECT."
+  "The run used simpleFoam with steadyState time scheme. At the configured Reynolds number of 100.0 the wake is expected to shed vortices, and a steady solver cannot capture this unsteady behaviour.",
+  "The Strouhal number was not obtained (strouhal_number is null). The rms lift coefficient is 0.0, so no oscillation was resolved. One requested quantity is therefore missing entirely.",
+  "The reported mean drag coefficient of 1.0921 is the steady-solver value. It is not a time-mean over shedding cycles. The evidence has no stationary window, no averaging, and no stationary cycles (all null), so it cannot be trusted to 3 %.",
+  "The mesh is coarse for this problem. The representative cell size is 0.45745 D, the wake last cell is 1.0209 D, and the first wall cell is 0.005 D. The wake is under-resolved, and the first-order-like upwinding-dominated steady solution is further smeared.",
+  "The outlet pressure is fixedValue and the inlet pressure is zeroGradient, which is standard. The inlet is uniform and the blockage is 0.0125, so the setup is not the main problem. The steady-versus-unsteady mismatch and the missing Strouhal number are enough to reject."
  ],
  "numeric_audit": {
   "traced": 6,
@@ -24,5 +27,10 @@
   "n_untraced": 0
  },
  "case": "D1_steady_solver",
- "root_run": "D1_steady_solver-9cd0391edef9"
+ "root_run": "D1_steady_solver-9cd0391edef9",
+ "stamp": {
+  "decision_code": "fa4a465206b4a958",
+  "root_config_hash": "5e15ea2b5873f91b",
+  "git_commit": "e27ac5b5f0a41ab78028585e9904a54d804d0acc"
+ }
 }

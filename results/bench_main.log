@@ -1,0 +1,39 @@
+A        baseline                 -> ACCEPT
+A        A1_coarse_mesh           -> ACCEPT
+A        B1_small_domain          -> ACCEPT
+A        D1_steady_solver         -> REJECT
+A        E1_noslip_side_walls     -> ACCEPT
+A        G1_premature_averaging   -> ACCEPT
+A        J1_coarse_wake           -> REJECT
+A        F1_upwind_convection     -> ACCEPT
+A        B2_moderate_domain       -> ACCEPT
+A        H1_dynamic_viscosity     -> ACCEPT
+A        G2_average_from_start    -> ACCEPT
+B        B1_small_domain          -> INCONCLUSIVE
+B        B2_moderate_domain       -> INCONCLUSIVE
+B        A1_coarse_mesh           -> INCONCLUSIVEB        baseline                 -> INCONCLUSIVE
+
+B        D1_steady_solver         -> REJECTB        F1_upwind_convection     -> INCONCLUSIVE
+
+B        G2_average_from_start    -> INCONCLUSIVE
+B        E1_noslip_side_walls     -> INCONCLUSIVE
+B        J1_coarse_wake           -> REJECT
+B        H1_dynamic_viscosity     -> REJECT
+B        G1_premature_averaging   -> INCONCLUSIVE
+C-rule   D1_steady_solver         -> REJECT
+C-rule   H1_dynamic_viscosity     -> REJECT
+C-rule   J1_coarse_wake           -> REJECT
+C-llm    D1_steady_solver         -> REJECT
+C-llm    H1_dynamic_viscosity     -> REJECT
+C-llm    J1_coarse_wake           -> REJECT
+L-judge  D1_steady_solver         -> REJECT
+L-judge  H1_dynamic_viscosity     -> REJECT
+L-judge  F1_upwind_convection     -> REJECT
+L-judge  B2_moderate_domain       -> REJECT
+L-judge  A1_coarse_mesh           -> REJECT
+L-judge  B1_small_domain          -> REJECT
+L-judge  J1_coarse_wake           -> REJECT
+L-judge  G1_premature_averaging   -> REJECT
+L-judge  baseline                 -> ACCEPT
+L-judge  G2_average_from_start    -> ACCEPT
+L-judge  E1_noslip_side_walls     -> ACCEPT

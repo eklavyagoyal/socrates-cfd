@@ -35,32 +35,104 @@
         "cylinder": {
           "faces": 160,
           "points": 320,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.005,
+              -0.005,
+              0.0
+            ],
+            [
+              0.005,
+              0.005,
+              0.01
+            ]
+          ]
         },
         "inlet": {
           "faces": 58,
           "points": 118,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.08,
+              -0.04,
+              0.0
+            ],
+            [
+              -0.08,
+              0.04,
+              0.01
+            ]
+          ]
         },
         "outlet": {
           "faces": 58,
           "points": 118,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              0.15,
+              -0.04,
+              0.0
+            ],
+            [
+              0.15,
+              0.04,
+              0.01
+            ]
+          ]
         },
         "top": {
           "faces": 115,
           "points": 232,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.08,
+              0.04,
+              0.0
+            ],
+            [
+              0.15,
+              0.04,
+              0.01
+            ]
+          ]
         },
         "bottom": {
           "faces": 115,
           "points": 232,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.08,
+              -0.04,
+              0.0
+            ],
+            [
+              0.15,
+              -0.04,
+              0.01
+            ]
+          ]
         },
         "frontAndBack": {
           "faces": 26140,
           "points": 26646,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.08,
+              -0.04,
+              0.0
+            ],
+            [
+              0.15,
+              0.04,
+              0.01
+            ]
+          ]
         }
       }
     },
@@ -75,6 +147,23 @@
       "wake_last_cell_D": 0.3618755961553369,
       "wake_cells_across_near_wake": 40,
       "wake_factor": 1.0
+    },
+    "measured_geometry": {
+      "cylinder_patch_bounding_box_m": [
+        [
+          -0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.005,
+          0.01
+        ]
+      ],
+      "cylinder_diameter_x_m": 0.01,
+      "cylinder_diameter_y_m": 0.01,
+      "configured_diameter_m": 0.01
     },
     "representative_cell_size_D": 0.11839748767599656,
     "domain_area_D2": 183.2148037
@@ -191,6 +280,16 @@
     "relative_imbalance_final": 3.3333332748389e-10,
     "lateral_flux_fraction_max": 0.0
   },
+  "inlet": {
+    "measured": true,
+    "time": 10.0000000005,
+    "n_faces_or_uniform": 1,
+    "ux_min": 0.15,
+    "ux_max": 0.15,
+    "ux_mean_unweighted": 0.15,
+    "ux_nonuniformity": 0.0,
+    "uy_max_abs": 0.0
+  },
   "forces": {
     "found": true,
     "steady": false,
@@ -238,6 +337,8 @@
       "cycle_mean_cd_lag1_autocorr": 0.08549655442255619,
       "mean_cd_relative_drift": 1.1249447873826042e-05,
       "cl_amplitude_relative_drift": 0.00012086169293641213,
+      "period_relative_drift": -5.462760893446906e-06,
+      "period_half_difference_rel": -2.364304698196639e-06,
       "mean_cd_half_difference_rel": 3.5360576338256524e-06
     },
     "cycle_table": {
@@ -392,13 +493,17 @@
     }
   },
   "run_id": "B1_small_domain-a69ffb97a2e6",
+  "extraction": {
+    "extractor_sha256": "e5ad2b6ece3659d0",
+    "git_commit": "4639ddbeae95e92525dcfff8aa45297ecbe6eb5b",
+    "time": "2026-10-19T08:24:52+00:00",
+    "reextracted": true
+  },
   "cost": {
     "wall_seconds": 511.01445616700016,
     "n_cells": 13070,
     "n_steps": 15000,
-    "cell_steps": 196050000
-  },
-  "extraction": {
-    "reextracted": "2026-10-19T07:17:23+00:00"
+    "cell_steps": 196050000,
+    "n_steps_including_restart_history": 15000
   }
 }

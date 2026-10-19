@@ -2,29 +2,46 @@
  "backend": {
   "backend": "claude-cli",
   "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.303 (Claude Code)",
   "timeout_s": 300.0,
   "max_attempts": 3
  },
  "ok": true,
- "latency_s": 7.630328582000402,
- "cost_usd": 0.034297875,
+ "latency_s": 40.43576700500034,
+ "cost_usd": 0.02922061,
  "errors": [],
+ "model_fingerprint": "6ad399b27406",
  "verdict": "REJECT",
  "confidence": "MEDIUM",
  "reasoning_summary": [
-  "Statistical and averaging uncertainties are negligible. The drag CI95 is 3.0259e-06 and the drift is 6.5207e-06. The run has 12 stationary cycles.",
-  "The mesh is very coarse. The representative cell size is 0.55953 D and the wake has 33 streamwise cells. The last wake cell is 5.3797 D, so the wake is badly under-resolved for a shedding problem.",
-  "checkMesh failed with 48 cells having a small determinant (< 0.001). The max non-orthogonality is 43.313 deg and the max aspect ratio is 43.04. This is a genuine mesh-quality defect, not a formality.",
-  "No mesh, time-step or domain sensitivity evidence exists. These three error components are all unquantified, so the error budget cannot be closed at the 0.03 tolerance for either drag or Strouhal number.",
-  "The domain is finite, with 30 D upstream, 50 D downstream and 40 D half-height. The outlet pressure is fixed and the lateral boundaries are symmetry planes. The domain effect is untested.",
-  "The run is clean on other points: the solver completed, mass imbalance is 8.3333e-11, Courant is 0.73353, Re matches, and the force references are consistent. These checks do not offset the mesh failure or the unquantified discretisation error.",
-  "The deterministic verifier returned REJECT because mesh_quality failed. Both quantities are INCONCLUSIVE on the missing components. The failed mesh check and the under-resolved wake make the 3 % tolerance untrustworthy."
+  "Time-series statistics are clean. There are 12 stationary cycles. The drag 95% CI is 3.0259e-06. Drift is 6.5207e-06. The Strouhal numbers from the stationary window and the FFT agree (0.16212 vs 0.16213). So the sampling is not the problem.",
+  "The spatial resolution is not adequate and was never checked. The mesh has 20440 cells with a representative cell size of 0.55953 D. The wake has only 33 streamwise cells over 50 D, and the last wake cell is 5.3797 D. Shedding sets St, and the wake sets the mean drag through base pressure. Both depend on the wake, so a coarse, rapidly stretching wake mesh is a risk for both quantities at the 3 % tolerance.",
+  "checkMesh_ok is false. Max non-orthogonality is 43.313 deg and max skewness is 0.53384. The solver uses nNonOrthogonalCorrectors = 0, so the non-orthogonality is never corrected. This adds discretisation error that is not quantified.",
+  "There is only one run (R0). No mesh or time-step refinement was done, so I cannot show that the two quantities are grid-independent to 3 %. The strong time-averaging convergence does not show spatial accuracy.",
+  "Several settings are fine: the inlet velocity is uniform (ux_min = ux_max = 0.15), the blockage is 0.0125, the domain has 30 D upstream and 50 D downstream, Courant max is 0.73353, mass imbalance is 8.3333e-11, and the force reference values are consistent (magUInf 0.15, lRef 0.01, Aref 0.0001). These do not make up for the unresolved wake and the failed mesh check.",
+  "The strouhal_frequency_resolution is 0.013333, which is coarser than 3 % of St (about 0.0049). The St value therefore depends on the interpolation or zero-crossing estimate, not on the FFT bin width. This adds some uncertainty.",
+  "Conclusion: the numbers are statistically converged but the discretisation is under-resolved, the mesh failed its check, and no refinement evidence exists. I judge the quantities not trustworthy to 3 %."
  ],
  "numeric_audit": {
-  "traced": 16,
-  "untraced": [],
-  "n_untraced": 0
+  "traced": 22,
+  "untraced": [
+   {
+    "token": "95%",
+    "context": "tistics are clean. There are 12 stationary cycles. The drag 95% CI is 3.0259e-06. Drift is 6.5207e-06. "
+   },
+   {
+    "token": "0.0049",
+    "context": "olution is 0.013333, which is coarser than 3 % of St (about 0.0049). The St value therefore depends on the"
+   }
+  ],
+  "n_untraced": 2
  },
  "case": "J1_coarse_wake",
- "root_run": "J1_coarse_wake-a7868b40e5b3"
+ "root_run": "J1_coarse_wake-a7868b40e5b3",
+ "stamp": {
+  "decision_code": "fa4a465206b4a958",
+  "root_config_hash": "af63be83c2974394",
+  "git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+ }
 }

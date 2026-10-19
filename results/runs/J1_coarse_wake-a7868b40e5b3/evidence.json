@@ -37,32 +37,104 @@
         "cylinder": {
           "faces": 160,
           "points": 320,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.005,
+              -0.005,
+              0.0
+            ],
+            [
+              0.005,
+              0.005,
+              0.01
+            ]
+          ]
         },
         "inlet": {
           "faces": 130,
           "points": 262,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.3,
+              -0.4,
+              0.0
+            ],
+            [
+              -0.3,
+              0.4,
+              0.01
+            ]
+          ]
         },
         "outlet": {
           "faces": 130,
           "points": 262,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              0.5,
+              -0.4,
+              0.0
+            ],
+            [
+              0.5,
+              0.4,
+              0.01
+            ]
+          ]
         },
         "top": {
           "faces": 108,
           "points": 218,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.3,
+              0.4,
+              0.0
+            ],
+            [
+              0.5,
+              0.4,
+              0.01
+            ]
+          ]
         },
         "bottom": {
           "faces": 108,
           "points": 218,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.3,
+              -0.4,
+              0.0
+            ],
+            [
+              0.5,
+              -0.4,
+              0.01
+            ]
+          ]
         },
         "frontAndBack": {
           "faces": 40880,
           "points": 41516,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.3,
+              -0.4,
+              0.0
+            ],
+            [
+              0.5,
+              0.4,
+              0.01
+            ]
+          ]
         }
       }
     },
@@ -77,6 +149,23 @@
       "wake_last_cell_D": 5.379697970278438,
       "wake_cells_across_near_wake": 40,
       "wake_factor": 0.3
+    },
+    "measured_geometry": {
+      "cylinder_patch_bounding_box_m": [
+        [
+          -0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.005,
+          0.01
+        ]
+      ],
+      "cylinder_diameter_x_m": 0.01,
+      "cylinder_diameter_y_m": 0.01,
+      "configured_diameter_m": 0.01
     },
     "representative_cell_size_D": 0.5595293837781484,
     "domain_area_D2": 6399.214803999999
@@ -193,6 +282,16 @@
     "relative_imbalance_final": 0.0,
     "lateral_flux_fraction_max": 0.0
   },
+  "inlet": {
+    "measured": true,
+    "time": 10.0000000005,
+    "n_faces_or_uniform": 1,
+    "ux_min": 0.15,
+    "ux_max": 0.15,
+    "ux_mean_unweighted": 0.15,
+    "ux_nonuniformity": 0.0,
+    "uy_max_abs": 0.0
+  },
   "forces": {
     "found": true,
     "steady": false,
@@ -240,6 +339,8 @@
       "cycle_mean_cd_lag1_autocorr": 0.014253763096520598,
       "mean_cd_relative_drift": 6.520661614727309e-06,
       "cl_amplitude_relative_drift": 0.00015346976166806016,
+      "period_relative_drift": 1.2362386861425333e-06,
+      "period_half_difference_rel": 1.3760707092897613e-06,
       "mean_cd_half_difference_rel": 1.9078949011654963e-06
     },
     "cycle_table": {
@@ -382,10 +483,17 @@
     }
   },
   "run_id": "J1_coarse_wake-a7868b40e5b3",
+  "extraction": {
+    "extractor_sha256": "e5ad2b6ece3659d0",
+    "git_commit": "4639ddbeae95e92525dcfff8aa45297ecbe6eb5b",
+    "time": "2026-10-19T08:24:58+00:00",
+    "reextracted": true
+  },
   "cost": {
     "wall_seconds": 1579.5089767739992,
     "n_cells": 20440,
     "n_steps": 15000,
-    "cell_steps": 306600000
+    "cell_steps": 306600000,
+    "n_steps_including_restart_history": 15000
   }
 }

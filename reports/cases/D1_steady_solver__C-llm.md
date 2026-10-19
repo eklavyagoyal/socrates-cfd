@@ -123,4 +123,4 @@ Failed checks (measured): linear_solver_convergence, physics_regime.
 
 - `D1_steady_solver-9cd0391edef9` status=completed parent=None created=2026-10-19T07:02:08+00:00 wall=246.7 s; record: results/runs/D1_steady_solver-9cd0391edef9/run.json
 - OpenFOAM v2412 (package 2412.260127-1); problem specification and full configuration embedded in each run.json.
-- Experiment cost: {"experiment_cell_steps": 0.0, "relative_to_root": 0.0, "experiment_wall_seconds": 0, "n_experiments": 0, "planner_calls": 0, "planner_cost_usd": 0, "loop_wall_seconds": 0.0005855780000274535}
+- Experiment cost: {"experiment_cell_steps": 0.0, "relative_to_root": 0.0, "experiment_wall_seconds": 0, "n_experiments": 0, "planner_calls": 0, "planner_cost_usd": 0, "loop_wall_seconds": 0.00046533600016118726}

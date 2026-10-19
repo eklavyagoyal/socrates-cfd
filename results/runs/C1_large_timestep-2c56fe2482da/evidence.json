@@ -35,32 +35,104 @@
         "cylinder": {
           "faces": 160,
           "points": 320,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.005,
+              -0.005,
+              0.0
+            ],
+            [
+              0.005,
+              0.005,
+              0.01
+            ]
+          ]
         },
         "inlet": {
           "faces": 130,
           "points": 262,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.3,
+              -0.4,
+              0.0
+            ],
+            [
+              -0.3,
+              0.4,
+              0.01
+            ]
+          ]
         },
         "outlet": {
           "faces": 130,
           "points": 262,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              0.5,
+              -0.4,
+              0.0
+            ],
+            [
+              0.5,
+              0.4,
+              0.01
+            ]
+          ]
         },
         "top": {
           "faces": 186,
           "points": 374,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.3,
+              0.4,
+              0.0
+            ],
+            [
+              0.5,
+              0.4,
+              0.01
+            ]
+          ]
         },
         "bottom": {
           "faces": 186,
           "points": 374,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.3,
+              -0.4,
+              0.0
+            ],
+            [
+              0.5,
+              -0.4,
+              0.01
+            ]
+          ]
         },
         "frontAndBack": {
           "faces": 61160,
           "points": 61952,
-          "topology": "ok"
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.3,
+              -0.4,
+              0.0
+            ],
+            [
+              0.5,
+              0.4,
+              0.01
+            ]
+          ]
         }
       }
     },
@@ -75,6 +147,23 @@
       "wake_last_cell_D": 1.0209112241611284,
       "wake_cells_across_near_wake": 40,
       "wake_factor": 1.0
+    },
+    "measured_geometry": {
+      "cylinder_patch_bounding_box_m": [
+        [
+          -0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.005,
+          0.01
+        ]
+      ],
+      "cylinder_diameter_x_m": 0.01,
+      "cylinder_diameter_y_m": 0.01,
+      "configured_diameter_m": 0.01
     },
     "representative_cell_size_D": 0.45745102358583184,
     "domain_area_D2": 6399.214803999999
@@ -188,6 +277,16 @@
     "relative_imbalance_final": 1.6683515042500003e+73,
     "lateral_flux_fraction_max": 0.0
   },
+  "inlet": {
+    "measured": true,
+    "time": 0.0,
+    "n_faces_or_uniform": 1,
+    "ux_min": 0.15,
+    "ux_max": 0.15,
+    "ux_mean_unweighted": 0.15,
+    "ux_nonuniformity": 0.0,
+    "uy_max_abs": 0.0
+  },
   "forces": {
     "found": true,
     "steady": false,
@@ -195,22 +294,12 @@
     "record_end": 0.3333333333,
     "record_length_convective": 4.899999999495,
     "n_samples": 50,
-    "oscillating": true,
-    "cl_rms_last_quarter": Infinity,
-    "upcrossings_last_half": 7,
-    "oscillation_rms_threshold": 0.001,
-    "declared_window": {
-      "start": 5.0,
-      "reason": "declared averaging start is missing or after the end of the record"
-    },
-    "n_cycles_total": 1,
-    "stationary_window": {
-      "reason": "only 1 complete cycles in record"
-    }
+    "oscillating": null,
+    "reason": "non-finite or unbounded force history (diverged solution)"
   },
   "temporal_behavior": {
     "steady_solver": false,
-    "oscillating": true,
+    "oscillating": null,
     "record_length_convective": 4.899999999495,
     "transient_end_time_convective": null,
     "declared_averaging_start_convective": 75.0,
@@ -232,13 +321,17 @@
     "stationary": null
   },
   "run_id": "C1_large_timestep-2c56fe2482da",
+  "extraction": {
+    "extractor_sha256": "e5ad2b6ece3659d0",
+    "git_commit": "4639ddbeae95e92525dcfff8aa45297ecbe6eb5b",
+    "time": "2026-10-19T08:24:53+00:00",
+    "reextracted": true
+  },
   "cost": {
     "wall_seconds": null,
     "n_cells": 30580,
     "n_steps": 51,
-    "cell_steps": 1559580
-  },
-  "extraction": {
-    "reextracted": "2026-10-19T07:17:23+00:00"
+    "cell_steps": 1559580,
+    "n_steps_including_restart_history": 51
   }
 }

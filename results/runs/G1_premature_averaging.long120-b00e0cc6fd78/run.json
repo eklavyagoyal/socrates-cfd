@@ -1,8 +1,8 @@
 {
-  "run_id": "G1_premature_averaging.long240-ddb0109abd94",
+  "run_id": "G1_premature_averaging.long120-b00e0cc6fd78",
   "status": "running",
-  "owner_pid": 16561,
-  "created": "2026-10-19T08:06:46+00:00",
+  "owner_pid": 23063,
+  "created": "2026-10-19T08:26:07+00:00",
   "problem_spec": {
     "problem": {
       "id": "cylinder2d_re100",
@@ -37,8 +37,8 @@
     }
   },
   "case_config": {
-    "name": "G1_premature_averaging.long240",
-    "description": "RUN_LONGER {'additional_convective_times': 100.0} from G1_premature_averaging.long140-34c6cca905d9",
+    "name": "G1_premature_averaging.long120",
+    "description": "RUN_LONGER {'additional_convective_times': 80.0} from G1_premature_averaging-17c0143468d7",
     "mesh": {
       "refinement": 1.0,
       "n_quadrant": 40,
@@ -89,7 +89,7 @@
     },
     "time": {
       "delta_t": 0.01,
-      "end_time": 240.0,
+      "end_time": 120.0,
       "adjust_time_step": false,
       "max_co": 0.5,
       "write_interval": 50.0
@@ -116,38 +116,38 @@
       "v_fraction": 0.3
     }
   },
-  "config_hash": "c3de119461305778",
-  "parent_run": "G1_premature_averaging.long140-34c6cca905d9",
-  "launch_reason": "averaging uncertainty component is unmeasured or not yet within budget",
-  "launched_by": "rule_based",
+  "config_hash": "f48e061d659ed929",
+  "parent_run": "G1_premature_averaging-17c0143468d7",
+  "launch_reason": "R0's stationary window has only 3 cycles, so statistics and averaging are inconclusive. The Cd drift is 4.0%, the Cd CI95 is 4.4% and the St statistical uncertainty is 3.6%. All of these exceed the 3% tolerance, and the declared averaging start (10) precedes the detected transient end (15.276). Mesh, time and domain comparisons cannot be resolved until the baseline statistics are fixed. This is the cheapest experiment and a prerequisite for the others.",
+  "launched_by": "llm_critic",
   "experiment": {
     "action": "RUN_LONGER",
     "params": {
-      "additional_convective_times": 100.0
+      "additional_convective_times": 80.0
     },
-    "parent_run": "G1_premature_averaging.long140-34c6cca905d9",
+    "parent_run": "G1_premature_averaging-17c0143468d7",
     "changes": {
       "time.end_time": {
-        "from": 140.0,
-        "to": 240.0
+        "from": 40.0,
+        "to": 120.0
       }
     },
     "notes": [],
     "initialisation": {
       "kind": "restart",
-      "source_run": "G1_premature_averaging.long140-34c6cca905d9"
+      "source_run": "G1_premature_averaging-17c0143468d7"
     },
-    "estimated_cell_steps": 305800000.0
+    "estimated_cell_steps": 244640000.0
   },
   "config_changes_from_parent": {
     "time.end_time": {
-      "from": 140.0,
-      "to": 240.0
+      "from": 40.0,
+      "to": 120.0
     }
   },
   "initialisation": {
     "kind": "restart",
-    "source_run": "G1_premature_averaging.long140-34c6cca905d9",
+    "source_run": "G1_premature_averaging-17c0143468d7",
     "consistent": true
   },
   "software": {
@@ -160,7 +160,7 @@
     "python": "3.13.16",
     "numpy": "2.5.3",
     "scipy": "1.18.1",
-    "socrates_git_commit": "667dd6c4da4f4ac0d83b746b86b7ac2da321e288",
+    "socrates_git_commit": "4639ddbeae95e92525dcfff8aa45297ecbe6eb5b",
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4

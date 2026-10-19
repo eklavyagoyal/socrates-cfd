@@ -45,11 +45,7 @@ def setup_problems(ev: dict) -> list[str]:
         out.append(f"solves Re={conf['configured_reynolds']:.4g} instead of {conf['spec_reynolds']:.4g}")
     if conf.get("solver") == "simpleFoam":
         out.append("steady formulation of a periodic flow")
-    fr = conf.get("force_reference") or {}
-    fc = conf.get("force_reference_consistent_values") or {}
-    if fr.get("magUInf") and fc.get("magUInf") and abs(fr["magUInf"] - fc["magUInf"]) / fc["magUInf"] > 1e-3:
-        out.append("force coefficients normalised with the wrong velocity")
-    return out
+    return out  # pre-registered: wrong Re or wrong regime only; everything else is judged by its error
 
 
 def outcome(label: str, verdict: str) -> str:

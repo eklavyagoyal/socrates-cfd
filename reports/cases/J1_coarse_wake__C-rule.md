@@ -123,4 +123,4 @@ Failed checks (measured): mesh_quality.
 
 - `J1_coarse_wake-a7868b40e5b3` status=completed parent=None created=2026-10-19T07:16:32+00:00 wall=1580 s; record: results/runs/J1_coarse_wake-a7868b40e5b3/run.json
 - OpenFOAM v2412 (package 2412.260127-1); problem specification and full configuration embedded in each run.json.
-- Experiment cost: {"experiment_cell_steps": 0.0, "relative_to_root": 0.0, "experiment_wall_seconds": 0, "n_experiments": 0, "planner_calls": 0, "planner_cost_usd": 0, "loop_wall_seconds": 0.00042617899998731446}
+- Experiment cost: {"experiment_cell_steps": 0.0, "relative_to_root": 0.0, "experiment_wall_seconds": 0, "n_experiments": 0, "planner_calls": 0, "planner_cost_usd": 0, "loop_wall_seconds": 0.0008373519995075185}

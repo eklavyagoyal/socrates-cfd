@@ -19,8 +19,8 @@ are re-aggregated under three acceptance rules:
 
 Criterion for 'INCONCLUSIVE only because U > tau/2': status INCONCLUSIVE with a numerical uncertainty attached
 (CheckResult.uncertainty is not None).  In the current decision code exactly two branches return such a result:
-the last branch of sensitivity.assess_sequence (U_root > tau/2 while the demonstrated change is <= tau) and the
-u > tau/2 branch of static.check_statistics.  Every other INCONCLUSIVE component result (no experiment, family
+the last branch of sensitivity.assess_sequence (U_root > tau/2 and the demonstrated change does not exceed tau by
+more than twice the statistical noise) and the u > tau/2 branch of static.check_statistics.  Every other INCONCLUSIVE component result (no experiment, family
 member not statistically reliable, unknown temporal order, value missing, degenerate family, divergent sequence,
 no positive observed order, steady solver, too few cycles, unreliable averaging reference) carries no
 uncertainty.  The script checks U > threshold for every result it treats this way and reports any exception.
@@ -36,7 +36,17 @@ which each rule is decisive.  This assumes the planner would have chosen the sam
 rule, which is not guaranteed (the planner sees the verifier's missing components); for C-llm-v1+review an ACCEPT
 would further go to the acceptance review, whose outcome is unknown.
 
+Labels.  Benchmark cases take both label views of benchmark/labels.json, which apply the narrow reading of the
+docs/design.md section-19 set-up clause: only set-up problems detected from the evidence (wrong Re, steady
+formulation) and missing quantities count; every other departure is judged by its error.  Attack labels are
+computed as scripts/analyze_benchmark.py (attack_labels) computes them, in three readings: narrow (`label` with
+the truth-uncertainty mitigation, `label_point_estimate` without), literal (`label_literal`: credible needs a
+consistent set-up, flawed needs e > tau or a wrong Re or regime, so a departure leaves a within-tau/2 case
+ambiguous) and set-up (`label_setup_reading`: any departure from the problem statement makes the case flawed).
+Counts are reported in the narrow views, with false acceptances under the set-up reading as an extra column.
+
     python scripts/posthoc_acceptance_rule.py      # writes results/posthoc/acceptance_rule.{json,md}
+                                                   # exit 1 on a V0 mismatch, criterion exception or label mismatch
 """
 
 import copy
@@ -51,6 +61,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from analyze_benchmark import setup_problems  # noqa: E402  (narrow set-up problems, as in benchmark/labels.json)
 from replay_verdicts import GROUPS, V1, V2, stored  # noqa: E402
 
 from socrates.case_generation.spec import ProblemSpec  # noqa: E402
@@ -72,13 +83,18 @@ TAU = dict(SPEC.verification.requested_tolerance)
 QS = list(SPEC.requested_outputs)
 SHORT = {"mean_drag_coefficient": "Cd", "strouhal_number": "St"}
 ADAPTIVE = ("C-rule", "C-llm")  # system-name prefixes of results produced by the adaptive loop
-# Attacks that change the problem itself, not its numerics (cases/attacks/<id>.yaml 'flaw'); under the labelling
-# rule in benchmark/labels.json ("flawed if ... set-up answers a different problem") they are flawed whatever
-# their error.  X3 changes only mesh and domain size and is judged by its error, like B1/B2 in the benchmark.
-ATTACK_SETUP_PROBLEMS = {
-    "X1_cylinder_geometry": ["meshed cylinder diameter 1.05 D while Re, force reference and St assume D"],
-    "X2_inlet_shear": ["sheared inlet profile; the specification requires a uniform stream"],
+# Attacks that depart from the problem statement itself, not its numerics (cases/attacks/<id>.yaml 'flaw'; same
+# cases as scripts/analyze_benchmark.py).  They decide the label only under the set-up reading of the section-19
+# clause (and prevent 'credible' under the literal reading); X3 changes mesh and domain size only and is judged by
+# its error in every reading.
+ATTACK_SETUP_DEPARTURES = {
+    "X1_cylinder_geometry": ["cylinder diameter 1.05 D where the problem specifies D = 10 mm"],
+    "X2_inlet_shear": ["sheared inlet profile where the problem specifies a uniform stream"],
 }
+# label fields of every case: (field, description); the attack-only readings are None for benchmark cases
+VIEWS = {"label": "narrow, with mitigation", "label_point_estimate": "narrow, point estimate",
+         "label_literal": "literal", "label_setup_reading": "set-up reading"}
+REVIEW_SYSTEMS = ("C-llm-v1+review",)  # a verifier ACCEPT goes to the acceptance review, which was not replayed
 
 
 def u_only(c) -> bool:
@@ -167,9 +183,16 @@ def criterion_anomalies(v, where: str) -> list[str]:
     return bad
 
 
+def literal_label(narrow: str, departures: list[str]) -> str:
+    """Literal reading of section 19: 'credible' needs 'the set-up is consistent'; 'flawed' needs e > tau or a set-up
+    that 'answers a different problem (wrong Re or regime)', which the narrow label already covers.  So a departure
+    from the problem statement turns a narrow 'credible' into 'ambiguous' and changes nothing else."""
+    return "ambiguous" if departures and narrow == "credible" else narrow
+
+
 def truth_view(group: str, case: str, root: str) -> dict:
-    """Signed true errors vs the reference T and the case label in both views (with / without the
-    truth-uncertainty mitigation)."""
+    """Signed true errors vs the reference T and the case labels (VIEWS).  `notes` lists disagreements with
+    benchmark/labels.json; they are reported and make the script exit 1."""
     if group == "benchmark":
         lab = LABELS["cases"][case]
         rep = lab["reported"]
@@ -179,13 +202,17 @@ def truth_view(group: str, case: str, root: str) -> dict:
         if lab["root_run"] != root:
             notes.append(f"stored root {root} != labels.json root {lab['root_run']}")
         return {"errors": err, "label": lab["label"], "label_point_estimate": lab["label_point_estimate"],
-                "error_source": "benchmark/labels.json", "notes": notes}
+                "label_literal": None, "label_setup_reading": None, "setup_problems": lab.get("setup_problems"),
+                "setup_departures": None, "error_source": "benchmark/labels.json", "notes": notes}
     ev = json.loads((STORE.root / root / "evidence.json").read_text())
     rep = (ev.get("qoi") or {}).get("reported") or {}
     err = {q: None if rep.get(q) is None else (rep[q] - T[q]) / abs(T[q]) for q in QS}
-    setup = ATTACK_SETUP_PROBLEMS.get(case, [])
-    return {"errors": err, "label": label_case(rep, T, TAU, setup, truth_uncertainty=UT)["label"],
-            "label_point_estimate": label_case(rep, T, TAU, setup)["label"], "setup_problems": setup,
+    sp, dep = setup_problems(ev), ATTACK_SETUP_DEPARTURES.get(case, [])
+    narrow = label_case(rep, T, TAU, sp, truth_uncertainty=UT)["label"]
+    return {"errors": err, "label": narrow, "label_point_estimate": label_case(rep, T, TAU, sp)["label"],
+            "label_literal": literal_label(narrow, dep),
+            "label_setup_reading": label_case(rep, T, TAU, sp + dep, truth_uncertainty=UT)["label"],
+            "setup_problems": sp, "setup_departures": dep,
             "error_source": f"results/runs/{root}/evidence.json qoi.reported vs benchmark/labels.json truth", "notes": []}
 
 
@@ -233,7 +260,7 @@ def main() -> int:
     fp = decision_code_fingerprint()
     frac = V1["error_budget"]["component_pass_fraction"]
     assert V2["error_budget"]["component_pass_fraction"] == frac
-    rows, cases, skipped, mismatches, anomalies = [], [], [], [], []
+    rows, cases, skipped, mismatches, anomalies, truth_mismatches = [], [], [], [], [], []
     for group, system, case, item, why in results():
         if item is None:
             skipped.append({"group": group, "system": system, "case": case, "reason": why})
@@ -262,6 +289,7 @@ def main() -> int:
                     a is not None and abs(a - b) > 1e-9 * max(abs(a), 1e-12)):
                 mismatches.append(f"{where} {q}: V0 {v0['per_qoi'][q]} / stored {so.get('verdict')} U={b}")
         tv = truth_view(group, case, r["root_run"])
+        truth_mismatches += [f"{where}: {n}" for n in tv["notes"]]
         # intermediate loop states (adaptive systems only)
         loop = None
         if system.startswith(ADAPTIVE) and len(runs) > 1:
@@ -275,8 +303,9 @@ def main() -> int:
                 mismatches.append(f"{where}: V0 decisive at intermediate state(s) {early} although the loop continued")
         cases.append({"group": group, "system": system, "case": case, "root_run": r["root_run"], "n_runs": len(runs),
                       "stored_verdict": old.get("verdict"), "final_verdict": r.get("final_verdict"),
-                      "stale": stale, "label": tv["label"], "label_point_estimate": tv["label_point_estimate"],
-                      "setup_problems": tv.get("setup_problems"), "truth_notes": tv["notes"],
+                      "stale": stale, **{view: tv[view] for view in VIEWS},
+                      "setup_problems": tv["setup_problems"], "setup_departures": tv["setup_departures"],
+                      "true_errors": tv["errors"], "truth_notes": tv["notes"],
                       "failed_checks": v.failed_checks, "gates_blocking": ev["gates_blocking"],
                       **{n: ev["variants"][n]["case"] for n in VARIANTS}, "loop": loop})
         for q in QS:
@@ -300,6 +329,12 @@ def main() -> int:
                 row[f"flag_{n}"] = flag(d["verdict"], e, TAU[q])
             rows.append(row)
 
+    roots = {}
+    for c in cases:
+        if c["group"] == "attacks":
+            roots.setdefault(c["case"], set()).add(c["root_run"])
+    truth_mismatches += [f"attacks/{cid}: root runs differ between systems: {sorted(rs)}" for cid, rs in roots.items()
+                         if len(rs) > 1]
     summary = summarize(rows, cases)
     blockers = blocking_table(rows, cases)
     present = {(c["system"], c["case"]) for c in cases if c["group"] == "benchmark"}
@@ -314,41 +349,47 @@ def main() -> int:
            "criterion_u_only": "component status INCONCLUSIVE with CheckResult.uncertainty not None "
                                "(sensitivity.assess_sequence last branch; static.check_statistics u > tau/2 branch)",
            "variants": {n: VARIANT_NAMES[n] for n in VARIANTS},
-           "attack_setup_problems": ATTACK_SETUP_PROBLEMS,
-           "v0_mismatches": mismatches, "criterion_anomalies": anomalies, "skipped": skipped,
-           "benchmark_results_not_stored": {s: m for s, m in missing.items() if m},
-           "summary": summary, "blocking_V0": blockers, "cases": cases, "rows": rows}
+           "label_views": VIEWS,
+           "label_views_note": "benchmark cases: narrow reading only (benchmark/labels.json), label_literal and "
+                               "label_setup_reading are null and not counted; summary counts in those two views are "
+                               "over attack cases only",
+           "attack_setup_departures": ATTACK_SETUP_DEPARTURES,
+           "v0_mismatches": mismatches, "criterion_anomalies": anomalies, "truth_mismatches": truth_mismatches,
+           "skipped": skipped, "benchmark_results_not_stored": {s: m for s, m in missing.items() if m},
+           "summary": summary, "blocking_V0": blockers, "gates_V0_inconclusive": gate_table(cases),
+           "gate_only": gate_only(rows, cases), "cases": cases, "rows": rows}
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "acceptance_rule.json").write_text(json.dumps(doc, indent=1, default=str))
     (OUT / "acceptance_rule.md").write_text(markdown(doc))
     print_summary(doc)
-    return 1 if (mismatches or anomalies) else 0
+    return 1 if (mismatches or anomalies or truth_mismatches) else 0
 
 
 def summarize(rows: list[dict], cases: list[dict]) -> dict:
-    """Per (group, system) and variant: case-level and quantity-level acceptance counts (stale results excluded)."""
+    """Per (group, system), per group and overall, per variant: case-level and quantity-level acceptance counts
+    (stale results excluded).  Label counts per view are over the cases labelled in that view (VIEWS)."""
     out = {}
     stale = {(c["group"], c["system"], c["case"]) for c in cases if c["stale"]}
     keys = list(dict.fromkeys((c["group"], c["system"]) for c in cases))
-    for g, s in keys + [("all", "all")]:
+    keys += [(g, "all") for g in dict.fromkeys(c["group"] for c in cases)] + [("all", "all")]
+    for g, s in keys:
         def sel(x, g=g, s=s):
-            return g == "all" or (x["group"], x["system"]) == (g, s)
+            return g in ("all", x["group"]) and s in ("all", x["system"])
         cs = [c for c in cases if sel(c) and (c["group"], c["system"], c["case"]) not in stale]
         rs = [r for r in rows if sel(r) and (r["group"], r["system"], r["case"]) not in stale]
         d = {"n_results": len(cs), "n_stale_excluded": sum(1 for c in cases if sel(c) and c["stale"])}
-        for view in ("label", "label_point_estimate"):
+        for view in VIEWS:
+            d[f"n_labelled[{view}]"] = sum(1 for c in cs if c[view] is not None)
             d[f"n_credible[{view}]"] = sum(1 for c in cs if c[view] == "credible")
             d[f"n_flawed[{view}]"] = sum(1 for c in cs if c[view] == "flawed")
         for n in VARIANTS:
             acc = [c for c in cs if c[n] == "ACCEPT"]
             qa = [r for r in rs if r[n] == "ACCEPT"]
             d[n] = {"cases_accept": len(acc),
-                    **{f"correct_accept[{view}]": sum(1 for c in acc if c[view] == "credible")
-                       for view in ("label", "label_point_estimate")},
-                    **{f"false_accept_case[{view}]": sum(1 for c in acc if c[view] == "flawed")
-                       for view in ("label", "label_point_estimate")},
-                    **{f"ambiguous_accept[{view}]": sum(1 for c in acc if c[view] == "ambiguous")
-                       for view in ("label", "label_point_estimate")},
+                    "cases_accept_review_not_run": sum(1 for c in acc if c["system"] in REVIEW_SYSTEMS),
+                    **{f"correct_accept[{view}]": sum(1 for c in acc if c[view] == "credible") for view in VIEWS},
+                    **{f"false_accept_case[{view}]": sum(1 for c in acc if c[view] == "flawed") for view in VIEWS},
+                    **{f"ambiguous_accept[{view}]": sum(1 for c in acc if c[view] == "ambiguous") for view in VIEWS},
                     "quantities_accept": len(qa),
                     "quantities_accept_err_gt_tau": sum(1 for r in qa if r["true_error"] is not None and abs(r["true_error"]) > r["tau"]),
                     "quantities_accept_err_gt_half_tau": sum(1 for r in qa if r["true_error"] is not None
@@ -376,8 +417,30 @@ def blocking_table(rows: list[dict], cases: list[dict]) -> list[dict]:
         cnt[(pat, r["group"], kind)] += 1
     pats = sorted({p for p, _, _ in cnt}, key=lambda p: (-sum(cnt[(p, g, k)] for g, k in BLOCK_COLUMNS
                                                               if k == "with experiments"),
-                                                         -sum(cnt[(p, g, k)] for g, k in BLOCK_COLUMNS)))
+                                                         -sum(cnt[(p, g, k)] for g, k in BLOCK_COLUMNS), p))
     return [{"pattern": p, **{f"{g}, {k}": cnt[(p, g, k)] for g, k in BLOCK_COLUMNS}} for p in pats]
+
+
+def gate_table(cases: list[dict]) -> dict:
+    """{gate result: [group/system/case]} over V0-INCONCLUSIVE cases whose gate checks are not passed or
+    discharged (a case can hold more than one gate)."""
+    out = {}
+    for c in cases:
+        if c["V0"] == "INCONCLUSIVE":
+            for gt in c["gates_blocking"]:
+                out.setdefault(gt, []).append(f"{c['group']}/{c['system']}/{c['case']}")
+    return dict(sorted(out.items(), key=lambda kv: (-len(kv[1]), kv[0])))
+
+
+def gate_only(rows: list[dict], cases: list[dict]) -> dict:
+    """Per variant: cases without a FAIL whose quantities are all ACCEPT but whose case verdict is held by a gate."""
+    out = {}
+    for n in VARIANTS:
+        out[n] = [f"{c['group']}/{c['system']}/{c['case']} ({', '.join(c['gates_blocking'])})" for c in cases
+                  if c[n] != "ACCEPT" and not c["failed_checks"] and c["gates_blocking"]
+                  and all(r[n] == "ACCEPT" for r in rows if (r["group"], r["system"], r["case"])
+                          == (c["group"], c["system"], c["case"]))]
+    return out
 
 
 def findings(doc: dict) -> list[str]:
@@ -392,8 +455,8 @@ def findings(doc: dict) -> list[str]:
         early = [c for c in doc["cases"] if c["loop"] and c["loop"]["first_decisive"][n]["verdict"] == "ACCEPT"
                  and c["loop"]["first_decisive"][n]["n_experiments"] < c["loop"]["n_states"] - 1]
         s = (f"- **{n} ({VARIANT_NAMES[n]})**: {len(acc)} case ACCEPT"
-             + (" (" + "; ".join(f"{c['system']}/{c['case']}" for c in acc) + "; labels with mitigation / point "
-                "estimate: " + ", ".join(f"{k} ×{v}" for k, v in by_label.items()) + ")" if acc else "")
+             + (" (" + "; ".join(f"{c['system']}/{c['case']}" for c in acc) + "; narrow labels with mitigation / "
+                "point estimate: " + ", ".join(f"{k} ×{v}" for k, v in by_label.items()) + ")" if acc else "")
              + f". Quantity ACCEPTs with |e| > τ: {len(bad)}"
              + (" (" + "; ".join(f"{r['system']}/{r['case']} {SHORT[r['quantity']]} {pct(r['true_error'], True)}"
                                  for r in bad) + ")" if bad else "")
@@ -401,8 +464,47 @@ def findings(doc: dict) -> list[str]:
         if early:
             s += (" In " + ", ".join(f"{c['system']}/{c['case']}" for c in early)
                   + " the recorded loop passes a state this rule ACCEPTs before its last experiment.")
+        review = sorted({c["case"] for c in acc if c["system"] in REVIEW_SYSTEMS})
+        if review:
+            s += (f" For {', '.join(REVIEW_SYSTEMS)} ({', '.join(review)}) the ACCEPT is the verifier's; the acceptance "
+                  "review was not run on it, so that system's final verdict under this rule is unknown.")
         out.append(s)
-    return out
+    return out + config_lines(doc, stale)
+
+
+def config_lines(doc: dict, stale: set) -> list[str]:
+    """Which verification configuration the false case acceptances come from, and what v2 does on the same cases
+    (FAILs and gates are the same in every variant)."""
+    false = [c for c in doc["cases"] if (c["group"], c["system"], c["case"]) not in stale
+             and any(c[n] == "ACCEPT" for n in VARIANTS) and "flawed" in (c["label"], c["label_setup_reading"])]
+    if not false:
+        return []
+    v2 = [c for c in doc["cases"] if c["group"] == "attacks" and c["system"].endswith("v2") and c["setup_departures"]]
+    v1_only = all(not c["system"].endswith("v2") for c in false)
+    s = ("- All false case acceptances occur with verification v1 (`configs/verification.yaml`)" if v1_only
+         else "- False case acceptances occur with verification v2 as well: "
+         + "; ".join(f"{c['system']}/{c['case']}" for c in false if c["system"].endswith("v2")))
+    if v2 and all(c[n] == "REJECT" for c in v2 for n in VARIANTS):
+        by_case = {}
+        for c in v2:
+            by_case.setdefault(c["case"], set()).update(c["failed_checks"])
+        s += (". With v2 the static " + " and ".join(f"{', '.join(sorted(f))} ({cid.split('_')[0]})"
+                                                    for cid, f in by_case.items())
+              + " checks FAIL, so " + " and ".join(sorted({c["system"] for c in v2})) + " REJECT "
+              + " and ".join(cid.split("_")[0] for cid in by_case) + " under every variant. These v2 checks were "
+              "committed in 8161f5c (2026-10-19 07:40) before the attacks ran, but are post-hoc extensions of the "
+              "pre-registered verifier (`configs/verification_v2.yaml` line 1): their detections of "
+              + " and ".join(cid.split("_")[0] for cid in by_case) + " are not blind tests")
+        # a REJECT is correct only where the case is flawed; for a case flawed only under the set-up reading say so
+        not_flawed = sorted({c["case"].split("_")[0] for c in v2 if c["label"] != "flawed"})
+        if not_flawed:
+            s += (". The " + " and ".join(not_flawed) + " REJECTs are correct only under the set-up reading: under the "
+                  "narrow reading they are false rejections on point estimates and not scored with the mitigation "
+                  "(ambiguous under the literal reading too)")
+    elif v2:
+        s += (". With v2: " + "; ".join(f"{c['system']}/{c['case']} " + " / ".join(c[n] for n in VARIANTS)
+                                         for c in v2))
+    return [s + "."]
 
 
 def pct(x, signed: bool = False) -> str:
@@ -439,8 +541,8 @@ def markdown(doc: dict) -> str:
          "",
          "**Criterion for 'INCONCLUSIVE only because U > τ/2'**: status INCONCLUSIVE with a numerical uncertainty "
          "attached. In the current decision code only two branches return that: the last branch of "
-         "`sensitivity.assess_sequence` (U_root > τ/2 while the demonstrated change is ≤ τ) and the u > τ/2 branch of "
-         "`static.check_statistics`. Every other INCONCLUSIVE component result carries no uncertainty (no experiment, "
+         "`sensitivity.assess_sequence` (U_root > τ/2 and the demonstrated change does not exceed τ by more than twice "
+         "the statistical noise) and the u > τ/2 branch of `static.check_statistics`. Every other INCONCLUSIVE component result carries no uncertainty (no experiment, "
          "family member not statistically reliable, divergent sequence, no positive observed order, degenerate family, "
          "unknown temporal order, value missing, steady solver, too few cycles, unreliable averaging reference) and "
          "still blocks under V1 and V2. "
@@ -448,17 +550,46 @@ def markdown(doc: dict) -> str:
             else "Every result treated this way has U above its threshold (checked)."),
          "",
          "True error e = (reported − T)/T against the in-house reference T (benchmark: `benchmark/labels.json`; "
-         "attacks: the root run's `qoi.reported` against the same T). Labels: benchmark cases use both label views of "
-         "`benchmark/labels.json` (with the truth-uncertainty mitigation / point estimates). Attack labels apply the same "
-         "rule (`orchestration/truth.label_case`); X1 and X2 change the problem itself (cylinder diameter, inlet "
-         "profile) and are flawed under the rule's set-up clause whatever their error.",
+         "attacks: the root run's `qoi.reported` against the same T).",
          "",
-         "## Findings",
+         "**Labels.** Benchmark cases use both label views of `benchmark/labels.json` (with the truth-uncertainty "
+         "mitigation / point estimates). These apply the narrow reading of the set-up clause of `docs/design.md` "
+         "section 19: only set-up problems detected from the evidence (wrong Re, steady formulation) and missing "
+         "quantities count; every other departure is judged by its error. Attack labels are computed as "
+         "`scripts/analyze_benchmark.py` computes them for `results/benchmark/metrics.json`, in three readings: "
+         "narrow (as the benchmark), literal (credible needs 'the set-up is consistent'; flawed needs e > τ or a "
+         "set-up that 'answers a different problem (wrong Re or regime)') and set-up (any departure from the problem "
+         "statement makes the case flawed). The counts below use the narrow views; false acceptances under the "
+         "set-up reading are an extra column.",
          "",
-         *findings(doc),
-         "",
-         "## Reproduction of the stored verdicts (V0)",
-         ""]
+         "| attack | Cd error | St error | departure from the problem statement | narrow, with mitigation | "
+         "narrow, point estimate | literal | set-up reading |",
+         "|---|---|---|---|---|---|---|---|"]
+    att = list({c["case"]: c for c in doc["cases"] if c["group"] == "attacks"}.values())
+    L += [f"| {c['case']} | {pct(c['true_errors'][QS[0]], True)} | {pct(c['true_errors'][QS[1]], True)} | "
+          f"{'; '.join(c['setup_departures']) or '— (mesh and domain size only)'} | "
+          + " | ".join(c[view] for view in VIEWS) + " |" for c in att]
+    by_err = [c["case"].split("_")[0] for c in att if c["label"] == "flawed" and not c["setup_problems"]]
+    setup_only = [c for c in att if c["label_setup_reading"] == "flawed" and c["label"] != "flawed"]
+    acc_setup_only = [f"{c['system']}/{c['case']}" for c in doc["cases"] if c["group"] == "attacks"
+                      and c["case"] in {x["case"] for x in setup_only} and any(c[n] == "ACCEPT" for n in VARIANTS)]
+    L += ["", f"{' and '.join(by_err)} {'is' if len(by_err) == 1 else 'are'} flawed by {'its' if len(by_err) == 1 else 'their'} "
+          "error in every reading (no set-up problem is detected from the evidence), so an acceptance of "
+          f"{'it' if len(by_err) == 1 else 'either'} is a false acceptance in every reading."
+          + "".join(f" {c['case'].split('_')[0]} is flawed only under the set-up reading ({c['setup_departures'][0]}); "
+                    f"under the narrow reading used by `benchmark/labels.json` and `metrics.json` it is {c['label']} with "
+                    f"mitigation and {c['label_point_estimate']} on point estimates, and {c['label_literal']} under the "
+                    "literal reading." for c in setup_only)
+          + (" No variant accepts " + " or ".join(f"the {c['case'].split('_')[0]} case" for c in setup_only) + "."
+             if setup_only and not acc_setup_only else
+             (" Accepted under some variant: " + "; ".join(acc_setup_only) + "." if acc_setup_only else "")),
+          "",
+          "## Findings",
+          "",
+          *findings(doc),
+          "",
+          "## Reproduction of the stored verdicts (V0)",
+          ""]
     n_res = len(doc["cases"])
     if doc["v0_mismatches"]:
         L += [f"**{len(doc['v0_mismatches'])} mismatch(es)** between V0 and the stored verdicts:", ""]
@@ -467,6 +598,11 @@ def markdown(doc: dict) -> str:
         L += [f"V0 reproduces the stored case verdict, per-quantity verdict and combined U of all {n_res} results. "
               "For adaptive results V0 is INCONCLUSIVE at every intermediate state of the recorded loop, as it must be "
               "for the loop to have continued."]
+    if doc["truth_mismatches"]:
+        L += ["", f"**{len(doc['truth_mismatches'])} disagreement(s) with `benchmark/labels.json`** (true errors or "
+              "root runs):", ""] + [f"- {m}" for m in doc["truth_mismatches"]]
+    else:
+        L += ["", "True errors and root runs of the benchmark results agree with `benchmark/labels.json` (checked)."]
     stale = [c for c in doc["cases"] if c["stale"]]
     if stale:
         L += ["", "Stale benchmark results (excluded from the counts): "
@@ -482,25 +618,33 @@ def markdown(doc: dict) -> str:
 
     L += ["", "## Summary per variant", "",
           "Counts over the final evidence graph of each stored result. 'correct' = credible case ACCEPTed; "
-          "'false' = flawed case ACCEPTed; 'ambig.' = ambiguous case ACCEPTed (not scored). Each label cell gives "
-          "'with mitigation / point estimate'. Quantity columns count quantity-level ACCEPTs and those whose true "
-          "error exceeds τ or τ/2 (the τ/2 count includes the τ count). 'loop ACCEPT' counts adaptive results whose "
-          "recorded loop passes through a state the variant ACCEPTs (see the last section). All verdicts here are "
-          "the deterministic verifier's; for C-llm-v1+review a verifier ACCEPT would go to the acceptance review, so "
-          "that system's final verdict under V1 or V2 is not known.", ""]
+          "'false' = flawed case ACCEPTed; 'ambig.' = ambiguous case ACCEPTed (not scored). Each correct/false cell "
+          "gives 'with mitigation · point estimate' in the narrow reading, each as ACCEPTed/labelled; 'ambig.' gives "
+          "'with mitigation · point estimate'. 'false, set-up reading' counts flawed cases ACCEPTed under the set-up "
+          "reading, over attack cases only (benchmark labels use the narrow reading: —). Quantity columns count "
+          "quantity-level ACCEPTs and those whose true error exceeds τ or τ/2 (the τ/2 count includes the τ count). "
+          "'loop ACCEPT' counts adaptive results whose recorded loop passes through a state the variant ACCEPTs (see "
+          "the last section); '(flawed)' uses the narrow label with mitigation. All verdicts here are the "
+          "deterministic verifier's. ¹ " + ", ".join(REVIEW_SYSTEMS) + ": a verifier ACCEPT would go to the acceptance "
+          "review, which was not run on these states, so the system's final verdict under V1 or V2 is unknown; its "
+          "case ACCEPTs are counted as verifier ACCEPTs.", ""]
     for n in VARIANTS:
         L += [f"### {n}: {VARIANT_NAMES[n]}", "",
-              "| group / system | results | cases ACCEPT | correct | false | ambig. | quantities ACCEPT | of which abs. error > τ | "
-              "abs. error > τ/2 | loop ACCEPT (flawed) |",
-              "|---|---|---|---|---|---|---|---|---|---|"]
+              "| group / system | results | cases ACCEPT | correct | false (verifier) | false, set-up reading | ambig. | "
+              "quantities ACCEPT | of which abs. error > τ | abs. error > τ/2 | loop ACCEPT (flawed) |",
+              "|---|---|---|---|---|---|---|---|---|---|---|"]
         for key, d in doc["summary"].items():
             x = d[n]
-            name = "**all**" if key == "all/all" else key
+            g, s = key.split("/", 1)
+            name = ("**all**" if key == "all/all" else f"**{g}, all**" if s == "all"
+                    else key + (" ¹" if s in REVIEW_SYSTEMS else ""))
+            sv = "label_setup_reading"
+            setup = (f"{x[f'false_accept_case[{sv}]']}/{d[f'n_flawed[{sv}]']}" if d[f"n_labelled[{sv}]"] else "—")
             L.append(f"| {name} | {d['n_results']} | {x['cases_accept']} | "
                      f"{x['correct_accept[label]']}/{d['n_credible[label]']} · "
                      f"{x['correct_accept[label_point_estimate]']}/{d['n_credible[label_point_estimate]']} | "
                      f"{x['false_accept_case[label]']}/{d['n_flawed[label]']} · "
-                     f"{x['false_accept_case[label_point_estimate]']}/{d['n_flawed[label_point_estimate]']} | "
+                     f"{x['false_accept_case[label_point_estimate]']}/{d['n_flawed[label_point_estimate]']} | {setup} | "
                      f"{x['ambiguous_accept[label]']} · {x['ambiguous_accept[label_point_estimate]']} | "
                      f"{x['quantities_accept']} | {x['quantities_accept_err_gt_tau']} | "
                      f"{x['quantities_accept_err_gt_half_tau']} | {x['loop_first_decisive_accept']} "
@@ -527,37 +671,51 @@ def markdown(doc: dict) -> str:
               f"{sum(r['V1'] == 'ACCEPT' for r in only_u)} of these become ACCEPT under V1, the others have "
               f"bias + RSS > τ. {len(only_dom)} are blocked only by the domain component; "
               f"{sum(r['V2'] == 'ACCEPT' for r in only_dom)} of these become ACCEPT under V2.", ""]
+    gt = doc["gates_V0_inconclusive"]
+    held = {x for v in gt.values() for x in v}
+    L += [f"**Gates.** {len(held)} V0-INCONCLUSIVE cases also hold a gate check that is neither passed nor "
+          "discharged" + (": " + "; ".join(f"{g} {len(v)} ({', '.join(x.split('/', 1)[1] for x in v)})"
+                                          for g, v in gt.items()) + ". A case can hold more than one gate" if gt else "")
+          + ". "
+          + ("No case has all quantities ACCEPT under " + ", ".join(list(VARIANTS)[:-1]) + " or " + list(VARIANTS)[-1]
+             + " while held by a gate: every gate-held case also has a quantity that is not ACCEPT under each variant, "
+             "so it has component blockers as well."
+             if not any(doc["gate_only"].values()) else
+             "Cases whose quantities are all ACCEPT but whose case verdict is held by a gate: "
+             + "; ".join(f"{n}: {', '.join(v)}" for n, v in doc["gate_only"].items() if v) + "."), ""]
 
+    case_of = {(c["group"], c["system"], c["case"]): c for c in doc["cases"]}
     L += ["## Quantity rows that change", "",
-          "| group | system | case | qty | V0 | V1 | V2 | U_total (V1) | V0 blocking (U) | true error | flag |",
-          "|---|---|---|---|---|---|---|---|---|---|---|"]
+          "'case V0 / V1 / V2' is the case verdict; a quantity ACCEPT in a REJECTed or INCONCLUSIVE case is counted in "
+          "the quantity columns of the summary but does not accept the case.", "",
+          "| group | system | case | qty | V0 | V1 | V2 | U_total (V1) | V0 blocking (U) | true error | flag | "
+          "case V0 / V1 / V2 |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in doc["rows"]:
         if r["V1"] == r["V0"] and r["V2"] == r["V0"]:
             continue
         blk = ", ".join(f"{k} {why}" + (f" {pct(r['component_uncertainty'][k])}" if k in r["component_uncertainty"] else "")
                         for k, why in r["blocking_V0"].items())
         fl = r["flag_V1"] or r["flag_V2"]
+        c = case_of[(r["group"], r["system"], r["case"])]
         L.append(f"| {r['group']} | {r['system']} | {r['case']} | {SHORT[r['quantity']]} | {r['V0']} | {r['V1']} | "
-                 f"{r['V2']} | {pct(r['combined_V1'])} | {blk} | {pct(r['true_error'], True)} | {'**' + fl + '**' if fl else ''} |")
+                 f"{r['V2']} | {pct(r['combined_V1'])} | {blk} | {pct(r['true_error'], True)} | "
+                 f"{'**' + fl + '**' if fl else ''} | {c['V0']} / {c['V1']} / {c['V2']} |")
 
     L += ["", "## Case rows that change", "",
-          "| group | system | case | label (mitig. / point) | V0 | V1 | V2 | gates blocking | failed checks |",
+          "| group | system | case | label (narrow: mitig. / point; set-up reading) | V0 | V1 | V2 | gates blocking | "
+          "failed checks |",
           "|---|---|---|---|---|---|---|---|---|"]
     for c in doc["cases"]:
         if c["V1"] == c["V0"] and c["V2"] == c["V0"]:
             continue
-        L.append(f"| {c['group']} | {c['system']} | {c['case']} | {c['label']} / {c['label_point_estimate']} | {c['V0']} | "
+        lab = f"{c['label']} / {c['label_point_estimate']}" + (f"; {c['label_setup_reading']}"
+                                                               if c["label_setup_reading"] else "")
+        L.append(f"| {c['group']} | {c['system']} | {c['case']} | {lab} | {c['V0']} | "
                  f"{c['V1']} | {c['V2']} | {', '.join(c['gates_blocking']) or '—'} | {', '.join(c['failed_checks']) or '—'} |")
-    gate_only = [c for c in doc["cases"] if c["V1"] != "ACCEPT" and not c["failed_checks"] and c["gates_blocking"]
-                 and all(r["V1"] == "ACCEPT" for r in doc["rows"]
-                         if (r["group"], r["system"], r["case"]) == (c["group"], c["system"], c["case"]))]
-    if gate_only:
-        L += ["", "Cases whose quantities are all ACCEPT under V1 but whose case verdict is held by a gate: "
-              + "; ".join(f"{c['group']}/{c['system']}/{c['case']} ({', '.join(c['gates_blocking'])})" for c in gate_only)]
 
     L += ["", "## ACCEPTs with true error above τ/2 (all variants, final graphs)", "",
           "| group | system | case | qty | V0 | V1 | V2 | true error | case V0 / V1 / V2 |", "|---|---|---|---|---|---|---|---|---|"]
-    case_of = {(c["group"], c["system"], c["case"]): c for c in doc["cases"]}
     for r in doc["rows"]:
         if any(r[f"flag_{n}"] for n in VARIANTS):
             c = case_of[(r["group"], r["system"], r["case"])]
@@ -570,7 +728,7 @@ def markdown(doc: dict) -> str:
           "plus the first k experiments; the recorded loop ran to state n). This assumes the planner would have chosen "
           "the same experiments under the variant, which is not guaranteed. For C-llm-v1+review an ACCEPT would go to "
           "the acceptance review.", "",
-          "| group | system | case | label | n | V0 | V1 | V2 |", "|---|---|---|---|---|---|---|---|"]
+          "| group | system | case | label (narrow, mitig.) | n | V0 | V1 | V2 |", "|---|---|---|---|---|---|---|---|"]
     for c in doc["cases"]:
         lp = c["loop"]
         if not lp:
@@ -604,14 +762,19 @@ def markdown(doc: dict) -> str:
 
 def print_summary(doc: dict) -> None:
     print(f"{len(doc['cases'])} results, {len(doc['rows'])} quantity rows; {len(doc['v0_mismatches'])} V0 mismatch(es), "
-          f"{len(doc['criterion_anomalies'])} criterion exception(s), {len(doc['skipped'])} skipped")
-    for m in doc["v0_mismatches"] + doc["criterion_anomalies"]:
+          f"{len(doc['criterion_anomalies'])} criterion exception(s), {len(doc['truth_mismatches'])} label mismatch(es), "
+          f"{len(doc['skipped'])} skipped")
+    for m in doc["v0_mismatches"] + doc["criterion_anomalies"] + doc["truth_mismatches"]:
         print("  ", m)
     for n in VARIANTS:
-        a = doc["summary"]["all/all"][n]
-        print(f"{n} ({VARIANT_NAMES[n]}): cases ACCEPT {a['cases_accept']} (correct {a['correct_accept[label]']}/"
-              f"{a['correct_accept[label_point_estimate]']}, false {a['false_accept_case[label]']}/"
-              f"{a['false_accept_case[label_point_estimate]']} with mitigation/point labels); quantities ACCEPT "
+        a, d = doc["summary"]["all/all"][n], doc["summary"]["all/all"]
+        sv = "label_setup_reading"
+        print(f"{n} ({VARIANT_NAMES[n]}): cases ACCEPT {a['cases_accept']}; narrow mitigation / point: correct "
+              f"{a['correct_accept[label]']}/{d['n_credible[label]']} / "
+              f"{a['correct_accept[label_point_estimate]']}/{d['n_credible[label_point_estimate]']}, false "
+              f"{a['false_accept_case[label]']}/{d['n_flawed[label]']} / "
+              f"{a['false_accept_case[label_point_estimate]']}/{d['n_flawed[label_point_estimate]']}; set-up reading "
+              f"(attacks) false {a[f'false_accept_case[{sv}]']}/{d[f'n_flawed[{sv}]']}; quantities ACCEPT "
               f"{a['quantities_accept']}, |e|>tau {a['quantities_accept_err_gt_tau']}, |e|>tau/2 "
               f"{a['quantities_accept_err_gt_half_tau']}; loop ACCEPT {a['loop_first_decisive_accept']}")
 

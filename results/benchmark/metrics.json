@@ -872,9 +872,11 @@
      "strouhal_number": 0.0046035809457068535
     },
     "label_point_estimate": "flawed",
+    "label_literal": "flawed",
+    "label_literal_point_estimate": "flawed",
     "label_setup_reading": "flawed",
     "setup_departures": [
-     "meshed cylinder diameter 1.05 D while Re, force reference and St assume D"
+     "cylinder diameter 1.05 D where the problem specifies D = 10 mm"
     ],
     "root_run": "X1_cylinder_geometry-53f173b2191e",
     "reported": {
@@ -907,9 +909,11 @@
      "strouhal_number": 0.0046035809457068535
     },
     "label_point_estimate": "credible",
+    "label_literal": "ambiguous",
+    "label_literal_point_estimate": "ambiguous",
     "label_setup_reading": "flawed",
     "setup_departures": [
-     "sheared inlet profile; the problem specifies a uniform stream"
+     "sheared inlet profile where the problem specifies a uniform stream"
     ],
     "root_run": "X2_inlet_shear-32168bfbca6b",
     "reported": {
@@ -938,6 +942,8 @@
      "strouhal_number": 0.0046035809457068535
     },
     "label_point_estimate": "flawed",
+    "label_literal": "flawed",
+    "label_literal_point_estimate": "flawed",
     "label_setup_reading": "flawed",
     "setup_departures": [],
     "root_run": "X3_compensating_errors-b45927f15797",
@@ -954,8 +960,8 @@
    }
   },
   "notes": [
-   "C-rule-v1/X2_inlet_shear: counted, written after the last replay (run scripts/replay_verdicts.py to check it)",
-   "C-llm-v1+review/X1_cylinder_geometry: counted, written after the last replay (run scripts/replay_verdicts.py to check it)"
+   "C-rule-v1/X2_inlet_shear: counted, not replayed (run scripts/replay_verdicts.py to check it); marked \u2020 in the tables",
+   "C-llm-v1+review/X1_cylinder_geometry: counted, not replayed (run scripts/replay_verdicts.py to check it); marked \u2020 in the tables"
   ],
   "summary": {
    "B-v1": {
@@ -963,19 +969,33 @@
      "correct": 0,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
+    },
+    "label_literal": {
+     "correct": 0,
+     "false_accept": 0,
+     "false_reject": 0,
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     },
     "label_point_estimate": {
      "correct": 0,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
     },
     "label": {
      "correct": 0,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     }
    },
    "L-judge": {
@@ -983,19 +1003,33 @@
      "correct": 3,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
+    },
+    "label_literal": {
+     "correct": 2,
+     "false_accept": 0,
+     "false_reject": 0,
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     },
     "label_point_estimate": {
      "correct": 2,
      "false_accept": 0,
      "false_reject": 1,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
     },
     "label": {
      "correct": 2,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     }
    },
    "C-rule-v1": {
@@ -1003,19 +1037,33 @@
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
+    },
+    "label_literal": {
+     "correct": 1,
+     "false_accept": 0,
+     "false_reject": 0,
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     },
     "label_point_estimate": {
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
     },
     "label": {
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     }
    },
    "C-llm-v1": {
@@ -1023,19 +1071,33 @@
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
+    },
+    "label_literal": {
+     "correct": 1,
+     "false_accept": 0,
+     "false_reject": 0,
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     },
     "label_point_estimate": {
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
     },
     "label": {
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     }
    },
    "C-llm-v1+review": {
@@ -1043,19 +1105,33 @@
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
+    },
+    "label_literal": {
+     "correct": 1,
+     "false_accept": 0,
+     "false_reject": 0,
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     },
     "label_point_estimate": {
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
     },
     "label": {
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     }
    },
    "B-v2": {
@@ -1063,19 +1139,33 @@
      "correct": 2,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
+    },
+    "label_literal": {
+     "correct": 1,
+     "false_accept": 0,
+     "false_reject": 0,
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     },
     "label_point_estimate": {
      "correct": 1,
      "false_accept": 0,
      "false_reject": 1,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
     },
     "label": {
      "correct": 1,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     }
    },
    "C-rule-v2": {
@@ -1083,19 +1173,33 @@
      "correct": 3,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
+    },
+    "label_literal": {
+     "correct": 2,
+     "false_accept": 0,
+     "false_reject": 0,
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     },
     "label_point_estimate": {
      "correct": 2,
      "false_accept": 0,
      "false_reject": 1,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 0,
+     "n_scored": 3
     },
     "label": {
      "correct": 2,
      "false_accept": 0,
      "false_reject": 0,
-     "n": 3
+     "n": 3,
+     "n_ambiguous": 1,
+     "n_scored": 2
     }
    }
   },
@@ -1105,7 +1209,10 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "undecided",
     "label_point_estimate": "undecided",
     "label": "undecided"
    },
@@ -1114,7 +1221,10 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "ambiguous_inconclusive",
     "label_point_estimate": "undecided",
     "label": "ambiguous_inconclusive"
    },
@@ -1123,7 +1233,10 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "undecided",
     "label_point_estimate": "undecided",
     "label": "undecided"
    },
@@ -1132,7 +1245,10 @@
     "counted": true,
     "status": "current",
     "replay": "not applicable (no deterministic verdict)",
+    "replayed": null,
+    "failed_checks": null,
     "label_setup_reading": "correct",
+    "label_literal": "correct",
     "label_point_estimate": "correct",
     "label": "correct"
    },
@@ -1141,7 +1257,10 @@
     "counted": true,
     "status": "current",
     "replay": "not applicable (no deterministic verdict)",
+    "replayed": null,
+    "failed_checks": null,
     "label_setup_reading": "correct",
+    "label_literal": "ambiguous_reject",
     "label_point_estimate": "false_reject",
     "label": "ambiguous_reject"
    },
@@ -1150,7 +1269,10 @@
     "counted": true,
     "status": "current",
     "replay": "not applicable (no deterministic verdict)",
+    "replayed": null,
+    "failed_checks": null,
     "label_setup_reading": "correct",
+    "label_literal": "correct",
     "label_point_estimate": "correct",
     "label": "correct"
    },
@@ -1159,7 +1281,10 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "undecided",
     "label_point_estimate": "undecided",
     "label": "undecided"
    },
@@ -1167,8 +1292,11 @@
     "verdict": "INCONCLUSIVE",
     "counted": true,
     "status": "current",
-    "replay": "written after the last replay",
+    "replay": "not replayed",
+    "replayed": false,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "ambiguous_inconclusive",
     "label_point_estimate": "undecided",
     "label": "ambiguous_inconclusive"
    },
@@ -1177,7 +1305,12 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [
+     "mesh_sensitivity[strouhal_number]"
+    ],
     "label_setup_reading": "correct",
+    "label_literal": "correct",
     "label_point_estimate": "correct",
     "label": "correct"
    },
@@ -1186,7 +1319,10 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "undecided",
     "label_point_estimate": "undecided",
     "label": "undecided"
    },
@@ -1195,7 +1331,10 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "ambiguous_inconclusive",
     "label_point_estimate": "undecided",
     "label": "ambiguous_inconclusive"
    },
@@ -1204,7 +1343,13 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [
+     "domain_sensitivity[mean_drag_coefficient]",
+     "domain_sensitivity[strouhal_number]"
+    ],
     "label_setup_reading": "correct",
+    "label_literal": "correct",
     "label_point_estimate": "correct",
     "label": "correct"
    },
@@ -1212,8 +1357,11 @@
     "verdict": "INCONCLUSIVE",
     "counted": true,
     "status": "current",
-    "replay": "written after the last replay",
+    "replay": "not replayed",
+    "replayed": false,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "undecided",
     "label_point_estimate": "undecided",
     "label": "undecided"
    },
@@ -1222,7 +1370,10 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "ambiguous_inconclusive",
     "label_point_estimate": "undecided",
     "label": "ambiguous_inconclusive"
    },
@@ -1231,7 +1382,13 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [
+     "domain_sensitivity[mean_drag_coefficient]",
+     "domain_sensitivity[strouhal_number]"
+    ],
     "label_setup_reading": "correct",
+    "label_literal": "correct",
     "label_point_estimate": "correct",
     "label": "correct"
    },
@@ -1240,7 +1397,12 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [
+     "geometry_consistency"
+    ],
     "label_setup_reading": "correct",
+    "label_literal": "correct",
     "label_point_estimate": "correct",
     "label": "correct"
    },
@@ -1249,7 +1411,12 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [
+     "inlet_uniformity"
+    ],
     "label_setup_reading": "correct",
+    "label_literal": "ambiguous_reject",
     "label_point_estimate": "false_reject",
     "label": "ambiguous_reject"
    },
@@ -1258,7 +1425,10 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [],
     "label_setup_reading": "undecided",
+    "label_literal": "undecided",
     "label_point_estimate": "undecided",
     "label": "undecided"
    },
@@ -1267,7 +1437,12 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [
+     "geometry_consistency"
+    ],
     "label_setup_reading": "correct",
+    "label_literal": "correct",
     "label_point_estimate": "correct",
     "label": "correct"
    },
@@ -1276,7 +1451,12 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [
+     "inlet_uniformity"
+    ],
     "label_setup_reading": "correct",
+    "label_literal": "ambiguous_reject",
     "label_point_estimate": "false_reject",
     "label": "ambiguous_reject"
    },
@@ -1285,7 +1465,12 @@
     "counted": true,
     "status": "current",
     "replay": "match",
+    "replayed": true,
+    "failed_checks": [
+     "mesh_sensitivity[strouhal_number]"
+    ],
     "label_setup_reading": "correct",
+    "label_literal": "correct",
     "label_point_estimate": "correct",
     "label": "correct"
    }
@@ -1334,14 +1519,14 @@
     "INCONCLUSIVE": 23
    },
    "benchmark/C-llm-r2": {
-    "quantities": 21,
+    "quantities": 23,
     "ACCEPT": 1,
     "accept_within_half_tau": 1,
     "accept_within_tau": 0,
     "accept_beyond_tau": 0,
     "REJECT": 4,
     "reject_within_half_tau": 0,
-    "INCONCLUSIVE": 16
+    "INCONCLUSIVE": 18
    },
    "attacks/B-v1": {
     "quantities": 6,
@@ -1415,6 +1600,8 @@
     "verifier_U": 0.016246667160863707,
     "quantity_verdict": "ACCEPT",
     "case_verdict": "INCONCLUSIVE",
+    "failing_components": [],
+    "unreplayed_attack_result": false,
     "finding": "false acceptance (e > \u03c4)",
     "holds_for_every_T_within_UT": true
    },
@@ -1428,6 +1615,10 @@
     "verifier_U": null,
     "quantity_verdict": "REJECT",
     "case_verdict": "REJECT",
+    "failing_components": [
+     "mesh"
+    ],
+    "unreplayed_attack_result": false,
     "finding": "REJECT of an accurate quantity (e \u2264 \u03c4/2)",
     "holds_for_every_T_within_UT": true
    },
@@ -1441,6 +1632,10 @@
     "verifier_U": null,
     "quantity_verdict": "REJECT",
     "case_verdict": "REJECT",
+    "failing_components": [
+     "domain"
+    ],
+    "unreplayed_attack_result": false,
     "finding": "REJECT of an accurate quantity (e \u2264 \u03c4/2)",
     "holds_for_every_T_within_UT": true
    },
@@ -1454,6 +1649,10 @@
     "verifier_U": null,
     "quantity_verdict": "REJECT",
     "case_verdict": "REJECT",
+    "failing_components": [
+     "domain"
+    ],
+    "unreplayed_attack_result": false,
     "finding": "REJECT of an accurate quantity (e \u2264 \u03c4/2)",
     "holds_for_every_T_within_UT": true
    },
@@ -1467,8 +1666,137 @@
     "verifier_U": null,
     "quantity_verdict": "REJECT",
     "case_verdict": "REJECT",
+    "failing_components": [
+     "mesh"
+    ],
+    "unreplayed_attack_result": false,
     "finding": "REJECT of an accurate quantity (e \u2264 \u03c4/2)",
     "holds_for_every_T_within_UT": true
+   }
+  ],
+  "not_scored": [
+   {
+    "group": "benchmark",
+    "case": "D1_steady_solver",
+    "quantity": "strouhal_number",
+    "reason": "not produced",
+    "systems": [
+     "B",
+     "C-rule",
+     "C-llm",
+     "Bexh",
+     "C-llm-r2"
+    ]
+   }
+  ],
+  "case_rejects_every_quantity_within_half_tau": [
+   {
+    "group": "benchmark",
+    "case": "J1_coarse_wake",
+    "system": "B",
+    "errors": {
+     "mean_drag_coefficient": 0.005642655330814095,
+     "strouhal_number": 0.011070679169840005
+    },
+    "quantity_verdicts": {
+     "mean_drag_coefficient": "INCONCLUSIVE",
+     "strouhal_number": "INCONCLUSIVE"
+    },
+    "failed_checks": [
+     "mesh_quality"
+    ],
+    "labels": "credible (point estimates), ambiguous (with mitigation)",
+    "unreplayed_attack_result": false
+   },
+   {
+    "group": "benchmark",
+    "case": "J1_coarse_wake",
+    "system": "C-rule",
+    "errors": {
+     "mean_drag_coefficient": 0.005642655330814095,
+     "strouhal_number": 0.011070679169840005
+    },
+    "quantity_verdicts": {
+     "mean_drag_coefficient": "INCONCLUSIVE",
+     "strouhal_number": "INCONCLUSIVE"
+    },
+    "failed_checks": [
+     "mesh_quality"
+    ],
+    "labels": "credible (point estimates), ambiguous (with mitigation)",
+    "unreplayed_attack_result": false
+   },
+   {
+    "group": "benchmark",
+    "case": "J1_coarse_wake",
+    "system": "C-llm",
+    "errors": {
+     "mean_drag_coefficient": 0.005642655330814095,
+     "strouhal_number": 0.011070679169840005
+    },
+    "quantity_verdicts": {
+     "mean_drag_coefficient": "INCONCLUSIVE",
+     "strouhal_number": "INCONCLUSIVE"
+    },
+    "failed_checks": [
+     "mesh_quality"
+    ],
+    "labels": "credible (point estimates), ambiguous (with mitigation)",
+    "unreplayed_attack_result": false
+   },
+   {
+    "group": "benchmark",
+    "case": "J1_coarse_wake",
+    "system": "C-llm-r2",
+    "errors": {
+     "mean_drag_coefficient": 0.005642655330814095,
+     "strouhal_number": 0.011070679169840005
+    },
+    "quantity_verdicts": {
+     "mean_drag_coefficient": "INCONCLUSIVE",
+     "strouhal_number": "INCONCLUSIVE"
+    },
+    "failed_checks": [
+     "mesh_quality"
+    ],
+    "labels": "credible (point estimates), ambiguous (with mitigation)",
+    "unreplayed_attack_result": false
+   },
+   {
+    "group": "attacks",
+    "case": "X2_inlet_shear",
+    "system": "B-v2",
+    "errors": {
+     "mean_drag_coefficient": 0.011967924452297734,
+     "strouhal_number": 0.004990753620379909
+    },
+    "quantity_verdicts": {
+     "mean_drag_coefficient": "INCONCLUSIVE",
+     "strouhal_number": "INCONCLUSIVE"
+    },
+    "failed_checks": [
+     "inlet_uniformity"
+    ],
+    "labels": "flawed (set-up reading), ambiguous (literal reading), credible (narrow reading, point estimates), ambiguous (narrow reading, with mitigation)",
+    "unreplayed_attack_result": false
+   },
+   {
+    "group": "attacks",
+    "case": "X2_inlet_shear",
+    "system": "C-rule-v2",
+    "errors": {
+     "mean_drag_coefficient": 0.011967924452297734,
+     "strouhal_number": 0.004990753620379909
+    },
+    "quantity_verdicts": {
+     "mean_drag_coefficient": "INCONCLUSIVE",
+     "strouhal_number": "INCONCLUSIVE"
+    },
+    "failed_checks": [
+     "inlet_uniformity"
+    ],
+    "labels": "flawed (set-up reading), ambiguous (literal reading), credible (narrow reading, point estimates), ambiguous (narrow reading, with mitigation)",
+    "unreplayed_attack_result": false
    }
   ]
  },
@@ -1530,11 +1858,73 @@
    "C-rule": 77.55002888044433,
    "C-llm": 77.06091713913094
   },
+  "cost_difference_base": "the larger of the two costs",
   "n_cost_differs_gt_5pct": 9,
   "n_llm_cheaper": 2,
   "n_rule_cheaper": 7,
   "sign_test_p_two_sided": 0.1796875,
   "beats_on_cost": false,
+  "cost_difference_bases": {
+   "larger": {
+    "base": "the larger of the two costs",
+    "n_cost_differs_gt_5pct": 9,
+    "n_llm_cheaper": 2,
+    "n_rule_cheaper": 7,
+    "sign_test_p_two_sided": 0.1796875,
+    "beats_on_cost": false,
+    "cases_differ": [
+     "baseline",
+     "K1_central_scheme",
+     "A1_coarse_mesh",
+     "A2_moderate_mesh",
+     "B1_small_domain",
+     "B2_moderate_domain",
+     "C1_large_timestep",
+     "C2_euler_large_timestep",
+     "F1_upwind_convection"
+    ]
+   },
+   "C-rule": {
+    "base": "the C-rule cost",
+    "n_cost_differs_gt_5pct": 9,
+    "n_llm_cheaper": 2,
+    "n_rule_cheaper": 7,
+    "sign_test_p_two_sided": 0.1796875,
+    "beats_on_cost": false,
+    "cases_differ": [
+     "baseline",
+     "K1_central_scheme",
+     "A1_coarse_mesh",
+     "A2_moderate_mesh",
+     "B1_small_domain",
+     "B2_moderate_domain",
+     "C1_large_timestep",
+     "C2_euler_large_timestep",
+     "F1_upwind_convection"
+    ]
+   },
+   "smaller": {
+    "base": "the smaller of the two costs",
+    "n_cost_differs_gt_5pct": 9,
+    "n_llm_cheaper": 2,
+    "n_rule_cheaper": 7,
+    "sign_test_p_two_sided": 0.1796875,
+    "beats_on_cost": false,
+    "cases_differ": [
+     "baseline",
+     "K1_central_scheme",
+     "A1_coarse_mesh",
+     "A2_moderate_mesh",
+     "B1_small_domain",
+     "B2_moderate_domain",
+     "C1_large_timestep",
+     "C2_euler_large_timestep",
+     "F1_upwind_convection"
+    ]
+   }
+  },
+  "cost_difference_bases_agree": true,
+  "cost_difference_conclusions_agree": true,
   "llm_cost_usd_paired": 4.47214904,
   "conclusion": "does not meet 5b: the LLM planner adds no measurable value on this benchmark",
   "provisional": true
@@ -1549,6 +1939,16 @@
    "covered": 4,
    "covered_within_truth_unc": 4,
    "total": 10
+  },
+  "attacks_setup_departure": {
+   "covered": 4,
+   "covered_within_truth_unc": 4,
+   "total": 10
+  },
+  "attacks_numerics_only": {
+   "covered": 0,
+   "covered_within_truth_unc": 0,
+   "total": 0
   }
  }
 }

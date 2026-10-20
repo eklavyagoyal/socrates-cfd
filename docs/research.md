@@ -120,7 +120,7 @@ CL′ is r.m.s.
 
 ### 2.6 Time-step sensitivity
 
-- Qu et al. [V]: going from Δt = 0.005 to 0.04 (in D/U) lowers **CL′ by 9.8 %** but CD by only 0.8 %, while St rises by 0.2 %. The lift amplitude is the most time-step-sensitive quantity.
+- Qu et al. [V]: going from Δt = 0.005 to 0.04 (in D/U) lowers **CL′ by 9.9 %** but CD by only 0.8 %, while St rises by 0.2 %. The lift amplitude is the most time-step-sensitive quantity.
 - Behr et al. 1995 [V]: St is "significantly affected by the dissipation introduced by the time-integration scheme".
 
 ---
@@ -207,10 +207,10 @@ question. Those judgements are left to the expert. They are what this project au
 - **Over-specified inlet (U and p fixed) and outlet backflow.** Standard OpenFOAM practice is `inletOutlet` at outlets [tutorial pattern V; literature citation UNVERIFIED].
 - **Agents that "succeed" but are wrong.** This directly motivates the project.
   - Foam-Agent (arXiv 2505.04997v3, §3, §3.2 and Table 1; https://arxiv.org/abs/2505.04997v3) [V], on the 110-case Basic tier of FoamBench (part of CFDLLMBench, arXiv 2509.20374), full system with the paper's default backbone model:
-    - 97 cases (88.2 %) execute: the solver exits with code 0, writes a final time step and has no NaN or Inf in the residuals.
-    - 46 (41.8 %) are complete successes: they execute and their field NMSE against an expert-made reference is ≤ 0.1 (NMSE = squared L2 error over squared L2 norm of the reference field, averaged over U, p and, where present, ρ and T).
+    - 97 cases (110 − 13 execution failures; 88.2 %) execute: the solver exits with code 0, writes a final time step and has no NaN or Inf in the residuals.
+    - 46 (41.8 %) are complete successes: they execute and their field NMSE against an expert-made reference is ≤ 0.1 (NMSE = squared L2 error over squared L2 norm of the reference field, averaged over the fields U, p, ρ and T, where present).
     - Of the other executed cases, 13 have 0.1 < NMSE ≤ 0.3 and 38 have NMSE > 0.3. The paper calls the 38 "exec-pass / fidelity-fail".
-    - With the paper's second backbone model, 59.1 % execute.
+  - Foam-Agent with the other backbone in the paper's main comparison (§3.1): 59.1 % execute on the same tier (§3.2); the paper gives no NMSE for that backbone.
   - ChatCFD (arXiv 2506.02019) [V]: wrong boundary conditions "rarely trigger convergence failures".
 
 ---

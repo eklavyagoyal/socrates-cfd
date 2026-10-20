@@ -218,8 +218,10 @@ E1, G1, G2, J1). B2, intended as borderline, is flawed (Cd error 4.2 %).
 
 Everything in §14 except the crash: discretisation error, domain error, temporal
 error, averaging bias, wrong Re, wrong force normalisation, and wrong regime. In
-these cases the solver completes and default checkMesh reports `Mesh OK`. Two
-measured exceptions (`results/benchmark/A/`):
+these cases the solver completes and default checkMesh reports `Mesh OK`. System A
+(solver completion, `checkMesh -allGeometry -allTopology` as the runner uses it,
+and residualControl for steady runs) still rejects two of them
+(`results/benchmark/A/`):
 - **J1** fails the cell-determinant check of `checkMesh -allGeometry -allTopology`,
   which the runner uses (48 cells next to the outlet). Default checkMesh reports
   `Mesh OK` (`results/posthoc/J1_checkMesh_default.log`). System A rejects J1 on
@@ -276,12 +278,17 @@ See research §7. In summary:
   - **ambiguous** otherwise.
 
   *Annotation, not part of the pre-registered text above (which is unchanged):* the
-  extrapolation rule used for T was superseded. When the observed order lies outside
-  [0.5, 2]× the formal order, T uses p = min(observed, formal) with Fs = 3 (review
-  corrections R4/E1, `docs/methodology.md`). U(T) also carries model-form and
-  conditioning terms (far-field model form, time-overlap shift, time conditioning),
-  and the largest domain member is a far-field-refined ×4 run, not a primitive run
-  (`reports/baseline_validation.md` §3–4).
+  extrapolation rule originally used for T (the formal order outside the band, as in
+  the first version of §13) was superseded before the first reference was committed.
+  When the observed order lies outside [0.5, 2]× the formal order, T uses
+  p = min(observed, formal) with Fs = 3 (review corrections R4/E1,
+  `docs/methodology.md`). T is not one finest, largest or smallest-Δt run
+  extrapolated on its own: it is built as the baseline value plus the sum of
+  per-factor corrections from one-factor chains, with the mesh levels shifted to the
+  baseline Δt; the final time chain uses the finest three of four levels. U(T) also
+  carries model-form and conditioning terms (far-field model form, time-overlap
+  shift, time conditioning), and the largest domain member is a far-field-refined ×4
+  run, not a primitive run (`reports/baseline_validation.md` §3–4).
 - **Systems:**
   - **A** — OpenFOAM diagnostics only: ACCEPT if the solver completed, checkMesh is OK, and (steady) residualControl is satisfied; otherwise REJECT.
   - **B** — static deterministic verifier, one run.
@@ -313,8 +320,8 @@ See research §7. In summary:
 | 5–6 | Static verifier; adversarial cases run and screened | done |
 | 7–8 | Experiment primitives with provenance; mesh/time/domain studies on baseline | done; the reference needed three further stages (methodology §8) |
 | 9–10 | Critic and loop; rule-based planner | done |
-| 11–12 | Benchmark A/B/C + ablations | A, B, L-judge and C-rule complete (17/17). Running at 2026-10-20 09:50 UTC: C-llm 16/17 (K1 finished at 09:29; K2 running), Bexh 12/17, C-llm-r2 repeat 11/17 |
-| 13–14 | Attacks on the verifier; final reports | attacks complete (X1–X3 for every attack system); baseline report final; benchmark and final reports pending |
+| 11–12 | Benchmark A/B/C + ablations | A, B, L-judge and C-rule complete (17/17). Running at 2026-10-20 10:47 UTC: C-llm 16/17 (K1 finished at 09:29; K2 running), Bexh 12/17, C-llm-r2 repeat 11/17. Post-hoc J1 adaptive variant (`scripts/posthoc_allgeometry.py --adaptive`) and the C-llm-r3 repeat not started |
+| 13–14 | Attacks on the verifier; final reports | attacks complete (X1–X3 for every attack system); benchmark extensions (acceptance review and verifier v2 on the benchmark cases, `scripts/run_attacks.py --benchmark-extensions`) pending; baseline report final; benchmark and final reports pending |
 
 ---
 

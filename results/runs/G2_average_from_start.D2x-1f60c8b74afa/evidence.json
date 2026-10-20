@@ -1,0 +1,449 @@
+{
+  "mesh": {
+    "checkMesh": {
+      "points": 82116,
+      "faces": 162858,
+      "internal_faces": 80742,
+      "cells": 40600,
+      "hexahedra": 40600,
+      "max_aspect_ratio": 42.52965152,
+      "max_non_orthogonality": 43.31296755,
+      "avg_non_orthogonality": 5.604396322,
+      "max_skewness": 0.5338415736,
+      "min_volume": 9.864028568e-11,
+      "max_volume": 2.62207783e-05,
+      "total_volume": 0.0255992148,
+      "geometric_directions": 2,
+      "bounding_box": [
+        [
+          -0.6,
+          -0.8,
+          0.0
+        ],
+        [
+          1.0,
+          0.8,
+          0.01
+        ]
+      ],
+      "failed_checks": 1,
+      "mesh_ok": false,
+      "error_lines": [
+        "***Cells with small determinant (< 0.001) found, number of cells: 152"
+      ],
+      "warning_lines": [],
+      "completed": true,
+      "patches": {
+        "cylinder": {
+          "faces": 160,
+          "points": 320,
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.005,
+              -0.005,
+              0.0
+            ],
+            [
+              0.005,
+              0.005,
+              0.01
+            ]
+          ]
+        },
+        "inlet": {
+          "faces": 150,
+          "points": 302,
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.6,
+              -0.8,
+              0.0
+            ],
+            [
+              -0.6,
+              0.8,
+              0.01
+            ]
+          ]
+        },
+        "outlet": {
+          "faces": 150,
+          "points": 302,
+          "topology": "ok",
+          "bounding_box": [
+            [
+              1.0,
+              -0.8,
+              0.0
+            ],
+            [
+              1.0,
+              0.8,
+              0.01
+            ]
+          ]
+        },
+        "top": {
+          "faces": 228,
+          "points": 458,
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.6,
+              0.8,
+              0.0
+            ],
+            [
+              1.0,
+              0.8,
+              0.01
+            ]
+          ]
+        },
+        "bottom": {
+          "faces": 228,
+          "points": 458,
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.6,
+              -0.8,
+              0.0
+            ],
+            [
+              1.0,
+              -0.8,
+              0.01
+            ]
+          ]
+        },
+        "frontAndBack": {
+          "faces": 81200,
+          "points": 82116,
+          "topology": "ok",
+          "bounding_box": [
+            [
+              -0.6,
+              -0.8,
+              0.0
+            ],
+            [
+              1.0,
+              0.8,
+              0.01
+            ]
+          ]
+        }
+      }
+    },
+    "n_cells": 40600,
+    "design": {
+      "refinement_factor": 1.0,
+      "cells_around_cylinder": 160,
+      "wall_normal_first_cell_D": 0.005000000000000012,
+      "radial_cells_inner_ring": 30,
+      "wake_cells_streamwise": 145,
+      "wake_first_cell_D": 0.1250000000000012,
+      "wake_last_cell_D": 1.9728741626121586,
+      "wake_cells_across_near_wake": 40,
+      "wake_factor": 1.0
+    },
+    "measured_geometry": {
+      "cylinder_patch_bounding_box_m": [
+        [
+          -0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.005,
+          0.01
+        ]
+      ],
+      "cylinder_diameter_x_m": 0.01,
+      "cylinder_diameter_y_m": 0.01,
+      "configured_diameter_m": 0.01
+    },
+    "representative_cell_size_D": 0.7940544893265855,
+    "domain_area_D2": 25599.214799999998
+  },
+  "domain": {
+    "upstream_D": 60.0,
+    "downstream_D": 100.0,
+    "half_height_D": 80.0,
+    "blockage_ratio": 0.00625,
+    "lateral_boundary": "symmetryPlane",
+    "outlet_velocity_bc": "inletOutlet",
+    "outlet_pressure_bc": "fixedValue",
+    "inlet_pressure_bc": "zeroGradient",
+    "cylinder_velocity_bc": "noSlip"
+  },
+  "configuration": {
+    "solver": "pimpleFoam",
+    "ddt_scheme": "backward",
+    "convection_scheme": "Gauss linearUpwind grad(U)",
+    "grad_scheme": "Gauss linear",
+    "pimple": {
+      "nOuterCorrectors": 1,
+      "nCorrectors": 2,
+      "nNonOrthogonalCorrectors": 0
+    },
+    "time_step_convective": 0.01,
+    "end_time_convective": 80.0,
+    "declared_averaging_start_convective": 40.0,
+    "adjust_time_step": false,
+    "physical_configured": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "configured_reynolds": 100.0,
+    "spec_reynolds": 100.0,
+    "spec_reynolds_from_parameters": 100.0,
+    "force_reference": {
+      "magUInf": 0.15,
+      "lRef": 0.01,
+      "Aref": 0.0001,
+      "rhoInf": 1.2
+    },
+    "force_reference_consistent_values": {
+      "magUInf": 0.15,
+      "lRef": 0.01,
+      "Aref": 0.0001
+    },
+    "mesh_span_m": 0.01,
+    "initial_perturbation": true
+  },
+  "solver": {
+    "log_found": true,
+    "logs": [
+      "log.pimpleFoam"
+    ],
+    "application": "pimpleFoam",
+    "build": "_b8cf4d35-20260127 OPENFOAM=2412 patch=260127 version=2412",
+    "n_procs": 1,
+    "completed": true,
+    "fatal_errors": [],
+    "warnings": [
+      "--> FOAM Warning : From virtual Foam::Time& Foam::Time::operator++() in file db/Time/Time.C at line 1225 Increased the timePrecision from 10 to 11 to distinguish between timeNames at time 5.3333333336"
+    ],
+    "n_warnings": 1,
+    "n_steps": 8000,
+    "final_time": 5.3333333336,
+    "execution_time_s": 1277.85,
+    "courant_max": 0.5944601257,
+    "courant_max_including_startup": 0.5944601257,
+    "courant_mean_avg": 0.014445803650057572,
+    "courant_startup_steps_skipped": 10,
+    "continuity_sum_local_max": 1.309803507e-14,
+    "continuity_sum_local_median": 1.0209358275e-14,
+    "continuity_cumulative_final": -2.259304399e-10,
+    "max_linear_solver_iteration_hits": 0,
+    "p_last_solve_final_residual_max": 9.99962596e-08,
+    "p_last_solve_final_residual_p99": 9.965424867189999e-08,
+    "p_last_solve_unconverged_fraction_1e-7": 0.0,
+    "steady_converged_iteration": null
+  },
+  "residuals": {
+    "found": true,
+    "Ux_initial": {
+      "final": 3.577810214e-05,
+      "max_last_10pct": 3.61850957e-05,
+      "median_last_10pct": 3.5754399455e-05
+    },
+    "Uy_initial": {
+      "final": 0.0014329056,
+      "max_last_10pct": 0.002497620333,
+      "median_last_10pct": 0.0014568455759999999
+    },
+    "p_initial": {
+      "final": 0.005249740868,
+      "max_last_10pct": 0.006491913849,
+      "median_last_10pct": 0.005005726441
+    },
+    "Ux_final_max_last_10pct": 1.492999769e-09,
+    "Uy_final_max_last_10pct": 9.995094802e-09,
+    "p_final_max_last_10pct": 6.351408687e-05
+  },
+  "conservation": {
+    "patch_fluxes_found": true,
+    "patches": [
+      "bottom",
+      "inlet",
+      "outlet",
+      "top"
+    ],
+    "relative_imbalance_max": 4.1666792990428344e-11,
+    "relative_imbalance_final": 0.0,
+    "lateral_flux_fraction_max": 0.0
+  },
+  "inlet": {
+    "measured": true,
+    "time": 5.3333333336,
+    "n_faces_or_uniform": 1,
+    "ux_min": 0.15,
+    "ux_max": 0.15,
+    "ux_mean_unweighted": 0.15,
+    "ux_nonuniformity": 0.0,
+    "uy_max_abs": 0.0
+  },
+  "forces": {
+    "found": true,
+    "steady": false,
+    "record_start": 0.0006666666667,
+    "record_end": 5.3333333336,
+    "record_length_convective": 79.9900000039995,
+    "n_samples": 8000,
+    "oscillating": true,
+    "cl_rms_last_quarter": 0.22054187604296496,
+    "upcrossings_last_half": 6,
+    "oscillation_rms_threshold": 0.001,
+    "declared_window": {
+      "start": 2.6666666666666665,
+      "mean_cd": 1.3223729707451048,
+      "cl_rms": 0.22586779445299232,
+      "frequency_fft": 2.4402493241623473,
+      "frequency_resolution": 0.375000000009375,
+      "length_convective": 39.999999998999996,
+      "complete_cycles": 5
+    },
+    "n_cycles_total": 12,
+    "stationary_window": {
+      "method": "MSER on per-cycle mean Cd, lift amplitude and period; integer cycles",
+      "truncated_cycles": 6,
+      "mser_index": {
+        "mean_cd": 6,
+        "cl_amplitude": 6,
+        "period": 6
+      },
+      "start": 2.6292022378451354,
+      "end": 5.087619208088744,
+      "n_cycles": 6,
+      "length_convective": 36.87625455365413,
+      "mean_cd": 1.3224473424224643,
+      "mean_cl": 3.787783249971228e-06,
+      "cl_rms": 0.2262730566563321,
+      "cl_amplitude_mean": 0.32012236785,
+      "cd_amplitude_mean": 0.009099981925,
+      "frequency_zero_crossing": 2.440594932683633,
+      "frequency_fft": 2.4405193149920064,
+      "frequency_fft_resolution": 0.4068348248955106,
+      "period_cv": 0.00037024108062366215,
+      "mean_cd_ci95_halfwidth": 0.0005897967893011164,
+      "period_ci95_halfwidth": 0.00015920060316311385,
+      "cycle_mean_cd_lag1_autocorr": 0.997662019996309,
+      "mean_cd_relative_drift": -0.0012442655453649592,
+      "cl_amplitude_relative_drift": -0.0032164262668140427,
+      "period_relative_drift": 0.0010994556278404143,
+      "period_half_difference_rel": 0.0005283988380620118,
+      "mean_cd_half_difference_rel": -0.0005942128148726375
+    },
+    "cycle_table": {
+      "t_start": [
+        0.17819455979313237,
+        0.5861740239907556,
+        0.9943022511069957,
+        1.4026390330891274,
+        1.8111774150354312,
+        2.22003236695093,
+        2.6292022378451354,
+        3.038678882816787,
+        3.4483139029539664,
+        3.8580859667993024,
+        4.267905066381737,
+        4.677755735773316
+      ],
+      "mean_cd": [
+        1.330672459561762,
+        1.3298964991456645,
+        1.3289250893571491,
+        1.3276766321541429,
+        1.3260676141317767,
+        1.3245669256757107,
+        1.3234565187150569,
+        1.3227588592125503,
+        1.322333861213657,
+        1.3221437727596128,
+        1.3220452696860534,
+        1.3220027512220125
+      ],
+      "cl_amplitude": [
+        0.32336552681499997,
+        0.323267771345,
+        0.32297773776000005,
+        0.322535979815,
+        0.32193681942499996,
+        0.32125931412,
+        0.32071527602,
+        0.320335912605,
+        0.320066000355,
+        0.319928437535,
+        0.319864072475,
+        0.31982450811
+      ],
+      "period": [
+        0.4079794641976232,
+        0.4081282271162401,
+        0.40833678198213175,
+        0.40853838194630376,
+        0.4088549519154987,
+        0.40916987089420553,
+        0.4094766449716518,
+        0.40963502013717923,
+        0.40977206384533593,
+        0.4098190995824349,
+        0.4098506693915791,
+        0.4098634723154273
+      ]
+    }
+  },
+  "temporal_behavior": {
+    "steady_solver": false,
+    "oscillating": true,
+    "record_length_convective": 79.9900000039995,
+    "transient_end_time_convective": 39.43803356767703,
+    "declared_averaging_start_convective": 40.0,
+    "stationary_cycles": 6,
+    "declared_window_cycles": 5,
+    "mser_truncated_cycles": 6,
+    "mser_hit_cap": true,
+    "steps_per_period": 614.6042425609021,
+    "shedding_period_convective": 6.146042425609021
+  },
+  "qoi": {
+    "reported": {
+      "mean_drag_coefficient": 1.3223729707451048,
+      "rms_lift_coefficient": 0.22586779445299232,
+      "strouhal_number": 0.16268328827748982,
+      "strouhal_frequency_resolution": 0.025000000000625,
+      "basis": "declared averaging window; time-weighted mean; St from FFT peak of Cl"
+    },
+    "stationary": {
+      "mean_drag_coefficient": 1.3224473424224643,
+      "rms_lift_coefficient": 0.2262730566563321,
+      "strouhal_number": 0.16270632884557554,
+      "strouhal_number_fft": 0.16270128766613376,
+      "mean_drag_coefficient_ci95": 0.0005897967893011164,
+      "mean_drag_coefficient_drift_rel": -0.0012442655453649592,
+      "mean_drag_coefficient_half_diff_rel": -0.0005942128148726375,
+      "n_cycles": 6
+    }
+  },
+  "run_id": "G2_average_from_start.D2x-1f60c8b74afa",
+  "extraction": {
+    "extractor_sha256": "e5ad2b6ece3659d0",
+    "git_commit": "f7bdfd45d34a46fa0d195e6a4594286226b9dcac",
+    "time": "2026-10-20T10:39:35+00:00"
+  },
+  "cost": {
+    "wall_seconds": 1405.7593539619993,
+    "n_cells": 40600,
+    "n_steps": 8000,
+    "n_steps_including_restart_history": 8000,
+    "cell_steps": 324800000
+  }
+}

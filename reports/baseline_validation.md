@@ -44,8 +44,9 @@ as unbounded.
   - 2b is met through its fallback clause ("or the report explains why not"). The pre-registered verifier does
     *not* bound the drag uncertainty. On the full-study graph (baseline + 11 study runs, §6) it returns
     INCONCLUSIVE for drag, because the drag domain component (component U = 2.62 %, from the coarse-far-field
-    domain chain) exceeds τ/2. It ACCEPTs St (combined U 1.86 %). The benchmark systems' own baseline graphs also
-    leave drag INCONCLUSIVE on the domain component, with component U from 1.74 % to 3.89 % (§6).
+    domain chain) exceeds τ/2. It ACCEPTs St (combined U 1.86 %). The baseline graphs that C-rule, C-llm, C-llm-r2
+    and Bexh built also leave drag INCONCLUSIVE on the domain component, with component U from 1.74 % to 3.89 %;
+    the values below 2.62 % come mainly from domain levels that had not settled, not from better evidence (§6).
 
 ## 2. Case set-up
 
@@ -194,7 +195,7 @@ unlikely. It is not derived from a model of the residual far-field error:
 | version | truth.json commit | labels commit | Cd | St | what changed |
 |---|---|---|---|---|---|
 | stage 1 | 0cb34f0 (11:02) | 3d9f43c (11:03) | 1.3133 ± 0.72 % | 0.1647 ± 1.06 % | pre-registered chains; domain levels unsettled (80 D/U) |
-| stage 1, root continued | ce815d6 (11:23) | 3cff05d (12:42) | 1.3134 ± 0.71 % | 0.1648 ± 1.29 % | root value from its 250 D/U continuation; other members unchanged |
+| stage 1, root continued | ce815d6 (11:23) | 3cff05d (12:42) | 1.3134 ± 0.71 % | 0.1648 ± 1.29 % | root value from its 250 D/U continuation; other members unchanged (commit titled stage 2: the stage-2 runs were launched; truth.json changed only the root value); St U rises because the St time order falls from 0.25 to 0.21 |
 | stage 2 | 33d5ebf (13:25) | 33d5ebf | 1.3046 ± 1.15 % | 0.1638 ± 0.28 % | settled domain levels; dt/8 |
 | stage 2, model-form terms | 4776198 (13:51) | not recomputed | 1.3046 ± 1.19 % | 0.1638 ± 0.48 % | time-overlap model-form term; time conditioning term |
 | stage 3 (four-level domain chain, standard far field) | 26fee11 (14:26) | not recomputed | 1.290 ± 6.3 % | 0.1641 ± 0.84 % | the domain chain is not asymptotic |
@@ -203,17 +204,18 @@ unlikely. It is not derived from a model of the residual far-field error:
 The revisions were not made blind to the benchmark. Labels and rates were first computed against the stage-1
 reference (3d9f43c, which also wrote `reports/benchmark_tables.md` and `results/benchmark/metrics.json`). The
 handoff document committed at 4b2a419 (13:13) interpreted benchmark verdicts and case errors under the 3cff05d
-labels (its §39, "findings so far"), before stages 2–4 were committed. The stated reason for each later stage is a
-diagnostic of the study itself (stage table in §3), and no verdict uses T. What the revisions can and cannot have
-changed (recomputed from the `reported` values in `benchmark/labels.json` and each version's `truth`):
+labels (its §39, "findings so far"), before the stage 2–4 references were committed. The stated reason for each
+later stage is a diagnostic of the study itself (stage table in §3), and no verdict uses T. What the revisions can
+and cannot have changed (recomputed from the `reported` values in `benchmark/labels.json` and each version's
+`truth`):
 - On point estimates (§19 rule verbatim), the flawed set is identical under every committed labels version:
   A1, B1, B2, C2, D1, F1, H1, I1.
 - The credible set changes: baseline, C1, K2 (3d9f43c, 3cff05d); A2, C1, G2, J1 (33d5ebf); A2, C1, J1, K2,
   baseline (021fc5a).
-- So the false-acceptance and detection rates do not depend on the revisions; the correct-acceptance and
-  false-rejection rates do.
+- So, on point estimates, the false-acceptance and detection rates do not depend on the revisions, while the
+  correct-acceptance and false-rejection rates do.
 - With the mitigation (§7), the stored label sets are the same in all four labels versions: A1, B1, B2, D1, F1,
-  H1, I1 flawed, no case credible, the rest ambiguous.
+  H1, I1 flawed, no case credible, the rest ambiguous; so in the mitigated view no rate depends on the revisions.
 
 **Cl rms (not a requested quantity) has no reliable reference.** With the standard ×4 level its domain chain
 diverges. With the refined ×4 level it extrapolates to 0.2217, and the time-overlap shift moves it by 2.4 %. No value
@@ -266,14 +268,15 @@ not the refined test run.
 | time | 0.65 % PASS | 0.67 % PASS |
 | domain | **2.62 % INCONCLUSIVE** | 1.12 % PASS |
 
-A component U is that component's own uncertainty estimate, and each must be ≤ τ/2. The combined U (the measured
-averaging bias plus the root-sum-square of the other components, design §13) is formed only when every component
-PASSes, and must be ≤ τ. The drag domain component does not PASS in any graph in this section, so no drag
-combined U exists.
+Each uncertainty component (statistics, mesh, time, domain) PASSes only if its U ≤ τ/2. The averaging component is
+a measured bias and PASSes if it is ≤ τ. The combined U (the averaging bias plus the root-sum-square of the
+uncertainty components, design §13) is formed only when every component PASSes, and must be ≤ τ. The drag domain
+component does not PASS in any graph in this section, so no drag combined U exists.
 
-The benchmark systems built their own, smaller graphs for the baseline case
-(`results/benchmark/<system>/baseline.json`, verifier `per_qoi`). Their domain levels are 80 D/U EXPAND_DOMAIN
-runs; the full-study graph also contains the continuations of those levels (`baseline.long180/200/280`).
+C-rule, C-llm, C-llm-r2 and Bexh built their own, smaller graphs for the baseline case
+(`results/benchmark/<system>/baseline.json`, verifier `per_qoi`). A and L-judge build no verifier graph, and B's
+single-run graph has no domain level (first table above). The full-study domain chain uses the settled
+continuations (`baseline.long250`, `baseline.long180`, `baseline.long280`).
 
 | graph | Cd domain component U | Cd | St |
 |---|---|---|---|
@@ -285,11 +288,21 @@ runs; the full-study graph also contains the continuations of those levels (`bas
 
 Every drag domain component is above τ/2 = 1.5 %.
 
+The C-rule, C-llm and C-llm-r2 values are lower than the same estimates on settled levels because their domain
+levels are the 80 D/U EXPAND_DOMAIN runs, which had not settled (×2 1.32259 against 1.32189 settled, ×3 1.31943 against 1.31815, ×4 1.31789 against
+1.31577; §3 stages 2–3, §8 "Mapped initialisation"), not because their evidence is better. The three-level estimate
+uses the root and the two largest domains of each chain: ×2 and ×4 for C-rule (observed order 0.86, against 0.60
+with the settled values); ×3 and ×4 for C-llm, whose chain also has ×2; ×2 and ×3 for C-llm-r2, whose chain also
+has ×1.5 and stops at ×3 (half-height 120 D). With the settled values of the same levels, the same estimate gives
+2.62 % (C-rule), 7.15 % (C-llm: observed order 0.49, just below the band, so Fs = 3) and 2.40 % (C-llm-r2; it
+stays below 2.62 % only because that chain stops at ×3). Bexh
+has one domain level (the 80 D/U ×2 run), with `baseline.long250` as its root member.
+
 Reading this:
 - **The verifier's domain component U for Cd is inflated by the far-field confound** (stage 4 and its ×1
   control). U = 1.25 × the root's estimated domain error from the standard chain, 2.09 % relative to the
-  extrapolated value, which gives 2.62 %. From the refined chain it would be 1.25 × 1.25 % = 1.56 %. That is still just above τ/2, so the domain
-  component would remain INCONCLUSIVE.
+  extrapolated value, which gives 2.62 %. From the refined chain it would be 1.25 × 1.25 % = 1.56 %. That is still
+  just above τ/2, so the domain component would remain INCONCLUSIVE.
 - **The verifier cannot ACCEPT this drag within the primitives.** ×4 is EXPAND_DOMAIN's hard limit, so no further step
   is available, and even the refined chain would give U above τ/2.
 - **The confound is a design flaw of the EXPAND_DOMAIN primitive, not of the decision rule.** It makes the verifier

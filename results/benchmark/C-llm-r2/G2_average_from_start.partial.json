@@ -169,6 +169,102 @@
     "expected_outcome": "If the stationary-window drag and Strouhal number change by well under 1.5% relative to R1 (1.3311 and 0.16344), the mesh component can be bounded and the check can pass. A larger change shows the root mesh is inadequate, and a further refinement or a FAIL follows."
    },
    "outcome": "executed -> G2_average_from_start.m1.41-0f6f3498eef5 (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 26.819920828998875,
+    "cost_usd": 0.093996675,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 29244,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 48,
+     "untraced": [
+      {
+       "token": "1.77",
+       "context": " of 12.0 root-compute units. EXPAND_DOMAIN on R1 adds about 1.77 units. A REDUCE_TIME_STEP run (about 2."
+      },
+      {
+       "token": "2.67",
+       "context": " on R1 adds about 1.77 units. A REDUCE_TIME_STEP run (about 2.67 units) can still follow it."
+      }
+     ],
+     "n_untraced": 2
+    },
+    "run_aliases": {
+     "G2_average_from_start-e7384e5a2c24": "R0",
+     "G2_average_from_start.long160-24e243b2227c": "R1",
+     "G2_average_from_start.m1.41-0f6f3498eef5": "R2"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed. There is no FAIL, so REJECT is not justified.",
+    "R1 (RUN_LONGER, 13 stationary cycles) settled the statistics. Drag drift is 5.59e-05 and the statistics uncertainties are 5.59e-05 (drag) and 4.525e-05 (Strouhal). The averaging bias of R0's submitted values is 0.008643 (drag) and 0.01219 (Strouhal).",
+    "R2 (REFINE_MESH from R1, factor about 1.41) gives a demonstrated change of 0.28% in drag (1.3311 to 1.3349) and 0.61% in Strouhal (0.16344 to 0.16443). Both are below the 3% tolerance. The two-level Richardson estimate of mesh uncertainty is 1.69% (drag) and 3.62% (Strouhal). It assumes p=2, so it is an estimate, not a measured order.",
+    "Time and domain components are still completely unmeasured for both quantities. No REDUCE_TIME_STEP or EXPAND_DOMAIN run exists, and a missing component is not a pass.",
+    "The domain is the cheapest unmeasured component to test. EXPAND_DOMAIN on R1 is estimated at 1126 s, against 1697 s for REDUCE_TIME_STEP and 1963 s for REFINE_MESH. The domain is truncated at 30D upstream, 50D downstream and 40D half height, with a symmetryPlane lateral boundary and a blockage ratio of 0.0125. The question says to treat the stream as unbounded, so this truncation is a direct risk to the answer.",
+    "Time-step error looks less likely to dominate. The setup uses a second-order backward scheme, 611.86 steps per shedding period and max Courant number 0.73373. That is a hypothesis, and only a REDUCE_TIME_STEP run can test it.",
+    "R1 is the right parent. It has the same mesh and time step as R0 and a long stationary window, so any shift can be attributed to the domain and not to sampling noise. R2 as parent would cost 2607 s and has only 6 cycles.",
+    "Budget: 2 of 6 experiments are used and 4.75 of 12.0 root-compute units. EXPAND_DOMAIN on R1 adds about 1.77 units. A REDUCE_TIME_STEP run (about 2.67 units) can still follow it.",
+    "The root mesh uncertainty for Strouhal (3.62%) already exceeds the 0.5*tolerance component limit. The remaining menu may therefore not reach ACCEPT for the root. I cannot use that to pre-empt the evidence. The deterministic verdict stays INCONCLUSIVE."
+   ],
+   "missing_evidence": [
+    "Domain truncation/blockage error for drag and Strouhal (EXPAND_DOMAIN not run)",
+    "Temporal discretisation error for drag and Strouhal (REDUCE_TIME_STEP not run)",
+    "A mesh uncertainty for the root that is within 0.5*tolerance. The current Richardson estimate assumes p=2, with only two levels (R1, R2) and no measured order of convergence.",
+    "A physics_regime check evaluated on the longer R1 record. The INCONCLUSIVE result still cites only R0 (lift amplitude +6.7% across the window).",
+    "Combined uncertainty against the 0.03 tolerance for both quantities"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The artificial boundaries (30D upstream, 50D downstream, 40D half height, symmetry lateral planes, blockage ratio 0.0125) bias mean drag and Strouhal by less than 0.5*tolerance (1.5%).",
+     "test": "EXPAND_DOMAIN from R1 with factor 2.0. Compare the stationary-window drag (R1: 1.3311) and Strouhal (R1: 0.16344). A relative change below about 1.5% for both confirms the hypothesis. A change above 3% (beyond twice the noise floor) refutes it and would justify a FAIL."
+    },
+    {
+     "hypothesis": "A time step of 0.01 D/U (611.86 steps per period, backward scheme) leaves a temporal error that is small compared with the mesh error.",
+     "test": "REDUCE_TIME_STEP from R1 with factor 2.0 in a later iteration. Compare the stationary-window drag and Strouhal with R1."
+    },
+    {
+     "hypothesis": "The mesh error for Strouhal is smaller than the assumed-order Richardson estimate of 3.62%.",
+     "test": "Only a third mesh level would measure the observed convergence order. That is probably unaffordable (REFINE_MESH from R2 is 4510 s)."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "G2_average_from_start.long160-24e243b2227c",
+    "reason": "Domain truncation is a completely unmeasured error component for both quantities, and the question requires an unbounded stream. EXPAND_DOMAIN is the cheapest experiment (1126 s on R1). R1 has the same mesh and time step as R0 and a converged 13-cycle stationary window, so any shift is attributable to the boundaries.",
+    "expected_outcome": "If drag and Strouhal change by well under 1.5% relative to R1 (1.3311 and 0.16344), the domain component can be bounded and passes. A change above 3% would be a demonstrated domain error and would support a FAIL. An intermediate change means the domain term uses much of the budget and a further expansion would be needed."
+   },
+   "outcome": "executed -> G2_average_from_start.D2x-1f60c8b74afa (completed)"
   }
  ]
 }

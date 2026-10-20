@@ -50,11 +50,14 @@ checks, primitives (which act on `CaseConfig`), critic, loop and reporting.
 | "Reported" value | declared averaging window from the case | What the case author's own post-processing would give: time-weighted mean; St from FFT peak |
 
 Evidence is a pure function of (raw outputs, configuration, spec). It can be
-regenerated with `RunStore.reextract` after an extractor change. This was done after
-the linear-solver parser fix (§7) and after the extractor changes of the adversarial
-review: 15 evidence files carry `extraction.reextracted = true` (12 root runs at 08:24 UTC,
-the C1 and C2 roots at 09:08 and the K1 root at 09:33, all on 2026-10-19). All 171 evidence
-files in the run store carry the same extractor fingerprint.
+regenerated with `RunStore.reextract` after an extractor change, which overwrites the
+evidence file together with its record of any earlier re-extraction. The re-extractions after
+the linear-solver parser fix (§7) and the other early extractor changes ran at 07:17–07:24 UTC
+on 2026-10-19 and recorded only their time (committed in 4a53ce3 and f27a82d); no current
+evidence file shows them. Since R19 the record carries the extractor fingerprint: 15 evidence
+files carry `extraction.reextracted = true` (12 root runs at 08:24 UTC, the C1 and C2 roots at
+09:08 and the K1 root at 09:33, all on 2026-10-19). Every evidence file in the run store (175 on
+2026-10-20 at 10:46 UTC) carries the same extractor fingerprint.
 
 ## 3. Deterministic checks (`checks/`)
 
@@ -65,7 +68,7 @@ Thresholds come from three places (`configs/verification.yaml`):
 1. **OpenFOAM defaults or guidance** (checkMesh limits, the Co < 1 PISO guideline);
 2. **Literature** (regime boundaries; Roache/Celik safety factors);
 3. **The user's tolerance τ**, via an explicit error budget:
-   - each component's uncertainty must be ≤ τ/2 to PASS;
+   - each component's uncertainty must be ≤ τ/2 to PASS (except the averaging bias, which PASSes up to τ when its reference is reliable and is added linearly, R22/R23);
    - a demonstrated change > τ (by more than twice the statistical noise) FAILs;
    - ACCEPT needs the measured averaging bias plus the root-sum-square of the independent components ≤ τ (R23).
 
@@ -128,7 +131,7 @@ is matched against the numbers in its package at its printed precision: half a u
 in its last printed digit, so "1.33" matches values within 0.005. Magnitudes are compared.
 - Percent tokens are matched against 100× package values; plain tokens only against package values.
 - Percent strings in the package contribute both v and v/100; numbers inside dict keys count as known.
-- Integers below 10 (counts, run indices, list numbering) are skipped.
+- Plain (non-percent) integers below 10 (counts, run indices, list numbering) are skipped.
 - The critic-authored fields of earlier iterations are excluded from the pool, so a number it invented cannot become traced by repetition.
 
 Untraceable numbers are counted and shown in reports. This catches fabricated values
@@ -149,7 +152,8 @@ backoff and jitter. Every attempt, error, latency and cost is recorded.
 
 Pre-registered in `docs/design.md` §19, committed at 07:13 UTC on 2026-10-19 (dd548bc), after the
 first root runs had started (07:00–07:02). The decision code was revised after early verdicts were
-known. Every reported verdict was recomputed on the final decision code. The details
+known. Every benchmark result carries the final decision-code stamp. Attack results carry none and
+rest on a replay of the verifier, which has to be repeated on the final result set. The details
 are under "Deviations from pre-registration" below.
 
 **In-house reference** (final construction; details and numbers in `reports/baseline_validation.md`
@@ -172,6 +176,11 @@ was replaced in three further stages (§8, "Observations").
 - **flawed** if max error > τ, a requested quantity is missing, or the set-up solves a different problem;
 - **credible** if max error ≤ τ/2;
 - **ambiguous** otherwise.
+
+The set-up clause is applied in the narrow reading (`orchestration/truth.label_case`, `benchmark/labels.json`):
+only set-up problems detected from the evidence (wrong Re, steady formulation of a periodic flow) and missing
+quantities count; every other departure from the problem statement is judged by its error. The attack tables
+(`reports/benchmark_tables.md`) also show the literal and set-up readings.
 
 Two views are reported. The first applies the mitigation for the uncertainty of T (R18): a case is
 ambiguous when [e − U(T), e + U(T)] straddles τ or τ/2, unless it is flawed for every T in that
@@ -199,12 +208,13 @@ Times are UTC on 2026-10-19 unless stated; commits are from `git log`.
    - The first root runs were created at 07:00–07:02 (`created` in `results/runs/*/run.json`); A1 finished at 07:06.
    - `docs/design.md` with the protocol was committed at 07:13 (dd548bc).
    - The decision code (the files hashed by `orchestration/systems.py::decision_code_fingerprint`) then changed in ten commits up to 09:06, among them 4a53ce3 (07:18, "fix averaging check reference reliability (found on G1)").
-   - The first results snapshot (8c77290, 07:43) holds A, B and L-judge verdicts on seven cases and C-rule and C-llm verdicts on D1 and J1.
-   - Four decision-code commits came after it: 1df98b8 (08:20), 4639ddb (08:24), 10f8b80 (08:59) and b65bf88 (09:06, the final fingerprint `6406c53bb2011ef5`).
+   - Benchmark verdicts were first committed in 0ce5d5e (07:30: `results/bench_batch1.log`; A, B and L-judge on A1, B1, D1 and G1; C-rule on D1, run at 07:25). The first results snapshot, 8c77290 (07:43), holds A, B and L-judge verdicts on seven cases and C-rule and C-llm verdicts on D1 and J1.
+   - Six decision-code commits followed the first committed verdicts: 667dd6c (07:35), 8161f5c (07:40), 1df98b8 (08:20), 4639ddb (08:24), 10f8b80 (08:59) and b65bf88 (09:06, the final fingerprint `6406c53bb2011ef5`).
+   - `docs/design.md` was edited after dd548bc. Among the changes, §13 was brought in line with the corrected verifier (averaging as a measured bias, the order used below the band, monotone divergence, the FAIL noise rule, bias + RSS for ACCEPT), and the mapped-child duration in §18 was reduced from 100 to 80 D/U (b8057b0, 07:23, before the first committed child run, created at 07:24). The pre-registered text is the dd548bc version (`git show dd548bc:docs/design.md`). The pre-registered text of §19 is unchanged; an annotation marked as not part of it describes how T was actually built (the superseded extrapolation rule, the model-form terms, the refined ×4 member).
 
-   Every reported verdict was recomputed on the final code: each result carries the decision-code stamp, and `scripts/replay_verdicts.py` replays the verifier on every stored result. The revisions were nevertheless made with some early verdicts known.
+   Each benchmark result carries the decision-code stamp (all current ones: `6406c53bb2011ef5`). Attack results carry none and are checked only by `scripts/replay_verdicts.py` (E11). The last recorded replay (`results/analysis/replay.json`, 2026-10-20 05:02 UTC) matched all 62 results with a verifier verdict that existed then (A and L-judge results have none to replay). It has to be re-run on the final result set before the claim holds for every reported verdict. The revisions were nevertheless made with some early verdicts known.
 2. **Rule planner.** §19 fixes the C-rule order statistics/averaging → mesh → time → domain. The RUN_LONGER request for an INCONCLUSIVE `physics_regime` was added after the first results (10f8b80) and is applied before that order; so is the RUN_LONGER request for an unreliable family member (1df98b8). The regime rule cannot discharge the check it targets (§8, "Observations").
-3. **Reference T.** T has four committed versions in `benchmark/labels.json`. All 17 A, B and L-judge results existed before the first version, as did 5 C-rule and 5 C-llm results (7 and 6 by the last version). Metrics and tables (`results/benchmark/metrics.json`, `reports/benchmark_tables.md`) were regenerated with each version.
+3. **Reference T.** T has four committed versions in `benchmark/labels.json`. All 17 A, B and L-judge results existed before the first version, as did 5 C-rule and 5 C-llm results (7 and 6 by the last version); 2 Bexh results existed by 3cff05d. Metrics and tables (`results/benchmark/metrics.json`, `reports/benchmark_tables.md`) were regenerated with each version.
 
    | commit | time | Cd | St | basis |
    |---|---|---|---|---|
@@ -213,15 +223,18 @@ Times are UTC on 2026-10-19 unless stated; commits are from `git log`.
    | 33d5ebf | 13:25 | 1.3046 ± 1.15 % | 0.1638 ± 0.28 % | stage 2 |
    | 021fc5a | 16:43 | 1.3155 ± 0.94 % | 0.1639 ± 0.46 % | stage 4 (final) |
 
-   The stage-3 estimate (1.290 ± 6.3 %) was never committed as T. An interim interpretation of the results under the stage-1 T was written in `HANDOFF.md` at 4b2a419 (13:13, §39 "findings so far (not final)"), before the stage-2 and stage-4 versions.
+   Two further `results/baseline/truth.json` versions were never committed as T: 4776198 (13:51; Cd 1.3046 ± 1.19 %, St 0.1638 ± 0.48 %; time-overlap model-form and time-conditioning terms added) and the stage-3 estimate 26fee11 (14:26; Cd 1.290 ± 6.3 %). An interim interpretation of the results under the stage-1 T was written in `HANDOFF.md` at 4b2a419 (13:13, §39 "findings so far (not final)"), before the stage-2 and stage-4 versions.
 4. **Robustness to the revisions of T.**
    - In the point-estimate view the flawed set is {A1, B1, B2, C2, D1, F1, H1, I1} under every committed version. The credible set changes: {C1, K2, baseline} (3d9f43c, 3cff05d) → {A2, C1, G2, J1} (33d5ebf) → {A2, C1, J1, K2, baseline} (021fc5a).
    - In the view with the truth-uncertainty mitigation, the flawed set {A1, B1, B2, D1, F1, H1, I1} and the empty credible set are the same under every version.
    - False-acceptance and detection rates therefore do not depend on the revisions of T. Correct-acceptance and false-rejection rates in the point-estimate view do.
 5. **Decision rule for criterion 5b.** It was fixed after 15 of 17 C-llm results were known (3ee09b1, 2026-10-20 09:17; §8).
-6. **v2 checks.** The post-attack extensions (`configs/verification_v2.yaml`, line 1: "v2 = pre-registered v1 + post-attack extensions") were committed in 8161f5c (07:40).
-   - This was after the attack cases X1–X3 were defined (0ce5d5e, 07:30) and before any attack ran (the first attack root was created at 09:08).
-   - They are post-hoc extensions of the pre-registered verifier, not part of the §19 protocol. A v2 detection on X1–X3 is therefore not a blind test.
+6. **Post-attack extensions.** The v2 checks `geometry_consistency` and `inlet_uniformity` (`configs/verification_v2.yaml`, line 1: "v2 = pre-registered v1 + post-attack extensions") and the LLM acceptance review used by C-llm-v1+review were committed in 8161f5c (07:40).
+   - This was after the attack cases X1–X3 were defined (0ce5d5e, 07:30) and before any attack ran. The attack roots were first created at 08:27, an attempt recorded only in git (22adb05) and replaced under the same run ids at 09:08.
+   - They are post-hoc extensions of the pre-registered verifier, not part of the §19 protocol. A detection of X1–X3 by the v2 checks or by the acceptance review is therefore not a blind test.
+7. **Post-hoc analyses.** Evaluated separately and not part of the §19 protocol:
+   - the J1 variant that treats `-allGeometry`-only checkMesh failures as INCONCLUSIVE (`scripts/posthoc_allgeometry.py`, results in `results/posthoc/B-allgeo/`; 83989a7 at 09:14, after J1's verdicts were committed at 07:43; §8, "Observations");
+   - the acceptance-rule variants of `scripts/posthoc_acceptance_rule.py` (§9).
 
 ## 7. Development log of methodological corrections
 
@@ -265,8 +278,8 @@ of the verification evidence and of the validation against literature in
 A six-lens adversarial review (signal analysis, check logic, experiments/store/loop, LLM authority, CFD methodology,
 evaluation validity) was run with independent reviewer agents while the first benchmark batch was in progress. The
 findings below were each traced against the code before fixing. **All benchmark results produced before these fixes were
-discarded and every system was re-run on the corrected code** (results now carry a decision-code fingerprint and are
-recomputed automatically if that changes).
+discarded and every system was re-run on the corrected code** (benchmark results now carry a decision-code fingerprint
+and are recomputed automatically if that changes; attack results carry none, E11).
 
 | # | Defect | Consequence if unfixed | Fix |
 |---|---|---|---|
@@ -303,7 +316,7 @@ Second-round findings from the same review (latest lens to finish), also fixed b
 
 The fixes were themselves re-reviewed by a second adversarial pass. That fix-verification pass found the following,
 also fixed before the reported results were computed (the benchmark was relaunched from scratch afterwards; the stamp
-of every result records the decision-code fingerprint and the git commit it was produced with):
+of every benchmark result records the decision-code fingerprint and the git commit it was produced with):
 
 | # | Defect in a fix | Fix |
 |---|---|---|
@@ -318,7 +331,10 @@ of every result records the decision-code fingerprint and the git commit it was 
 | R34 | An exception while writing a case report discarded the finished result | Report failures are written to `<case>.report_error.txt`; the result is kept |
 | R35 | The analysis took the root run from System B only (crash when B errored) and counted errors in rate denominators | Root run taken from any system's result (must agree); errors excluded from denominators and reported per label |
 
-### Review of the evaluation pipeline (truth, labels, metrics, reports), before any number was reported
+### Review of the evaluation pipeline (truth, labels, metrics, reports)
+
+E1–E10 were fixed before any number was reported (2b63972, 10:14 UTC on 2026-10-19); E11 was added on 2026-10-20
+(49b583f), after the first metrics (3d9f43c, 11:03 UTC on 2026-10-19).
 
 A further three-lens adversarial review (truth/labels mathematics, metrics, report assembly) targeted the scripts
 that turn results into the reported numbers. None of these files is part of the decision-code fingerprint, so
@@ -364,7 +380,7 @@ no cost metric, margin or test. A review found this gap after 15 of 17 C-llm res
 
 ### Observations logged during the evaluation (not changed in the pre-registered verifier)
 
-- **J1 (coarse wake):** `checkMesh -allGeometry` reports "Cells with small determinant (< 0.001): 48", which OpenFOAM counts as a failed check, so `mesh_quality` FAILs and every system REJECTs J1. Its reported Cd/St are within ~1 % of the baseline, so if the measured label is *credible*, this is a false rejection caused by an extended-geometry quality heuristic rather than by an accuracy problem. A post-hoc variant that treats `-allGeometry`-only failures as INCONCLUSIVE (to be discharged by mesh refinement) is evaluated separately and reported as a protocol deviation.
+- **J1 (coarse wake):** `checkMesh -allGeometry` reports "Cells with small determinant (< 0.001): 48", which OpenFOAM counts as a failed check, so `mesh_quality` FAILs and every system REJECTs J1. Its reported Cd/St are within ~1 % of the baseline, so if the measured label is *credible*, this is a false rejection caused by an extended-geometry quality heuristic rather than by an accuracy problem. A post-hoc variant that treats `-allGeometry`-only failures as INCONCLUSIVE (to be discharged by mesh refinement) is evaluated separately and reported as a protocol deviation (§6, "Deviations from pre-registration", item 7).
   `scripts/locate_flagged_cells.py` places all 48 flagged cells at x ≈ 47 D, next to the outlet
   (`results/posthoc/flagged_cells.txt`); the enlarged-domain meshes of the baseline study fail the same check with
   cells 57–155 D from the cylinder. The flag reacts to stretched far-field cells, not to the wake region that sets
@@ -393,9 +409,12 @@ no cost metric, margin or test. A review found this gap after 15 of 17 C-llm res
     ×2; C2 ×√2 and ×2. All ended with returncode −8 (floating-point exception) and a recorded max Co of
     10¹⁰²–10¹⁰³.
   - Refinements of a REDUCE_TIME_STEP child completed, but they are not members of the root's mesh family (§3).
-  - A refinement of either root keeps its Δt, so in practice the mesh component of these roots cannot be
-    measured with the current primitives, and no adaptive system can ACCEPT C1 or C2. C1 is credible in the
-    point-estimate view.
+  - A refinement of either root keeps its Δt. On C1 even the smallest allowed factor (×1.3; `primitives.py`
+    range 1.3–2.0) diverged, and larger factors raise the Courant number further. The mesh component of the C1
+    root therefore cannot be measured with the current primitives, and no adaptive system can ACCEPT C1
+    (credible in the point-estimate view).
+  - On C2 a ×1.3 root refinement (`C2_euler_large_timestep.m1.3-53f0c75d4a04`, launched by C-llm-r2 at 07:52 on
+    2026-10-20) had produced no solver output at 10:46 UTC on 2026-10-20.
 - **A diverged refinement is reported as missing evidence.** `RunGraph.factor_family` drops failed children. The
   C-rule, C-llm and Bexh results for C1 and C2, and the C-llm-r2 result for C1, therefore all give the mesh reason
   "no REFINE_MESH experiment has been run; mesh error of … is unknown", although refinements ran and diverged.
@@ -408,12 +427,17 @@ no cost metric, margin or test. A review found this gap after 15 of 17 C-llm res
   - `verify` evaluates the static checks on the root's evidence and re-evaluates only averaging and statistics on
     the longest continuation, so no RUN_LONGER can change `physics_regime`. Since 10f8b80, the rule planner
     requests RUN_LONGER whenever that check is INCONCLUSIVE (§5).
-  - In the C-rule results this produced 13 continuations with 3.98 × 10⁹ cell-steps, 16 % of C-rule's experiment
-    cell-steps over all 17 cases: F1 4 (2.7× root), G1 4 (10.0× root, all of its experiment compute) and G2 5
+  - In the C-rule results 13 continuations were requested with the regime reason, with 3.98 × 10⁹ cell-steps,
+    16 % of C-rule's experiment cell-steps over all 17 cases: F1 4 (2.7× root), G1 4 (10.0× root) and G2 5
     (8.3× root).
+  - One of them (G1's first) would have been requested anyway by the pre-registered averaging/statistics step,
+    which asks for the same RUN_LONGER on the same parent and was discharged by it. The rule's own cost is 12
+    continuations, 3.67 × 10⁹ cell-steps (15 %): F1 4, G1 3 (7.5× root), G2 5.
   - `physics_regime` stayed INCONCLUSIVE in all three final verdicts. On F1 and G2 the next request was refused
     by the end-time limit (600 D/U), and on G1 by the compute budget. F1 then reached REJECT through REFINE_MESH;
     G1 and G2 ended INCONCLUSIVE on their compute and experiment budgets.
+  - Because `physics_regime` is a gate check (no error-budget component) without a discharge path in `aggregate`,
+    a root on which it is INCONCLUSIVE can never be ACCEPTed, whatever experiments run.
 - **Per-iteration check outputs are not stored.** A result keeps the final verdict with all its checks. For each
   iteration it keeps only the verdict, the missing components, the planner's output and the outcome (`history`), so
   the reason an intermediate verdict was INCONCLUSIVE is not on record. Example: after C-llm's first experiment on F1
@@ -429,11 +453,37 @@ no cost metric, margin or test. A review found this gap after 15 of 17 C-llm res
     15 000 steps each) took 1442 s and 4804 s. C-llm's E1 result reports 10 759 s of experiment wall time inside a
     7 421 s loop.
   - Cell-steps relative to the root are therefore the primary cost metric (criterion 5b, above).
+- **Abandoned attempts are not kept in the run store.** The store keeps one record per run id.
+  - When `RunStore.get_or_run` finds a 'running' record whose owner process is gone, it adopts the run if its
+    solver output is complete (R20, R30). Otherwise it deletes the directory and runs the configuration again under
+    the same run id. A record that failed with failure kind `final_state` is also deleted and re-run.
+  - The current record therefore shows only the last attempt. The creation time, owner, launcher, partial output
+    and compute of earlier attempts are not in the store. Their only record is the git history of the `results/`
+    snapshots, which holds an attempt only if it was committed before it was replaced.
+  - Example: the current record of `A1_coarse_mesh.m0.707-a67b9e3443d4` was created at 08:25 on 2026-10-19. Git
+    holds two earlier attempts under the same id, created at 07:25 (0ce5d5e) and 07:35 (6133c4a), both last
+    committed as 'running'.
+  - `scripts/audit_runs.py` lists the earlier attempts it can recover from git (§9). An attempt that started and
+    was removed between two commits leaves no trace, so compute taken from git is a lower bound.
 
-## 9. Reproducibility check
+## 9. Reproducibility and integrity checks
 
 Case A1 was re-run from scratch inside the container (`docker/Dockerfile`, image built from the pinned
 `openfoam2412=2412.260127-1` package and `requirements.lock`) with an empty run store, and compared with the host run:
 same content-addressed run id (`A1_coarse_mesh-8db269c22d05`), and mean Cd, St and Cl rms identical to all printed
 digits (relative difference 0.0). Files: `results/reproducibility/`. Single-core OpenFOAM runs with identical inputs
 and binaries are bitwise deterministic here; parallel (decomposed) runs would not be expected to be.
+
+**Integrity tools.** None of them runs a simulation or changes a run record or a stored result; each writes only its
+own report. Live processes keep writing results, so each report is a snapshot.
+- `scripts/replay_verdicts.py` re-runs the current verifier on the stored run graph of every result with a verifier
+  verdict (benchmark B, C-rule, C-llm, Bexh, C-llm-r*; the attack systems except L-judge) and requires the verdict,
+  the failed checks and every component status and uncertainty to match (E11). Output: `results/analysis/replay.json`.
+- `scripts/audit_runs.py` compares the run store with the stored results and the git history: runs no result names,
+  orphaned 'running' records, failed runs, records without the R19 hashes, and earlier attempts under a current run
+  id (§8, "Observations"). Output: `results/analysis/run_audit.{json,md}`.
+- `scripts/dump_untraced.py` lists every number in LLM-written text that the numeric audit could not trace, with its
+  context and a mechanical triage (convention, leakage-check, other). Output: `results/analysis/untraced_numbers.{json,md}`.
+- `scripts/posthoc_acceptance_rule.py` (post-hoc, not pre-registered) replays the verifier on the stored run graphs
+  and re-aggregates the component checks under two looser acceptance rules, to show what blocks acceptance.
+  Output: `results/posthoc/acceptance_rule.{json,md}`.

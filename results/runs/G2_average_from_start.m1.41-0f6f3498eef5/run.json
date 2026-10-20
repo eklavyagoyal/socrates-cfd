@@ -1,0 +1,195 @@
+{
+  "run_id": "G2_average_from_start.m1.41-0f6f3498eef5",
+  "status": "running",
+  "owner_pid": 5669,
+  "created": "2026-10-20T07:51:13+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "G2_average_from_start.m1.41",
+    "description": "REFINE_MESH {'factor': 1.4142135623730951} from G2_average_from_start.long160-24e243b2227c",
+    "mesh": {
+      "refinement": 1.4142135623730951,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 35,
+      "n_downstream": 111,
+      "n_lateral": 45,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 30.0,
+      "downstream": 50.0,
+      "half_height": 40.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "backward",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 1,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.008673416628962177,
+      "end_time": 80.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 40.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "32de295963dd6edc",
+  "parent_run": "G2_average_from_start.long160-24e243b2227c",
+  "launch_reason": "Mesh, time and domain uncertainties are all unmeasured. The mesh is the coarsest-looking element of the setup (representative_cell_size_D 0.45745, wake_last_cell_D 1.0209), and the Strouhal number and drag are sensitive to wake and near-wall resolution. R1 supplies a converged 13-cycle baseline, so any shift can be attributed to the mesh rather than sampling noise.",
+  "launched_by": "llm_critic",
+  "experiment": {
+    "action": "REFINE_MESH",
+    "params": {
+      "factor": 1.4142135623730951
+    },
+    "parent_run": "G2_average_from_start.long160-24e243b2227c",
+    "changes": {
+      "averaging.start_time": {
+        "from": 0.0,
+        "to": 40.0
+      },
+      "mesh.refinement": {
+        "from": 1.0,
+        "to": 1.4142135623730951
+      },
+      "time.delta_t": {
+        "from": 0.01,
+        "to": 0.008673416628962177
+      },
+      "time.end_time": {
+        "from": 160.0,
+        "to": 80.0
+      }
+    },
+    "notes": [
+      "time step reduced 0.01 -> 0.008673 D/U to keep predicted max Co (1.04) <= 0.9 (parent Co 0.73)",
+      "initialised by mapping the parent's final periodic state; run 80 D/U"
+    ],
+    "initialisation": {
+      "kind": "map",
+      "source_run": "G2_average_from_start.long160-24e243b2227c"
+    },
+    "estimated_cell_steps": 566014548.8234689
+  },
+  "config_changes_from_parent": {
+    "averaging.start_time": {
+      "from": 0.0,
+      "to": 40.0
+    },
+    "mesh.refinement": {
+      "from": 1.0,
+      "to": 1.4142135623730951
+    },
+    "time.delta_t": {
+      "from": 0.01,
+      "to": 0.008673416628962177
+    },
+    "time.end_time": {
+      "from": 160.0,
+      "to": 80.0
+    }
+  },
+  "initialisation": {
+    "kind": "map",
+    "source_run": "G2_average_from_start.long160-24e243b2227c",
+    "consistent": true
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "f7bdfd45d34a46fa0d195e6a4594286226b9dcac",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  }
+}

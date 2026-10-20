@@ -1,0 +1,175 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 36.3649581869995,
+    "cost_usd": 0.05201921,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13207,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 31,
+     "untraced": [
+      {
+       "token": "1.25",
+       "context": "Boundary truncation at 30 D / 50 D / 40 D, including the 1.25 % blockage, biases Cd and St by an amou"
+      }
+     ],
+     "n_untraced": 1
+    },
+    "run_aliases": {
+     "K1_central_scheme-e4e5fb66bdca": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed and REJECT has no basis.",
+    "R0 passes the averaging and statistics components: the drag averaging bias is 7.04e-05 and the statistics uncertainty is 0.0001331. For Strouhal the values are 1.316e-05 and 0.000122. All are far below the 0.03 tolerance. R0 has 12 stationary cycles.",
+    "The mesh, time and domain components are all unmeasured, because no REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run exists. Absence of evidence is not a pass.",
+    "R0 has 30580 cells with a representative cell size of 0.45745 D and a last wake cell of 1.0209 D. It uses Gauss linear convection with 160 cells around the cylinder. Spatial error in the wake and shedding is the most plausible source of an error larger than 3 %.",
+    "The time step is 0.01 D/U with a max Courant number of 0.736, giving 612.39 steps per shedding period with a 'backward' (second-order) scheme. Temporal error looks less likely to dominate, but it is unmeasured.",
+    "The domain has a blockage ratio of 0.0125, 30 D upstream, 50 D downstream and 40 D half-height. The boundary conditions are plausible and the domain is moderately large, so it is a lower-priority risk than the mesh.",
+    "Budget allows the mesh run first (about 5070 s). Time and domain runs (about 4367 s and 2899 s) can follow within the compute and experiment limits."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation uncertainty for mean_drag_coefficient and strouhal_number (no refined-mesh run)",
+    "Temporal discretisation uncertainty for both quantities (no reduced-time-step run)",
+    "Domain truncation/blockage uncertainty for both quantities (no expanded-domain run)",
+    "Combined uncertainty against the 0.03 tolerance for both quantities"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse mesh (representative cell size 0.45745 D, last wake cell 1.0209 D) with a non-dissipative central scheme under-resolves the wake, shifting mean Cd or St by more than 3 %.",
+     "test": "REFINE_MESH on R0 with factor 2.0. If Cd and St change by less than about 1.5 % (half the tolerance) relative to R0, the mesh error is acceptable. A larger change, or a change above tolerance, means the mesh is inadequate."
+    },
+    {
+     "hypothesis": "Boundary truncation at 30 D / 50 D / 40 D, including the 1.25 % blockage, biases Cd and St by an amount comparable to the tolerance.",
+     "test": "Later EXPAND_DOMAIN run on R0 with factor 2.0. Compare Cd and St with R0."
+    },
+    {
+     "hypothesis": "The time step of 0.01 D/U is sufficient and temporal error is small.",
+     "test": "Later REDUCE_TIME_STEP run on R0 with factor 2.0. Compare Cd and St with R0."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "K1_central_scheme-e4e5fb66bdca",
+    "reason": "Mesh is the most likely uncontrolled error source: R0 is relatively coarse (30580 cells, 0.45745 D representative size, 1.0209 D last wake cell). Averaging and statistics are already negligible, so the remaining risk is discretisation. A factor of 2.0 gives the largest signal-to-noise ratio and is affordable within the budget.",
+    "expected_outcome": "If Cd and St change by less than about 1.5 % relative to R0, the mesh component is acceptable and the time and domain runs can follow. A change above 3 % means R0 is mesh-dependent and the case must be refined further or REJECTed."
+   },
+   "outcome": "executed -> K1_central_scheme.m2-325af4c14f68 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 25.894854256001054,
+    "cost_usd": 0.07595517499999999,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 20178,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 40,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "K1_central_scheme-e4e5fb66bdca": "R0",
+     "K1_central_scheme.m2-325af4c14f68": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed, and there is no FAIL to justify REJECT.",
+    "R0 averaging and statistics components pass. Drag: averaging 7.04e-05, statistics 0.0001331. Strouhal: averaging 1.316e-05, statistics 0.000122. R0 has 12 stationary cycles.",
+    "Mesh, drag: R0 Cd 1.3403 vs R1 Cd 1.3365 (root-to-finest change 0.289%). The mesh uncertainty is 0.01155 and the mesh check passes.",
+    "Mesh, Strouhal: R0 St 0.1633 vs R1 St 0.16471 (change 0.86%). The Richardson estimate with assumed p=2 gives 0.03431, so the mesh check is INCONCLUSIVE. Only two levels exist, so the observed order is unknown.",
+    "Time and domain components are unmeasured for both quantities. No REDUCE_TIME_STEP or EXPAND_DOMAIN run exists, and absence of evidence is not a pass.",
+    "R1 used a time step of 0.006111 against 0.01 for R0, so the R0-to-R1 difference mixes spatial and temporal effects.",
+    "The domain is 30 D upstream, 50 D downstream and 40 D half-height, with blockage ratio 0.0125. This is untested. EXPAND_DOMAIN on R0 is the cheapest unmeasured component, at 2899 s against 4367 s for time and 5070 s for mesh.",
+    "Budget: 1 of 6 experiments used and 3.49 of 12.0 compute units used. Time, domain and a further mesh level are all affordable, so a sequence of experiments is possible."
+   ],
+   "missing_evidence": [
+    "Domain truncation/blockage uncertainty for mean_drag_coefficient and strouhal_number (no EXPAND_DOMAIN run)",
+    "Temporal discretisation uncertainty for both quantities (no REDUCE_TIME_STEP run)",
+    "Strouhal mesh uncertainty: only two mesh levels, and R1 also changed the time step, so observed order and the spatial/temporal split are unknown",
+    "Combined uncertainty against the 0.03 tolerance for both quantities"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "Boundary truncation (30 D upstream, 50 D downstream, 40 D half-height, blockage 0.0125, symmetry lateral boundaries, zeroGradient inlet pressure) shifts Cd or St by an amount comparable to the 3% tolerance.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2.0. If Cd and St change by less than about 1.5% relative to R0, the domain component is acceptable. A change above 3% means the domain error is significant and R0 should be rejected."
+    },
+    {
+     "hypothesis": "The time step of 0.01 D/U (612 steps per period, backward scheme) is adequate, and part of the 0.86% St shift in R1 is temporal rather than spatial.",
+     "test": "Later REDUCE_TIME_STEP on R0 with factor 2.0. Compare Cd and St with R0."
+    },
+    {
+     "hypothesis": "The Strouhal mesh uncertainty of 3.43% is overestimated by the assumed p=2 two-level Richardson estimate, because the actual convergence is faster.",
+     "test": "Later intermediate REFINE_MESH on R0 (factor about 1.4142) to obtain a three-level observed order."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "K1_central_scheme-e4e5fb66bdca",
+    "reason": "Domain truncation is completely unmeasured for both quantities and is a possible systematic error larger than the 3% tolerance. It is the cheapest experiment (2899 s) and can be run directly on R0, because R1 is not allowed (child mesh would have 162400 cells, above the 160000 limit). The near-field mesh is unchanged, so the comparison with R0 isolates the boundary effect.",
+    "expected_outcome": "If Cd and St change by less than about 1.5% relative to R0, the domain component passes and the remaining time-step and mesh runs can follow. A change above 3% shows R0 is domain-dependent and should be REJECTed."
+   },
+   "outcome": "executed -> K1_central_scheme.D2x-b0a7ed20bbb5 (completed)"
+  }
+ ]
+}

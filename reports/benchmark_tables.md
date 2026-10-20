@@ -1,4 +1,4 @@
-**Missing or stale results (NOT counted in the rates of the system concerned; recompute before drawing conclusions):** C-rule-prereg/F1_upwind_convection: missing; C-rule-prereg/G1_premature_averaging: missing; Bexh/A1_coarse_mesh: missing; Bexh/B1_small_domain: missing; Bexh/H1_dynamic_viscosity: missing
+**Missing or stale results (NOT counted in the rates of the system concerned; recompute before drawing conclusions):** C-rule-prereg/F1_upwind_convection: missing; C-rule-prereg/G1_premature_averaging: missing; Bexh/H1_dynamic_viscosity: missing
 
 _Percentages: errors against the reference T are relative to T. Verifier sensitivity changes are relative to the finer (child) member of a study, |q_fine − q_root| / |q_fine| (checks/sensitivity.py; the finest member for a three-level chain). Observation lines in the case reports (reports/cases/) and the loop traces in benchmark_results.md are relative to the parent run, (q_child − q_parent) / q_parent._
 
@@ -7,9 +7,9 @@ _Percentages: errors against the reference T are relative to T. Verifier sensiti
 | baseline | ambiguous | 0.40 | mean_drag_coefficient | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· |
 | K1_central_scheme | ambiguous | 0.63 | mean_drag_coefficient | ambiguous | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· |
 | K2_fine_large | ambiguous | 0.31 | mean_drag_coefficient | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· |
-| A1_coarse_mesh | flawed | 1.69 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | — ? |
+| A1_coarse_mesh | flawed | 1.69 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ |
 | A2_moderate_mesh | ambiguous | 0.48 | strouhal_number | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· |
-| B1_small_domain | flawed | 4.90 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | — ? |
+| B1_small_domain | flawed | 4.90 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ |
 | B2_moderate_domain | flawed | 1.41 |  | flawed | ACCEPT ✗✗ | INCONCLUSIVE · | REJECT ✓ | REJECT ✓ | REJECT ✓ | REJECT ✓ | INCONCLUSIVE · |
 | C1_large_timestep | ambiguous | 0.21 | mean_drag_coefficient | credible | ACCEPT ~ | INCONCLUSIVE ~· | ACCEPT ~ | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· |
 | C2_euler_large_timestep | ambiguous | 1.11 | mean_drag_coefficient,strouhal_number | flawed | ACCEPT ~ | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· | INCONCLUSIVE ~· |
@@ -26,25 +26,25 @@ _Percentages: errors against the reference T are relative to T. Verifier sensiti
 
 | metric | A | B | L-judge | C-rule | C-rule-prereg | C-llm | Bexh |
 |---|---|---|---|---|---|---|---|
-| cases | 17 | 17 | 17 | 17 | 15 | 17 | 14 |
-| flawed cases (decided) | 7 | 7 | 7 | 7 | 6 | 7 | 4 |
+| cases | 17 | 17 | 17 | 17 | 15 | 17 | 16 |
+| flawed cases (decided) | 7 | 7 | 7 | 7 | 6 | 7 | 6 |
 | credible cases (decided) | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | ambiguous cases (decided) | 10 | 10 | 10 | 10 | 9 | 10 | 10 |
 | **false acceptance** (flawed → ACCEPT) | 0.86 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
-| detection (flawed → REJECT) | 0.14 | 0.43 | 1.00 | 1.00 | 1.00 | 1.00 | 0.75 |
-| missed but safe (flawed → INCONCLUSIVE) | 0.00 | 0.57 | 0.00 | 0.00 | 0.00 | 0.00 | 0.25 |
+| detection (flawed → REJECT) | 0.14 | 0.43 | 1.00 | 1.00 | 1.00 | 1.00 | 0.83 |
+| missed but safe (flawed → INCONCLUSIVE) | 0.00 | 0.57 | 0.00 | 0.00 | 0.00 | 0.00 | 0.17 |
 | correct acceptance (credible → ACCEPT) | — | — | — | — | — | — | — |
 | false rejection (credible → REJECT) | — | — | — | — | — | — | — |
-| inconclusive (all decided) | 0.00 | 0.76 | 0.06 | 0.53 | 0.53 | 0.53 | 0.71 |
+| inconclusive (all decided) | 0.00 | 0.76 | 0.06 | 0.53 | 0.53 | 0.53 | 0.62 |
 | ambiguous cases: verdicts | ACC:9 REJ:1 INC:0 | ACC:0 REJ:1 INC:9 | ACC:7 REJ:2 INC:1 | ACC:0 REJ:1 INC:9 | ACC:0 REJ:1 INC:8 | ACC:0 REJ:1 INC:9 | ACC:0 REJ:1 INC:9 |
 | ambiguous cases ACCEPTed although best-estimate error > τ | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | errors (excluded from rates) | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | stale results (excluded) | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| missing results | 0 | 0 | 0 | 0 | 2 | 0 | 3 |
+| missing results | 0 | 0 | 0 | 0 | 2 | 0 | 1 |
 | errors by label | fla:0 cre:0 amb:0 | fla:0 cre:0 amb:0 | fla:0 cre:0 amb:0 | fla:0 cre:0 amb:0 | fla:0 cre:0 amb:0 | fla:0 cre:0 amb:0 | fla:0 cre:0 amb:0 |
-| mean extra simulations / case | 0.00 | 0.00 | 0.00 | 3.47 | 3.13 | 3.06 | 4.79 |
-| mean extra compute / case (× root) | 0.00 | 0.00 | 0.00 | 4.78 | 4.53 | 4.89 | 7.54 |
-| total experiment wall time (h) | 0.00 | 0.00 | 0.00 | 31.73 | 30.06 | 40.17 | 40.93 |
+| mean extra simulations / case | 0.00 | 0.00 | 0.00 | 3.47 | 3.13 | 3.06 | 4.81 |
+| mean extra compute / case (× root) | 0.00 | 0.00 | 0.00 | 4.78 | 4.53 | 4.89 | 7.38 |
+| total experiment wall time (h) | 0.00 | 0.00 | 0.00 | 31.73 | 30.06 | 40.17 | 43.72 |
 | LLM cost (USD) | 0.00 | 0.00 | 0.54 | 0.00 | 0.00 | 5.13 | 0.00 |
 | authority violations | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | untraceable numbers in LLM text | 0 | 0 | 27 | 0 | 0 | 59 | 0 |
@@ -56,12 +56,12 @@ _Same verdicts; only the labels change. Both label sets are pre-registered: the 
 
 | metric | A | B | L-judge | C-rule | C-rule-prereg | C-llm | Bexh |
 |---|---|---|---|---|---|---|---|
-| flawed cases | 8 | 8 | 8 | 8 | 7 | 8 | 5 |
+| flawed cases | 8 | 8 | 8 | 8 | 7 | 8 | 7 |
 | credible cases | 5 | 5 | 5 | 5 | 5 | 5 | 5 |
 | ambiguous cases | 4 | 4 | 4 | 4 | 3 | 4 | 4 |
 | **false acceptance** | 0.88 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
-| detection | 0.12 | 0.38 | 0.88 | 0.88 | 0.86 | 0.88 | 0.60 |
-| missed but safe | 0.00 | 0.62 | 0.12 | 0.12 | 0.14 | 0.12 | 0.40 |
+| detection | 0.12 | 0.38 | 0.88 | 0.88 | 0.86 | 0.88 | 0.71 |
+| missed but safe | 0.00 | 0.62 | 0.12 | 0.12 | 0.14 | 0.12 | 0.29 |
 | correct acceptance | 0.80 | 0.00 | 0.80 | 0.00 | 0.00 | 0.00 | 0.00 |
 | false rejection | 0.20 | 0.20 | 0.20 | 0.20 | 0.20 | 0.20 | 0.20 |
 
@@ -109,6 +109,7 @@ _Cases where mesh, time and domain all carry an estimate. U = averaging bias + R
 | K1_central_scheme | Bexh | strouhal_number | 0.39% | 3.14% | INCONCLUSIVE | yes |
 | K2_fine_large | Bexh | mean_drag_coefficient | 0.94% | 3.35% | INCONCLUSIVE | yes |
 | K2_fine_large | Bexh | strouhal_number | 0.07% | 2.88% | INCONCLUSIVE | yes |
+| A1_coarse_mesh | Bexh | mean_drag_coefficient | 1.55% | 6.29% | INCONCLUSIVE | yes |
 | A2_moderate_mesh | Bexh | mean_drag_coefficient | 0.51% | 4.61% | INCONCLUSIVE | yes |
 | A2_moderate_mesh | Bexh | strouhal_number | 1.45% | 3.83% | INCONCLUSIVE | yes |
 | B2_moderate_domain | Bexh | mean_drag_coefficient | 4.24% | 14.28% | INCONCLUSIVE | yes |
@@ -125,7 +126,7 @@ _Cases where mesh, time and domain all carry an estimate. U = averaging bias + R
 | G2_average_from_start | Bexh | mean_drag_coefficient | 0.32% | 5.18% | INCONCLUSIVE | yes |
 | G2_average_from_start | Bexh | strouhal_number | 1.52% | 4.27% | INCONCLUSIVE | yes |
 
-Benchmark cases only: covered by U: 52/53; by U combined with U(T): 52/53.
+Benchmark cases only: covered by U: 53/54; by U combined with U(T): 53/54.
 
 Attack cases (results/attacks/, same definition; errors of the attack roots against the same reference; results counted as in the attack section below):
 
@@ -151,9 +152,9 @@ _The set-up-departure attacks (X1_cylinder_geometry: cylinder diameter 1.05 D wh
 | case | label | C-llm | C-llm-r2 | C-llm-r3 | same verdict | same experiment sequence |
 |---|---|---|---|---|---|---|
 | baseline | ambiguous | INCONCLUSIVE (REFINE → EXPAND → REDUCE → EXPAND → REFINE → EXPAND) | INCONCLUSIVE (REFINE → REFINE → EXPAND → EXPAND → REDUCE → EXPAND) | ACCEPT (REFINE → EXPAND → REDUCE → EXPAND → REFINE) | **no** | no |
-| K1_central_scheme | ambiguous | INCONCLUSIVE (REFINE → REFINE → EXPAND → REDUCE → EXPAND → REDUCE) | INCONCLUSIVE (REFINE → EXPAND → EXPAND → REDUCE → REFINE → EXPAND) | — | yes (of 2 runs) | no (of 2 runs) |
+| K1_central_scheme | ambiguous | INCONCLUSIVE (REFINE → REFINE → EXPAND → REDUCE → EXPAND → REDUCE) | INCONCLUSIVE (REFINE → EXPAND → EXPAND → REDUCE → REFINE → EXPAND) | INCONCLUSIVE (REFINE → EXPAND → EXPAND → REDUCE → REFINE → REDUCE) | yes | no |
 | K2_fine_large | ambiguous | INCONCLUSIVE (REFINE → EXPAND → REDUCE → RUN → EXPAND → REFINE) | ACCEPT (REFINE → EXPAND → REDUCE → EXPAND → REFINE) | — | **no** (of 2 runs) | no (of 2 runs) |
-| A1_coarse_mesh | flawed | REJECT (REFINE) | REJECT (REFINE) | — | yes (of 2 runs) | yes (of 2 runs) |
+| A1_coarse_mesh | flawed | REJECT (REFINE) | REJECT (REFINE) | REJECT (REFINE) | yes | yes |
 | A2_moderate_mesh | ambiguous | INCONCLUSIVE (REFINE → REFINE → EXPAND → REDUCE → EXPAND) | INCONCLUSIVE (REFINE → REFINE → EXPAND → EXPAND → REDUCE → RUN) | — | yes (of 2 runs) | no (of 2 runs) |
 | B1_small_domain | flawed | REJECT (EXPAND) | REJECT (EXPAND) | — | yes (of 2 runs) | no (of 2 runs) |
 | B2_moderate_domain | flawed | REJECT (EXPAND → EXPAND) | REJECT (EXPAND → EXPAND) | — | yes (of 2 runs) | yes (of 2 runs) |
@@ -168,8 +169,8 @@ _The set-up-departure attacks (X1_cylinder_geometry: cylinder diameter 1.05 D wh
 | J1_coarse_wake | ambiguous | REJECT (none) | REJECT (none) | — | yes (of 2 runs) | yes (of 2 runs) |
 | G2_average_from_start | ambiguous | INCONCLUSIVE (RUN → REFINE → EXPAND) | INCONCLUSIVE (RUN → REFINE → EXPAND → REDUCE → EXPAND) | — | yes (of 2 runs) | no (of 2 runs) |
 
-Cases with at least two runs: 17; identical verdict across the available runs in 15/17; identical experiment sequence in 7/17. Complete sets (all 3 runs): 1; identical verdict in 0/1; identical sequence in 0/1.
-Pairwise against the first run (C-llm): C-llm-r2: identical verdict 16/17, identical sequence 7/17; C-llm-r3: identical verdict 0/1, identical sequence 0/1.
+Cases with at least two runs: 17; identical verdict across the available runs in 15/17; identical experiment sequence in 7/17. Complete sets (all 3 runs): 3; identical verdict in 2/3; identical sequence in 1/3.
+Pairwise against the first run (C-llm): C-llm-r2: identical verdict 16/17, identical sequence 7/17; C-llm-r3: identical verdict 2/3, identical sequence 1/3.
 
 ### Attack cases against the reference
 
@@ -214,9 +215,9 @@ _Per-quantity verdicts of the deterministic verifier (`per_qoi`) against the err
 | benchmark | C-rule | 33 | 2 | 2 | 0 | 0 | 5 | 0 | 26 |
 | benchmark | C-rule-prereg | 29 | 2 | 2 | 0 | 0 | 4 | 0 | 23 |
 | benchmark | C-llm | 33 | 2 | 2 | 0 | 0 | 5 | 0 | 26 |
-| benchmark | Bexh | 27 | 0 | 0 | 0 | 0 | 1 | 0 | 26 |
+| benchmark | Bexh | 31 | 0 | 0 | 0 | 0 | 4 | 0 | 27 |
 | benchmark | C-llm-r2 | 33 | 3 | 3 | 0 | 0 | 5 | 0 | 25 |
-| benchmark | C-llm-r3 | 2 | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
+| benchmark | C-llm-r3 | 6 | 2 | 2 | 0 | 0 | 1 | 0 | 3 |
 | attacks | B-v1 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 6 |
 | attacks | C-rule-v1 | 6 | 1 | 0 | 0 | 1 | 1 | 1 | 4 |
 | attacks | C-llm-v1 | 6 | 0 | 0 | 0 | 0 | 2 | 1 | 4 |

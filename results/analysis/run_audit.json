@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-20T14:13:01+00:00",
+ "generated": "2026-10-20T15:31:22+00:00",
  "decision_code_fingerprint": "6406c53bb2011ef5",
  "sources": [
   "results/benchmark",
@@ -8,18 +8,18 @@
   "results/posthoc",
   "results/reproducibility"
  ],
- "n_source_files": 282,
+ "n_source_files": 294,
  "doc_sources": [
   "cases",
   "docs",
   "reports",
   "README.md"
  ],
- "n_runs": 203,
+ "n_runs": 206,
  "by_status": {
-  "completed": 181,
-  "running": 13,
-  "failed": 9
+  "completed": 185,
+  "failed": 9,
+  "running": 12
  },
  "unreadable_run_records": [],
  "unreadable_result_files": [],
@@ -291,12 +291,12 @@
   }
  ],
  "cell_steps": {
-  "all_runs": 95522814979,
+  "all_runs": 97444899087,
   "unreferenced_by_launcher": {
-   "exhaustive": 1301977320,
    "benchmark": 1559580,
    "llm_critic": 2252415184,
-   "rule_based": 0
+   "rule_based": 0,
+   "exhaustive": 859321320
   },
   "unreferenced_no_live_user_by_launcher": {
    "benchmark": 1559580,
@@ -305,11 +305,6 @@
   "replaced_finished_attempts_in_git": 550440000
  },
  "unreferenced": [
-  "A1_coarse_mesh.D2x-0c836e0d97c0",
-  "A1_coarse_mesh.dt0.005-7544dcbae909",
-  "A1_coarse_mesh.long250-430da87fc0b2",
-  "A1_coarse_mesh.m1-26cfdbe9e736",
-  "B1_small_domain.long250-e4dc482c83a6",
   "C1_large_timestep-2c56fe2482da",
   "C1_large_timestep.m1.5-ccd50b275a8c",
   "C1_large_timestep.m2-43ace4fb86f8",
@@ -324,6 +319,7 @@
   "H1_dynamic_viscosity.m1.41-f0d5b0a7b270",
   "H1_dynamic_viscosity.m2-21637f9f044c",
   "J1_coarse_wake.D2x-8ca51167810d",
+  "K2_fine_large.D3x-7a1272bafc30",
   "X1_cylinder_geometry.m1.4-9e2404581939",
   "X1_cylinder_geometry.m1.5-4f1242ab559c",
   "X2_inlet_shear.long280-73bf3827d017",
@@ -366,9 +362,11 @@
   "K1_central_scheme-e4e5fb66bdca",
   "baseline-408129116207"
  ],
- "referenced_only_by_partial": [],
+ "referenced_only_by_partial": [
+  "K2_fine_large.D1.5x-c2938461e5bc"
+ ],
  "llm_planner_unreferenced": {
-  "note": "11 runs launched by the LLM planner are named by no current result and have no live owner process. For 11 of them the store shows when the owner process stopped writing records and which later process took over the same launcher on the same group of cases (columns 'owner' and 'taken over by'; the commits and launch markers in between are under 'Owner processes'). 4 of them are named by a committed version of a partial result that a later loop attempt of the same system and case replaced (columns 'last named in' and 'removed in'); the other 7 are 'running' records that never finished, and a loop names a run only after it has run. For 11 of the 11, a result for the same case was logged by a process launched after the run was created (run_audit.json, `llm_results_logged_after_creation`). They come from loop attempts that ended with their owner process, after which a later process ran the case again from the root. The planner calls that proposed them, and their LLM cost, are not in any current result; lower bounds for 4 of them are in committed partial files: 0.839 USD over 12 planner iterations in 5 superseded attempts (all superseded loop attempts are listed under 'Superseded loop attempts'). Their simulation cost recorded in evidence.json is 2.25e+09 cell-steps. Of the 7 'running' records among them, 6 never started their solver; X2_inlet_shear.long280-73bf3827d017 ran it for 764 s of wall time (log last written 2026-10-20 01:13), recorded only in its solver log. 0 further unnamed LLM-planner runs have a live owner: their loops are still running, and a loop names a run in its partial file once the run has finished.",
+  "note": "11 runs launched by the LLM planner are named by no current result and have no live owner process. For 11 of them the store shows when the owner process stopped writing records and which later process took over the same launcher on the same group of cases (columns 'owner' and 'taken over by'; the commits and launch markers in between are under 'Owner processes'). 4 of them are named by a committed version of a partial result that a later loop attempt of the same system and case replaced (columns 'last named in' and 'removed in'); the other 7 are 'running' records that never finished, and a loop names a run only after it has run. For 11 of the 11, a result for the same case was logged by a process launched after the run was created (run_audit.json, `llm_results_logged_after_creation`). They come from loop attempts that ended with their owner process, after which a later process ran the case again from the root. The planner calls that proposed them, and their LLM cost, are not in any current result; lower bounds for 4 of them are in committed partial files: 0.839 USD over 12 planner iterations in 5 superseded attempts (all superseded loop attempts are listed under 'Superseded loop attempts'). Their simulation cost recorded in evidence.json is 2.25e+09 cell-steps. Of the 7 'running' records among them, 6 never started their solver; X2_inlet_shear.long280-73bf3827d017 ran it for 764 s of wall time (log last written 2026-10-20 01:13), recorded only in its solver log. 1 further unnamed LLM-planner runs have a live owner: their loops are still running, and a loop names a run in its partial file once the run has finished.",
   "no_live_owner": [
    "C1_large_timestep.m1.5-ccd50b275a8c",
    "C1_large_timestep.m2-43ace4fb86f8",
@@ -382,7 +380,9 @@
    "X2_inlet_shear.long280-73bf3827d017",
    "X2_inlet_shear.m2-8ee7c87760a6"
   ],
-  "live_owner": []
+  "live_owner": [
+   "K2_fine_large.D3x-7a1272bafc30"
+  ]
  },
  "loop_attempts": [
   {
@@ -1143,21 +1143,85 @@
   {
    "group": "benchmark",
    "system": "C-llm-r3",
-   "case": "K1_central_scheme",
-   "file": "benchmark/C-llm-r3/K1_central_scheme.partial.json",
+   "case": "A1_coarse_mesh",
+   "file": "benchmark/C-llm-r3/A1_coarse_mesh.partial.json",
    "commits": [
     "working tree"
    ],
    "last_time": null,
-   "n_iterations": 3,
-   "cost_usd": 0.238020195,
+   "n_iterations": 1,
+   "cost_usd": 0.05167191,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "A1_coarse_mesh-8db269c22d05",
+    "A1_coarse_mesh.m1-127e3ddbb1e9"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "A2_moderate_mesh",
+   "file": "benchmark/C-llm-r3/A2_moderate_mesh.partial.json",
+   "commits": [
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 1,
+   "cost_usd": 0.04985331,
    "status": "current, no final result",
+   "superseded_in": null,
+   "runs_named": [
+    "A2_moderate_mesh-1c5ea01594aa",
+    "A2_moderate_mesh.m1.5-773c4ec70534"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K1_central_scheme",
+   "file": "benchmark/C-llm-r3/K1_central_scheme.partial.json",
+   "commits": [
+    "ca32290",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 6,
+   "cost_usd": 0.613594325,
+   "status": "current, final result",
    "superseded_in": null,
    "runs_named": [
     "K1_central_scheme-e4e5fb66bdca",
     "K1_central_scheme.D2x-b0a7ed20bbb5",
     "K1_central_scheme.D3x-14d3dc15d928",
-    "K1_central_scheme.m1.41-9a011a4052fe"
+    "K1_central_scheme.dt0.005-4f460bac38b7",
+    "K1_central_scheme.dt0.005-5fad5168407b",
+    "K1_central_scheme.m1.41-9a011a4052fe",
+    "K1_central_scheme.m2-f0705353471c"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K2_fine_large",
+   "file": "benchmark/C-llm-r3/K2_fine_large.partial.json",
+   "commits": [
+    "ca32290",
+    "284d547",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 6,
+   "cost_usd": 0.5893849250000001,
+   "status": "current, no final result",
+   "superseded_in": null,
+   "runs_named": [
+    "K2_fine_large-2d999cd1eb7c",
+    "K2_fine_large.D1.5x-c2938461e5bc",
+    "K2_fine_large.D2x-bc527461f36d",
+    "K2_fine_large.dt0.0035-6a0f9a80f290",
+    "K2_fine_large.long180-dda8a9c17278",
+    "K2_fine_large.m2-e923e7640822"
    ]
   },
   {
@@ -1166,17 +1230,20 @@
    "case": "baseline",
    "file": "benchmark/C-llm-r3/baseline.partial.json",
    "commits": [
+    "ca32290",
     "working tree"
    ],
    "last_time": null,
-   "n_iterations": 3,
-   "cost_usd": 0.208754695,
-   "status": "current, no final result",
+   "n_iterations": 5,
+   "cost_usd": 0.419614315,
+   "status": "current, final result",
    "superseded_in": null,
    "runs_named": [
     "baseline-408129116207",
+    "baseline.D1.5x-c018e6157314",
     "baseline.D2x-efba395f6c27",
     "baseline.dt0.005-693742b868bc",
+    "baseline.m1.41-807cdf343a51",
     "baseline.m2-93c9ab8d6f2d"
    ]
   },
@@ -1720,6 +1787,7 @@
     "49e8dc8",
     "51d181d",
     "a295a37",
+    "ca32290",
     "working tree"
    ],
    "last_time": null,
@@ -1945,6 +2013,7 @@
    "file": "benchmark/C-rule-prereg/F1_upwind_convection.partial.json",
    "commits": [
     "a295a37",
+    "ca32290",
     "working tree"
    ],
    "last_time": null,
@@ -2319,8 +2388,21 @@
    "last": "2026-10-20T14:09:37+00:00",
    "state": "no such process",
    "command": null,
-   "successor": null,
-   "events_between": [],
+   "successor": {
+    "pid": 25156,
+    "first_record": "2026-10-20T14:14:26+00:00"
+   },
+   "events_between": [
+    {
+     "time": "2026-10-20T14:11:43+00:00",
+     "kind": "launch marker",
+     "label": "C-llm-r3 launch",
+     "fingerprint": null,
+     "sources": [
+      "logs/repeats.log"
+     ]
+    }
+   ],
    "earlier_attempts": 0
   },
   "712": {
@@ -2378,7 +2460,7 @@
     ]
    ],
    "first": "2026-10-20T06:49:20+00:00",
-   "last": "2026-10-20T14:12:24+00:00",
+   "last": "2026-10-20T14:25:01+00:00",
    "state": "alive",
    "command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
    "successor": null,
@@ -2812,8 +2894,21 @@
    "last": "2026-10-20T13:21:07+00:00",
    "state": "no such process",
    "command": null,
-   "successor": null,
-   "events_between": [],
+   "successor": {
+    "pid": 25156,
+    "first_record": "2026-10-20T14:14:26+00:00"
+   },
+   "events_between": [
+    {
+     "time": "2026-10-20T14:11:43+00:00",
+     "kind": "launch marker",
+     "label": "C-llm-r3 launch",
+     "fingerprint": null,
+     "sources": [
+      "logs/repeats.log"
+     ]
+    }
+   ],
    "earlier_attempts": 0
   },
   "5824": {
@@ -4127,6 +4222,37 @@
     }
    ],
    "earlier_attempts": 4
+  },
+  "25156": {
+   "pid": 25156,
+   "launchers": [
+    "llm_critic"
+   ],
+   "groups": [
+    "attacks",
+    "benchmark"
+   ],
+   "records": [
+    [
+     "K1_central_scheme.dt0.005-5fad5168407b",
+     "2026-10-20T14:14:26+00:00"
+    ],
+    [
+     "K2_fine_large.D1.5x-c2938461e5bc",
+     "2026-10-20T14:15:17+00:00"
+    ],
+    [
+     "K2_fine_large.D3x-7a1272bafc30",
+     "2026-10-20T15:24:08+00:00"
+    ]
+   ],
+   "first": "2026-10-20T14:14:26+00:00",
+   "last": "2026-10-20T15:30:36+00:00",
+   "state": "alive",
+   "command": "python3 scripts/run_benchmark.py --systems C-llm-r3 --workers 2",
+   "successor": null,
+   "events_between": [],
+   "earlier_attempts": 0
   },
   "25633": {
    "pid": 25633,
@@ -6018,7 +6144,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 43,
+   "cache_hits": 44,
    "requests": [
     {
      "time": "2026-10-19T07:25:26+00:00",
@@ -6191,6 +6317,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T15:30:38+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -6200,8 +6330,11 @@
     "attacks/B-v2-on-benchmark/A1_coarse_mesh.json",
     "benchmark/A/A1_coarse_mesh.json",
     "benchmark/B/A1_coarse_mesh.json",
+    "benchmark/Bexh/A1_coarse_mesh.json",
     "benchmark/C-llm-r2/A1_coarse_mesh.json",
     "benchmark/C-llm-r2/A1_coarse_mesh.partial.json",
+    "benchmark/C-llm-r3/A1_coarse_mesh.json",
+    "benchmark/C-llm-r3/A1_coarse_mesh.partial.json",
     "benchmark/C-llm/A1_coarse_mesh.json",
     "benchmark/C-llm/A1_coarse_mesh.partial.json",
     "benchmark/C-rule-prereg/A1_coarse_mesh.json",
@@ -6216,7 +6349,9 @@
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "docs/methodology.md",
+    "reports/cases/A1_coarse_mesh__Bexh.md",
     "reports/cases/A1_coarse_mesh__C-llm-r2.md",
+    "reports/cases/A1_coarse_mesh__C-llm-r3.md",
     "reports/cases/A1_coarse_mesh__C-llm.md",
     "reports/cases/A1_coarse_mesh__C-rule.md"
    ],
@@ -6227,10 +6362,10 @@
   },
   "A1_coarse_mesh.D2x-0c836e0d97c0": {
    "run_id": "A1_coarse_mesh.D2x-0c836e0d97c0",
-   "status": "running",
+   "status": "completed",
    "launched_by": "exhaustive",
    "created": "2026-10-20T06:49:23+00:00",
-   "finished": null,
+   "finished": "2026-10-20T14:16:57+00:00",
    "parent_run": "A1_coarse_mesh-8db269c22d05",
    "root_run": "A1_coarse_mesh-8db269c22d05",
    "root_case": "A1_coarse_mesh",
@@ -6243,44 +6378,36 @@
    "failure_kind": null,
    "failure_step": null,
    "failure_returncode": null,
-   "cell_steps": null,
-   "wall_seconds": null,
+   "cell_steps": 82112000,
+   "wall_seconds": 269.07941527599905,
    "owner_pid": 712,
    "owner": 712,
    "owner_state": "alive",
    "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
-   "processes_in_case_dir": [
-    "pimpleFoam"
-   ],
+   "processes_in_case_dir": [],
    "cache_hits": 0,
    "requests": [],
    "unreadable_request_lines": 0,
-   "has_postprocessing_sha256": false,
-   "has_final_fields_sha256": false,
-   "solver_started": true,
-   "solver_logs": [
-    "log.pimpleFoam"
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/Bexh/A1_coarse_mesh.json"
    ],
-   "solver_log": "log.pimpleFoam",
-   "last_time_s": 0.5986666667,
-   "clock_time_s": 30.0,
-   "log_modified": "2026-10-20T14:13:01+00:00",
-   "referenced_by": [],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/A1_coarse_mesh__Bexh.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
-   },
-   "in_use": "live owner",
-   "last_named_in_git": null
+   }
   },
   "A1_coarse_mesh.dt0.005-7544dcbae909": {
    "run_id": "A1_coarse_mesh.dt0.005-7544dcbae909",
@@ -6319,9 +6446,13 @@
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
-   "referenced_by": [],
+   "referenced_by": [
+    "benchmark/Bexh/A1_coarse_mesh.json"
+   ],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/A1_coarse_mesh__Bexh.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [],
    "owner_process": {
@@ -6341,9 +6472,7 @@
      "Bexh launch (2026-10-20 06:49)",
      "commit a91ba95: Results snapshot: attack phase complete; Bexh resumed (2026-10-20 06:50)"
     ]
-   },
-   "in_use": "cache hit by live pid 712 at 2026-10-20 06:49",
-   "last_named_in_git": null
+   }
   },
   "A1_coarse_mesh.long250-430da87fc0b2": {
    "run_id": "A1_coarse_mesh.long250-430da87fc0b2",
@@ -6382,9 +6511,13 @@
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
-   "referenced_by": [],
+   "referenced_by": [
+    "benchmark/Bexh/A1_coarse_mesh.json"
+   ],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/A1_coarse_mesh__Bexh.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [],
    "owner_process": {
@@ -6404,9 +6537,7 @@
      "Bexh launch (2026-10-20 06:49)",
      "commit a91ba95: Results snapshot: attack phase complete; Bexh resumed (2026-10-20 06:50)"
     ]
-   },
-   "in_use": "cache hit by live pid 712 at 2026-10-20 06:49",
-   "last_named_in_git": null
+   }
   },
   "A1_coarse_mesh.m0.707-a67b9e3443d4": {
    "run_id": "A1_coarse_mesh.m0.707-a67b9e3443d4",
@@ -6458,6 +6589,7 @@
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/Bexh/A1_coarse_mesh.json",
     "benchmark/C-rule-prereg/A1_coarse_mesh.json",
     "benchmark/C-rule-prereg/A1_coarse_mesh.partial.json",
     "benchmark/C-rule/A1_coarse_mesh.json"
@@ -6466,6 +6598,7 @@
    "mentioned_in": [
     "docs/methodology.md",
     "reports/benchmark_results.md",
+    "reports/cases/A1_coarse_mesh__Bexh.md",
     "reports/cases/A1_coarse_mesh__C-rule.md"
    ],
    "pid_cleared_in": null,
@@ -6514,10 +6647,14 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 1,
+   "cache_hits": 2,
    "requests": [
     {
      "time": "2026-10-20T07:50:43+00:00",
+     "launched_by": "llm_critic"
+    },
+    {
+     "time": "2026-10-20T15:30:55+00:00",
      "launched_by": "llm_critic"
     }
    ],
@@ -6527,6 +6664,8 @@
    "referenced_by": [
     "benchmark/C-llm-r2/A1_coarse_mesh.json",
     "benchmark/C-llm-r2/A1_coarse_mesh.partial.json",
+    "benchmark/C-llm-r3/A1_coarse_mesh.json",
+    "benchmark/C-llm-r3/A1_coarse_mesh.partial.json",
     "benchmark/C-llm/A1_coarse_mesh.json",
     "benchmark/C-llm/A1_coarse_mesh.partial.json"
    ],
@@ -6534,6 +6673,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/A1_coarse_mesh__C-llm-r2.md",
+    "reports/cases/A1_coarse_mesh__C-llm-r3.md",
     "reports/cases/A1_coarse_mesh__C-llm.md"
    ],
    "pid_cleared_in": null,
@@ -6592,9 +6732,13 @@
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
-   "referenced_by": [],
+   "referenced_by": [
+    "benchmark/Bexh/A1_coarse_mesh.json"
+   ],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/A1_coarse_mesh__Bexh.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [],
    "owner_process": {
@@ -6614,9 +6758,7 @@
      "Bexh launch (2026-10-20 06:49)",
      "commit a91ba95: Results snapshot: attack phase complete; Bexh resumed (2026-10-20 06:50)"
     ]
-   },
-   "in_use": "cache hit by live pid 712 at 2026-10-20 06:49",
-   "last_named_in_git": null
+   }
   },
   "A2_moderate_mesh-1c5ea01594aa": {
    "run_id": "A2_moderate_mesh-1c5ea01594aa",
@@ -6643,7 +6785,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": true,
    "processes_in_case_dir": [],
-   "cache_hits": 30,
+   "cache_hits": 31,
    "requests": [
     {
      "time": "2026-10-19T09:43:44+00:00",
@@ -6764,6 +6906,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T15:30:55+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -6776,6 +6922,7 @@
     "benchmark/Bexh/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.partial.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.partial.json",
     "benchmark/C-llm/A2_moderate_mesh.json",
     "benchmark/C-llm/A2_moderate_mesh.partial.json",
     "benchmark/C-rule-prereg/A2_moderate_mesh.json",
@@ -7019,8 +7166,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "A2_moderate_mesh.dt0.005-4720e4eddcde": {
@@ -7171,8 +7323,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "A2_moderate_mesh.long250-4d9d2cfead3f": {
@@ -7500,7 +7657,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 2,
+   "cache_hits": 3,
    "requests": [
     {
      "time": "2026-10-20T02:24:04+00:00",
@@ -7508,6 +7665,10 @@
     },
     {
      "time": "2026-10-20T07:50:41+00:00",
+     "launched_by": "llm_critic"
+    },
+    {
+     "time": "2026-10-20T15:31:12+00:00",
      "launched_by": "llm_critic"
     }
    ],
@@ -7517,6 +7678,7 @@
    "referenced_by": [
     "benchmark/C-llm-r2/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.partial.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.partial.json",
     "benchmark/C-llm/A2_moderate_mesh.json",
     "benchmark/C-llm/A2_moderate_mesh.partial.json"
    ],
@@ -7749,6 +7911,7 @@
     "attacks/B-v2-on-benchmark/B1_small_domain.json",
     "benchmark/A/B1_small_domain.json",
     "benchmark/B/B1_small_domain.json",
+    "benchmark/Bexh/B1_small_domain.json",
     "benchmark/C-llm-r2/B1_small_domain.json",
     "benchmark/C-llm-r2/B1_small_domain.partial.json",
     "benchmark/C-llm/B1_small_domain.json",
@@ -7762,6 +7925,7 @@
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
+    "reports/cases/B1_small_domain__Bexh.md",
     "reports/cases/B1_small_domain__C-llm-r2.md",
     "reports/cases/B1_small_domain__C-llm.md",
     "reports/cases/B1_small_domain__C-rule.md"
@@ -7798,7 +7962,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 2,
+   "cache_hits": 3,
    "requests": [
     {
      "time": "2026-10-19T13:46:01+00:00",
@@ -7807,12 +7971,17 @@
     {
      "time": "2026-10-20T12:54:07+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T14:25:04+00:00",
+     "launched_by": "exhaustive"
     }
    ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/Bexh/B1_small_domain.json",
     "benchmark/C-llm/B1_small_domain.json",
     "benchmark/C-llm/B1_small_domain.partial.json",
     "benchmark/C-rule-prereg/B1_small_domain.json",
@@ -7822,6 +7991,7 @@
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "reports/benchmark_results.md",
+    "reports/cases/B1_small_domain__Bexh.md",
     "reports/cases/B1_small_domain__C-llm.md",
     "reports/cases/B1_small_domain__C-rule.md"
    ],
@@ -7894,8 +8064,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "B1_small_domain.dt0.005-61f238fa3616": {
@@ -7925,17 +8100,22 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 1,
+   "cache_hits": 2,
    "requests": [
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T14:25:04+00:00",
+     "launched_by": "exhaustive"
     }
    ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/Bexh/B1_small_domain.json",
     "benchmark/C-rule-prereg/B1_small_domain.json",
     "benchmark/C-rule-prereg/B1_small_domain.partial.json",
     "benchmark/C-rule/B1_small_domain.json"
@@ -7943,6 +8123,7 @@
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "reports/benchmark_results.md",
+    "reports/cases/B1_small_domain__Bexh.md",
     "reports/cases/B1_small_domain__C-rule.md"
    ],
    "pid_cleared_in": null,
@@ -7967,10 +8148,10 @@
   },
   "B1_small_domain.long250-e4dc482c83a6": {
    "run_id": "B1_small_domain.long250-e4dc482c83a6",
-   "status": "running",
+   "status": "completed",
    "launched_by": "exhaustive",
    "created": "2026-10-20T06:49:24+00:00",
-   "finished": null,
+   "finished": "2026-10-20T14:25:01+00:00",
    "parent_run": "B1_small_domain-a69ffb97a2e6",
    "root_run": "B1_small_domain-a69ffb97a2e6",
    "root_case": "B1_small_domain",
@@ -7983,8 +8164,8 @@
    "failure_kind": null,
    "failure_step": null,
    "failure_returncode": null,
-   "cell_steps": null,
-   "wall_seconds": null,
+   "cell_steps": 130700000,
+   "wall_seconds": 483.03856122299476,
    "owner_pid": 712,
    "owner": 712,
    "owner_state": "alive",
@@ -7995,23 +8176,24 @@
    "cache_hits": 0,
    "requests": [],
    "unreadable_request_lines": 0,
-   "has_postprocessing_sha256": false,
-   "has_final_fields_sha256": false,
-   "solver_started": false,
-   "referenced_by": [],
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/Bexh/B1_small_domain.json"
+   ],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/B1_small_domain__Bexh.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
-   },
-   "in_use": "live owner",
-   "last_named_in_git": null
+   }
   },
   "B1_small_domain.m1.41-21ba2b6971bf": {
    "run_id": "B1_small_domain.m1.41-21ba2b6971bf",
@@ -8040,17 +8222,22 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 1,
+   "cache_hits": 2,
    "requests": [
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T14:25:04+00:00",
+     "launched_by": "exhaustive"
     }
    ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/Bexh/B1_small_domain.json",
     "benchmark/C-rule-prereg/B1_small_domain.json",
     "benchmark/C-rule-prereg/B1_small_domain.partial.json",
     "benchmark/C-rule/B1_small_domain.json"
@@ -8058,6 +8245,7 @@
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "reports/benchmark_results.md",
+    "reports/cases/B1_small_domain__Bexh.md",
     "reports/cases/B1_small_domain__C-rule.md"
    ],
    "pid_cleared_in": null,
@@ -8107,17 +8295,22 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 1,
+   "cache_hits": 2,
    "requests": [
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T14:25:04+00:00",
+     "launched_by": "exhaustive"
     }
    ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/Bexh/B1_small_domain.json",
     "benchmark/C-rule-prereg/B1_small_domain.json",
     "benchmark/C-rule-prereg/B1_small_domain.partial.json",
     "benchmark/C-rule/B1_small_domain.json"
@@ -8125,6 +8318,7 @@
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "reports/benchmark_results.md",
+    "reports/cases/B1_small_domain__Bexh.md",
     "reports/cases/B1_small_domain__C-rule.md"
    ],
    "pid_cleared_in": null,
@@ -8603,8 +8797,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "B2_moderate_domain.long250-c6e14395cdc1": {
@@ -8819,8 +9018,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "C1_large_timestep-2c56fe2482da": {
@@ -9097,8 +9301,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "C1_large_timestep.D2x-cd501a12fa84": {
@@ -9157,8 +9366,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "C1_large_timestep.D2x-f2b47ea2de80": {
@@ -9237,8 +9451,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "C1_large_timestep.D3x-f035e789cb02": {
@@ -9290,8 +9509,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "C1_large_timestep.dt0.025-610f857bd6ea": {
@@ -9585,8 +9809,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "C1_large_timestep.m1.41-c9c1535204d3": {
@@ -9665,8 +9894,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "C1_large_timestep.m1.5-ccd50b275a8c": {
@@ -9930,7 +10164,7 @@
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
    }
@@ -10646,8 +10880,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "C2_euler_large_timestep.m1.3-85139c80f1bb": {
@@ -11725,8 +11964,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "E1_noslip_side_walls.D1.5x-f702a7c7fa9d": {
@@ -12245,8 +12489,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "E1_noslip_side_walls.m2-24c0dd986308": {
@@ -12655,7 +12904,7 @@
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
    }
@@ -12761,7 +13010,7 @@
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
    }
@@ -12902,8 +13151,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "F1_upwind_convection.long350-3e56ac0814bc": {
@@ -13288,8 +13542,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "F1_upwind_convection.m2-a5b11786bf96": {
@@ -13701,8 +13960,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "G1_premature_averaging.D2x-8095ac8f3890": {
@@ -13749,7 +14013,7 @@
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
    }
@@ -14164,8 +14428,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "G1_premature_averaging.long440-c4155f5b634a": {
@@ -14217,8 +14486,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "G1_premature_averaging.m1.41-0097f3f3f17a": {
@@ -14912,8 +15186,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "G2_average_from_start.dt0.005-9ef3c201ac13": {
@@ -14965,8 +15244,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "G2_average_from_start.dt0.005-ee6872926d0a": {
@@ -15446,8 +15730,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "G2_average_from_start.m1.41-bcf7a2407283": {
@@ -15499,8 +15788,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "G2_average_from_start.m1.41-f3197d3f2274": {
@@ -16035,7 +16329,7 @@
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
    },
@@ -16081,9 +16375,9 @@
     "log.pimpleFoam"
    ],
    "solver_log": "log.pimpleFoam",
-   "last_time_s": 2.148414761,
-   "clock_time_s": 3174.0,
-   "log_modified": "2026-10-20T14:13:01+00:00",
+   "last_time_s": 5.313437939,
+   "clock_time_s": 7875.0,
+   "log_modified": "2026-10-20T15:31:22+00:00",
    "referenced_by": [],
    "referenced_only_by_partial": false,
    "mentioned_in": [],
@@ -16092,7 +16386,7 @@
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
    },
@@ -16858,7 +17152,7 @@
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
    }
@@ -16964,7 +17258,7 @@
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
    }
@@ -17161,7 +17455,7 @@
    "owner_process": {
     "pid": 712,
     "state": "alive",
-    "last_record": "2026-10-20T14:12:24+00:00",
+    "last_record": "2026-10-20T14:25:01+00:00",
     "successor": null,
     "events_between": []
    }
@@ -17328,6 +17622,7 @@
     "benchmark/Bexh/K1_central_scheme.json",
     "benchmark/C-llm-r2/K1_central_scheme.json",
     "benchmark/C-llm-r2/K1_central_scheme.partial.json",
+    "benchmark/C-llm-r3/K1_central_scheme.json",
     "benchmark/C-llm-r3/K1_central_scheme.partial.json",
     "benchmark/C-llm/K1_central_scheme.json",
     "benchmark/C-llm/K1_central_scheme.partial.json",
@@ -17342,6 +17637,7 @@
    "mentioned_in": [
     "reports/cases/K1_central_scheme__Bexh.md",
     "reports/cases/K1_central_scheme__C-llm-r2.md",
+    "reports/cases/K1_central_scheme__C-llm-r3.md",
     "reports/cases/K1_central_scheme__C-llm.md",
     "reports/cases/K1_central_scheme__C-rule.md"
    ],
@@ -17426,8 +17722,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K1_central_scheme.D2x-b0a7ed20bbb5": {
@@ -17495,6 +17796,7 @@
     "benchmark/Bexh/K1_central_scheme.json",
     "benchmark/C-llm-r2/K1_central_scheme.json",
     "benchmark/C-llm-r2/K1_central_scheme.partial.json",
+    "benchmark/C-llm-r3/K1_central_scheme.json",
     "benchmark/C-llm-r3/K1_central_scheme.partial.json",
     "benchmark/C-llm/K1_central_scheme.json",
     "benchmark/C-llm/K1_central_scheme.partial.json",
@@ -17507,6 +17809,7 @@
     "reports/benchmark_results.md",
     "reports/cases/K1_central_scheme__Bexh.md",
     "reports/cases/K1_central_scheme__C-llm-r2.md",
+    "reports/cases/K1_central_scheme__C-llm-r3.md",
     "reports/cases/K1_central_scheme__C-llm.md",
     "reports/cases/K1_central_scheme__C-rule.md"
    ],
@@ -17570,11 +17873,13 @@
    "referenced_by": [
     "benchmark/C-llm-r2/K1_central_scheme.json",
     "benchmark/C-llm-r2/K1_central_scheme.partial.json",
+    "benchmark/C-llm-r3/K1_central_scheme.json",
     "benchmark/C-llm-r3/K1_central_scheme.partial.json"
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
-    "reports/cases/K1_central_scheme__C-llm-r2.md"
+    "reports/cases/K1_central_scheme__C-llm-r2.md",
+    "reports/cases/K1_central_scheme__C-llm-r3.md"
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
@@ -17585,8 +17890,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K1_central_scheme.dt0.005-4f460bac38b7": {
@@ -17616,7 +17926,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 4,
+   "cache_hits": 5,
    "requests": [
     {
      "time": "2026-10-20T06:49:20+00:00",
@@ -17633,6 +17943,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T14:13:21+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -17642,6 +17956,8 @@
     "benchmark/Bexh/K1_central_scheme.json",
     "benchmark/C-llm-r2/K1_central_scheme.json",
     "benchmark/C-llm-r2/K1_central_scheme.partial.json",
+    "benchmark/C-llm-r3/K1_central_scheme.json",
+    "benchmark/C-llm-r3/K1_central_scheme.partial.json",
     "benchmark/C-llm/K1_central_scheme.json",
     "benchmark/C-llm/K1_central_scheme.partial.json",
     "benchmark/C-rule-prereg/K1_central_scheme.json",
@@ -17653,6 +17969,7 @@
     "reports/benchmark_results.md",
     "reports/cases/K1_central_scheme__Bexh.md",
     "reports/cases/K1_central_scheme__C-llm-r2.md",
+    "reports/cases/K1_central_scheme__C-llm-r3.md",
     "reports/cases/K1_central_scheme__C-llm.md",
     "reports/cases/K1_central_scheme__C-rule.md"
    ],
@@ -17665,6 +17982,64 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
+   }
+  },
+  "K1_central_scheme.dt0.005-5fad5168407b": {
+   "run_id": "K1_central_scheme.dt0.005-5fad5168407b",
+   "status": "completed",
+   "launched_by": "llm_critic",
+   "created": "2026-10-20T14:14:26+00:00",
+   "finished": "2026-10-20T15:30:36+00:00",
+   "parent_run": "K1_central_scheme.m1.41-9a011a4052fe",
+   "root_run": "K1_central_scheme-e4e5fb66bdca",
+   "root_case": "K1_central_scheme",
+   "missing_ancestor": null,
+   "action": "REDUCE_TIME_STEP",
+   "params": {
+    "factor": 1.728
+   },
+   "launch_reason": "Drag mesh is the largest unresolved component (0.06483, observed p=0.16). R0, R1 and R5 differ in time step, so the mesh and time effects are confounded. R4 (dt 0.005, R0 mesh) and R5 (finer mesh, dt 0.0075022) both give drag 1.3373. Reducing R1's dt to about 0.005 gives a mesh pair with R4 at matched dt. It fits the remaining budget (about 10140 s at factor 2, and less at 1.7284).",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 981610536,
+   "wall_seconds": 4570.086919993992,
+   "owner_pid": 25156,
+   "owner": 25156,
+   "owner_state": "alive",
+   "owner_command": "python3 scripts/run_benchmark.py --systems C-llm-r3 --workers 2",
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-llm-r3/K1_central_scheme.json",
+    "benchmark/C-llm-r3/K1_central_scheme.partial.json"
+   ],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [
+    "reports/cases/K1_central_scheme__C-llm-r3.md"
+   ],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [
+    "C-llm-v1",
+    "C-llm-v1+review"
+   ],
+   "owner_process": {
+    "pid": 25156,
+    "state": "alive",
+    "last_record": "2026-10-20T15:30:36+00:00",
     "successor": null,
     "events_between": []
    }
@@ -17719,8 +18094,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K1_central_scheme.long250-410df1808fb2": {
@@ -17861,6 +18241,7 @@
     "benchmark/Bexh/K1_central_scheme.json",
     "benchmark/C-llm-r2/K1_central_scheme.json",
     "benchmark/C-llm-r2/K1_central_scheme.partial.json",
+    "benchmark/C-llm-r3/K1_central_scheme.json",
     "benchmark/C-llm-r3/K1_central_scheme.partial.json",
     "benchmark/C-rule-prereg/K1_central_scheme.json",
     "benchmark/C-rule-prereg/K1_central_scheme.partial.json",
@@ -17871,6 +18252,7 @@
     "reports/benchmark_results.md",
     "reports/cases/K1_central_scheme__Bexh.md",
     "reports/cases/K1_central_scheme__C-llm-r2.md",
+    "reports/cases/K1_central_scheme__C-llm-r3.md",
     "reports/cases/K1_central_scheme__C-rule.md"
    ],
    "pid_cleared_in": null,
@@ -17943,8 +18325,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K1_central_scheme.m2-325af4c14f68": {
@@ -18005,8 +18392,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K1_central_scheme.m2-f0705353471c": {
@@ -18036,7 +18428,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 3,
+   "cache_hits": 4,
    "requests": [
     {
      "time": "2026-10-20T03:41:01+00:00",
@@ -18049,6 +18441,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T14:13:46+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -18056,6 +18452,8 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/K1_central_scheme.json",
+    "benchmark/C-llm-r3/K1_central_scheme.json",
+    "benchmark/C-llm-r3/K1_central_scheme.partial.json",
     "benchmark/C-rule-prereg/K1_central_scheme.json",
     "benchmark/C-rule-prereg/K1_central_scheme.partial.json",
     "benchmark/C-rule/K1_central_scheme.json"
@@ -18064,6 +18462,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/K1_central_scheme__Bexh.md",
+    "reports/cases/K1_central_scheme__C-llm-r3.md",
     "reports/cases/K1_central_scheme__C-rule.md"
    ],
    "pid_cleared_in": null,
@@ -18110,7 +18509,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": true,
    "processes_in_case_dir": [],
-   "cache_hits": 30,
+   "cache_hits": 31,
    "requests": [
     {
      "time": "2026-10-19T10:01:44+00:00",
@@ -18231,6 +18630,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T14:13:19+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -18242,6 +18645,7 @@
     "benchmark/Bexh/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.partial.json",
+    "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json",
     "benchmark/C-rule-prereg/K2_fine_large.json",
@@ -18309,11 +18713,67 @@
     "reports/cases/K2_fine_large__C-llm-r2.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-llm-r3"
+   ],
    "owner_process": {
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
+   }
+  },
+  "K2_fine_large.D1.5x-c2938461e5bc": {
+   "run_id": "K2_fine_large.D1.5x-c2938461e5bc",
+   "status": "completed",
+   "launched_by": "llm_critic",
+   "created": "2026-10-20T14:15:17+00:00",
+   "finished": "2026-10-20T15:22:56+00:00",
+   "parent_run": "K2_fine_large-2d999cd1eb7c",
+   "root_run": "K2_fine_large-2d999cd1eb7c",
+   "root_case": "K2_fine_large",
+   "missing_ancestor": null,
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 1.5
+   },
+   "launch_reason": "Domain uncertainty is the component that blocks ACCEPT for both quantities. It is estimated only from the confounded R2 (checkMesh_ok false, coarser far field, short record) with an assumed order p=1. A third domain level at factor 1.5 gives an observed order. It is the cheapest menu entry (5621 s from R0) and stays below the cell limit.",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 727661572,
+   "wall_seconds": 4059.4539978339963,
+   "owner_pid": 25156,
+   "owner": 25156,
+   "owner_state": "alive",
+   "owner_command": "python3 scripts/run_benchmark.py --systems C-llm-r3 --workers 2",
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-llm-r3/K2_fine_large.partial.json"
+   ],
+   "referenced_only_by_partial": true,
+   "mentioned_in": [],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [
+    "C-llm-r3"
+   ],
+   "owner_process": {
+    "pid": 25156,
+    "state": "alive",
+    "last_record": "2026-10-20T15:30:36+00:00",
     "successor": null,
     "events_between": []
    }
@@ -18356,16 +18816,24 @@
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
+    "reports/benchmark_results.md",
     "reports/cases/K2_fine_large__C-llm.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-llm-r3"
+   ],
    "owner_process": {
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K2_fine_large.D2x-4555577439db": {
@@ -18421,8 +18889,13 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K2_fine_large.D2x-bc527461f36d": {
@@ -18452,7 +18925,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 4,
+   "cache_hits": 5,
    "requests": [
     {
      "time": "2026-10-20T06:49:20+00:00",
@@ -18469,6 +18942,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T14:14:33+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -18478,6 +18955,7 @@
     "benchmark/Bexh/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.partial.json",
+    "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json",
     "benchmark/C-rule-prereg/K2_fine_large.json",
@@ -18498,9 +18976,74 @@
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
+   }
+  },
+  "K2_fine_large.D3x-7a1272bafc30": {
+   "run_id": "K2_fine_large.D3x-7a1272bafc30",
+   "status": "running",
+   "launched_by": "llm_critic",
+   "created": "2026-10-20T15:24:08+00:00",
+   "finished": null,
+   "parent_run": "K2_fine_large-2d999cd1eb7c",
+   "root_run": "K2_fine_large-2d999cd1eb7c",
+   "root_case": "K2_fine_large",
+   "missing_ancestor": null,
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 3.0
+   },
+   "launch_reason": "Domain is the component that blocks ACCEPT for drag and also leaves St marginal. The drag domain sequence R0 1.3277, R4 1.3237, R5 1.3196 diverges under the Eca-Hoekstra check, so no extrapolation is possible. A 180 D level adds a clearly separated fourth point, so the verifier can test whether the trend flattens. It is the cheapest menu entry (5621 s from R0) and addresses two open components. It leaves compute within budget. R0 is the root with 13 cycles, and R1 is not allowed as a parent.",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": null,
+   "wall_seconds": null,
+   "owner_pid": 25156,
+   "owner": 25156,
+   "owner_state": "alive",
+   "owner_command": "python3 scripts/run_benchmark.py --systems C-llm-r3 --workers 2",
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [
+    "pimpleFoam"
+   ],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": false,
+   "has_final_fields_sha256": false,
+   "solver_started": true,
+   "solver_logs": [
+    "log.pimpleFoam"
+   ],
+   "solver_log": "log.pimpleFoam",
+   "last_time_s": 0.4466,
+   "clock_time_s": 425.0,
+   "log_modified": "2026-10-20T15:31:22+00:00",
+   "referenced_by": [],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [
+    "C-llm-r3"
+   ],
+   "owner_process": {
+    "pid": 25156,
+    "state": "alive",
+    "last_record": "2026-10-20T15:30:36+00:00",
     "successor": null,
     "events_between": []
-   }
+   },
+   "in_use": "live owner",
+   "last_named_in_git": null,
+   "llm_results_logged_after_creation": []
   },
   "K2_fine_large.dt0.0035-6a0f9a80f290": {
    "run_id": "K2_fine_large.dt0.0035-6a0f9a80f290",
@@ -18529,7 +19072,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 5,
+   "cache_hits": 6,
    "requests": [
     {
      "time": "2026-10-20T03:41:01+00:00",
@@ -18550,6 +19093,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T14:14:54+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -18559,6 +19106,7 @@
     "benchmark/Bexh/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.partial.json",
+    "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json",
     "benchmark/C-rule-prereg/K2_fine_large.json",
@@ -18616,27 +19164,41 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 0,
-   "requests": [],
+   "cache_hits": 1,
+   "requests": [
+    {
+     "time": "2026-10-20T15:23:39+00:00",
+     "launched_by": "llm_critic"
+    }
+   ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json"
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
+    "reports/benchmark_results.md",
     "reports/cases/K2_fine_large__C-llm.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-llm-r3"
+   ],
    "owner_process": {
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K2_fine_large.long250-0d48c4a802f5": {
@@ -18742,16 +19304,24 @@
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
+    "reports/benchmark_results.md",
     "reports/cases/K2_fine_large__C-llm.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-llm-r3"
+   ],
    "owner_process": {
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K2_fine_large.m1.77-e5d0ad1d73b4": {
@@ -18866,27 +19436,41 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 0,
-   "requests": [],
+   "cache_hits": 1,
+   "requests": [
+    {
+     "time": "2026-10-20T14:14:09+00:00",
+     "launched_by": "llm_critic"
+    }
+   ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json"
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
+    "reports/benchmark_results.md",
     "reports/cases/K2_fine_large__C-llm.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-llm-r3"
+   ],
    "owner_process": {
     "pid": 509,
     "state": "no such process",
     "last_record": "2026-10-20T14:09:37+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "K2_fine_large.m2.06-7ad5498c706d": {
@@ -18930,13 +19514,20 @@
     "reports/cases/K2_fine_large__C-llm-r2.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-llm-r3"
+   ],
    "owner_process": {
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "X1_cylinder_geometry-53f173b2191e": {
@@ -21166,6 +21757,7 @@
     "benchmark/Bexh/baseline.json",
     "benchmark/C-llm-r2/baseline.json",
     "benchmark/C-llm-r2/baseline.partial.json",
+    "benchmark/C-llm-r3/baseline.json",
     "benchmark/C-llm-r3/baseline.partial.json",
     "benchmark/C-llm/baseline.json",
     "benchmark/C-llm/baseline.partial.json",
@@ -21181,6 +21773,7 @@
     "reports/baseline_generated.md",
     "reports/cases/baseline__Bexh.md",
     "reports/cases/baseline__C-llm-r2.md",
+    "reports/cases/baseline__C-llm-r3.md",
     "reports/cases/baseline__C-llm.md",
     "reports/cases/baseline__C-rule.md"
    ],
@@ -21228,11 +21821,14 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/C-llm-r2/baseline.json",
-    "benchmark/C-llm-r2/baseline.partial.json"
+    "benchmark/C-llm-r2/baseline.partial.json",
+    "benchmark/C-llm-r3/baseline.json",
+    "benchmark/C-llm-r3/baseline.partial.json"
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
-    "reports/cases/baseline__C-llm-r2.md"
+    "reports/cases/baseline__C-llm-r2.md",
+    "reports/cases/baseline__C-llm-r3.md"
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
@@ -21243,8 +21839,13 @@
     "pid": 5669,
     "state": "no such process",
     "last_record": "2026-10-20T13:21:07+00:00",
-    "successor": null,
-    "events_between": []
+    "successor": {
+     "pid": 25156,
+     "first_record": "2026-10-20T14:14:26+00:00"
+    },
+    "events_between": [
+     "C-llm-r3 launch (2026-10-20 14:11)"
+    ]
    }
   },
   "baseline.D1.5x-ed421affd588": {
@@ -21490,6 +22091,7 @@
     "benchmark/Bexh/baseline.json",
     "benchmark/C-llm-r2/baseline.json",
     "benchmark/C-llm-r2/baseline.partial.json",
+    "benchmark/C-llm-r3/baseline.json",
     "benchmark/C-llm-r3/baseline.partial.json",
     "benchmark/C-llm/baseline.json",
     "benchmark/C-llm/baseline.partial.json",
@@ -21504,6 +22106,7 @@
     "reports/benchmark_results.md",
     "reports/cases/baseline__Bexh.md",
     "reports/cases/baseline__C-llm-r2.md",
+    "reports/cases/baseline__C-llm-r3.md",
     "reports/cases/baseline__C-llm.md",
     "reports/cases/baseline__C-rule.md"
    ],
@@ -21795,6 +22398,7 @@
     "benchmark/Bexh/baseline.json",
     "benchmark/C-llm-r2/baseline.json",
     "benchmark/C-llm-r2/baseline.partial.json",
+    "benchmark/C-llm-r3/baseline.json",
     "benchmark/C-llm-r3/baseline.partial.json",
     "benchmark/C-llm/baseline.json",
     "benchmark/C-llm/baseline.partial.json",
@@ -21808,6 +22412,7 @@
     "reports/benchmark_results.md",
     "reports/cases/baseline__Bexh.md",
     "reports/cases/baseline__C-llm-r2.md",
+    "reports/cases/baseline__C-llm-r3.md",
     "reports/cases/baseline__C-llm.md",
     "reports/cases/baseline__C-rule.md"
    ],
@@ -22156,7 +22761,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": true,
    "processes_in_case_dir": [],
-   "cache_hits": 10,
+   "cache_hits": 11,
    "requests": [
     {
      "time": "2026-10-19T09:41:41+00:00",
@@ -22197,6 +22802,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T14:13:19+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -22211,6 +22820,8 @@
     "benchmark/Bexh/baseline.json",
     "benchmark/C-llm-r2/baseline.json",
     "benchmark/C-llm-r2/baseline.partial.json",
+    "benchmark/C-llm-r3/baseline.json",
+    "benchmark/C-llm-r3/baseline.partial.json",
     "benchmark/C-llm/baseline.json",
     "benchmark/C-llm/baseline.partial.json",
     "benchmark/C-rule-prereg/baseline.json",
@@ -22223,6 +22834,7 @@
     "reports/benchmark_results.md",
     "reports/cases/baseline__Bexh.md",
     "reports/cases/baseline__C-llm-r2.md",
+    "reports/cases/baseline__C-llm-r3.md",
     "reports/cases/baseline__C-llm.md",
     "reports/cases/baseline__C-rule.md"
    ],
@@ -22389,6 +23001,7 @@
     "baseline/study_stage2.json",
     "baseline/summary.json",
     "baseline/truth.json",
+    "benchmark/C-llm-r3/baseline.json",
     "benchmark/C-llm-r3/baseline.partial.json",
     "benchmark/C-llm/baseline.json",
     "benchmark/C-llm/baseline.partial.json"
@@ -22397,6 +23010,7 @@
    "mentioned_in": [
     "reports/baseline_generated.md",
     "reports/benchmark_results.md",
+    "reports/cases/baseline__C-llm-r3.md",
     "reports/cases/baseline__C-llm.md"
    ],
    "pid_cleared_in": null,

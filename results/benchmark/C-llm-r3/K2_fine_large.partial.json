@@ -365,6 +365,170 @@
     "expected_outcome": "If drag (1.3277) and Strouhal number (0.16382) each change by less than about 1.5% relative to R0, the time component can be bounded within budget. A change above 3% beyond noise would give a FAIL and show R0 is time-step sensitive."
    },
    "outcome": "executed -> K2_fine_large.dt0.0035-6a0f9a80f290 (completed)"
+  },
+  {
+   "iteration": 5,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 22.145015914997202,
+    "cost_usd": 0.10843371,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 40930,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 48,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "K2_fine_large-2d999cd1eb7c": "R0",
+     "K2_fine_large.m2-e923e7640822": "R1",
+     "K2_fine_large.D2x-bc527461f36d": "R2",
+     "K2_fine_large.dt0.0035-6a0f9a80f290": "R3"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed and REJECT is not justified.",
+    "Time is now measured and passes. R3 (dt 0.0035) gives drag 1.3251 and St 0.16393 against R0 1.3277 and 0.16382. Time uncertainty is 0.007908 for drag and 0.0027 for St.",
+    "Drag mesh passes. R1 gives 1.3289 against R0 1.3277, with mesh uncertainty 0.004327. Averaging and statistics uncertainties are tiny for both quantities.",
+    "Domain is the blocking component for both quantities. Drag domain uncertainty is 0.03173, which exceeds the 0.5*tolerance limit of 0.015. St domain uncertainty is 0.01884. The demonstrated changes are small (0.53% drag, 0.31% St), so the large values come from the assumed order p=1 with Fs=3, not from a measured large effect.",
+    "R2 is a confounded domain estimate. checkMesh_ok is false. Its representative cell size is 0.82162 D against 0.47033 D for R0, and its last wake cell is 1.8673 D against 0.96749 D. Its drag CI95 is 0.00088885 and its drift is -0.0019997, both much worse than R0. The R0-to-R2 change mixes domain size, far-field coarsening and a shorter record.",
+    "A third domain level would give an observed order in place of the assumed p=1. EXPAND_DOMAIN from R0 with factor 1.5 gives levels R0 (1.0), new (1.5) and R2 (2.0). It is the cheapest menu entry at 5621 s. It also stays below the 160000 cell limit, because R2 at factor 2.0 has 71104 cells and R0 has 54244. This follows from the recorded counts and is not a measured count for the new run.",
+    "St mesh uncertainty is 0.02187 and is also INCONCLUSIVE. The R0-to-R1 St change is only 0.44%. A third mesh level (REFINE_MESH from R0, small factor) is the next step after domain. Budget is 3 of 6 experiments and 3.33 of 12 compute units used, so both are affordable.",
+    "R1 is not an allowed parent for EXPAND_DOMAIN (181768 cells > 160000). R0 is the root, has 13 cycles and a valid mesh, so it is the parent."
+   ],
+   "missing_evidence": [
+    "Domain uncertainty for drag and St with an observed order. Only two domain levels exist (R0 and R2), and R2 has checkMesh_ok false and a coarser far-field mesh.",
+    "St mesh uncertainty with an observed order. Only two mesh levels exist (R0 and R1).",
+    "Combined uncertainty is not computed for either quantity because the domain components (and St mesh) are INCONCLUSIVE.",
+    "St frequency resolution (0.013334 for R0, 0.025002 for R1) is comparable to the R0-to-R1 St change, and no longer record has tested it."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "Boundary truncation and blockage (blockage 0.0083333) bias drag and St by far less than the 3% tolerance. The large domain uncertainty (0.03173 for drag) is an artefact of the assumed p=1 and a confounded R2 mesh.",
+     "test": "EXPAND_DOMAIN factor 1.5 from R0. If drag and St differ from R0 (1.3277, 0.16382) by less than R2 did (0.53% and 0.31%), and the R0, new and R2 sequence shows an observed order, the domain component can be bounded within 1.5%. A change above 3% beyond noise would be a FAIL."
+    },
+    {
+     "hypothesis": "St mesh uncertainty (0.02187) is inflated by the assumed p=2 and Fs=3. The true mesh error is consistent with the 0.44% R0-to-R1 change.",
+     "test": "Later, run REFINE_MESH from R0 with a small factor (about 1.3) to get a third mesh level and an observed order."
+    },
+    {
+     "hypothesis": "The R2 difference partly reflects R2's coarser far-field mesh and shorter record rather than boundary position.",
+     "test": "Compare the new run (same method, factor 1.5) with R0 and R2. Domain differences that do not decrease monotonically with boundary distance would indicate confounding."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 1.5
+    },
+    "parent_run": "K2_fine_large-2d999cd1eb7c",
+    "reason": "Domain uncertainty is the component that blocks ACCEPT for both quantities. It is estimated only from the confounded R2 (checkMesh_ok false, coarser far field, short record) with an assumed order p=1. A third domain level at factor 1.5 gives an observed order. It is the cheapest menu entry (5621 s from R0) and stays below the cell limit.",
+    "expected_outcome": "If drag and St change by less than about 1.5% relative to R0 (1.3277 and 0.16382) and the three levels give an observed order, the domain component can be bounded within budget. A change above 3% beyond noise would give a FAIL."
+   },
+   "outcome": "executed -> K2_fine_large.D1.5x-c2938461e5bc (completed)"
+  },
+  {
+   "iteration": 6,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 41.6537002010009,
+    "cost_usd": 0.158184275,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 48451,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 54,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "K2_fine_large-2d999cd1eb7c": "R0",
+     "K2_fine_large.m2-e923e7640822": "R1",
+     "K2_fine_large.D2x-bc527461f36d": "R2",
+     "K2_fine_large.dt0.0035-6a0f9a80f290": "R3",
+     "K2_fine_large.D1.5x-c2938461e5bc": "R4"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and failed_checks is empty. ACCEPT is not allowed and REJECT is not justified.",
+    "Averaging, statistics and time pass for both quantities. Drag time uncertainty is 0.007908 and St time uncertainty is 0.0027. R3 (dt 0.0035) gives drag 1.3251 and St 0.16393, against R0 1.3277 and 0.16382.",
+    "Drag mesh passes at 0.004327 (R1 1.3289 vs R0 1.3277). St mesh is INCONCLUSIVE at 0.02187, above 0.015. The demonstrated R0-to-R1 change is only 0.44%, so the large value comes from the assumed p=2 with Fs=3 on two levels.",
+    "Drag domain is INCONCLUSIVE at 0.01587, just above 0.015. The verifier reports a demonstrated change of 0.53%. St domain passes at 0.00942.",
+    "Drag falls monotonically as the domain grows: R0 1.3277, R4 1.3237, R2 1.3208. This ordering is systematic and is not within noise.",
+    "R2 and R4 are weak domain points. Both have checkMesh_ok false and coarser far-field meshes than R0. They have only 6 cycles on a 80 D/U record. Their drag drift is -0.0019997 (R2) and -0.00081836 (R4), against -2.9076e-05 for R0. R2's CI95 is 0.00088885, against 1.0366e-05 for R0.",
+    "The R2 drift (-0.0019997) is a large fraction of the 0.53% R0-to-R2 difference. The drag spread may therefore include an unfinished transient in R2, not only a boundary effect. R0 was averaged over a 13-cycle window that reaches 150 D/U.",
+    "RUN_LONGER on R2 separates these two causes. It is the cheapest informative option (7027 s). A longer R2 record, comparable to R0's, tests whether the R2 value settles and whether the drag spread is a real domain effect.",
+    "Budget: 4 of 6 experiments and 3.96 of 12 compute units used. This run and a later REFINE_MESH from R0 with a small factor (for the St mesh order) both fit in the remaining budget.",
+    "RUN_LONGER is preferred to another EXPAND_DOMAIN. A new domain level would keep the same short-record and far-field confounders. It would also widen the spread if the drag trend continues."
+   ],
+   "missing_evidence": [
+    "Domain uncertainty for drag below the 0.015 component limit. It is currently 0.01587, based on R0, R4 and R2. R2 and R4 have short records, drift and checkMesh_ok false.",
+    "St mesh uncertainty with an observed order. Only two mesh levels exist (R0, R1), and the current 0.02187 relies on an assumed p=2.",
+    "Combined uncertainty for both quantities, which is not computed while one component per quantity is INCONCLUSIVE.",
+    "Whether R2's drag has settled. Its drift is -0.0019997 and its CI95 is 0.00088885 on 6 cycles."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "Part of the R0-to-R2 drag difference (1.3277 vs 1.3208) comes from R2's short, still-drifting record (drift -0.0019997, CI95 0.00088885, 6 cycles) and not from boundary position.",
+     "test": "RUN_LONGER on R2 by 100 D/U. If the R2 stationary-window drag moves toward R0 or R4 and the drift and CI95 shrink, the domain spread falls and the drag domain component can come within 0.015. If the R2 drag stays near 1.3208 with small drift, the domain effect is real and monotonic."
+    },
+    {
+     "hypothesis": "The St mesh uncertainty of 0.02187 is inflated by the assumed order p=2 and Fs=3. The true mesh error is consistent with the observed 0.44% R0-to-R1 change.",
+     "test": "REFINE_MESH from R0 with factor 1.3 gives a third mesh level. Check whether the observed order brings the St mesh uncertainty to 0.015 or below."
+    }
+   ],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {
+     "additional_convective_times": 100.0
+    },
+    "parent_run": "K2_fine_large.D2x-bc527461f36d",
+    "reason": "R2 is the largest-domain run and defines one end of the drag domain spread. Its record is short (6 cycles, 80 D/U), it has the largest drag drift (-0.0019997) and CI95 (0.00088885), and it has checkMesh_ok false. Extending it by 100 D/U gives a record comparable to R0's (150 D/U). This tests whether the 0.53% drag difference from R0 is a real boundary effect or a transient and sampling artefact. It costs an estimated 7027 s.",
+    "expected_outcome": "If R2's drift and CI95 shrink and its drag settles close to R0 and R4, the domain spread falls to about 0.5% or below and the drag domain component can pass at 0.015 or less. If R2's drag keeps falling or stays near 1.3208 with small drift, the domain sensitivity is real and the drag domain uncertainty stays above budget. That would justify a domain-corrected estimate or a further domain run."
+   },
+   "outcome": "executed -> K2_fine_large.long180-dda8a9c17278 (completed)"
   }
  ]
 }

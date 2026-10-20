@@ -1,0 +1,226 @@
+{
+  "run_id": "K2_fine_large.D3x-7a1272bafc30",
+  "status": "running",
+  "owner_pid": 25156,
+  "created": "2026-10-20T15:24:08+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "K2_fine_large.D3x",
+    "description": "EXPAND_DOMAIN {'factor': 3.0} from K2_fine_large-2d999cd1eb7c",
+    "mesh": {
+      "refinement": 1.25,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 51,
+      "n_downstream": 175,
+      "n_lateral": 67,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 120.0,
+      "downstream": 180.0,
+      "half_height": 180.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "backward",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 1,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.007,
+      "end_time": 80.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 40.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "4b36eddb70c71af9",
+  "parent_run": "K2_fine_large-2d999cd1eb7c",
+  "launch_reason": "Domain is the component that blocks ACCEPT for drag and also leaves St marginal. The drag domain sequence R0 1.3277, R4 1.3237, R5 1.3196 diverges under the Eca-Hoekstra check, so no extrapolation is possible. A 180 D level adds a clearly separated fourth point, so the verifier can test whether the trend flattens. It is the cheapest menu entry (5621 s from R0) and addresses two open components. It leaves compute within budget. R0 is the root with 13 cycles, and R1 is not allowed as a parent.",
+  "launched_by": "llm_critic",
+  "experiment": {
+    "action": "EXPAND_DOMAIN",
+    "params": {
+      "factor": 3.0
+    },
+    "parent_run": "K2_fine_large-2d999cd1eb7c",
+    "changes": {
+      "averaging.start_time": {
+        "from": 75.0,
+        "to": 40.0
+      },
+      "domain.downstream": {
+        "from": 60.0,
+        "to": 180.0
+      },
+      "domain.half_height": {
+        "from": 60.0,
+        "to": 180.0
+      },
+      "domain.upstream": {
+        "from": 40.0,
+        "to": 120.0
+      },
+      "mesh.n_downstream": {
+        "from": 120,
+        "to": 175
+      },
+      "mesh.n_lateral": {
+        "from": 51,
+        "to": 67
+      },
+      "mesh.n_upstream": {
+        "from": 38,
+        "to": 51
+      },
+      "time.end_time": {
+        "from": 150.0,
+        "to": 80.0
+      }
+    },
+    "notes": [
+      "initialised by mapping the parent's final periodic state; run 80 D/U"
+    ],
+    "initialisation": {
+      "kind": "map",
+      "source_run": "K2_fine_large-2d999cd1eb7c"
+    },
+    "estimated_cell_steps": 945074285.7142857
+  },
+  "config_changes_from_parent": {
+    "averaging.start_time": {
+      "from": 75.0,
+      "to": 40.0
+    },
+    "domain.downstream": {
+      "from": 60.0,
+      "to": 180.0
+    },
+    "domain.half_height": {
+      "from": 60.0,
+      "to": 180.0
+    },
+    "domain.upstream": {
+      "from": 40.0,
+      "to": 120.0
+    },
+    "mesh.n_downstream": {
+      "from": 120,
+      "to": 175
+    },
+    "mesh.n_lateral": {
+      "from": 51,
+      "to": 67
+    },
+    "mesh.n_upstream": {
+      "from": 38,
+      "to": 51
+    },
+    "time.end_time": {
+      "from": 150.0,
+      "to": 80.0
+    }
+  },
+  "initialisation": {
+    "kind": "map",
+    "source_run": "K2_fine_large-2d999cd1eb7c",
+    "consistent": false
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "ca3229040ca0a3a78f96646ee2e525779b8e56b5",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  }
+}

@@ -163,6 +163,172 @@
     "expected_outcome": "If drag and Strouhal number change by well under 1.5% relative to R0, mesh uncertainty can be bounded and the time-step run should follow. If either changes by more than 3% (beyond 2x noise), the verifier can mark a mesh FAIL for R0 and the answer is REJECT."
    },
    "outcome": "executed -> E1_noslip_side_walls.m1.41-f15d7e2db685 (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 23.181227296999992,
+    "cost_usd": 0.08761321000000001,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 27771,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 45,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "E1_noslip_side_walls-88a7cd5812e8": "R0",
+     "E1_noslip_side_walls.D2x-1620b1098386": "R1",
+     "E1_noslip_side_walls.m1.41-f15d7e2db685": "R2"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and no checks failed. ACCEPT is not allowed because mesh, time and domain are not within budget. REJECT is not allowed because nothing has failed.",
+    "R0 averaging and statistics pass. Drag: averaging 9.319e-05, statistics 0.001199. Strouhal: averaging 6.507e-05, statistics 0.0009705. The stationary window has 13 cycles against a tolerance of 0.03.",
+    "Mesh, R0 to R2: Cd changed from 1.3402 to 1.3475 (0.54%) and St from 0.16428 to 0.16562 (0.81%). Both changes are below the tolerance. The verifier still estimates mesh uncertainty at 0.03243 (Cd) and 0.04838 (St), which is above the 0.015 half-tolerance limit. That estimate uses an assumed order p=2 and Fs=3.",
+    "R2 is confounded: it changed the time step from 0.01 to 0.0086733 as well as the mesh (cells 61366, 228 cells around the cylinder). The mesh estimate therefore also contains an unmeasured temporal effect.",
+    "Time uncertainty has never been measured for either quantity. Every run uses dt of 0.01 or 0.0086733 with the backward scheme and a max Courant number of 0.73374 (R0) or 0.73815 (R2). The verifier cannot give a combined uncertainty or ACCEPT without a REDUCE_TIME_STEP run.",
+    "Domain, R0 to R1: Cd changed by 1.08% and St by 0.78%. The verifier estimate is 0.0647 (Cd) and 0.04674 (St) with assumed p=1. R1 has a coarser mesh (representative size 0.79405 D against 0.45745 D), only 6 stationary cycles, and checkMesh_ok false. Its domain signal is confounded, so repeating a domain run now would not be clean.",
+    "REDUCE_TIME_STEP on R0 is the cheapest experiment that isolates a completely missing component (1974 s). It also separates the time effect from the mesh effect seen in R2. The budget allows it: 2 of 6 experiments used and 1.94 of 12.0 compute used."
+   ],
+   "missing_evidence": [
+    "Temporal discretisation uncertainty for mean_drag_coefficient and strouhal_number (no REDUCE_TIME_STEP run)",
+    "Mesh uncertainty from a measured convergence order. This needs a third mesh level and the time step held fixed, because R2 changed both mesh and time step.",
+    "Domain uncertainty from a clean domain sequence. R1 has a coarser mesh, 6 stationary cycles and checkMesh_ok false, and the order is only assumed (p=1).",
+    "Combined uncertainty against the 0.03 tolerance, which cannot be computed until mesh, time and domain are all measured."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The temporal error at dt=0.01 D/U (608.73 steps per shedding period) is small, below 1.5%, for both Cd and St. Part of the R0-to-R2 change was caused by R2's smaller time step and not by the mesh.",
+     "test": "REDUCE_TIME_STEP factor 2 from R0 on the identical mesh. Confirmed if Cd (R0 stationary 1.3402) and St (0.16428) change by well under 1.5%. Refuted if either changes by more than about 1.5%. A change above 3% beyond twice the noise would be a time-step FAIL."
+    },
+    {
+     "hypothesis": "The mesh error is smaller than the verifier's 3.24% (Cd) and 4.84% (St). Those figures come from the assumed p=2 and Fs=3 applied to a two-level comparison that is confounded by the time step.",
+     "test": "After the time-step run, apply REFINE_MESH from R2 or compare against the time-step result. Confirmed if the change from R2 to a finer mesh is smaller than the R0-to-R2 change."
+    },
+    {
+     "hypothesis": "The domain effect is small (changes of 1.08% for Cd and 0.78% for St), and R1's coarser far-field mesh inflates the apparent effect.",
+     "test": "Later, run an EXPAND_DOMAIN from a parent with a fine mesh. Confirmed if Cd and St change by less than 1.5%."
+    }
+   ],
+   "next_experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
+    "reason": "Time error is unmeasured for both quantities and is required for any ACCEPT. R0 is the clean parent because R1 has checkMesh_ok false and a coarser mesh. The run isolates the time effect that R2 confounded with the mesh effect, and it is cheap (1974 s).",
+    "expected_outcome": "If Cd and St change by well under 1.5% relative to R0 (Cd 1.3402, St 0.16428), temporal uncertainty is bounded and the mesh and domain sequences can be refined next. If either changes by more than 3%, time-step FAIL, and R0 would be rejected."
+   },
+   "outcome": "executed -> E1_noslip_side_walls.dt0.005-c41af2c90410 (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 37.54847567100023,
+    "cost_usd": 0.121694575,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 35406,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 52,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "E1_noslip_side_walls-88a7cd5812e8": "R0",
+     "E1_noslip_side_walls.D2x-1620b1098386": "R1",
+     "E1_noslip_side_walls.m1.41-f15d7e2db685": "R2",
+     "E1_noslip_side_walls.dt0.005-c41af2c90410": "R3"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed, and REJECT is not allowed because nothing has failed.",
+    "Within budget for R0: averaging (Cd 9.319e-05, St 6.507e-05), statistics (Cd 0.001199, St 0.0009705) and time (Cd 0.008342, St 0.005466). R3 (dt 0.005) moved Cd from 1.3402 to 1.3374 (0.209%) and St by 0.137%. The time component is now measured and passes.",
+    "Mesh is still INCONCLUSIVE: Cd 0.03243 and St 0.04838. Both exceed half the tolerance (0.015). R0 to R2 changed Cd by 0.54% and St by 0.81%, which is below the 0.03 tolerance. The verifier's estimate rests on an assumed order p=2 with Fs=3 from only two mesh levels. The order has not been measured.",
+    "Domain is still INCONCLUSIVE: Cd 0.0647 and St 0.04674. The observed R0 to R1 changes were 1.08% (Cd) and 0.78% (St). The estimate uses an assumed order p=1. R1 is not a clean domain level. Its representative cell size is 0.79405 D against 0.45745 D in R0, its wake_last_cell_D is 1.9729 against 1.0209, it has only 6 stationary cycles, and checkMesh_ok is false.",
+    "R2 (finer mesh, lower values at coarser resolution) and R1 (coarser mesh, Cd 1.3259 and St 0.163, both below R0) point the same way. Part of R1's apparent domain effect may therefore be a mesh-resolution effect. Mesh convergence has to be pinned down before the domain signal can be interpreted.",
+    "R3 shows that the time step is a small effect (0.209% in Cd). Most of the R0 to R2 change can therefore be attributed to the mesh. This removes the confound noted at iteration 3.",
+    "Choosing REFINE_MESH from R2 with factor 1.4142 gives R0, R2 and a new finer run at a near-constant refinement ratio. That allows a measured convergence order and removes the assumed p=2. Cost is 5280 s. Budget used is 3 of 6 experiments and 3.01 of 12.0 compute, so one or two further runs, such as a domain run, remain affordable."
+   ],
+   "missing_evidence": [
+    "Mesh uncertainty from a measured convergence order (a third mesh level, R0, R2 and a finer run) for both Cd and St",
+    "Domain uncertainty from a clean sequence where the far-field and wake resolution is not coarser than R0, with a measured order and more than 6 stationary cycles",
+    "Combined uncertainty against the 0.03 tolerance. It cannot be computed until the mesh and domain components are measured and each is at or below 0.015."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The mesh error of R0 is much smaller than the verifier's 3.24% (Cd) and 4.84% (St). Those figures are inflated by the assumed p=2 and Fs=3 on a two-level comparison.",
+     "test": "REFINE_MESH factor 1.4142 from R2. Confirmed if the R2-to-new change in Cd (R2 1.3475) and St (R2 0.16562) is clearly smaller than the R0-to-R2 change (0.54% Cd, 0.81% St), and the measured order is near or above 2. Refuted if the change is similar or larger, which means non-asymptotic behaviour and a mesh uncertainty above 0.015."
+    },
+    {
+     "hypothesis": "Much of the 1.08% (Cd) and 0.78% (St) R0-to-R1 change comes from R1's coarser mesh (representative size 0.79405 D, wake_last_cell_D 1.9729) and not from the domain. The true domain effect is then smaller than the verifier's 6.47% and 4.67%.",
+     "test": "After the mesh sequence, run EXPAND_DOMAIN from a parent with a fine wake mesh. Confirmed if Cd and St change by well under 1.5%, and the change shrinks with further expansion."
+    },
+    {
+     "hypothesis": "The noSlipWall lateral boundary (blockage_ratio 0.0125) creates a real, p~1 domain bias that is not negligible against the 3% tolerance.",
+     "test": "A clean EXPAND_DOMAIN sequence. Confirmed if Cd or St changes by more than about 1.5% with the near-field and wake resolution held fixed."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "E1_noslip_side_walls.m1.41-f15d7e2db685",
+    "reason": "Mesh uncertainty (Cd 0.03243, St 0.04838) rests on two levels with an assumed order p=2. R3 showed the time step effect is small (Cd 0.209%, St 0.137%), so R0 to R2 is largely a clean mesh signal. A further level from R2 gives a constant-ratio three-level sequence (R0, R2, new) and a measured order. It also separates mesh from domain effects in R1.",
+    "expected_outcome": "If the change from R2 is clearly smaller than the R0-to-R2 change (0.54% Cd, 0.81% St), mesh uncertainty can be bounded by a measured order and falls below 0.015, which leaves only the domain component to resolve. If the change is comparable or larger, the mesh is not in the asymptotic range and a further refinement is needed. A change above 3% beyond twice the noise would be a mesh FAIL."
+   },
+   "outcome": "executed -> E1_noslip_side_walls.m2-24c0dd986308 (completed)"
   }
  ]
 }

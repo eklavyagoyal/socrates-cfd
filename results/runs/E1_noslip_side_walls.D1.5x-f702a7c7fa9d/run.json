@@ -1,8 +1,8 @@
 {
   "run_id": "E1_noslip_side_walls.D1.5x-f702a7c7fa9d",
   "status": "running",
-  "owner_pid": null,
-  "created": "2026-10-19T22:37:51+00:00",
+  "owner_pid": 1506,
+  "created": "2026-10-20T02:45:52+00:00",
   "problem_spec": {
     "problem": {
       "id": "cylinder2d_re100",
@@ -118,7 +118,7 @@
   },
   "config_hash": "615035d748247fb8",
   "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
-  "launch_reason": "The domain component is the largest unresolved uncertainty (Cd 0.0647, St 0.04674) and rests on an assumed first-order, two-level estimate. R3 shows a measured shift of -1.07% in Cd and -0.77% in St relative to R0. Expanding R0 by 1.5 adds a third domain level between R0 and R3 at the lowest cost on the menu (1311 s). That gives an observed domain order. It is built the same way as R3, so the check on the failed R3 checkMesh and its coarser far field is better informed. It also stays inside any cumulative-expansion limit.",
+  "launch_reason": "Domain is the largest unresolved component (Cd 0.0647, St 0.04674, assumed p=1 from two levels). R1 is confounded by a coarser far-field mesh, so the observed 1.08% and 0.78% changes are not a clean domain signal. A third level at 1.5x from R0 (near-field unchanged) gives R0, new run and R1 as a three-level sequence, so the order can be measured.",
   "launched_by": "llm_critic",
   "experiment": {
     "action": "EXPAND_DOMAIN",
@@ -218,13 +218,9 @@
     "python": "3.13.16",
     "numpy": "2.5.3",
     "scipy": "1.18.1",
-    "socrates_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+    "socrates_git_commit": "296beaa7f7bcdfda68830b68f0a2f89c19c547f4",
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4
-  },
-  "stale_owner_pid_cleared": {
-    "old_owner_pid": 10692,
-    "reason": "container restart"
   }
 }

@@ -1,0 +1,351 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 22.55095287499998,
+    "cost_usd": 0.05151451,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13251,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 29,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "K2_fine_large-2d999cd1eb7c": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT and REJECT are both unavailable. Mesh, time and domain components are unmeasured for both mean_drag_coefficient and strouhal_number.",
+    "Averaging and statistics components are measured and small. For drag they are 7.057e-05 and 2.908e-05. For Strouhal they are 4.994e-06 and 2.011e-05. They use almost none of the 0.03 tolerance. R0 has 13 stationary cycles and drag drift of -2.9076e-05, so the remaining risk is discretisation or domain error.",
+    "The mesh is the weakest-looking element in R0. The representative cell size is 0.47033 D and the last wake cell is 0.96749 D, with only 150 streamwise wake cells. The wake is therefore coarsely resolved far downstream, and this could shift shedding frequency and drag.",
+    "The time step looks adequate: max Courant is 0.64796, there are 872.03 steps per shedding period, and the scheme is backward. The domain also looks adequate: 40 D upstream, 60 D downstream, half-height 60 D and blockage 0.0083333. Both are lower-probability risks than the mesh, though neither is verified.",
+    "The recorded cost is 8041 s for R0, and the budget allows 12x root compute with 6 experiments. Mesh refinement is affordable at an estimated 8677 s (default factor), with room left for the time and domain checks afterward."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error of mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error of both quantities (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error of both quantities (no EXPAND_DOMAIN run)"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse wake mesh (last wake cell 0.96749 D, representative cell size 0.47033 D) introduces a spatial error in St or mean Cd larger than 0.5*tolerance (1.5 %).",
+     "test": "REFINE_MESH on R0 with factor 2.0. If Cd and St change by less than about 1.5 % relative, the hypothesis is refuted and mesh error is acceptable. A larger change confirms it, and the refinement sequence should continue."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "K2_fine_large-2d999cd1eb7c",
+    "reason": "The mesh is the most likely unmeasured source of error larger than the 3 % tolerance. The wake cells are coarse, up to 0.96749 D. Time step and domain look comparatively adequate. Statistical noise on R0 is about 1e-5, so a factor of 2.0 (about 1.41x linear) gives a clear signal and gives the best estimate of the mesh error. The budget allows it.",
+    "expected_outcome": "Mean Cd and St on the refined mesh differ from R0 (1.3277 and 0.16382) by well under 1.5 %. That would make the mesh component small enough to move on to the time-step and domain checks. A larger difference means the mesh is under-resolved and a further refinement is needed."
+   },
+   "outcome": "rejected by validator: child mesh has 216220 cells > limit 160000",
+   "action_rejected": true
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 15.561406152000018,
+    "cost_usd": 0.05321011,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 16748,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 34,
+     "untraced": [
+      {
+       "token": "3.99",
+       "context": "16220 cells, over the 160000 limit. 216220 / 54244 is about 3.99, so the factor scales cell count roughl"
+      },
+      {
+       "token": "1.717",
+       "context": "he limit of 160000 cells therefore allows a factor of about 1.717 at most."
+      },
+      {
+       "token": "1.6",
+       "context": "A factor of 1.6 gives about 2.56x the cells, roughly 13"
+      },
+      {
+       "token": "2.56",
+       "context": "A factor of 1.6 gives about 2.56x the cells, roughly 139000 cells. That "
+      },
+      {
+       "token": "139000",
+       "context": "A factor of 1.6 gives about 2.56x the cells, roughly 139000 cells. That is under the 160000 limit w"
+      },
+      {
+       "token": "1.6",
+       "context": "ause it gave 216220 cells against a limit of 160000. Factor 1.6 gives about 2.56x cells, roughly 139000"
+      },
+      {
+       "token": "2.56",
+       "context": "220 cells against a limit of 160000. Factor 1.6 gives about 2.56x cells, roughly 139000, which fits. Sta"
+      },
+      {
+       "token": "139000",
+       "context": "imit of 160000. Factor 1.6 gives about 2.56x cells, roughly 139000, which fits. Statistical noise on R0 is"
+      }
+     ],
+     "n_untraced": 8
+    },
+    "run_aliases": {
+     "K2_fine_large-2d999cd1eb7c": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT and REJECT are not allowed. Mesh, time and domain components are unmeasured for both mean_drag_coefficient and strouhal_number.",
+    "Averaging and statistics components are tiny. For drag they are 7.057e-05 and 2.908e-05. For Strouhal they are 4.994e-06 and 2.011e-05. R0 has 13 stationary cycles. Remaining risk is discretisation or domain error.",
+    "The validator rejected factor 2.0 because the child mesh would have 216220 cells, over the 160000 limit. 216220 / 54244 is about 3.99, so the factor scales cell count roughly as factor^2 (per-direction refinement). The limit of 160000 cells therefore allows a factor of about 1.717 at most.",
+    "A factor of 1.6 gives about 2.56x the cells, roughly 139000 cells. That is under the 160000 limit with margin. It is still a clear refinement of the 0.47033 D representative cell size and the 0.96749 D last wake cell.",
+    "The mesh stays the most likely source of error. The wake is coarse, with 150 streamwise cells and a last wake cell of 0.96749 D. Max Courant is 0.64796 with 872.03 steps per shedding period, and the domain is 40 D upstream, 60 D downstream and 60 D half-height with blockage 0.0083333. Time and domain look less risky but are unverified.",
+    "Budget is unused: 0 of 6 experiments and 0.0 of 12.0 relative compute. The estimated cost for mesh refinement is about 8677 s against 8041 s for R0, so time and domain runs remain affordable afterwards."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error of mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error of both quantities (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error of both quantities (no EXPAND_DOMAIN run)"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse wake mesh (last wake cell 0.96749 D, representative cell size 0.47033 D) shifts St or mean Cd by more than 0.5*tolerance (1.5 %).",
+     "test": "REFINE_MESH on R0 with factor 1.6, which stays under the 160000-cell limit. If Cd and St differ from R0 (1.3277 and 0.16382) by less than about 1.5 %, the hypothesis is refuted. A larger change confirms it, and the refinement sequence should continue from the child run."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.6
+    },
+    "parent_run": "K2_fine_large-2d999cd1eb7c",
+    "reason": "The mesh is the most likely unmeasured error source. The earlier factor of 2.0 was rejected because it gave 216220 cells against a limit of 160000. Factor 1.6 gives about 2.56x cells, roughly 139000, which fits. Statistical noise on R0 is about 1e-5, so even a small mesh effect will be clearly visible.",
+    "expected_outcome": "Mean Cd and St on the refined mesh differ from R0 (1.3277 and 0.16382) by well under 1.5 %. That would make the mesh component small enough to move on to the time-step and domain checks. A larger difference means the mesh is under-resolved, and the next step is a further refinement with a smaller step."
+   },
+   "outcome": "executed -> K2_fine_large.m2-e923e7640822 (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 22.286184887001582,
+    "cost_usd": 0.07315511,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 23184,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 37,
+     "untraced": [
+      {
+       "token": "1.7",
+       "context": "lready rejected for exceeding the cell limit. A factor near 1.7 would only repeat R1's resolution and w"
+      }
+     ],
+     "n_untraced": 1
+    },
+    "run_aliases": {
+     "K2_fine_large-2d999cd1eb7c": "R0",
+     "K2_fine_large.m2-e923e7640822": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT and REJECT are not allowed.",
+    "Time and domain components are unmeasured for both Cd and St. The St mesh component is also INCONCLUSIVE.",
+    "Mesh, Cd: R0 gives 1.3277 and R1 gives 1.3289, a change of 0.088%. The mesh uncertainty is 0.004327, which passes.",
+    "Mesh, St: R0 gives 0.16382 and R1 gives 0.16455, a change of 0.44%. The two-level Richardson estimate is 0.02187, above 0.5*tol = 0.015, so the St mesh check is INCONCLUSIVE.",
+    "Another mesh refinement can't fix this. REFINE_MESH is not allowed from R1, because cumulative refinement would exceed 2.0. From R0, a factor of 2.0 was already rejected for exceeding the cell limit. A factor near 1.7 would only repeat R1's resolution and would add little to a Richardson estimate.",
+    "R0 has 872.03 steps per shedding period, max Courant 0.64796 and a backward scheme. Temporal error looks small, but it is unverified.",
+    "R0 has blockage 0.0083333 and symmetryPlane lateral boundaries at 60 D. The question requires an unbounded stream. Boundary truncation or blockage can shift both Cd and St, and neither has been measured.",
+    "EXPAND_DOMAIN from R0 is the cheapest remaining experiment, at 5621 s. Budget used is 1 of 6 experiments and 1.56 of 12.0 relative compute, so it is affordable. REDUCE_TIME_STEP from R0 can follow it.",
+    "The submitted setup reports Cd 1.3278 and St 0.16382 with a frequency resolution of 0.013334. That resolution is coarse compared with the 3% tolerance on St. The stationary-window FFT value matches it at 0.16382."
+   ],
+   "missing_evidence": [
+    "Domain truncation/blockage error of mean_drag_coefficient and strouhal_number (no EXPAND_DOMAIN run)",
+    "Temporal discretisation error of both quantities (no REDUCE_TIME_STEP run)",
+    "A mesh uncertainty for strouhal_number that is within 0.5*tolerance; the current two-level estimate is 0.02187 and no further refinement is available",
+    "Verification that the domain-expanded run keeps the same near-field resolution and a long enough stationary window"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The 40 D upstream, 60 D downstream and 60 D half-height symmetry-plane domain (blockage 0.0083333) shifts mean Cd or St by more than 0.5*tolerance (1.5%) relative to an unbounded stream.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2.0. If Cd (1.3277) and St (0.16382) change by less than about 1.5%, the hypothesis is refuted and the domain component can be bounded. A larger change confirms it."
+    },
+    {
+     "hypothesis": "The time step (872.03 steps per shedding period, Courant 0.64796) contributes a Cd or St error above 1.5%.",
+     "test": "Later, run REDUCE_TIME_STEP on R0 with factor 2.0 and compare Cd and St with R0."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "K2_fine_large-2d999cd1eb7c",
+    "reason": "Domain truncation is the only unmeasured component that the stated requirement 'treat the stream as unbounded' directly targets, and it has not been tested. It is the cheapest option from R0 at 5621 s. Further mesh refinement is blocked by the cumulative factor limit and the cell limit. The time step looks adequate.",
+    "expected_outcome": "Mean Cd and St differ from R0 (1.3277 and 0.16382) by well under 1.5%, which bounds the domain component and leaves only the time component and the St mesh component to resolve. A larger change would show that domain truncation or blockage is significant, and could lead to a FAIL or a further expansion."
+   },
+   "outcome": "executed -> K2_fine_large.D2x-bc527461f36d (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 29.81754999400073,
+    "cost_usd": 0.09828711,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 30246,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 53,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "K2_fine_large-2d999cd1eb7c": "R0",
+     "K2_fine_large.m2-e923e7640822": "R1",
+     "K2_fine_large.D2x-bc527461f36d": "R2"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT and REJECT are not allowed.",
+    "Drag: averaging is 7.057e-05, statistics is 2.908e-05 and mesh is 0.004327 (R0 1.3277 vs R1 1.3289), all PASS. The time component is unmeasured. The domain component is 0.03173, above 0.5*tol = 0.015, so it is INCONCLUSIVE.",
+    "Strouhal: the mesh component is 0.02187 (R0 0.16382 vs R1 0.16455, change 0.44%), the domain component is 0.01884, and the time component is unmeasured. All three are INCONCLUSIVE.",
+    "The time-step sensitivity is unmeasured for both quantities. R0 has time_step_convective_units 0.007, max Courant 0.64796 and 872.03 steps per shedding period. No REDUCE_TIME_STEP run exists, so every quantity stays INCONCLUSIVE whatever else is resolved. This is the only component with no measurement.",
+    "Domain: R2 (80 D upstream, 120 D downstream, 120 D half-height) changes Cd from 1.3277 to 1.3208 (0.53%) and St from 0.16382 to 0.16331 (0.31%). The shifts are small but the estimate is inflated by the assumed order p=1 and Fs=3.",
+    "R2 is a weak comparison run. Its checkMesh_ok is false. Its far-field mesh is coarser (last wake cell 1.8673 D). It has only 6 stationary cycles, a Cd ci95 of 0.00088885 against 1.0366e-05 for R0, and drift of -0.0019997. The domain estimate is therefore confounded and noisy, and will need a follow-up run.",
+    "Budget: 2 of 6 experiments and 2.26 of 12.0 relative compute are used. REDUCE_TIME_STEP from R0 costs 8577 s, so it is affordable and leaves room for domain follow-up (RUN_LONGER or EXPAND_DOMAIN on R2) and St mesh work.",
+    "REFINE_MESH is not allowed from R1 (cumulative refinement 2.26 exceeds the 2.0 limit). It cannot clear the St mesh component this iteration."
+   ],
+   "missing_evidence": [
+    "Temporal discretisation error of mean_drag_coefficient and strouhal_number (no REDUCE_TIME_STEP run)",
+    "Domain uncertainty within 0.5*tolerance for both quantities. R2 has checkMesh_ok false, a coarser far-field mesh, drift of -0.0019997 and a Cd ci95 of 0.00088885",
+    "Strouhal mesh uncertainty within 0.5*tolerance (currently 0.02187, two-level estimate with assumed p=2)",
+    "A shedding-frequency resolution fine enough to resolve St to 3% in the shorter runs (R1 and R2 have strouhal_frequency_resolution 0.025002 and 0.025001)"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The R0 time step (0.007 D/U, 872.03 steps per period, backward scheme) causes a Cd or St error above 1.5%.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2.0. If Cd (1.3277) and St (0.16382) change by much less than 1.5%, the temporal component is bounded and small. A larger change refutes the time-step adequacy."
+    },
+    {
+     "hypothesis": "The 0.53% Cd change in R2 comes from the transient and noise in a short record, or from the coarser far-field mesh, rather than from domain truncation.",
+     "test": "Next, run RUN_LONGER on R2 (about 7027 s) to cut its ci95 and drift, or EXPAND_DOMAIN on R2, and check whether the R0-to-R2 change persists."
+    },
+    {
+     "hypothesis": "The St mesh uncertainty of 0.02187 is an artefact of the assumed p=2 and Fs=3 on a 0.44% change, and the true mesh error is smaller.",
+     "test": "A further mesh level, if the validator permits one, to give a three-level observed order."
+    }
+   ],
+   "next_experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "K2_fine_large-2d999cd1eb7c",
+    "reason": "The time component is the only one with no measurement for either quantity, so no ACCEPT is possible without it. R0 is the root, so the time-step comparison is made directly against the quantities being certified. R0 has the longest record (13 stationary cycles) and the lowest noise. The cost is 8577 s, which fits the remaining budget.",
+    "expected_outcome": "Cd and St change by well under 1.5% from R0 (1.3277 and 0.16382), which bounds the temporal component. This leaves the domain and St mesh components to resolve. A change above 1.5% would show that the time step matters and the temporal component needs further work."
+   },
+   "outcome": "executed -> K2_fine_large.dt0.0035-6a0f9a80f290 (completed)"
+  }
+ ]
+}

@@ -266,6 +266,93 @@
     "expected_outcome": "If Cd and St change by well under 1.5% from R0 (Cd 1.3277, St 0.16382), the time component is bounded and the remaining work is the domain and St-mesh estimates. A change near or above 3% means R0 is time-step dependent and the verifier could FAIL it."
    },
    "outcome": "executed -> K2_fine_large.dt0.0035-6a0f9a80f290 (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 29.12876179399973,
+    "cost_usd": 0.10871351,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 36030,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 46,
+     "untraced": [
+      {
+       "token": "1.7",
+       "context": "ed further, but REFINE_MESH from R0 at a factor up to about 1.7 stays under the 160000-cell limit."
+      }
+     ],
+     "n_untraced": 1
+    },
+    "run_aliases": {
+     "K2_fine_large-2d999cd1eb7c": "R0",
+     "K2_fine_large.m1.77-e5d0ad1d73b4": "R1",
+     "K2_fine_large.D2x-bc527461f36d": "R2",
+     "K2_fine_large.dt0.0035-6a0f9a80f290": "R3"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and no check has failed. I can't ACCEPT, and I can't REJECT because there is no FAIL.",
+    "Still unresolved: Cd domain 0.03173, St mesh 0.02166 and St domain 0.01884. Each is above the 0.015 component budget (0.5 x 3%). Cd domain is also above the full 3% tolerance. Averaging, statistics, time (Cd 0.007908, St 0.0027) and Cd mesh (0.006837) pass.",
+    "The three open estimates are inflated by assumptions, not by measured changes. The domain estimates use assumed order p=1 and Fs=3. The St mesh estimate uses assumed p=2 and Fs=3. The demonstrated changes are small: Cd domain 0.53%, St domain 0.31%, St mesh 0.36%, all inside the 3% tolerance.",
+    "Domain is the largest open item and affects both quantities. R0 to R2 changes Cd 1.3277 -> 1.3208 and St 0.16382 -> 0.1633. Only two domain levels exist, so no observed order can be computed.",
+    "R2 is weaker evidence than R0. R2 has checkMesh_ok=false and a coarser far field (wake_last_cell_D 1.8673 vs 0.96749). R2 has 6 cycles and a Cd CI95 of 0.00088885 (R0: 1.0366e-05). Part of the R0-to-R2 difference may come from that coarsening and the short record, not from the boundaries.",
+    "A third domain level continuing from R2 (factor 1.5 gives 3x R0) gives a nested sequence of R0, R2 and the child. That allows an observed convergence order for Cd and St, or shows whether the domain effect is saturating. Estimated cost is 7234 s.",
+    "Budget is available. 3 of 6 experiments are used and 2.84 of 12 compute units. After this run, a third mesh level for the St mesh estimate stays affordable. R1 can't be refined further, but REFINE_MESH from R0 at a factor up to about 1.7 stays under the 160000-cell limit."
+   ],
+   "missing_evidence": [
+    "Observed convergence order for the domain effect on Cd and St (only two domain levels: R0 and R2)",
+    "Third mesh level for St, to replace the assumed p=2 estimate (St mesh 0.02166)",
+    "R2 has checkMesh_ok=false, a coarser far field and only 6 cycles (Cd CI95 0.00088885), so the domain comparison is confounded",
+    "St frequency resolution is coarse for R1, R2 and R3 (0.025) and for R0 (0.013334) compared with the sub-1% differences being resolved"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The R0-to-R2 domain differences (Cd 0.53%, St 0.31%) are small and shrink as the domain grows, so the true domain error of R0 is below 1.5%. The verifier's 3.17% and 1.88% come from assumed p=1 and Fs=3.",
+     "test": "Run EXPAND_DOMAIN with factor 1.5 from R2, giving a domain 3x R0. Compare Cd (R2 1.3208) and St (R2 0.1633). If the R2-to-child change is clearly smaller than the R0-to-R2 change (Cd 0.0069, St 0.00052), the sequence is converging and the domain component can be bounded."
+    },
+    {
+     "hypothesis": "The St mesh uncertainty of 2.17% is an artefact of two-level Richardson with assumed p=2, Fs=3. The true mesh error is below 1.5%.",
+     "test": "After the domain run, run REFINE_MESH from R0 at factor about 1.7 (about 156000 cells, under the limit) to get a third level and an observed order for St."
+    },
+    {
+     "hypothesis": "The R2 differences are partly caused by its coarser far-field mesh and short record, not by boundary truncation.",
+     "test": "If the new run is non-monotonic, or its change is similar to R0-to-R2, use RUN_LONGER on R2 or the new run to reduce the statistical noise."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 1.5
+    },
+    "parent_run": "K2_fine_large.D2x-bc527461f36d",
+    "reason": "Domain is the largest unresolved component. It affects both Cd and St, and the Cd domain estimate (0.03173) is above the full tolerance. Only two domain levels exist, so no observed order can be formed. Continuing from R2 gives a nested sequence of R0, R2 and the child at 1x, 2x and 3x. The estimated cost is 7234 s, which fits the remaining budget and leaves room for a third mesh level for St.",
+    "expected_outcome": "If the change from R2 to the child is clearly smaller than the R0-to-R2 change (Cd 1.3277 -> 1.3208, St 0.16382 -> 0.1633), the domain error is converging and an observed-order estimate should bring both domain components under 1.5%. If the change is similar or larger, domain truncation is significant. In that case the next step is longer records or a possible FAIL from the verifier."
+   },
+   "outcome": "executed -> K2_fine_large.D1.5x-39e38799b1d6 (completed)"
   }
  ]
 }

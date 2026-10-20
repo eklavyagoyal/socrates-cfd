@@ -46,17 +46,17 @@ velocity and kinematic pressure.
 | Geometry | D = 0.01 m; one cell thick, span 1 D | standard pseudo-2D |
 | Domain | inlet 30 D, outlet 50 D, sides ±40 D | blockage 1.25 %. Qu et al.: ~+1 % Cd at 1–1.7 % blockage. Inlet > 20 D (Posdziech & Grundmann). Outlet ≫ 14.5 D (Tezduyar & Shih) |
 | Mesh | structured: 2-layer O-grid + 8 H-blocks, 30 580 hexes (`src/socrates/case_generation/blockmesh.py`) | geometric similarity under refinement (needed for Richardson) |
-| Wall resolution | 160 cells around; first cell 0.005 D | ≈ 20 cells inside the boundary layer (δ ~ D/√Re = 0.1 D) |
+| Wall resolution | 160 cells around; first cell 0.005 D; radial growth 1.07 | about 12 cells inside δ ~ D/√Re = 0.1 D (`reports/baseline_validation.md` §2) |
 | Near wake | 0.125 D cells to ±2.5 D; streamwise growth 1.9 %/cell to the outlet | |
-| Mesh quality [measured] | max non-orthogonality 43°, skewness 0.53, aspect ratio 12.6 | |
+| Mesh quality [measured] | max non-orthogonality 43°, skewness 0.53, aspect ratio 21.0 | checkMesh of the baseline run (`reports/baseline_generated.md`) |
 | Boundary conditions | inlet U fixed (0.15, 0) / p zeroGradient; outlet p = 0 / U inletOutlet; sides symmetryPlane (free slip); cylinder noSlip | `inletOutlet` prevents backflow instability when vortices exit; free slip is the standard far-field side condition (Behr et al. "slip walls") |
 | Fluid | ν = 1.5×10⁻⁵ m²/s, ρ = 1.2 (ρ cancels in coefficients) | air at ~20 °C |
 | Schemes | `backward` in time (2nd order); `Gauss linearUpwind grad(U)` for convection (2nd order); `Gauss linear` gradient; `corrected` Laplacian | JFE policy: ≥ 2nd order |
 | Pressure/velocity solvers | GAMG p: tolerance 1e-7, relTol 0.01; final corrector relTol 0. U: smoothSolver, tolerance 1e-8 | |
 | Non-orthogonal correctors | 0 [measured]: Cd identical to 5 digits and Cl_rms within 0.02 % compared with 1 corrector | |
-| Time step | Δt = 0.01 D/U; max Co ≈ 0.75 [measured]; ≈ 600 steps per shedding period | PISO needs Co < 1 (OpenFOAM User Guide) |
+| Time step | Δt = 0.01 D/U; max Co 0.73 [measured]; 612 steps per shedding period [measured] (`reports/baseline_generated.md`) | PISO needs Co < 1 (OpenFOAM User Guide) |
 | Start-up | asymmetric initial velocity patch (setFields) to trigger shedding immediately | identical for all fresh runs; removed by transient detection |
-| Duration and averaging | 150 D/U; declared averaging window 75–150 D/U (≈ 12 cycles) | [measured] the cycle-mean Cd error halves every cycle: −0.97 % at t = 28, −0.06 % at 53, < 0.005 % by 78 D/U |
+| Duration and averaging | 150 D/U; declared averaging window 75–150 D/U (11 complete cycles [measured]; the MSER stationary window holds 12; `reports/baseline_validation.md` §2, run evidence `declared_window.complete_cycles`) | [measured] the cycle-mean Cd error halves every cycle: −0.97 % at t = 28, −0.06 % at 53, < 0.005 % by 78 D/U |
 | Forces | `forceCoeffs` every step; magUInf = U; Aref = D × span | |
 | Completion criteria | solver reaches endTime and prints `End`; final pressure solve at tolerance; checkMesh OK | **Not sufficient for credibility.** Credibility is established in `reports/baseline_validation.md` |
 
@@ -71,8 +71,17 @@ critic. They are used only for validation of the baseline and to label the bench
 
 See §4. Domain changes always **preserve the near-field mesh**: the first cell
 and per-cell growth rate are held, and cells are only added or removed far away
-(`expanded_domain_counts`). Domain studies are therefore not confounded with
-resolution.
+(`expanded_domain_counts`). The near-field resolution is therefore unchanged.
+
+**[measured] The far-field resolution is not.** Holding the per-cell growth rate
+coarsens the far field as the domain grows: the last wake cell is about 1.0 D at
+×1, 2.0 D at ×2 and 3.9 D at ×4. Stage 4 of the baseline study showed that this
+does confound the domain study. Multiplying the outer-block cell counts of the ×4
+domain by 1.5 raised Cd by 0.16 %, against +0.03 % for the same refinement of the
+×1 domain, so about 80 % of the change comes from the coarse far field beyond the
+baseline's extent (`reports/baseline_validation.md` §3). The in-house reference
+uses the refined ×4 member and carries the difference as a far-field model-form
+term; the verifier can only use the standard EXPAND_DOMAIN levels.
 
 ## 7. Boundary conditions
 
@@ -148,7 +157,7 @@ All checks return PASS, FAIL or INCONCLUSIVE with value, threshold, source and r
 The quantity estimated is always the uncertainty of the **root** (submitted) run.
 
 - **Two levels:** U = 3 · δ · r^p/(r^p − 1).
-- **Three levels:** observed p (Celik iteration). Fs = 1.25 if 0.5 p_f ≤ p ≤ 2 p_f; otherwise Fs = 3 with the formal order. Oscillatory or noise-level sequences use U = 3 × range.
+- **Three levels:** observed p (Celik iteration). Fs = 1.25 if 0.5 p_f ≤ p ≤ 2 p_f; otherwise Fs = 3 with p = min(observed, formal) (review correction R4; the first version of this text said the formal order). Oscillatory or noise-level sequences use U = 3 × range.
 - **Monotone divergence** (|ε21| ≥ |ε32|, Eça & Hoekstra 2014) is never extrapolated: FAIL if the change exceeds τ, else INCONCLUSIVE.
 - **Decision:**
   - **FAIL** if the demonstrated root-to-finest change exceeds τ (by more than twice the statistical noise of the two runs);
@@ -170,23 +179,34 @@ ACCEPT is therefore expensive (it needs mesh, time and domain studies). That is 
 ## 14. Adversarial failure cases
 
 Defined as diffs against the baseline in `cases/adversarial/*.yaml`, with flaw,
-plausibility and expected mechanism recorded. Each was run, inspected and kept or
-discarded (`cases/adversarial/DISCARDED.md`). Measured outcomes are in
+plausibility and expected mechanism recorded; the two borderline variants A2 and
+B2 are in `cases/variants/`. Each was run, inspected and kept or discarded
+(`cases/adversarial/DISCARDED.md`). The intended label is the author's intent
+(`benchmark/manifest.yaml`); the measured label is computed from the case's
+reported values against the in-house reference (`benchmark/labels.json`, rule in
+§19), on point estimates and with the near-boundary mitigation
+(`reports/baseline_validation.md` §7). Measured outcomes are in
 `reports/benchmark_results.md`.
 
-| id | Flaw | Expected first detector |
-|---|---|---|
-| A1 | mesh ×0.5 | REFINE_MESH |
-| B1 | inlet 8 D, outlet 15 D, sides 4 D (12.5 % blockage) | EXPAND_DOMAIN |
-| C1 | Δt ×5, 3 PIMPLE outer correctors (Co ≈ 3.7) | REDUCE_TIME_STEP (Courant INCONCLUSIVE) |
-| C2 | Euler time stepping, Δt ×4, 2 outer correctors | REDUCE_TIME_STEP |
-| D1 | steady simpleFoam | static: physics_regime + steady convergence |
-| E1 | no-slip walls on the far-field sides | EXPAND_DOMAIN (wall boundary layers scale with the domain) |
-| F1 | first-order upwind convection | REFINE_MESH (scheme-order INCONCLUSIVE) |
-| G1 | 40 D/U run, averaged from 10 D/U | static averaging check / RUN_LONGER |
-| H1 | dynamic viscosity entered as ν (Re = 83) | static reynolds_consistency |
-| I1 | stale magUInf (0.16 vs 0.15) | static force_reference_consistency |
-| J1 | wake streamwise cells ×0.3 | REFINE_MESH |
+| id | Flaw | Expected first detector | Intended | Measured label (point estimate / with mitigation) |
+|---|---|---|---|---|
+| A1 | mesh ×0.5 | REFINE_MESH | flawed | flawed / flawed |
+| A2 | mesh ×0.75 (120 cells around the cylinder) | REFINE_MESH | ambiguous | credible / ambiguous |
+| B1 | inlet 8 D, outlet 15 D, sides 4 D (12.5 % blockage) | EXPAND_DOMAIN | flawed | flawed / flawed |
+| B2 | inlet 15 D, outlet 25 D, sides 10 D (5 % blockage) | EXPAND_DOMAIN | ambiguous | flawed / flawed |
+| C1 | Δt ×5, 3 PIMPLE outer correctors (Co ≈ 3.7) | REDUCE_TIME_STEP (Courant INCONCLUSIVE) | flawed | credible / ambiguous |
+| C2 | Euler time stepping, Δt ×4, 2 outer correctors | REDUCE_TIME_STEP | flawed | flawed / ambiguous |
+| D1 | steady simpleFoam | static: physics_regime + steady convergence | flawed | flawed / flawed |
+| E1 | no-slip walls on the far-field sides | EXPAND_DOMAIN (wall boundary layers scale with the domain) | flawed | ambiguous / ambiguous |
+| F1 | first-order upwind convection | REFINE_MESH (scheme-order INCONCLUSIVE) | flawed | flawed / flawed |
+| G1 | 40 D/U run, averaged from 10 D/U | static averaging check / RUN_LONGER | flawed | ambiguous / ambiguous |
+| G2 | 60 D/U run, averaged from t = 0 (start-up included) | static averaging check | flawed | ambiguous / ambiguous |
+| H1 | dynamic viscosity entered as ν (Re = 83) | static reynolds_consistency | flawed | flawed / flawed |
+| I1 | stale magUInf (0.16 vs 0.15) | static force_reference_consistency | flawed | flawed / flawed |
+| J1 | wake streamwise cells ×0.3 | REFINE_MESH | flawed | credible / ambiguous |
+
+Five cases intended as flawed are not flawed on point estimates at τ = 3 % (C1,
+E1, G1, G2, J1). B2, intended as borderline, is flawed (Cd error 4.2 %).
 
 ## 15. Failures that existing OpenFOAM diagnostics detect
 
@@ -198,7 +218,14 @@ discarded (`cases/adversarial/DISCARDED.md`). Measured outcomes are in
 
 Everything in §14 except the crash: discretisation error, domain error, temporal
 error, averaging bias, wrong Re, wrong force normalisation, and wrong regime. In
-these cases the solver completes and checkMesh passes.
+these cases the solver completes and default checkMesh reports `Mesh OK`. Two
+measured exceptions (`results/benchmark/A/`):
+- **J1** fails the cell-determinant check of `checkMesh -allGeometry -allTopology`,
+  which the runner uses (48 cells next to the outlet). Default checkMesh reports
+  `Mesh OK` (`results/posthoc/J1_checkMesh_default.log`). System A rejects J1 on
+  this check, not on its discretisation error.
+- **D1**'s steady residuals do not satisfy residualControl (§15), and System A
+  rejects it on that.
 
 ## 17. Where expert judgement is still required
 
@@ -247,6 +274,14 @@ See research §7. In summary:
   - **flawed** if max_q e_q > τ, or if the set-up answers a different problem (wrong Re or regime); the rationale is recorded;
   - **credible** if max e_q ≤ τ/2 and the set-up is consistent;
   - **ambiguous** otherwise.
+
+  *Annotation, not part of the pre-registered text above (which is unchanged):* the
+  extrapolation rule used for T was superseded. When the observed order lies outside
+  [0.5, 2]× the formal order, T uses p = min(observed, formal) with Fs = 3 (review
+  corrections R4/E1, `docs/methodology.md`). U(T) also carries model-form and
+  conditioning terms (far-field model form, time-overlap shift, time conditioning),
+  and the largest domain member is a far-field-refined ×4 run, not a primitive run
+  (`reports/baseline_validation.md` §3–4).
 - **Systems:**
   - **A** — OpenFOAM diagnostics only: ACCEPT if the solver completed, checkMesh is OK, and (steady) residualControl is satisfied; otherwise REJECT.
   - **B** — static deterministic verifier, one run.
@@ -278,8 +313,8 @@ See research §7. In summary:
 | 5–6 | Static verifier; adversarial cases run and screened | done |
 | 7–8 | Experiment primitives with provenance; mesh/time/domain studies on baseline | done; the reference needed three further stages (methodology §8) |
 | 9–10 | Critic and loop; rule-based planner | done |
-| 11–12 | Benchmark A/B/C + ablations | A, B, L-judge complete; C-rule, C-llm, Bexh and LLM repeats running |
-| 13–14 | Attacks on the verifier; final reports | attacks mostly complete; baseline report final; benchmark and final reports pending |
+| 11–12 | Benchmark A/B/C + ablations | A, B, L-judge and C-rule complete (17/17). Running at 2026-10-20 09:50 UTC: C-llm 16/17 (K1 finished at 09:29; K2 running), Bexh 12/17, C-llm-r2 repeat 11/17 |
+| 13–14 | Attacks on the verifier; final reports | attacks complete (X1–X3 for every attack system); baseline report final; benchmark and final reports pending |
 
 ---
 

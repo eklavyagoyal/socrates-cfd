@@ -82,6 +82,93 @@
     "expected_outcome": "A stationary window with many more cycles and a flat lift amplitude. Mean drag and Strouhal number should fall within the R0 CI, with reduced statistical and averaging uncertainty. If they shift by more than that, the R0 values are transient-contaminated."
    },
    "outcome": "executed -> G2_average_from_start.long160-24e243b2227c (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 26.399702026999876,
+    "cost_usd": 0.07658411,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 20884,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 50,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "G2_average_from_start-e7384e5a2c24": "R0",
+     "G2_average_from_start.long160-24e243b2227c": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed and there is no FAIL to justify REJECT.",
+    "Mesh, time and domain uncertainties are still unmeasured for both mean_drag_coefficient and strouhal_number. No REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run exists, and a missing component is not a pass.",
+    "RUN_LONGER (R1, 160 convective times) settled the statistics. R1 has 13 stationary cycles. Drag drift is 5.59e-05, CI95 is 1.5832e-05, and the statistics uncertainties are 5.59e-05 (drag) and 4.525e-05 (Strouhal number).",
+    "R0's submitted-setup values are biased relative to the R1 stationary window. Drag is 1.3196 vs 1.3311 (averaging bias 0.008643). Strouhal number is 0.16144 vs 0.16344 (bias 0.01219). This bias is added linearly, so it takes a sizeable share of the 0.03 tolerance. Mesh, time and domain together must fit in what is left.",
+    "The R1 stationary window start (76.938) is still flagged as the MSER cap. However, the measured drag drift is tiny, so the averaging and statistics components are no longer the limiting items.",
+    "The physics_regime check is still INCONCLUSIVE. It cites only R0, where the lift amplitude changes by +6.7%. R1 rms lift is 0.22857 in the stationary window. This does not block the next experiment.",
+    "The mesh is the most likely source of a large unmeasured error. representative_cell_size_D is 0.45745, wake_last_cell_D is 1.0209 with 111 streamwise wake cells, and there are 160 cells around the cylinder. The Strouhal number depends on wake resolution, and drag on near-wall resolution (wall_first_cell_D 0.005). Time step and domain look comparatively benign: the Courant number is 0.73373 with 611.86 steps per period, the blockage ratio is 0.0125, and the extents are 30D upstream, 50D downstream and 40D half height.",
+    "Budget: 1 of 6 experiments used and compute is 1.67 of 12.0 relative to root. REFINE_MESH (1963 s) is affordable. The time-step (1697 s) and domain (1126 s) runs still fit afterwards.",
+    "Use R1 as parent. It has the longer, well-converged stationary window, so differences from the refined run are not masked by sampling noise. The listed refinement cost is the same for R0 and R1."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (REFINE_MESH not run)",
+    "Temporal discretisation error for both quantities (REDUCE_TIME_STEP not run)",
+    "Domain truncation/blockage error for both quantities (EXPAND_DOMAIN not run)",
+    "Combined uncertainty against the 0.03 tolerance for both quantities",
+    "A physics_regime check evaluated on the longer R1 record. The current INCONCLUSIVE result cites only R0 (lift amplitude +6.7%).",
+    "A stationary-window start for R1 that is not set by the MSER cap"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse mesh (representative_cell_size_D 0.45745, wake_last_cell_D 1.0209, 160 cells around the cylinder) biases the Strouhal number and mean drag by an amount comparable to the remaining tolerance budget.",
+     "test": "REFINE_MESH from R1 with a factor of 1.4142. Compare the stationary-window drag (R1: 1.3311) and Strouhal number (R1: 0.16344). A relative change above about 1.5% for either quantity confirms the mesh as a dominant error. A change much smaller than that refutes it, and the time step and domain experiments then follow."
+    },
+    {
+     "hypothesis": "A time step of 0.01 convective units (611.86 steps per period, Courant number 0.73373) leaves a temporal error that is small compared with the mesh error.",
+     "test": "REDUCE_TIME_STEP in a later iteration. Compare the stationary-window quantities with those of R1."
+    },
+    {
+     "hypothesis": "The truncation boundaries (blockage ratio 0.0125, symmetry lateral boundaries, 30D upstream, 50D downstream) bias drag and Strouhal number by less than the 0.5*tolerance component limit.",
+     "test": "EXPAND_DOMAIN in a later iteration. Compare the stationary-window drag and Strouhal number with those of R1."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "G2_average_from_start.long160-24e243b2227c",
+    "reason": "Mesh, time and domain uncertainties are all unmeasured. The mesh is the coarsest-looking element of the setup (representative_cell_size_D 0.45745, wake_last_cell_D 1.0209), and the Strouhal number and drag are sensitive to wake and near-wall resolution. R1 supplies a converged 13-cycle baseline, so any shift can be attributed to the mesh rather than sampling noise.",
+    "expected_outcome": "If the stationary-window drag and Strouhal number change by well under 1.5% relative to R1 (1.3311 and 0.16344), the mesh component can be bounded and the check can pass. A larger change shows the root mesh is inadequate, and a further refinement or a FAIL follows."
+   },
+   "outcome": "executed -> G2_average_from_start.m1.41-0f6f3498eef5 (completed)"
   }
  ]
 }

@@ -42,8 +42,10 @@ as unbounded.
 - **Success criteria.**
   - 2a (pre-registered) is met: the baseline's Cd and St lie within the literature band widened by τ.
   - 2b is met through its fallback clause ("or the report explains why not"). The pre-registered verifier does
-    *not* bound the drag uncertainty: with the full study it returns INCONCLUSIVE for drag, because the domain
-    component (U = 2.62 %, from the coarse-far-field domain chain) exceeds τ/2. It ACCEPTs St (combined U 1.86 %).
+    *not* bound the drag uncertainty. On the full-study graph (baseline + 11 study runs, §6) it returns
+    INCONCLUSIVE for drag, because the drag domain component (component U = 2.62 %, from the coarse-far-field
+    domain chain) exceeds τ/2. It ACCEPTs St (combined U 1.86 %). The benchmark systems' own baseline graphs also
+    leave drag INCONCLUSIVE on the domain component, with component U from 1.74 % to 3.89 % (§6).
 
 ## 2. Case set-up
 
@@ -186,14 +188,32 @@ unlikely. It is not derived from a model of the residual far-field error:
 - it does not cover the stage-3 four-level standard-chain result (1.290), which the far-field diagnosis explains
   rather than bounds.
 
-**History of the reference** (each change was made before any benchmark result was interpreted):
+**History of the reference.** Every committed version of `results/baseline/truth.json`, and the
+`benchmark/labels.json` version computed from it (commit times UTC, 2026-10-19):
 
-| version | Cd | St | what changed |
-|---|---|---|---|
-| stage 1 | 1.3133 ± 0.72 % | 0.1647 ± 1.06 % | domain levels unsettled (80 D/U) |
-| stage 2 | 1.3046 ± 1.15 % | 0.1638 ± 0.28 % | settled domain levels; dt/8 |
-| stage 3 (four-level domain chain, standard far field) | 1.290 ± 6.3 % | 0.1641 ± 0.84 % | the domain chain is not asymptotic |
-| **stage 4 (final)** | **1.3155 ± 0.94 %** | **0.1639 ± 0.46 %** | far-field-refined ×4 level; model-form terms |
+| version | truth.json commit | labels commit | Cd | St | what changed |
+|---|---|---|---|---|---|
+| stage 1 | 0cb34f0 (11:02) | 3d9f43c (11:03) | 1.3133 ± 0.72 % | 0.1647 ± 1.06 % | pre-registered chains; domain levels unsettled (80 D/U) |
+| stage 1, root continued | ce815d6 (11:23) | 3cff05d (12:42) | 1.3134 ± 0.71 % | 0.1648 ± 1.29 % | root value from its 250 D/U continuation; other members unchanged |
+| stage 2 | 33d5ebf (13:25) | 33d5ebf | 1.3046 ± 1.15 % | 0.1638 ± 0.28 % | settled domain levels; dt/8 |
+| stage 2, model-form terms | 4776198 (13:51) | not recomputed | 1.3046 ± 1.19 % | 0.1638 ± 0.48 % | time-overlap model-form term; time conditioning term |
+| stage 3 (four-level domain chain, standard far field) | 26fee11 (14:26) | not recomputed | 1.290 ± 6.3 % | 0.1641 ± 0.84 % | the domain chain is not asymptotic |
+| **stage 4 (final)** | 021fc5a (16:43) | 021fc5a | **1.3155 ± 0.94 %** | **0.1639 ± 0.46 %** | far-field-refined ×4 level; far-field model-form term |
+
+The revisions were not made blind to the benchmark. Labels and rates were first computed against the stage-1
+reference (3d9f43c, which also wrote `reports/benchmark_tables.md` and `results/benchmark/metrics.json`). The
+handoff document committed at 4b2a419 (13:13) interpreted benchmark verdicts and case errors under the 3cff05d
+labels (its §39, "findings so far"), before stages 2–4 were committed. The stated reason for each later stage is a
+diagnostic of the study itself (stage table in §3), and no verdict uses T. What the revisions can and cannot have
+changed (recomputed from the `reported` values in `benchmark/labels.json` and each version's `truth`):
+- On point estimates (§19 rule verbatim), the flawed set is identical under every committed labels version:
+  A1, B1, B2, C2, D1, F1, H1, I1.
+- The credible set changes: baseline, C1, K2 (3d9f43c, 3cff05d); A2, C1, G2, J1 (33d5ebf); A2, C1, J1, K2,
+  baseline (021fc5a).
+- So the false-acceptance and detection rates do not depend on the revisions; the correct-acceptance and
+  false-rejection rates do.
+- With the mitigation (§7), the stored label sets are the same in all four labels versions: A1, B1, B2, D1, F1,
+  H1, I1 flawed, no case credible, the rest ambiguous.
 
 **Cl rms (not a requested quantity) has no reliable reference.** With the standard ×4 level its domain chain
 diverges. With the refined ×4 level it extrapolates to 0.2217, and the time-overlap shift moves it by 2.4 %. No value
@@ -237,19 +257,38 @@ not the refined test run.
 | evidence available | Cd | St |
 |---|---|---|
 | baseline run only (System B) | INCONCLUSIVE (mesh, time, domain not measured) | INCONCLUSIVE |
-| baseline + 11 study runs | **INCONCLUSIVE**: domain U = 2.62 % > τ/2 | **ACCEPT** (combined U 1.86 %) |
+| baseline + 11 study runs (full-study graph) | **INCONCLUSIVE**: domain component U = 2.62 % > τ/2 | **ACCEPT** (combined U 1.86 %) |
 
-| component | Cd | St |
+| component (full-study graph) | Cd | St |
 |---|---|---|
 | averaging, statistics | PASS | PASS |
 | mesh | 0.85 % PASS | 1.33 % PASS |
 | time | 0.65 % PASS | 0.67 % PASS |
 | domain | **2.62 % INCONCLUSIVE** | 1.12 % PASS |
 
+A component U is that component's own uncertainty estimate, and each must be ≤ τ/2. The combined U (the measured
+averaging bias plus the root-sum-square of the other components, design §13) is formed only when every component
+PASSes, and must be ≤ τ. The drag domain component does not PASS in any graph in this section, so no drag
+combined U exists.
+
+The benchmark systems built their own, smaller graphs for the baseline case
+(`results/benchmark/<system>/baseline.json`, verifier `per_qoi`). Their domain levels are 80 D/U EXPAND_DOMAIN
+runs; the full-study graph also contains the continuations of those levels (`baseline.long180/200/280`).
+
+| graph | Cd domain component U | Cd | St |
+|---|---|---|---|
+| full study (above) | 2.62 % | INCONCLUSIVE | ACCEPT (combined U 1.86 %) |
+| C-rule | 1.81 % | INCONCLUSIVE | ACCEPT (combined U 1.59 %) |
+| C-llm | 1.74 % | INCONCLUSIVE | INCONCLUSIVE (domain component 1.85 %) |
+| C-llm-r2 (repeat) | 1.88 % | INCONCLUSIVE | INCONCLUSIVE (domain component 1.59 %) |
+| Bexh (one domain level: two-level estimate, p = 1, Fs = 3) | 3.89 % | INCONCLUSIVE | INCONCLUSIVE (domain component 2.63 %) |
+
+Every drag domain component is above τ/2 = 1.5 %.
+
 Reading this:
-- **The verifier's domain U for Cd is inflated by the far-field confound** (stage 4 and its ×1 control). U = 1.25 ×
-  the root's estimated domain error from the standard chain, 2.09 % relative to the extrapolated value, which gives
-  2.62 %. From the refined chain it would be 1.25 × 1.25 % = 1.56 %. That is still just above τ/2, so the domain
+- **The verifier's domain component U for Cd is inflated by the far-field confound** (stage 4 and its ×1
+  control). U = 1.25 × the root's estimated domain error from the standard chain, 2.09 % relative to the
+  extrapolated value, which gives 2.62 %. From the refined chain it would be 1.25 × 1.25 % = 1.56 %. That is still just above τ/2, so the domain
   component would remain INCONCLUSIVE.
 - **The verifier cannot ACCEPT this drag within the primitives.** ×4 is EXPAND_DOMAIN's hard limit, so no further step
   is available, and even the refined chain would give U above τ/2.
@@ -284,7 +323,7 @@ The analysis reports both label sets.
 | C2 | | 3.33 % | flawed | ambiguous |
 | A1, B1, B2, D1, F1, H1, I1 | | | flawed | flawed |
 
-Two consequences:
+Four consequences:
 - With U(T) = 0.94 % (Cd) and 0.46 % (St), the mitigated view can label a case credible only if its drag error is
   below 0.565 % *and* its St error is below 1.04 %. No case meets both: A2, G2 and J1 (0.564 %) meet the drag bound but
   not the St bound. So that view has no credible cases.

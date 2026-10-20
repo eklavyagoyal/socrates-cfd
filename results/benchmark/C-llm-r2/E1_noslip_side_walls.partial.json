@@ -1,0 +1,168 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 37.51589416200113,
+    "cost_usd": 0.053739709999999996,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13254,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 36,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "E1_noslip_side_walls-88a7cd5812e8": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed. REJECT is also not allowed because nothing has failed.",
+    "R0 passes the sampling checks. The averaging bias is 9.319e-05 for Cd and 6.507e-05 for St. The statistical uncertainty is 0.001199 for Cd and 0.0009705 for St, against a tolerance of 0.03. The record has 13 stationary cycles.",
+    "Mesh, time and domain uncertainties are all unmeasured for both quantities. No refinement, time-step or domain experiment has been run.",
+    "R0 mesh is coarse for the wake. It has 30580 cells, a representative cell size of 0.45745 D and a wake last cell of 1.0209 D. It has 160 cells around the cylinder and a wall first cell of 0.005 D. The wake is resolved by only 111 streamwise cells, and the wake sets St and the mean drag. This is the most likely source of an error larger than 3%.",
+    "Time and domain look less likely to dominate. The time scheme is backward, with dt = 0.01 D/U, max Courant 0.73374 and 608.73 steps per shedding period. The domain is 30 D upstream, 50 D downstream and 40 D half-height, with blockage 0.0125. The lateral boundaries are noSlipWall rather than a free-stream condition, so domain error is still unmeasured and should be tested later.",
+    "A refinement of R0 is the most informative single experiment. R0 has no refinement family yet, so the parent is R0. Factor 1.5 gives a signal clearly above noise. The estimated cost is about 2284 s at the default factor, which is well within the budget of 12 times the root cost (1850.8 s)."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation uncertainty for mean Cd and St (no REFINE_MESH run)",
+    "Temporal discretisation uncertainty for mean Cd and St (no REDUCE_TIME_STEP run)",
+    "Domain truncation/boundary uncertainty for mean Cd and St (no EXPAND_DOMAIN run, lateral noSlipWall at 40 D)",
+    "A second refinement level, if needed to estimate the mesh convergence order"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse wake mesh (wake last cell 1.0209 D, 111 wake cells, representative cell size 0.45745 D) biases Cd and St by more than the allowed share of the 3% tolerance.",
+     "test": "REFINE_MESH on R0 with factor 1.5. If the refined run's Cd or St differs from R0 (Cd 1.3402, St 0.16428) by more than about 1.5% relative, the hypothesis is confirmed and a further refinement is needed. A change well below 1.5% refutes it."
+    },
+    {
+     "hypothesis": "The noSlipWall lateral boundaries at 40 D and the finite upstream/downstream extents shift Cd and St by more than the tolerance share.",
+     "test": "EXPAND_DOMAIN on R0 (factor 2 or more) as a later experiment, and compare Cd and St with R0."
+    },
+    {
+     "hypothesis": "The time step (dt = 0.01 D/U, 608.73 steps per period) gives temporal error below the tolerance share.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2 as a later experiment, and compare Cd and St with R0."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.5
+    },
+    "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
+    "reason": "Mesh error is unmeasured and the most likely source of a change larger than the 3% tolerance, because the R0 wake mesh is coarse. Domain and time-step effects are also unmeasured but look less likely to dominate.",
+    "expected_outcome": "The refined run's Cd and St are compared with R0 (Cd 1.3402, St 0.16428). A change much smaller than 1.5% would let the mesh component pass the half-tolerance rule. A larger change would call for a second refinement level to estimate the convergence order."
+   },
+   "outcome": "executed -> E1_noslip_side_walls.m1.5-d5d24400570b (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 22.639642802998424,
+    "cost_usd": 0.07226731,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 20386,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 48,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "E1_noslip_side_walls-88a7cd5812e8": "R0",
+     "E1_noslip_side_walls.m1.5-d5d24400570b": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT and REJECT are both barred, so the decision is MORE_EVIDENCE.",
+    "R0 sampling is adequate. It has 13 stationary cycles, Cd statistical uncertainty 0.001199 and St statistical uncertainty 0.0009705. The averaging bias is 9.319e-05 for Cd and 6.507e-05 for St. Both are far below the 0.03 tolerance.",
+    "The R0 to R1 mesh refinement is done. Cd moved from 1.3402 to 1.3482 (0.59%). St moved from 0.16428 to 0.16575 (0.89%). Both changes are below the 3% tolerance, so there is no FAIL.",
+    "The mesh component is still INCONCLUSIVE. The two-level Richardson estimate with assumed p=2 gives 3.18% for Cd and 4.79% for St, both above the 1.5% half-tolerance. A third level could reduce this, but R1 cannot be refined further (cumulative refinement 2.12 exceeds the limit of 2.0).",
+    "Time uncertainty is unmeasured. R0 has dt = 0.01 D/U, max Courant 0.73374 and 608.73 steps per period with a backward scheme, and R1 has 737.81 steps per period. There is no evidence of a problem, but there is no measurement either.",
+    "Domain uncertainty is unmeasured and is the least defended setting. The lateral boundaries are noSlipWall at 40 D half-height, with 30 D upstream and 50 D downstream. The inlet pressure is zeroGradient and the outlet pressure is fixedValue. The question requires an unbounded stream. Wall-bounded lateral boundaries are a physical constraint, not a numerical one, so they could shift Cd and St beyond tolerance regardless of mesh and time-step convergence.",
+    "EXPAND_DOMAIN on R0 is the cheapest experiment (1311 s estimated) and the one most likely to expose a flaw larger than the tolerance. Budget is ample: 1 of 6 experiments used and 1.47 of 12 compute units used. Using R0 as parent keeps the near-field mesh identical, so the comparison isolates the boundary effect."
+   ],
+   "missing_evidence": [
+    "Domain truncation/boundary uncertainty for Cd and St (no EXPAND_DOMAIN run; lateral noSlipWall at 40 D)",
+    "Temporal discretisation uncertainty for Cd and St (no REDUCE_TIME_STEP run)",
+    "A third mesh level, or a measured convergence order, to replace the assumed p=2 mesh estimate (3.18% for Cd, 4.79% for St)"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The noSlipWall lateral boundaries at 40 D, together with the 30 D upstream and 50 D downstream extents, bias Cd or St by more than 1.5% relative to R0 (Cd 1.3402, St 0.16428).",
+     "test": "EXPAND_DOMAIN on R0 with factor 2. A change in Cd or St above about 1.5% confirms the hypothesis, and a change above 3% would be a FAIL for the root run. A change well below 1.5% refutes it."
+    },
+    {
+     "hypothesis": "The time step (dt = 0.01 D/U, 608.73 steps per period) gives a temporal error below the half-tolerance share.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2 (later), then compare Cd and St with R0."
+    },
+    {
+     "hypothesis": "The true mesh convergence order is at least 2, so the Richardson uncertainty from R0 and R1 (3.18% Cd, 4.79% St) is an overestimate.",
+     "test": "REFINE_MESH on R0 with factor 2.0 (later), to give a third level and a measured order."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
+    "reason": "Domain truncation is unmeasured and is the least defended setting: noSlipWall lateral boundaries conflict with the 'unbounded' requirement. It is also the cheapest experiment (1311 s). Mesh has already shown a sub-tolerance change (0.59% Cd, 0.89% St), whereas the domain effect has no measurement at all.",
+    "expected_outcome": "If the expanded-domain Cd and St differ from R0 (Cd 1.3402, St 0.16428) by well under 1.5%, the domain component can pass the half-tolerance rule. If they differ by more than 1.5%, the domain is a dominant error and a further expansion is needed. If they differ by more than 3% beyond noise, the deterministic verifier would FAIL the root run."
+   },
+   "outcome": "executed -> E1_noslip_side_walls.D2x-1620b1098386 (completed)"
+  }
+ ]
+}

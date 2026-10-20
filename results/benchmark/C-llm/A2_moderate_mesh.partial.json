@@ -175,6 +175,174 @@
     "expected_outcome": "If R0, the new run and R1 give monotone Cd and St with an observed order near 2, the Richardson mesh uncertainty can be reduced and may fall within 0.015. If the sequence is non-monotone or the order is erratic, the mesh bound remains inconclusive. If the extrapolated error of R0 exceeds 0.03, the result becomes a FAIL."
    },
    "outcome": "executed -> A2_moderate_mesh.m1.06-c5d153eb41a5 (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 27.624366324998846,
+    "cost_usd": 0.09108521,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 27301,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 47,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "A2_moderate_mesh-1c5ea01594aa": "R0",
+     "A2_moderate_mesh.m1.5-773c4ec70534": "R1",
+     "A2_moderate_mesh.m1.06-c5d153eb41a5": "R2"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "HIGH",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and failed_checks is empty. I cannot ACCEPT. Nothing measured supports REJECT.",
+    "R0 passes all run-level checks. Mass imbalance is 8.3333e-11 and max Courant is 0.56482. Cd averaging (4.434e-05) and statistics (7.165e-05) are negligible, and so are the St averaging (8.516e-06) and statistics (5.21e-05). RUN_LONGER would add little.",
+    "Cd mesh component now passes. Three-level Celik on R0/R2/R1 gives 0.01305 (observed p=3.58), below the 0.015 component budget. Cd moves from 1.3222 (R0) to 1.3321 (R2) to 1.335 (R1).",
+    "St mesh component is INCONCLUSIVE at 0.02755 (p=2.43), above 0.015. St moves from 0.16157 (R0) to 0.16364 (R2) to 0.16454 (R1). The demonstrated root-to-finest change is 1.80 %, below the 0.03 tolerance, so there is no FAIL.",
+    "R1 used a different time step (0.0079672 vs 0.01 for R0 and R2) and a higher Courant number (0.71246). Its St change therefore mixes spatial and temporal effects, which may inflate the St mesh estimate.",
+    "Time and domain are unmeasured for both quantities (no REDUCE_TIME_STEP or EXPAND_DOMAIN run). Missing components block ACCEPT regardless of the mesh outcome.",
+    "The domain is the cheapest unmeasured component (R0 parent about 1498 s) and a plausible source of a bias above 3 %: blockage ratio 0.0125, 30 D upstream, 50 D downstream, 40 D half-height with symmetryPlane lateral boundaries. Expanding the domain leaves the near-field mesh unchanged, so it isolates the boundary effect cleanly.",
+    "Budget: 2 of 6 experiments and 3.75 of 12 compute units used. This leaves room for a domain run, then a time-step run, then possibly one more mesh run."
+   ],
+   "missing_evidence": [
+    "Domain truncation/blockage error of Cd and St (no EXPAND_DOMAIN run)",
+    "Temporal discretisation error of Cd and St (no REDUCE_TIME_STEP run)",
+    "St mesh uncertainty is 0.02755, above the 0.015 budget. It may be confounded by R1's different time step.",
+    "Combined uncertainty for each quantity against the 0.03 tolerance"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The 30 D / 50 D / 40 D boundaries with symmetry lateral walls and 1.25 % blockage bias Cd and/or St by more than the 1.5 % component budget.",
+     "test": "EXPAND_DOMAIN from R0 with factor 2.0. If Cd and St change by less than about 0.5 % relative to R0 (Cd 1.3222, St 0.16157), the domain component passes. A change above 3 % is a FAIL."
+    },
+    {
+     "hypothesis": "The time step of 0.01 D/U (about 619 steps per shedding period) with backward differencing gives negligible temporal error. R1's St shift is partly a time-step artefact.",
+     "test": "Next, REDUCE_TIME_STEP from R0 (default factor 2.0). Compare the Cd and St change with the mesh-driven change."
+    },
+    {
+     "hypothesis": "The St mesh uncertainty of 2.75 % is inflated by R1's different time step and by the limited number of levels.",
+     "test": "After the time-step result, consider REFINE_MESH from R2 if budget allows. Check whether the St sequence stays monotone and the observed order stays stable."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "A2_moderate_mesh-1c5ea01594aa",
+    "reason": "The domain error is unmeasured for both quantities and is the cheapest missing component (about 1498 s from R0). Blockage is 1.25 % with symmetry lateral boundaries at 40 D, so a truncation bias is plausible. The near-field mesh is unchanged, so the comparison against R0 isolates the boundary effect.",
+    "expected_outcome": "If Cd and St change by well under 1.5 % relative to R0 (Cd 1.3222, St 0.16157), the domain component can be bounded within budget. A change above 3 % invalidates R0 for the requested quantities (FAIL)."
+   },
+   "outcome": "executed -> A2_moderate_mesh.D2x-4a8a18327a27 (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.303 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 18.90068080498895,
+    "cost_usd": 0.096622075,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 34527,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 44,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "A2_moderate_mesh-1c5ea01594aa": "R0",
+     "A2_moderate_mesh.m1.5-773c4ec70534": "R1",
+     "A2_moderate_mesh.m1.06-c5d153eb41a5": "R2",
+     "A2_moderate_mesh.D2x-4a8a18327a27": "R3"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "HIGH",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and failed_checks is empty, so ACCEPT is not allowed. Nothing measured supports REJECT.",
+    "R0 passes all run-level checks: mass imbalance 8.3333e-11, max Courant 0.56482, 12 stationary cycles. Cd averaging (4.434e-05) and statistics (7.165e-05) are negligible, and so are the St values (8.516e-06 and 5.21e-05). RUN_LONGER would add little.",
+    "Cd mesh passes at 0.01305 (Celik, observed p=3.58). St mesh is INCONCLUSIVE at 0.02755 (p=2.43), against a component budget of 0.015.",
+    "R3 (EXPAND_DOMAIN) moves Cd from 1.3222 to 1.3131 (0.69 %) and St from 0.16157 to 0.16082 (0.47 %). Both changes are well below the 0.03 tolerance, so there is no FAIL. The domain bounds (Cd 0.04147, St 0.02803) rest on an assumed order p=1 and Fs=3, so they are conservative placeholders, not measured bounds.",
+    "R3 has caveats. checkMesh_ok is false. Its far-field cells are coarser (representative cell size 1.0621 D vs 0.61063 D). Its Cd drift is -0.0013441 and its CI95 is 0.00063061, both much larger than R0's. Its change from R0 therefore mixes boundary and far-field-mesh effects. I would not tighten the domain bound further before the time error is known.",
+    "The time component is completely unmeasured for both quantities (no REDUCE_TIME_STEP run). It blocks ACCEPT whatever the other outcomes. It also confounds the St mesh estimate, because R1 used time step 0.0079672 and Courant 0.71246, while R0 and R2 used 0.01.",
+    "REDUCE_TIME_STEP from R0 on the identical mesh costs about 2266 s. Budget used is 3 of 6 experiments and 4.46 of 12 compute units, so it is affordable. It leaves room for one domain or mesh follow-up."
+   ],
+   "missing_evidence": [
+    "Temporal discretisation error of Cd and St (no REDUCE_TIME_STEP run)",
+    "Domain uncertainty is based on an assumed order p=1 with only two levels. R3 has checkMesh_ok=false and a coarser far-field mesh, so it is confounded.",
+    "St mesh uncertainty is 0.02755, above the 0.015 budget. It may be inflated by R1's different time step.",
+    "Combined uncertainty for each quantity against the 0.03 tolerance"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The time step of 0.01 D/U (618.93 steps per shedding period) with backward differencing gives a negligible temporal error in Cd and St. R1's St shift is then mostly spatial.",
+     "test": "REDUCE_TIME_STEP from R0 with factor 2.0. If Cd and St change by well under 0.5 % relative to R0 (Cd 1.3222, St 0.16157), the time component passes. A change above 3 % is a FAIL."
+    },
+    {
+     "hypothesis": "Part of the St mesh change between R0 and R1 comes from R1's different time step and Courant number (0.71246), which inflates the St mesh estimate.",
+     "test": "Compare the St change from the time-step run with the R0-to-R1 St change of 0.16157 to 0.16454. If the time-step effect is small, the mesh effect is real and needs a further mesh level."
+    },
+    {
+     "hypothesis": "The domain error is below 1.5 % for both quantities. The R0-to-R3 shift is small (0.69 % Cd, 0.47 % St), and the p=1, Fs=3 estimate is overly conservative.",
+     "test": "Later, EXPAND_DOMAIN from R3 with factor 1.5 to get a three-level sequence with an observed order, if budget allows."
+    }
+   ],
+   "next_experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "A2_moderate_mesh-1c5ea01594aa",
+    "reason": "The time component is unmeasured for both quantities and blocks ACCEPT. It may also explain part of the St mesh inconsistency, since R1 used a different time step. It is cheap at about 2266 s from R0, on the identical mesh, so the comparison is clean.",
+    "expected_outcome": "If Cd and St change by well under 1.5 % relative to R0 (Cd 1.3222, St 0.16157), the time component can be bounded within budget. A change above 3 % invalidates R0 for the requested quantities (FAIL). An intermediate change shows that time error must be included in the budget."
+   },
+   "outcome": "executed -> A2_moderate_mesh.dt0.005-4720e4eddcde (completed)"
   }
  ]
 }

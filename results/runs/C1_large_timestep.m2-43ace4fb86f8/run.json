@@ -1,171 +1,175 @@
 {
-  "run_id": "C1_large_timestep.m2-43ace4fb86f8",
-  "status": "running",
-  "owner_pid": 1506,
-  "created": "2026-10-20T01:16:37+00:00",
-  "problem_spec": {
-    "problem": {
-      "id": "cylinder2d_re100",
-      "type": "cylinder_external_flow",
-      "dimensionality": "2D",
-      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
-      "fluid": {
-        "name": "air (~20 degC, 1 atm)",
-        "kinematic_viscosity": 1.5e-05,
-        "density": 1.2
-      },
-      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
-    },
-    "geometry": {
-      "cylinder_diameter": 0.01,
-      "unbounded": true
-    },
-    "operating_conditions": {
-      "inlet_velocity": 0.15,
-      "reynolds_number": 100.0
-    },
-    "requested_outputs": [
-      "mean_drag_coefficient",
-      "strouhal_number"
-    ],
-    "verification": {
-      "requested_tolerance": {
-        "mean_drag_coefficient": 0.03,
-        "strouhal_number": 0.03
-      },
-      "reference_mode": "blind"
-    }
+ "run_id": "C1_large_timestep.m2-43ace4fb86f8",
+ "status": "running",
+ "owner_pid": null,
+ "created": "2026-10-20T01:16:37+00:00",
+ "problem_spec": {
+  "problem": {
+   "id": "cylinder2d_re100",
+   "type": "cylinder_external_flow",
+   "dimensionality": "2D",
+   "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+   "fluid": {
+    "name": "air (~20 degC, 1 atm)",
+    "kinematic_viscosity": 1.5e-05,
+    "density": 1.2
+   },
+   "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
   },
-  "case_config": {
-    "name": "C1_large_timestep.m2",
-    "description": "REFINE_MESH {'factor': 2.0} from C1_large_timestep.dt0.025-610f857bd6ea",
-    "mesh": {
-      "refinement": 2.0,
-      "n_quadrant": 40,
-      "n_ring_inner": 30,
-      "n_ring_outer": 20,
-      "n_upstream": 35,
-      "n_downstream": 111,
-      "n_lateral": 45,
-      "first_cell": 0.005,
-      "r_mid": 1.0,
-      "square_half": 2.5,
-      "span": 1.0,
-      "wake_factor": 1.0,
-      "cylinder_scale": 1.0
-    },
-    "domain": {
-      "upstream": 30.0,
-      "downstream": 50.0,
-      "half_height": 40.0
-    },
-    "physical": {
-      "diameter": 0.01,
-      "inlet_velocity": 0.15,
-      "kinematic_viscosity": 1.5e-05,
-      "density": 1.2
-    },
-    "boundaries": {
-      "lateral": "symmetryPlane",
-      "outlet_velocity": "inletOutlet",
-      "outlet_pressure": "fixedValue",
-      "inlet_pressure": "zeroGradient",
-      "cylinder_velocity": "noSlip",
-      "inlet_shear": 0.0
-    },
-    "numerics": {
-      "solver": "pimpleFoam",
-      "ddt": "backward",
-      "div_U": "Gauss linearUpwind grad(U)",
-      "grad": "Gauss linear",
-      "laplacian": "Gauss linear corrected",
-      "n_outer_correctors": 3,
-      "n_correctors": 2,
-      "n_nonorth_correctors": 0,
-      "steady_iterations": 4000,
-      "steady_residual_target": 1e-05,
-      "relax_U": 0.7,
-      "relax_p": 0.3
-    },
-    "time": {
-      "delta_t": 0.025,
-      "end_time": 80.0,
-      "adjust_time_step": false,
-      "max_co": 0.5,
-      "write_interval": 50.0
-    },
-    "forces": {
-      "mag_u_inf": null,
-      "l_ref": null,
-      "a_ref": null,
-      "rho_inf": null
-    },
-    "averaging": {
-      "start_time": 40.0
-    },
-    "perturbation": {
-      "enabled": true,
-      "box_min": [
-        0.5,
-        0.0
-      ],
-      "box_max": [
-        3.0,
-        1.0
-      ],
-      "v_fraction": 0.3
-    }
+  "geometry": {
+   "cylinder_diameter": 0.01,
+   "unbounded": true
   },
-  "config_hash": "fdf0ea357c7c5756",
-  "parent_run": "C1_large_timestep.dt0.025-610f857bd6ea",
-  "launch_reason": "The mesh component is unmeasured because R1 diverged at dt 0.05. R2 has the same mesh as R0 but dt 0.025 and max Courant 1.4804. Refining from R2 makes the child inherit the smaller dt. That should keep the Courant number stable and gives a clean mesh-sensitivity comparison with the time error already shown to be small.",
-  "launched_by": "llm_critic",
-  "experiment": {
-    "action": "REFINE_MESH",
-    "params": {
-      "factor": 2.0
-    },
-    "parent_run": "C1_large_timestep.dt0.025-610f857bd6ea",
-    "changes": {
-      "mesh.refinement": {
-        "from": 1.0,
-        "to": 2.0
-      }
-    },
-    "notes": [
-      "parent max Co 1.48 already exceeds 1.0; time step kept so that only the mesh changes",
-      "initialised by mapping the parent's final periodic state; run 80 D/U"
-    ],
-    "initialisation": {
-      "kind": "map",
-      "source_run": "C1_large_timestep.dt0.025-610f857bd6ea"
-    },
-    "estimated_cell_steps": 391424000.0
+  "operating_conditions": {
+   "inlet_velocity": 0.15,
+   "reynolds_number": 100.0
   },
-  "config_changes_from_parent": {
-    "mesh.refinement": {
-      "from": 1.0,
-      "to": 2.0
-    }
-  },
-  "initialisation": {
-    "kind": "map",
-    "source_run": "C1_large_timestep.dt0.025-610f857bd6ea",
-    "consistent": true
-  },
-  "software": {
-    "openfoam": {
-      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
-      "WM_PROJECT_VERSION": "v2412",
-      "WM_OPTIONS": "linux64GccDPInt32Opt",
-      "package_version": "2412.260127-1"
-    },
-    "python": "3.13.16",
-    "numpy": "2.5.3",
-    "scipy": "1.18.1",
-    "socrates_git_commit": "296beaa7f7bcdfda68830b68f0a2f89c19c547f4",
-    "socrates_src_dirty": false,
-    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
-    "cpu_count": 4
+  "requested_outputs": [
+   "mean_drag_coefficient",
+   "strouhal_number"
+  ],
+  "verification": {
+   "requested_tolerance": {
+    "mean_drag_coefficient": 0.03,
+    "strouhal_number": 0.03
+   },
+   "reference_mode": "blind"
   }
+ },
+ "case_config": {
+  "name": "C1_large_timestep.m2",
+  "description": "REFINE_MESH {'factor': 2.0} from C1_large_timestep.dt0.025-610f857bd6ea",
+  "mesh": {
+   "refinement": 2.0,
+   "n_quadrant": 40,
+   "n_ring_inner": 30,
+   "n_ring_outer": 20,
+   "n_upstream": 35,
+   "n_downstream": 111,
+   "n_lateral": 45,
+   "first_cell": 0.005,
+   "r_mid": 1.0,
+   "square_half": 2.5,
+   "span": 1.0,
+   "wake_factor": 1.0,
+   "cylinder_scale": 1.0
+  },
+  "domain": {
+   "upstream": 30.0,
+   "downstream": 50.0,
+   "half_height": 40.0
+  },
+  "physical": {
+   "diameter": 0.01,
+   "inlet_velocity": 0.15,
+   "kinematic_viscosity": 1.5e-05,
+   "density": 1.2
+  },
+  "boundaries": {
+   "lateral": "symmetryPlane",
+   "outlet_velocity": "inletOutlet",
+   "outlet_pressure": "fixedValue",
+   "inlet_pressure": "zeroGradient",
+   "cylinder_velocity": "noSlip",
+   "inlet_shear": 0.0
+  },
+  "numerics": {
+   "solver": "pimpleFoam",
+   "ddt": "backward",
+   "div_U": "Gauss linearUpwind grad(U)",
+   "grad": "Gauss linear",
+   "laplacian": "Gauss linear corrected",
+   "n_outer_correctors": 3,
+   "n_correctors": 2,
+   "n_nonorth_correctors": 0,
+   "steady_iterations": 4000,
+   "steady_residual_target": 1e-05,
+   "relax_U": 0.7,
+   "relax_p": 0.3
+  },
+  "time": {
+   "delta_t": 0.025,
+   "end_time": 80.0,
+   "adjust_time_step": false,
+   "max_co": 0.5,
+   "write_interval": 50.0
+  },
+  "forces": {
+   "mag_u_inf": null,
+   "l_ref": null,
+   "a_ref": null,
+   "rho_inf": null
+  },
+  "averaging": {
+   "start_time": 40.0
+  },
+  "perturbation": {
+   "enabled": true,
+   "box_min": [
+    0.5,
+    0.0
+   ],
+   "box_max": [
+    3.0,
+    1.0
+   ],
+   "v_fraction": 0.3
+  }
+ },
+ "config_hash": "fdf0ea357c7c5756",
+ "parent_run": "C1_large_timestep.dt0.025-610f857bd6ea",
+ "launch_reason": "The mesh component is unmeasured because R1 diverged at dt 0.05. R2 has the same mesh as R0 but dt 0.025 and max Courant 1.4804. Refining from R2 makes the child inherit the smaller dt. That should keep the Courant number stable and gives a clean mesh-sensitivity comparison with the time error already shown to be small.",
+ "launched_by": "llm_critic",
+ "experiment": {
+  "action": "REFINE_MESH",
+  "params": {
+   "factor": 2.0
+  },
+  "parent_run": "C1_large_timestep.dt0.025-610f857bd6ea",
+  "changes": {
+   "mesh.refinement": {
+    "from": 1.0,
+    "to": 2.0
+   }
+  },
+  "notes": [
+   "parent max Co 1.48 already exceeds 1.0; time step kept so that only the mesh changes",
+   "initialised by mapping the parent's final periodic state; run 80 D/U"
+  ],
+  "initialisation": {
+   "kind": "map",
+   "source_run": "C1_large_timestep.dt0.025-610f857bd6ea"
+  },
+  "estimated_cell_steps": 391424000.0
+ },
+ "config_changes_from_parent": {
+  "mesh.refinement": {
+   "from": 1.0,
+   "to": 2.0
+  }
+ },
+ "initialisation": {
+  "kind": "map",
+  "source_run": "C1_large_timestep.dt0.025-610f857bd6ea",
+  "consistent": true
+ },
+ "software": {
+  "openfoam": {
+   "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+   "WM_PROJECT_VERSION": "v2412",
+   "WM_OPTIONS": "linux64GccDPInt32Opt",
+   "package_version": "2412.260127-1"
+  },
+  "python": "3.13.16",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "socrates_git_commit": "296beaa7f7bcdfda68830b68f0a2f89c19c547f4",
+  "socrates_src_dirty": false,
+  "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+  "cpu_count": 4
+ },
+ "stale_owner_pid_cleared": {
+  "old_owner_pid": 1506,
+  "reason": "container restart 2"
+ }
 }

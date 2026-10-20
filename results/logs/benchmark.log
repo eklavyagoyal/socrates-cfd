@@ -147,3 +147,78 @@ report for E1_noslip_side_walls C-rule failed; see /home/user/socrates-cfd/repor
 C-rule   E1_noslip_side_walls     -> INCONCLUSIVE
 report for C2_euler_large_timestep C-llm failed; see /home/user/socrates-cfd/reports/cases/C2_euler_large_timestep__C-llm.report_error.txt
 C-llm    C2_euler_large_timestep  -> INCONCLUSIVE
+=== relaunch after container restart 2 2026-10-20T03:40:59Z ===
+A        baseline                 -> ACCEPT
+A        K2_fine_large            -> ACCEPT
+A        A1_coarse_mesh           -> ACCEPTA        C2_euler_large_timestep  -> ACCEPT
+A        A2_moderate_mesh         -> ACCEPT
+
+A        K1_central_scheme        -> ACCEPT
+A        B2_moderate_domain       -> ACCEPT
+B        F1_upwind_convection     -> INCONCLUSIVE
+L-judge  A2_moderate_mesh         -> ACCEPT
+L-judge  A1_coarse_mesh           -> REJECT
+B        B2_moderate_domain       -> INCONCLUSIVEA        B1_small_domain          -> ACCEPT
+L-judge  baseline                 -> ACCEPTA        F1_upwind_convection     -> ACCEPT
+A        C1_large_timestep        -> ACCEPTB        C2_euler_large_timestep  -> INCONCLUSIVE
+B        A2_moderate_mesh         -> INCONCLUSIVE
+B        K1_central_scheme        -> INCONCLUSIVEB        A1_coarse_mesh           -> INCONCLUSIVE
+
+
+B        baseline                 -> INCONCLUSIVE
+L-judge  K1_central_scheme        -> ACCEPT
+
+
+B        K2_fine_large            -> INCONCLUSIVEL-judge  K2_fine_large            -> ACCEPT
+A        I1_force_reference       -> ACCEPT
+A        G1_premature_averaging   -> ACCEPT
+A        D1_steady_solver         -> REJECT
+A        H1_dynamic_viscosity     -> ACCEPT
+B        G2_average_from_start    -> INCONCLUSIVEA        E1_noslip_side_walls     -> ACCEPT
+
+
+C-rule   A2_moderate_mesh         -> INCONCLUSIVE
+L-judge  B2_moderate_domain       -> REJECT
+C-llm    A1_coarse_mesh           -> REJECT
+C-llm    A2_moderate_mesh         -> INCONCLUSIVE
+C-llm    C2_euler_large_timestep  -> INCONCLUSIVE
+L-judge  C1_large_timestep        -> ACCEPT
+B        B1_small_domain          -> INCONCLUSIVE
+L-judge  H1_dynamic_viscosity     -> REJECT
+A        J1_coarse_wake           -> REJECT
+L-judge  C2_euler_large_timestep  -> INCONCLUSIVE
+B        G1_premature_averaging   -> INCONCLUSIVEL-judge  G2_average_from_start    -> ACCEPT
+L-judge  G1_premature_averaging   -> REJECT
+L-judge  D1_steady_solver         -> REJECTC-rule   D1_steady_solver         -> REJECT
+B        I1_force_reference       -> REJECT
+C-rule   E1_noslip_side_walls     -> INCONCLUSIVE
+A        G2_average_from_start    -> ACCEPT
+
+B        H1_dynamic_viscosity     -> REJECT
+L-judge  E1_noslip_side_walls     -> ACCEPT
+C-rule   A1_coarse_mesh           -> REJECT
+B        D1_steady_solver         -> REJECT
+C-llm    B2_moderate_domain       -> REJECTL-judge  F1_upwind_convection     -> REJECT
+L-judge  I1_force_reference       -> REJECT
+B        C1_large_timestep        -> INCONCLUSIVE
+
+
+B        E1_noslip_side_walls     -> INCONCLUSIVEC-llm    D1_steady_solver         -> REJECT
+C-rule   C2_euler_large_timestep  -> INCONCLUSIVE
+L-judge  B1_small_domain          -> REJECT
+C-llm    F1_upwind_convection     -> REJECT
+C-llm    H1_dynamic_viscosity     -> REJECT
+C-llm    G2_average_from_start    -> INCONCLUSIVE
+B        J1_coarse_wake           -> REJECT
+L-judge  J1_coarse_wake           -> REJECT
+
+C-llm    E1_noslip_side_walls     -> INCONCLUSIVE
+C-rule   H1_dynamic_viscosity     -> REJECT
+C-llm    B1_small_domain          -> REJECT
+C-llm    I1_force_reference       -> REJECT
+C-rule   J1_coarse_wake           -> REJECT
+C-llm    J1_coarse_wake           -> REJECT
+C-rule   I1_force_reference       -> REJECT
+C-llm    baseline                 -> INCONCLUSIVE
+C-rule   baseline                 -> INCONCLUSIVE
+C-rule   B1_small_domain          -> REJECT

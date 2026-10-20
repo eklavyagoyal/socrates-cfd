@@ -102,11 +102,13 @@ def run_one(system: str, case: dict, store: RunStore, spec: ProblemSpec, budget:
     if system in ("C-rule", "C-llm", "Bexh") or system.startswith("C-llm-r"):
         rep = REPO / "reports" / "cases" / f"{case['id']}__{system}.md"
         try:
-            bexh_view = {"verdict": res.get("verifier"), "root_run": root.run_id, "runs": res.get("runs"),
-                         "final_verdict": res.get("verdict"),
-                         "experiments": [{**e, "parent_run": e["parent"]} for e in res.get("experiments") or []
-                                         if e.get("run_id")]}
-            write_case_report(rep, store, spec, res if system != "Bexh" else bexh_view, title=f"{case['id']} ({system})")
+            view = res
+            if system == "Bexh":  # Bexh experiments name their parent `parent`; the report expects `parent_run`
+                view = {"verdict": res.get("verifier"), "root_run": root.run_id, "runs": res.get("runs"),
+                        "final_verdict": res.get("verdict"),
+                        "experiments": [{**e, "parent_run": e["parent"]} for e in res.get("experiments") or []
+                                        if e.get("run_id")]}
+            write_case_report(rep, store, spec, view, title=f"{case['id']} ({system})")
         except Exception:  # noqa: BLE001 -- a report failure must not discard the stored result
             rep.with_suffix(".report_error.txt").write_text(traceback.format_exc())
             print(f"report for {case['id']} {system} failed; see {rep.with_suffix('.report_error.txt')}", flush=True)

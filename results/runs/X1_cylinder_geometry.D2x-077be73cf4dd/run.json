@@ -1,8 +1,8 @@
 {
   "run_id": "X1_cylinder_geometry.D2x-077be73cf4dd",
   "status": "running",
-  "owner_pid": 1586,
-  "created": "2026-10-20T01:17:08+00:00",
+  "owner_pid": 507,
+  "created": "2026-10-20T03:41:01+00:00",
   "problem_spec": {
     "problem": {
       "id": "cylinder2d_re100",
@@ -118,8 +118,8 @@
   },
   "config_hash": "73c7e4c36cf0af65",
   "parent_run": "X1_cylinder_geometry.D2x-bfc063153665",
-  "launch_reason": "Domain is the component with the largest recorded uncertainty. Drag is 0.04066, above the full tolerance of 0.03, and Strouhal is 0.02715. Both come from a two-level estimate with assumed order p=1. R3 is a poor single reference because its checkMesh_ok is false and its far-field mesh is coarser. Expanding R3 again by the same factor of 2 gives a three-level domain sequence (R0, R3, new run). That sequence allows an observed order and a justified bound. The near-field mesh is unchanged, and the estimated cost is 1300 s, which the budget affords while leaving room for a REDUCE_TIME_STEP run.",
-  "launched_by": "llm_critic",
+  "launch_reason": "domain uncertainty component is unmeasured or not yet within budget",
+  "launched_by": "rule_based",
   "experiment": {
     "action": "EXPAND_DOMAIN",
     "params": {
@@ -202,7 +202,7 @@
     "python": "3.13.16",
     "numpy": "2.5.3",
     "scipy": "1.18.1",
-    "socrates_git_commit": "296beaa7f7bcdfda68830b68f0a2f89c19c547f4",
+    "socrates_git_commit": "1f1d047ee076506a65d1ac60b0d2d99f37b0c25c",
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4

@@ -1,0 +1,965 @@
+{
+ "root_run": "B2_moderate_domain-55b85b2cd33e",
+ "planner": "rule_based",
+ "final_verdict": "REJECT",
+ "stop_reason": "deterministic verifier verdict is decisive",
+ "verdict": {
+  "verdict": "REJECT",
+  "per_qoi": {
+   "mean_drag_coefficient": {
+    "verdict": "REJECT",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "PASS",
+     "statistics": "PASS",
+     "mesh": "PASS",
+     "time": "PASS",
+     "domain": "FAIL"
+    },
+    "component_uncertainty": {
+     "averaging": 1.8581236036513182e-06,
+     "statistics": 2.4920945380732298e-05,
+     "mesh": 0.0056631106205264434,
+     "time": 0.011216078417342179
+    },
+    "combined_uncertainty": null
+   },
+   "strouhal_number": {
+    "verdict": "INCONCLUSIVE",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "PASS",
+     "statistics": "PASS",
+     "mesh": "PASS",
+     "time": "PASS",
+     "domain": "INCONCLUSIVE"
+    },
+    "component_uncertainty": {
+     "averaging": 7.006427276056601e-06,
+     "statistics": 9.903815968313377e-06,
+     "mesh": 0.011761888027153174,
+     "time": 0.00444450308487629,
+     "domain": 0.03701457393941714
+    },
+    "combined_uncertainty": null
+   }
+  },
+  "missing_components": {
+   "mean_drag_coefficient": [
+    "domain"
+   ],
+   "strouhal_number": [
+    "domain"
+   ]
+  },
+  "failed_checks": [
+   "domain_sensitivity[mean_drag_coefficient]"
+  ],
+  "checks": [
+   {
+    "check": "solver_completion",
+    "status": "PASS",
+    "reason": "solver ran to its configured end and printed 'End'",
+    "value": 10.0000000005,
+    "threshold": null,
+    "source": "solver log",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mesh_quality",
+    "status": "PASS",
+    "reason": "checkMesh reports 'Mesh OK'; non-orthogonality, skewness and aspect ratio within OpenFOAM's limits. This shows the mesh is valid, NOT that it resolves the flow.",
+    "value": {
+     "max_non_orthogonality": 43.31296755,
+     "max_skewness": 0.5338415736,
+     "max_aspect_ratio": 9.03691296
+    },
+    "threshold": {
+     "max_non_orthogonality": 70.0,
+     "max_skewness": 4.0,
+     "max_aspect_ratio": 1000.0
+    },
+    "source": "checkMesh log ('Mesh OK' / 'Failed N mesh checks'); limits: max_non_orthogonality: OpenFOAM primitiveMesh::nonOrthThreshold_ default (70 deg); checkMesh reports '***' above it; max_skewness: OpenFOAM primitiveMesh::skewThreshold_ default (4); max_aspect_ratio: OpenFOAM primitiveMesh::aspectThreshold_ default (1000)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mass_conservation",
+    "status": "PASS",
+    "reason": "max relative boundary-flux imbalance 3.00e-10 <= 1.50e-03; cannot bias the requested quantities beyond tau/10",
+    "value": 3.000000060292737e-10,
+    "threshold": 0.0015,
+    "source": "postProcessing/flux_*/surfaceFieldValue.dat; threshold = tau/20 (2*eps <= tau/10 bound on induced Cd error)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "continuity_sum_local_max": 3.804064871e-13
+    }
+   },
+   {
+    "check": "linear_solver_convergence",
+    "status": "PASS",
+    "reason": "final pressure solve reached the configured tolerance in 100.0% of steps",
+    "value": {
+     "fraction_of_steps_above_tolerance": 0.0,
+     "max_final_residual": 9.999831172e-08,
+     "iteration_limit_hits": 0
+    },
+    "threshold": 0.01,
+    "source": "solver log, last pressure solve of each time step (relTol 0, so it must reach the configured absolute tolerance); solverInfo is not used because it records only the first solve of a step",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "courant_number",
+    "status": "PASS",
+    "reason": "max Courant number 0.74 < 1.0 (PISO mode). Stability/accuracy guideline only; temporal discretisation error is not quantified by this.",
+    "value": 0.7352551552,
+    "threshold": 1.0,
+    "source": "OpenFOAM User Guide (cavity tutorial); Issa (1986) J. Comput. Phys. 62:40",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "reynolds_consistency",
+    "status": "PASS",
+    "reason": "case Re=100 matches spec Re=100",
+    "value": {
+     "case": 100.0,
+     "spec": 100.0,
+     "spec_from_parameters": 100.0
+    },
+    "threshold": 0.001,
+    "source": "case physical parameters vs spec",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "force_reference_consistency",
+    "status": "PASS",
+    "reason": "magUInf equals inlet velocity and Aref equals D x mesh span",
+    "value": {
+     "magUInf": 0.15,
+     "lRef": 0.01,
+     "Aref": 0.0001,
+     "rhoInf": 1.2
+    },
+    "threshold": 0.001,
+    "source": "forceCoeffs entries vs inlet BC velocity and mesh-measured projected area (D x span)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "Aref_from_mesh_bounding_box": 0.0001
+    }
+   },
+   {
+    "check": "physics_regime",
+    "status": "PASS",
+    "reason": "sustained periodic lift oscillation present, as expected for 47.0 < Re=100.0 < 188.5",
+    "value": 100.0,
+    "threshold": null,
+    "source": "Provansal, Mathis & Boyer (1987) JFM 182:1 (Re_c ~ 47); Williamson (1996) Annu. Rev. Fluid Mech. 28:477; Barkley & Henderson (1996) JFM 322:215 (mode A at Re ~ 188.5); Williamson (1996)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "convection_scheme_order",
+    "status": "PASS",
+    "reason": "convection scheme 'Gauss linearUpwind grad(U)' is nominally second order",
+    "value": "Gauss linearUpwind grad(U)",
+    "threshold": null,
+    "source": "J. Fluids Eng. editorial policy on numerical accuracy (published with Celik et al. 2008): at least second-order spatial schemes; first-order numerical diffusion called 'devastating'",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {}
+   },
+   {
+    "check": "averaging_window",
+    "status": "PASS",
+    "reason": "reported mean_drag_coefficient is biased by 0.000% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+    "value": 1.8581236036513182e-06,
+    "threshold": 0.03,
+    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+    "qoi": "mean_drag_coefficient",
+    "component": "averaging",
+    "uncertainty": 1.8581236036513182e-06,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "reported": 1.3712817718756345,
+     "stationary": 1.3712792238693414,
+     "declared_start_convective": 75.0,
+     "transient_end_convective": 69.50008093579945,
+     "declared_window_cycles": 12,
+     "kind": "bias"
+    }
+   },
+   {
+    "check": "averaging_window",
+    "status": "PASS",
+    "reason": "reported strouhal_number is biased by 0.001% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+    "value": 7.006427276056601e-06,
+    "threshold": 0.03,
+    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+    "qoi": "strouhal_number",
+    "component": "averaging",
+    "uncertainty": 7.006427276056601e-06,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "reported": 0.16704091382411376,
+     "stationary": 0.1670397434722989,
+     "declared_start_convective": 75.0,
+     "transient_end_convective": 69.50008093579945,
+     "declared_window_cycles": 12,
+     "kind": "bias"
+    }
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "PASS",
+    "reason": "statistical/stationarity uncertainty 2.49e-05 <= 1.50%",
+    "value": 2.4920945380732298e-05,
+    "threshold": 0.015,
+    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+    "qoi": "mean_drag_coefficient",
+    "component": "statistics",
+    "uncertainty": 2.4920945380732298e-05,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "components": {
+      "ci95": 6.809096403027557e-06,
+      "drift": 2.4920945380732298e-05,
+      "half_difference": 1.0075777922056405e-05
+     },
+     "n_cycles": 13,
+     "mser_hit_cap": true
+    }
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "PASS",
+    "reason": "statistical/stationarity uncertainty 9.90e-06 <= 1.50%",
+    "value": 9.903815968313377e-06,
+    "threshold": 0.015,
+    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+    "qoi": "strouhal_number",
+    "component": "statistics",
+    "uncertainty": 9.903815968313377e-06,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e"
+    ],
+    "details": {
+     "components": {
+      "ci95_period": 9.5868318259222e-06,
+      "period_drift": 9.903815968313377e-06,
+      "period_half_difference": 5.2089908658014116e-06,
+      "fft_vs_zero_crossing": 7.431716594320814e-06
+     },
+     "n_cycles": 13,
+     "mser_hit_cap": true
+    }
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "PASS",
+    "reason": "estimated mesh uncertainty of mean_drag_coefficient = 0.57% <= 1.50% (root-to-finest change 0.392%) [three-level Celik procedure, observed order p=2.89, Fs=1.25]",
+    "value": 0.0056631106205264434,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "mean_drag_coefficient",
+    "component": "mesh",
+    "uncertainty": 0.0056631106205264434,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e",
+     "B2_moderate_domain.m1.41-d86d8d024222",
+     "B2_moderate_domain.m2-cc5b5f3a7d40"
+    ],
+    "details": {
+     "values": [
+      1.3712792238693414,
+      1.3752313290139166,
+      1.3766796898195286
+     ],
+     "h_D": [
+      0.20423680478045847,
+      0.14438708007264076,
+      0.10211839271778149
+     ],
+     "formal_order": 2.0,
+     "notes": [
+      "time step also varied across the mesh family: [0.007382236563461499, 0.008655445644509407, 0.01] (Courant control)"
+     ],
+     "root_to_finest_change": 0.003922819512863685,
+     "refinement_ratios": [
+      1.4145088651817563,
+      1.4139184551374082
+     ],
+     "noise": 3.349390633040549e-05,
+     "observed_order": 2.8926380977213557,
+     "iterations": 29,
+     "extrapolated_value": 1.377520062666843,
+     "estimated_root_error": 0.004530488496421155,
+     "method": "three-level Celik procedure, observed order p=2.89, Fs=1.25"
+    }
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "PASS",
+    "reason": "estimated mesh uncertainty of strouhal_number = 1.18% <= 1.50% (root-to-finest change 0.809%) [three-level Celik procedure, observed order p=2.82, Fs=1.25]",
+    "value": 0.011761888027153174,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "strouhal_number",
+    "component": "mesh",
+    "uncertainty": 0.011761888027153174,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e",
+     "B2_moderate_domain.m1.41-d86d8d024222",
+     "B2_moderate_domain.m2-cc5b5f3a7d40"
+    ],
+    "details": {
+     "values": [
+      0.1670397434722989,
+      0.16802915566833662,
+      0.16840133640392124
+     ],
+     "h_D": [
+      0.20423680478045847,
+      0.14438708007264076,
+      0.10211839271778149
+     ],
+     "formal_order": 2.0,
+     "notes": [
+      "time step also varied across the mesh family: [0.007382236563461499, 0.008655445644509407, 0.01] (Courant control)"
+     ],
+     "root_to_finest_change": 0.008085404550213681,
+     "refinement_ratios": [
+      1.4145088651817563,
+      1.4139184551374082
+     ],
+     "noise": 4.629586035797427e-05,
+     "observed_order": 2.8173886099662324,
+     "iterations": 29,
+     "extrapolated_value": 0.16862643567617178,
+     "estimated_root_error": 0.009409510421722538,
+     "method": "three-level Celik procedure, observed order p=2.82, Fs=1.25"
+    }
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "PASS",
+    "reason": "estimated time uncertainty of mean_drag_coefficient = 1.12% <= 1.50% (root-to-finest change 0.280%) [two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.5e-05)]",
+    "value": 0.011216078417342179,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "mean_drag_coefficient",
+    "component": "time",
+    "uncertainty": 0.011216078417342179,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e",
+     "B2_moderate_domain.dt0.005-525718785aa3"
+    ],
+    "details": {
+     "values": [
+      1.3712792238693414,
+      1.367444881613449
+     ],
+     "dt_convective": [
+      0.01,
+      0.005
+     ],
+     "formal_order": 2.0,
+     "notes": [],
+     "root_to_finest_change": 0.0028040196043355448,
+     "refinement_ratios": [
+      2.0
+     ],
+     "noise": 2.4920945380732298e-05,
+     "estimated_root_error": 0.0037386928057807265,
+     "method": "two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.5e-05)"
+    }
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "PASS",
+    "reason": "estimated time uncertainty of strouhal_number = 0.44% <= 1.50% (root-to-finest change 0.111%) [two-level Richardson, assumed order p=2, Fs=3 (noise floor 6.9e-05)]",
+    "value": 0.00444450308487629,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "strouhal_number",
+    "component": "time",
+    "uncertainty": 0.00444450308487629,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e",
+     "B2_moderate_domain.dt0.005-525718785aa3"
+    ],
+    "details": {
+     "values": [
+      0.1670397434722989,
+      0.1672255520928356
+     ],
+     "dt_convective": [
+      0.01,
+      0.005
+     ],
+     "formal_order": 2.0,
+     "notes": [],
+     "root_to_finest_change": 0.0011111257712190725,
+     "refinement_ratios": [
+      2.0
+     ],
+     "noise": 6.925264566019632e-05,
+     "estimated_root_error": 0.0014815010282920966,
+     "method": "two-level Richardson, assumed order p=2, Fs=3 (noise floor 6.9e-05)"
+    }
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "FAIL",
+    "reason": "mean_drag_coefficient of the run under verification changes by 3.39% under domain refinement (> tau=3%); its value is not converged to the requested tolerance",
+    "value": 0.0338865943566707,
+    "threshold": 0.03,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "mean_drag_coefficient",
+    "component": "domain",
+    "uncertainty": null,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e",
+     "B2_moderate_domain.D2x-44c88f366919",
+     "B2_moderate_domain.D2x-39e861cedde4"
+    ],
+    "details": {
+     "values": [
+      1.3712792238693414,
+      1.339526308163713,
+      1.3263342723991998
+     ],
+     "inverse_half_height": [
+      0.1,
+      0.05,
+      0.025
+     ],
+     "formal_order": 1.0,
+     "notes": [
+      "domain-size error assumed ~ (D/H)^q with q=1 (EXPERT REVIEW)"
+     ],
+     "root_to_finest_change": 0.0338865943566707,
+     "refinement_ratios": [
+      2.0,
+      2.0
+     ],
+     "noise": 0.0008144857879799902
+    }
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "estimated domain uncertainty of strouhal_number = 3.70% > 1.50% but the demonstrated change 2.45% <= tau; more refinement would be needed [three-level Celik procedure, observed order p=1.28, Fs=1.25]",
+    "value": 0.03701457393941714,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "strouhal_number",
+    "component": "domain",
+    "uncertainty": 0.03701457393941714,
+    "runs": [
+     "B2_moderate_domain-55b85b2cd33e",
+     "B2_moderate_domain.D2x-44c88f366919",
+     "B2_moderate_domain.D2x-39e861cedde4"
+    ],
+    "details": {
+     "values": [
+      0.1670397434722989,
+      0.16420786591392886,
+      0.16304530928874167
+     ],
+     "inverse_half_height": [
+      0.1,
+      0.05,
+      0.025
+     ],
+     "formal_order": 1.0,
+     "notes": [
+      "domain-size error assumed ~ (D/H)^q with q=1 (EXPERT REVIEW)"
+     ],
+     "root_to_finest_change": 0.02449892119547815,
+     "refinement_ratios": [
+      2.0,
+      2.0
+     ],
+     "noise": 0.0007452112225713579,
+     "observed_order": 1.2844579011551094,
+     "iterations": 28,
+     "extrapolated_value": 0.16223567593431334,
+     "estimated_root_error": 0.029611659151533715,
+     "method": "three-level Celik procedure, observed order p=1.28, Fs=1.25"
+    }
+   }
+  ]
+ },
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {},
+    "parent_run": "B2_moderate_domain-55b85b2cd33e",
+    "reason": "mesh uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> B2_moderate_domain.m1.41-d86d8d024222 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {},
+    "parent_run": "B2_moderate_domain.m1.41-d86d8d024222",
+    "reason": "mesh uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> B2_moderate_domain.m2-cc5b5f3a7d40 (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: time, domain",
+    "strouhal_number: time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "parameters": {},
+    "parent_run": "B2_moderate_domain-55b85b2cd33e",
+    "reason": "time uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> B2_moderate_domain.dt0.005-525718785aa3 (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: domain",
+    "strouhal_number: domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {},
+    "parent_run": "B2_moderate_domain-55b85b2cd33e",
+    "reason": "domain uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> B2_moderate_domain.D2x-44c88f366919 (completed)"
+  },
+  {
+   "iteration": 5,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: domain",
+    "strouhal_number: domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {},
+    "parent_run": "B2_moderate_domain.D2x-44c88f366919",
+    "reason": "domain uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> B2_moderate_domain.D2x-39e861cedde4 (completed)"
+  }
+ ],
+ "runs": [
+  "B2_moderate_domain-55b85b2cd33e",
+  "B2_moderate_domain.m1.41-d86d8d024222",
+  "B2_moderate_domain.m2-cc5b5f3a7d40",
+  "B2_moderate_domain.dt0.005-525718785aa3",
+  "B2_moderate_domain.D2x-44c88f366919",
+  "B2_moderate_domain.D2x-39e861cedde4"
+ ],
+ "experiments": [
+  {
+   "action": "REFINE_MESH",
+   "params": {
+    "factor": 1.4142135623730951
+   },
+   "parent_run": "B2_moderate_domain-55b85b2cd33e",
+   "changes": {
+    "averaging.start_time": {
+     "from": 75.0,
+     "to": 40.0
+    },
+    "mesh.refinement": {
+     "from": 1.0,
+     "to": 1.4142135623730951
+    },
+    "time.delta_t": {
+     "from": 0.01,
+     "to": 0.008655445644509407
+    },
+    "time.end_time": {
+     "from": 150.0,
+     "to": 80.0
+    }
+   },
+   "notes": [
+    "time step reduced 0.01 -> 0.008655 D/U to keep predicted max Co (1.04) <= 0.9 (parent Co 0.74)",
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "B2_moderate_domain-55b85b2cd33e"
+   },
+   "estimated_cell_steps": 354329531.48350936,
+   "run_id": "B2_moderate_domain.m1.41-d86d8d024222",
+   "status": "completed",
+   "cell_steps": 354339648.0,
+   "wall_seconds": 1687.2206208449934
+  },
+  {
+   "action": "REFINE_MESH",
+   "params": {
+    "factor": 1.4142135623730951
+   },
+   "parent_run": "B2_moderate_domain.m1.41-d86d8d024222",
+   "changes": {
+    "mesh.refinement": {
+     "from": 1.4142135623730951,
+     "to": 2.0000000000000004
+    },
+    "time.delta_t": {
+     "from": 0.008655445644509407,
+     "to": 0.007382236563461499
+    }
+   },
+   "notes": [
+    "time step reduced 0.00865545 -> 0.007382 D/U to keep predicted max Co (1.06) <= 0.9 (parent Co 0.75)",
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "B2_moderate_domain.m1.41-d86d8d024222"
+   },
+   "estimated_cell_steps": 830534208.3382257,
+   "run_id": "B2_moderate_domain.m2-cc5b5f3a7d40",
+   "status": "completed",
+   "cell_steps": 830547680.0,
+   "wall_seconds": 4335.708023627
+  },
+  {
+   "action": "REDUCE_TIME_STEP",
+   "params": {
+    "factor": 2.0
+   },
+   "parent_run": "B2_moderate_domain-55b85b2cd33e",
+   "changes": {
+    "averaging.start_time": {
+     "from": 75.0,
+     "to": 40.0
+    },
+    "time.delta_t": {
+     "from": 0.01,
+     "to": 0.005
+    },
+    "time.end_time": {
+     "from": 150.0,
+     "to": 80.0
+    }
+   },
+   "notes": [
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "B2_moderate_domain-55b85b2cd33e"
+   },
+   "estimated_cell_steps": 306560000.0,
+   "run_id": "B2_moderate_domain.dt0.005-525718785aa3",
+   "status": "completed",
+   "cell_steps": 306560000.0,
+   "wall_seconds": 968.6991512530003
+  },
+  {
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 2.0
+   },
+   "parent_run": "B2_moderate_domain-55b85b2cd33e",
+   "changes": {
+    "averaging.start_time": {
+     "from": 75.0,
+     "to": 40.0
+    },
+    "domain.downstream": {
+     "from": 25.0,
+     "to": 50.0
+    },
+    "domain.half_height": {
+     "from": 10.0,
+     "to": 20.0
+    },
+    "domain.upstream": {
+     "from": 15.0,
+     "to": 30.0
+    },
+    "mesh.n_downstream": {
+     "from": 78,
+     "to": 110
+    },
+    "mesh.n_lateral": {
+     "from": 24,
+     "to": 35
+    },
+    "mesh.n_upstream": {
+     "from": 27,
+     "to": 36
+    },
+    "time.end_time": {
+     "from": 150.0,
+     "to": 80.0
+    }
+   },
+   "notes": [
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "B2_moderate_domain-55b85b2cd33e"
+   },
+   "estimated_cell_steps": 214880000.0,
+   "run_id": "B2_moderate_domain.D2x-44c88f366919",
+   "status": "completed",
+   "cell_steps": 214880000.0,
+   "wall_seconds": 924.8347764950013
+  },
+  {
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 2.0
+   },
+   "parent_run": "B2_moderate_domain.D2x-44c88f366919",
+   "changes": {
+    "domain.downstream": {
+     "from": 50.0,
+     "to": 100.0
+    },
+    "domain.half_height": {
+     "from": 20.0,
+     "to": 40.0
+    },
+    "domain.upstream": {
+     "from": 30.0,
+     "to": 60.0
+    },
+    "mesh.n_downstream": {
+     "from": 110,
+     "to": 144
+    },
+    "mesh.n_lateral": {
+     "from": 35,
+     "to": 45
+    },
+    "mesh.n_upstream": {
+     "from": 36,
+     "to": 45
+    }
+   },
+   "notes": [
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "B2_moderate_domain.D2x-44c88f366919"
+   },
+   "estimated_cell_steps": 289360000.0,
+   "run_id": "B2_moderate_domain.D2x-39e861cedde4",
+   "status": "completed",
+   "cell_steps": 289360000.0,
+   "wall_seconds": 1037.2902798430005
+  }
+ ],
+ "cost": {
+  "experiment_cell_steps": 1995687328.0,
+  "relative_to_root": 6.943936423103688,
+  "experiment_wall_seconds": 8953.752852062997,
+  "n_experiments": 5,
+  "planner_calls": 5,
+  "planner_cost_usd": 0,
+  "loop_wall_seconds": 0.8455670539988205
+ },
+ "authority_violations": [],
+ "n_planner_failures": 0,
+ "n_invalid_events": 0,
+ "started": "2026-10-20T12:54:06+00:00",
+ "finished": "2026-10-20T12:54:07+00:00",
+ "case": "B2_moderate_domain",
+ "planner_variant": "pre-registered order only (no unreliable-member or physics-regime RUN_LONGER rules)",
+ "stamp": {
+  "decision_code": "6406c53bb2011ef5",
+  "created": "2026-10-20T12:54:07+00:00",
+  "evidence_sha": {
+   "B2_moderate_domain-55b85b2cd33e": "346eb9e6218c3533",
+   "B2_moderate_domain.m1.41-d86d8d024222": "eafb37622e24c17a",
+   "B2_moderate_domain.m2-cc5b5f3a7d40": "311721ce4cfacc69",
+   "B2_moderate_domain.dt0.005-525718785aa3": "e2f612b1ce18be18",
+   "B2_moderate_domain.D2x-44c88f366919": "085050dd99c88014",
+   "B2_moderate_domain.D2x-39e861cedde4": "7940d32e92afb4b1"
+  },
+  "root_config_hash": "e6b780dacd168e94",
+  "benchmark_git_commit": "6984b9b4b2e2c5112cb821c9bce2a5803d74d1c7",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "dd548bc973d5b6d5a50061bd2fcc97112a419773"
+ }
+}

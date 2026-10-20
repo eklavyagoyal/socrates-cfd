@@ -45,9 +45,10 @@ from socrates.orchestration.store import RunStore  # noqa: E402
 from socrates.orchestration.systems import decision_code_fingerprint  # noqa: E402
 from socrates.orchestration.truth import label_case  # noqa: E402
 
-SYSTEMS = ["A", "B", "L-judge", "C-rule", "C-llm", "Bexh"]
+SYSTEMS = ["A", "B", "L-judge", "C-rule", "C-rule-prereg", "C-llm", "Bexh"]
 NAMES = {"A": "A: OpenFOAM diagnostics", "B": "B: static verifier", "L-judge": "L: LLM judge (evidence only)",
-         "C-rule": "C-rule: adaptive, rule planner", "C-llm": "C: adaptive, LLM critic",
+         "C-rule": "C-rule: adaptive, rule planner",
+         "C-rule-prereg": "C-rule-prereg: rule planner as pre-registered (sensitivity)", "C-llm": "C: adaptive, LLM critic",
          "Bexh": "B+exh: fixed exhaustive protocol"}
 STATUS_COLORS = {"correct": "#0ca30c", "false_accept": "#d03b3b", "false_reject": "#ec835a",
                  "undecided": "#d9d8d4", "error": "#8a8986", "missing": "#ffffff", "stale": "#ffffff",
@@ -210,7 +211,7 @@ def calibration_table(bench: Path, cases: list[str], labels: dict, uT: dict, sto
     in-house reference (an independent estimate: the reference uses chains around the baseline, not around the case).
     Attack results (att_items, same tuple layout as _calibration_rows) are tabulated and counted separately."""
     items = []
-    for s in ("C-rule", "C-llm", "Bexh"):
+    for s in ("C-rule", "C-rule-prereg", "C-llm", "Bexh"):
         for cid in cases:
             r = current_result(bench, s, cid, labels, store, fp)
             if r is not None:
@@ -751,14 +752,14 @@ def main() -> None:
             if o == "error":
                 continue  # errors carry no verification outcome: excluded from experiment/cost/flaw-targeting tallies
             exps = [e for e in (r.get("experiments") or []) if e.get("run_id")]
-            if s in ("C-rule", "C-llm", "Bexh"):
+            if s in ("C-rule", "C-rule-prereg", "C-llm", "Bexh"):
                 n_exp.append(len(exps))
                 root_cs = ((store.load(labels[cid]["root_run"]).evidence or {}).get("cost") or {}).get("cell_steps") or 1
                 cs = sum((((store.load(e["run_id"]).evidence or {}).get("cost") or {}).get("cell_steps") or 0) for e in exps)
                 rel_cost.append(cs / root_cs)
                 per_case[cid]["relative_compute"] = cs / root_cs
                 wall.append(sum(((store.load(e["run_id"]).provenance or {}).get("wall_seconds") or 0) for e in exps))
-            if s in ("C-rule", "C-llm"):
+            if s in ("C-rule", "C-rule-prereg", "C-llm"):
                 per_case[cid]["planner_cost_usd"] = (r.get("cost") or {}).get("planner_cost_usd") or 0.0
                 llm_cost += (r.get("cost") or {}).get("planner_cost_usd") or 0.0
                 viol += len(r.get("authority_violations") or [])
@@ -835,7 +836,7 @@ def main() -> None:
                   UNREPLAYED_MARK if e["replayed"] is False else "") for (s, cid), e in ares.items()
                  if e["counted"] and verifier_verdict(e["result"]) is not None]
     pq_items = []
-    for s in ["B", "C-rule", "C-llm", "Bexh"] + sorted(d.name for d in bench.glob("C-llm-r*") if d.is_dir()):
+    for s in ["B", "C-rule", "C-rule-prereg", "C-llm", "Bexh"] + sorted(d.name for d in bench.glob("C-llm-r*") if d.is_dir()):
         for cid in cases:
             r = current_result(bench, s, cid, labels, store, fp)
             if r is not None:
@@ -848,6 +849,18 @@ def main() -> None:
                         for cid, lab in alabels.items() if lab["label"] != "unrun"})
     pq_lines, pq_summary = per_quantity_section(pq_items, tau, uT, case_labels)
     c5b_lines, c5b = criterion_5b(metrics, cases, labels, matrix)
+    if "C-rule-prereg" in metrics:  # sensitivity: the comparator as literally pre-registered (not the committed rule)
+        s_lines, s5b = criterion_5b({**metrics, "C-rule": metrics["C-rule-prereg"]}, cases, labels,
+                                    {**matrix, **{("C-rule", c): v for (s, c), v in matrix.items() if s == "C-rule-prereg"}})
+        s_lines = [ln.replace("C-rule", "C-rule-prereg") for ln in s_lines]
+        s_lines[1] = ("### Criterion 5b, sensitivity analysis: against the rule planner as literally pre-registered "
+                      "(scripts/run_rule_prereg.py)")
+        s_lines.insert(2, "")
+        s_lines.insert(3, "_Not the committed decision rule, which names C-rule as the comparator. C-rule-prereg is the "
+                          "rule planner without the two RUN_LONGER rules added after the first results "
+                          "(docs/methodology.md §6, Deviations, item 2); same loop, validator and budgets._")
+        c5b_lines += s_lines
+        c5b["sensitivity_prereg_rule"] = s5b
     cal_lines, cal_summary = calibration_table(bench, cases, labels, uT, store, fp, att_items)
 
     # ---------------- tables ----------------

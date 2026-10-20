@@ -1,0 +1,83 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "averaging",
+     "statistics",
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "averaging",
+     "statistics",
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: averaging, statistics, mesh, time, domain",
+    "strouhal_number: averaging, statistics, mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {},
+    "parent_run": "G1_premature_averaging-17c0143468d7",
+    "reason": "averaging uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> G1_premature_averaging.long140-34c6cca905d9 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {},
+    "parent_run": "G1_premature_averaging.long140-34c6cca905d9",
+    "reason": "mesh uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> G1_premature_averaging.m1.41-5d1d1becf814 (completed)"
+  }
+ ]
+}

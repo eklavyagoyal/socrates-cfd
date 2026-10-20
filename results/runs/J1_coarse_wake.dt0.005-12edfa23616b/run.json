@@ -1,0 +1,246 @@
+{
+  "run_id": "J1_coarse_wake.dt0.005-12edfa23616b",
+  "status": "completed",
+  "owner_pid": 712,
+  "created": "2026-10-20T11:46:56+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "J1_coarse_wake.dt0.005",
+    "description": "REDUCE_TIME_STEP {'factor': 2.0} from J1_coarse_wake-a7868b40e5b3",
+    "mesh": {
+      "refinement": 1.0,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 35,
+      "n_downstream": 111,
+      "n_lateral": 45,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 0.3,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 30.0,
+      "downstream": 50.0,
+      "half_height": 40.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "backward",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 1,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.005,
+      "end_time": 80.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 40.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "f68b1f11632f4d6c",
+  "parent_run": "J1_coarse_wake-a7868b40e5b3",
+  "launch_reason": "exhaustive protocol: REDUCE_TIME_STEP",
+  "launched_by": "exhaustive",
+  "experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "params": {
+      "factor": 2.0
+    },
+    "parent_run": "J1_coarse_wake-a7868b40e5b3",
+    "changes": {
+      "averaging.start_time": {
+        "from": 75.0,
+        "to": 40.0
+      },
+      "time.delta_t": {
+        "from": 0.01,
+        "to": 0.005
+      },
+      "time.end_time": {
+        "from": 150.0,
+        "to": 80.0
+      }
+    },
+    "notes": [
+      "initialised by mapping the parent's final periodic state; run 80 D/U"
+    ],
+    "initialisation": {
+      "kind": "map",
+      "source_run": "J1_coarse_wake-a7868b40e5b3"
+    },
+    "estimated_cell_steps": 327040000.0
+  },
+  "config_changes_from_parent": {
+    "averaging.start_time": {
+      "from": 75.0,
+      "to": 40.0
+    },
+    "time.delta_t": {
+      "from": 0.01,
+      "to": 0.005
+    },
+    "time.end_time": {
+      "from": 150.0,
+      "to": 80.0
+    }
+  },
+  "initialisation": {
+    "kind": "map",
+    "source_run": "J1_coarse_wake-a7868b40e5b3",
+    "consistent": true
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "0a9ee7fa769c8d21c2f90125a4f38951d3426d6c",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  },
+  "started": "2026-10-20T11:46:56+00:00",
+  "commands": [
+    {
+      "step": "blockMesh",
+      "command": "blockMesh",
+      "returncode": 0,
+      "wall_seconds": 0.6693424910008616,
+      "log_file": "log.blockMesh"
+    },
+    {
+      "step": "checkMesh",
+      "command": "checkMesh -allGeometry -allTopology",
+      "returncode": 0,
+      "wall_seconds": 0.870741448001354,
+      "log_file": "log.checkMesh"
+    },
+    {
+      "step": "mapFields",
+      "command": "mapFields /home/user/socrates-cfd/results/runs/J1_coarse_wake-a7868b40e5b3/case -consistent -sourceTime latestTime",
+      "returncode": 0,
+      "wall_seconds": 2.083505619997595,
+      "log_file": "log.mapFields"
+    },
+    {
+      "step": "pimpleFoam",
+      "command": "pimpleFoam",
+      "returncode": 0,
+      "wall_seconds": 1441.2509215339996,
+      "log_file": "log.pimpleFoam"
+    }
+  ],
+  "wall_seconds": 1444.8745110929995,
+  "finished": "2026-10-20T12:11:01+00:00",
+  "raw_output_sha256": {
+    "log.blockMesh": "4719816cdfda63e5e023c1448e3dd3629a6d08e9ec5a61c5740681c7c6e9c342",
+    "log.checkMesh": "12d9ac2df2f2e2b5f9aa54dc5fe51b3de0427cb2dcec9a45bee524efab3af015",
+    "log.mapFields": "4a4df748b9f9b2d124e0d594dde279f5f78c82d19472491e62cfa6c8c7c35e4e",
+    "log.pimpleFoam": "ce8768c9ba24a3804937f8eca64742eaa7dedb002fb04c8afa747706529f2f12"
+  },
+  "postprocessing_sha256": {
+    "flux_bottom/0/surfaceFieldValue.dat": "3265a83a1a9cecf4f85c2575303be7ac3e59c15ff2b250cb24e665bb3a51fecf",
+    "flux_inlet/0/surfaceFieldValue.dat": "4eba9f788b7ccb1876edf34d996958c626a82417eac9841f75054e88e67c7a0e",
+    "flux_outlet/0/surfaceFieldValue.dat": "759337d5de4794b1d1506ae8f266fea3667437735ce9264996ae63bf9b6bc98c",
+    "flux_top/0/surfaceFieldValue.dat": "62236c85385cdfe6fcedff5d9627d0497e159a2a53abcd96fa8a422474efed8e",
+    "forceCoeffs1/0/coefficient.dat": "b14d6bccc3c6e95765caa6e641a2226a20f4305d52d0d13d6330a9f65f29f4e9",
+    "solverInfo1/0/solverInfo.dat": "94144ba6e76b8056d982f1ec6edf4792d4a7c6f429b34b91bd56b02b3edd5c01"
+  },
+  "final_fields_sha256": {
+    "time": "5.3333333328",
+    "files": {
+      "U": "88a836c680544c3fd20b601f04ea7469d26ca259d982f5a8a60008e5e4b86e4b",
+      "U_0": "99547158501399079396155452d4782c75626e9efcdce75b9c4c3956a89e7b0b",
+      "p": "78ebb800cd98b403164364546fd2fe4d209c98dcf02d0a041ee43e8bfa7e4042",
+      "phi": "cb1a75e1470793c895444408ee282b5aafb1ca26ce19d09d53045d48453cc4f4",
+      "phi_0": "11887c01ed5833c1c0c0aa1288f19c45f31f2d2e176630dc98982964c31864b2",
+      "uniform/cumulativeContErr": "907f5ec984fe160582ee659b03c01962b23acf37608ac7484e012a543e7fe3ce",
+      "uniform/functionObjects/functionObjectProperties": "776022dc5fd4b7574da4a3b608b52e73b6297c9f9484b250d714f96ae4c57077",
+      "uniform/time": "555e02036a7f3aa48cad676dc05f8578329cd2e1372faafcbf5ed5ed734fbf34"
+    }
+  }
+}

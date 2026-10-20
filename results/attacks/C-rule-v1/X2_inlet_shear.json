@@ -1,0 +1,934 @@
+{
+ "root_run": "X2_inlet_shear-32168bfbca6b",
+ "planner": "rule_based",
+ "final_verdict": "INCONCLUSIVE",
+ "stop_reason": "experiment budget exhausted",
+ "verdict": {
+  "verdict": "INCONCLUSIVE",
+  "per_qoi": {
+   "mean_drag_coefficient": {
+    "verdict": "INCONCLUSIVE",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "PASS",
+     "statistics": "PASS",
+     "mesh": "PASS",
+     "time": "PASS",
+     "domain": "INCONCLUSIVE"
+    },
+    "component_uncertainty": {
+     "averaging": 0.00047338007801232357,
+     "statistics": 0.0022666299184727107,
+     "mesh": 0.0076098578960847405,
+     "time": 0.011392206865978602
+    },
+    "combined_uncertainty": null
+   },
+   "strouhal_number": {
+    "verdict": "INCONCLUSIVE",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "PASS",
+     "statistics": "PASS",
+     "mesh": "PASS",
+     "time": "PASS",
+     "domain": "INCONCLUSIVE"
+    },
+    "component_uncertainty": {
+     "averaging": 0.0003520228446197816,
+     "statistics": 0.0024982814835792923,
+     "mesh": 0.011799178173839589,
+     "time": 0.007494844450737876
+    },
+    "combined_uncertainty": null
+   }
+  },
+  "missing_components": {
+   "mean_drag_coefficient": [
+    "domain"
+   ],
+   "strouhal_number": [
+    "domain"
+   ]
+  },
+  "failed_checks": [],
+  "checks": [
+   {
+    "check": "solver_completion",
+    "status": "PASS",
+    "reason": "solver ran to its configured end and printed 'End'",
+    "value": 10.0000000005,
+    "threshold": null,
+    "source": "solver log",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mesh_quality",
+    "status": "PASS",
+    "reason": "checkMesh reports 'Mesh OK'; non-orthogonality, skewness and aspect ratio within OpenFOAM's limits. This shows the mesh is valid, NOT that it resolves the flow.",
+    "value": {
+     "max_non_orthogonality": 43.31296755,
+     "max_skewness": 0.5338415736,
+     "max_aspect_ratio": 20.98476912
+    },
+    "threshold": {
+     "max_non_orthogonality": 70.0,
+     "max_skewness": 4.0,
+     "max_aspect_ratio": 1000.0
+    },
+    "source": "checkMesh log ('Mesh OK' / 'Failed N mesh checks'); limits: max_non_orthogonality: OpenFOAM primitiveMesh::nonOrthThreshold_ default (70 deg); checkMesh reports '***' above it; max_skewness: OpenFOAM primitiveMesh::skewThreshold_ default (4); max_aspect_ratio: OpenFOAM primitiveMesh::aspectThreshold_ default (1000)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mass_conservation",
+    "status": "PASS",
+    "reason": "max relative boundary-flux imbalance 8.33e-11 <= 1.50e-03; cannot bias the requested quantities beyond tau/10",
+    "value": 8.333340528049461e-11,
+    "threshold": 0.0015,
+    "source": "postProcessing/flux_*/surfaceFieldValue.dat; threshold = tau/20 (2*eps <= tau/10 bound on induced Cd error)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {
+     "continuity_sum_local_max": 1.126183088e-13
+    }
+   },
+   {
+    "check": "linear_solver_convergence",
+    "status": "PASS",
+    "reason": "final pressure solve reached the configured tolerance in 100.0% of steps",
+    "value": {
+     "fraction_of_steps_above_tolerance": 0.0,
+     "max_final_residual": 9.999876776e-08,
+     "iteration_limit_hits": 0
+    },
+    "threshold": 0.01,
+    "source": "solver log, last pressure solve of each time step (relTol 0, so it must reach the configured absolute tolerance); solverInfo is not used because it records only the first solve of a step",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {}
+   },
+   {
+    "check": "courant_number",
+    "status": "PASS",
+    "reason": "max Courant number 0.73 < 1.0 (PISO mode). Stability/accuracy guideline only; temporal discretisation error is not quantified by this.",
+    "value": 0.7323036928,
+    "threshold": 1.0,
+    "source": "OpenFOAM User Guide (cavity tutorial); Issa (1986) J. Comput. Phys. 62:40",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {}
+   },
+   {
+    "check": "reynolds_consistency",
+    "status": "PASS",
+    "reason": "case Re=100 matches spec Re=100",
+    "value": {
+     "case": 100.0,
+     "spec": 100.0,
+     "spec_from_parameters": 100.0
+    },
+    "threshold": 0.001,
+    "source": "case physical parameters vs spec",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {}
+   },
+   {
+    "check": "force_reference_consistency",
+    "status": "PASS",
+    "reason": "magUInf equals inlet velocity and Aref equals D x mesh span",
+    "value": {
+     "magUInf": 0.15,
+     "lRef": 0.01,
+     "Aref": 0.0001,
+     "rhoInf": 1.2
+    },
+    "threshold": 0.001,
+    "source": "forceCoeffs entries vs inlet BC velocity and mesh-measured projected area (D x span)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {
+     "Aref_from_mesh_bounding_box": 0.0001
+    }
+   },
+   {
+    "check": "physics_regime",
+    "status": "PASS",
+    "reason": "sustained periodic lift oscillation present, as expected for 47.0 < Re=100.0 < 188.5",
+    "value": 100.0,
+    "threshold": null,
+    "source": "Provansal, Mathis & Boyer (1987) JFM 182:1 (Re_c ~ 47); Williamson (1996) Annu. Rev. Fluid Mech. 28:477; Barkley & Henderson (1996) JFM 322:215 (mode A at Re ~ 188.5); Williamson (1996)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {}
+   },
+   {
+    "check": "convection_scheme_order",
+    "status": "PASS",
+    "reason": "convection scheme 'Gauss linearUpwind grad(U)' is nominally second order",
+    "value": "Gauss linearUpwind grad(U)",
+    "threshold": null,
+    "source": "J. Fluids Eng. editorial policy on numerical accuracy (published with Celik et al. 2008): at least second-order spatial schemes; first-order numerical diffusion called 'devastating'",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {}
+   },
+   {
+    "check": "averaging_window",
+    "status": "PASS",
+    "reason": "reported mean_drag_coefficient is biased by 0.047% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+    "value": 0.00047338007801232357,
+    "threshold": 0.03,
+    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+    "qoi": "mean_drag_coefficient",
+    "component": "averaging",
+    "uncertainty": 0.00047338007801232357,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {
+     "reported": 1.3312062818835368,
+     "stationary": 1.3305764135171048,
+     "declared_start_convective": 75.0,
+     "transient_end_convective": 80.7813357236881,
+     "declared_window_cycles": 11,
+     "kind": "bias"
+    }
+   },
+   {
+    "check": "averaging_window",
+    "status": "PASS",
+    "reason": "reported strouhal_number is biased by 0.035% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+    "value": 0.0003520228446197816,
+    "threshold": 0.03,
+    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+    "qoi": "strouhal_number",
+    "component": "averaging",
+    "uncertainty": 0.0003520228446197816,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {
+     "reported": 0.1631218909763986,
+     "stationary": 0.16317933382967648,
+     "declared_start_convective": 75.0,
+     "transient_end_convective": 80.7813357236881,
+     "declared_window_cycles": 11,
+     "kind": "bias"
+    }
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "PASS",
+    "reason": "statistical/stationarity uncertainty 2.27e-03 <= 1.50%",
+    "value": 0.0022666299184727107,
+    "threshold": 0.015,
+    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+    "qoi": "mean_drag_coefficient",
+    "component": "statistics",
+    "uncertainty": 0.0022666299184727107,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {
+     "components": {
+      "ci95": 0.0007306450161768341,
+      "drift": 0.0022666299184727107,
+      "half_difference": 0.001102063911494092
+     },
+     "n_cycles": 11,
+     "mser_hit_cap": true
+    }
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "PASS",
+    "reason": "statistical/stationarity uncertainty 2.50e-03 <= 1.50%",
+    "value": 0.0024982814835792923,
+    "threshold": 0.015,
+    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+    "qoi": "strouhal_number",
+    "component": "statistics",
+    "uncertainty": 0.0024982814835792923,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b"
+    ],
+    "details": {
+     "components": {
+      "ci95_period": 0.0007238494248628292,
+      "period_drift": 0.0024982814835792923,
+      "period_half_difference": 0.001258038537150761,
+      "fft_vs_zero_crossing": 0.00045788926010610636
+     },
+     "n_cycles": 11,
+     "mser_hit_cap": true
+    }
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "PASS",
+    "reason": "estimated mesh uncertainty of mean_drag_coefficient = 0.76% <= 1.50% (root-to-finest change 0.254%) [differences within 2x statistical noise (2.3e-03); range-based U with Fs=3]",
+    "value": 0.0076098578960847405,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "mean_drag_coefficient",
+    "component": "mesh",
+    "uncertainty": 0.0076098578960847405,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b",
+     "X2_inlet_shear.m1.41-ca5c50f2e498",
+     "X2_inlet_shear.m2-3f2d80a2a02e"
+    ],
+    "details": {
+     "values": [
+      1.3305764135171048,
+      1.3337801852268167,
+      1.3339601626092696
+     ],
+     "h_D": [
+      0.45745102358583184,
+      0.3229233378682117,
+      0.2287255090764672
+     ],
+     "formal_order": 2.0,
+     "notes": [
+      "time step also varied across the mesh family: [0.007431907776503793, 0.00869033038239368, 0.01] (Courant control)"
+     ],
+     "root_to_finest_change": 0.0025366192986949134,
+     "refinement_ratios": [
+      1.416593258962665,
+      1.4118378801389067
+     ],
+     "noise": 0.0022666299184727107,
+     "method": "differences within 2x statistical noise (2.3e-03); range-based U with Fs=3"
+    }
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "PASS",
+    "reason": "estimated mesh uncertainty of strouhal_number = 1.18% <= 1.50% (root-to-finest change 0.828%) [three-level Celik procedure, observed order p=3.01, Fs=1.25]",
+    "value": 0.011799178173839589,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "strouhal_number",
+    "component": "mesh",
+    "uncertainty": 0.011799178173839589,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b",
+     "X2_inlet_shear.m1.41-ca5c50f2e498",
+     "X2_inlet_shear.m2-3f2d80a2a02e"
+    ],
+    "details": {
+     "values": [
+      0.16317933382967648,
+      0.16418970288446538,
+      0.16454163061857616
+     ],
+     "h_D": [
+      0.45745102358583184,
+      0.3229233378682117,
+      0.2287255090764672
+     ],
+     "formal_order": 2.0,
+     "notes": [
+      "time step also varied across the mesh family: [0.007431907776503793, 0.00869033038239368, 0.01] (Courant control)"
+     ],
+     "root_to_finest_change": 0.008279344162193334,
+     "refinement_ratios": [
+      1.416593258962665,
+      1.4118378801389067
+     ],
+     "noise": 0.0024982814835792923,
+     "observed_order": 3.012569249462592,
+     "iterations": 29,
+     "extrapolated_value": 0.16473431748031334,
+     "estimated_root_error": 0.00943934253907167,
+     "method": "three-level Celik procedure, observed order p=3.01, Fs=1.25"
+    }
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "PASS",
+    "reason": "estimated time uncertainty of mean_drag_coefficient = 1.14% <= 1.50% (root-to-finest change 0.285%) [two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.3e-03)]",
+    "value": 0.011392206865978602,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "mean_drag_coefficient",
+    "component": "time",
+    "uncertainty": 0.011392206865978602,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b",
+     "X2_inlet_shear.dt0.005-2ef6d66a694b"
+    ],
+    "details": {
+     "values": [
+      1.3305764135171048,
+      1.3267976252630334
+     ],
+     "dt_convective": [
+      0.01,
+      0.005
+     ],
+     "formal_order": 2.0,
+     "notes": [],
+     "root_to_finest_change": 0.0028480517164946504,
+     "refinement_ratios": [
+      2.0
+     ],
+     "noise": 0.0022666299184727107,
+     "estimated_root_error": 0.003797402288659534,
+     "method": "two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.3e-03)"
+    }
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "PASS",
+    "reason": "estimated time uncertainty of strouhal_number = 0.75% <= 1.50% (root-to-finest change 0.085%) [two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.5e-03)]",
+    "value": 0.007494844450737876,
+    "threshold": 0.015,
+    "source": "Roache (1998); Celik et al. (2008) J. Fluids Eng. 130:078001",
+    "qoi": "strouhal_number",
+    "component": "time",
+    "uncertainty": 0.007494844450737876,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b",
+     "X2_inlet_shear.dt0.005-2ef6d66a694b"
+    ],
+    "details": {
+     "values": [
+      0.16317933382967648,
+      0.16331753871721724
+     ],
+     "dt_convective": [
+      0.01,
+      0.005
+     ],
+     "formal_order": 2.0,
+     "notes": [],
+     "root_to_finest_change": 0.0008462342050112966,
+     "refinement_ratios": [
+      2.0
+     ],
+     "noise": 0.0024982814835792923,
+     "estimated_root_error": 0.0011283122733483956,
+     "method": "two-level Richardson, assumed order p=2, Fs=3 (noise floor 2.5e-03)"
+    }
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "family member(s) not statistically reliable for mean_drag_coefficient (run, cycles, uncertainty): [('X2_inlet_shear.long280-a5bb8f1a8800', 24, 0.007824449618541073)]; run them longer first",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "domain",
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b",
+     "X2_inlet_shear.long280-a5bb8f1a8800"
+    ],
+    "details": {
+     "unreliable_members": [
+      "X2_inlet_shear.long280-a5bb8f1a8800"
+     ]
+    }
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "family member(s) not statistically reliable for strouhal_number (run, cycles, uncertainty): [('X2_inlet_shear.long280-a5bb8f1a8800', 24, 0.006186083008221495)]; run them longer first",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "domain",
+    "uncertainty": null,
+    "runs": [
+     "X2_inlet_shear-32168bfbca6b",
+     "X2_inlet_shear.long280-a5bb8f1a8800"
+    ],
+    "details": {
+     "unreliable_members": [
+      "X2_inlet_shear.long280-a5bb8f1a8800"
+     ]
+    }
+   }
+  ]
+ },
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {},
+    "parent_run": "X2_inlet_shear-32168bfbca6b",
+    "reason": "mesh uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> X2_inlet_shear.m1.41-ca5c50f2e498 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {},
+    "parent_run": "X2_inlet_shear.m1.41-ca5c50f2e498",
+    "reason": "mesh uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> X2_inlet_shear.m2-3f2d80a2a02e (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: time, domain",
+    "strouhal_number: time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "parameters": {},
+    "parent_run": "X2_inlet_shear-32168bfbca6b",
+    "reason": "time uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> X2_inlet_shear.dt0.005-2ef6d66a694b (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: domain",
+    "strouhal_number: domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {},
+    "parent_run": "X2_inlet_shear-32168bfbca6b",
+    "reason": "domain uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "executed -> X2_inlet_shear.D2x-8d92db3cbed0 (completed)"
+  },
+  {
+   "iteration": 5,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: domain",
+    "strouhal_number: domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {},
+    "parent_run": "X2_inlet_shear.D2x-8d92db3cbed0",
+    "reason": "refinement-family member X2_inlet_shear.D2x-8d92db3cbed0 is not statistically reliable",
+    "expected_outcome": "a reliable stationary estimate for the sensitivity study"
+   },
+   "outcome": "executed -> X2_inlet_shear.long180-79490e8e4d8c (completed)"
+  },
+  {
+   "iteration": 6,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "domain"
+    ],
+    "strouhal_number": [
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: domain",
+    "strouhal_number: domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {},
+    "parent_run": "X2_inlet_shear.long180-79490e8e4d8c",
+    "reason": "refinement-family member X2_inlet_shear.long180-79490e8e4d8c is not statistically reliable",
+    "expected_outcome": "a reliable stationary estimate for the sensitivity study"
+   },
+   "outcome": "executed -> X2_inlet_shear.long280-a5bb8f1a8800 (completed)"
+  }
+ ],
+ "runs": [
+  "X2_inlet_shear-32168bfbca6b",
+  "X2_inlet_shear.m1.41-ca5c50f2e498",
+  "X2_inlet_shear.m2-3f2d80a2a02e",
+  "X2_inlet_shear.dt0.005-2ef6d66a694b",
+  "X2_inlet_shear.D2x-8d92db3cbed0",
+  "X2_inlet_shear.long180-79490e8e4d8c",
+  "X2_inlet_shear.long280-a5bb8f1a8800"
+ ],
+ "experiments": [
+  {
+   "action": "REFINE_MESH",
+   "params": {
+    "factor": 1.4142135623730951
+   },
+   "parent_run": "X2_inlet_shear-32168bfbca6b",
+   "changes": {
+    "averaging.start_time": {
+     "from": 75.0,
+     "to": 40.0
+    },
+    "mesh.refinement": {
+     "from": 1.0,
+     "to": 1.4142135623730951
+    },
+    "time.delta_t": {
+     "from": 0.01,
+     "to": 0.00869033038239368
+    },
+    "time.end_time": {
+     "from": 150.0,
+     "to": 80.0
+    }
+   },
+   "notes": [
+    "time step reduced 0.01 -> 0.00869 D/U to keep predicted max Co (1.04) <= 0.9 (parent Co 0.73)",
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "X2_inlet_shear-32168bfbca6b"
+   },
+   "estimated_cell_steps": 564912930.1166774,
+   "run_id": "X2_inlet_shear.m1.41-ca5c50f2e498",
+   "status": "completed",
+   "cell_steps": 564935396.0,
+   "wall_seconds": 2447.772826864002
+  },
+  {
+   "action": "REFINE_MESH",
+   "params": {
+    "factor": 1.4142135623730951
+   },
+   "parent_run": "X2_inlet_shear.m1.41-ca5c50f2e498",
+   "changes": {
+    "mesh.refinement": {
+     "from": 1.4142135623730951,
+     "to": 2.0000000000000004
+    },
+    "time.delta_t": {
+     "from": 0.00869033038239368,
+     "to": 0.007431907776503793
+    }
+   },
+   "notes": [
+    "time step reduced 0.00869033 -> 0.007432 D/U to keep predicted max Co (1.05) <= 0.9 (parent Co 0.74)",
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "X2_inlet_shear.m1.41-ca5c50f2e498"
+   },
+   "estimated_cell_steps": 1316700946.012473,
+   "run_id": "X2_inlet_shear.m2-3f2d80a2a02e",
+   "status": "completed",
+   "cell_steps": 1316652480.0,
+   "wall_seconds": 7000.273769697007
+  },
+  {
+   "action": "REDUCE_TIME_STEP",
+   "params": {
+    "factor": 2.0
+   },
+   "parent_run": "X2_inlet_shear-32168bfbca6b",
+   "changes": {
+    "averaging.start_time": {
+     "from": 75.0,
+     "to": 40.0
+    },
+    "time.delta_t": {
+     "from": 0.01,
+     "to": 0.005
+    },
+    "time.end_time": {
+     "from": 150.0,
+     "to": 80.0
+    }
+   },
+   "notes": [
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "X2_inlet_shear-32168bfbca6b"
+   },
+   "estimated_cell_steps": 489280000.0,
+   "run_id": "X2_inlet_shear.dt0.005-2ef6d66a694b",
+   "status": "completed",
+   "cell_steps": 489280000.0,
+   "wall_seconds": 1343.3081655279893
+  },
+  {
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 2.0
+   },
+   "parent_run": "X2_inlet_shear-32168bfbca6b",
+   "changes": {
+    "averaging.start_time": {
+     "from": 75.0,
+     "to": 40.0
+    },
+    "domain.downstream": {
+     "from": 50.0,
+     "to": 100.0
+    },
+    "domain.half_height": {
+     "from": 40.0,
+     "to": 80.0
+    },
+    "domain.upstream": {
+     "from": 30.0,
+     "to": 60.0
+    },
+    "mesh.n_downstream": {
+     "from": 111,
+     "to": 145
+    },
+    "mesh.n_lateral": {
+     "from": 45,
+     "to": 55
+    },
+    "mesh.n_upstream": {
+     "from": 35,
+     "to": 43
+    },
+    "time.end_time": {
+     "from": 150.0,
+     "to": 80.0
+    }
+   },
+   "notes": [
+    "initialised by mapping the parent's final periodic state; run 80 D/U"
+   ],
+   "initialisation": {
+    "kind": "map",
+    "source_run": "X2_inlet_shear-32168bfbca6b"
+   },
+   "estimated_cell_steps": 324800000.0,
+   "run_id": "X2_inlet_shear.D2x-8d92db3cbed0",
+   "status": "completed",
+   "cell_steps": 324800000.0,
+   "wall_seconds": 1191.175333553001
+  },
+  {
+   "action": "RUN_LONGER",
+   "params": {
+    "additional_convective_times": 100.0
+   },
+   "parent_run": "X2_inlet_shear.D2x-8d92db3cbed0",
+   "changes": {
+    "time.end_time": {
+     "from": 80.0,
+     "to": 180.0
+    }
+   },
+   "notes": [],
+   "initialisation": {
+    "kind": "restart",
+    "source_run": "X2_inlet_shear.D2x-8d92db3cbed0"
+   },
+   "estimated_cell_steps": 406000000.0,
+   "run_id": "X2_inlet_shear.long180-79490e8e4d8c",
+   "status": "completed",
+   "cell_steps": 406000000.0,
+   "wall_seconds": 1367.1535882450044
+  },
+  {
+   "action": "RUN_LONGER",
+   "params": {
+    "additional_convective_times": 100.0
+   },
+   "parent_run": "X2_inlet_shear.long180-79490e8e4d8c",
+   "changes": {
+    "time.end_time": {
+     "from": 180.0,
+     "to": 280.0
+    }
+   },
+   "notes": [],
+   "initialisation": {
+    "kind": "restart",
+    "source_run": "X2_inlet_shear.long180-79490e8e4d8c"
+   },
+   "estimated_cell_steps": 406000000.0,
+   "run_id": "X2_inlet_shear.long280-a5bb8f1a8800",
+   "status": "completed",
+   "cell_steps": 406000000.0,
+   "wall_seconds": 1758.7922738589987
+  }
+ ],
+ "cost": {
+  "experiment_cell_steps": 3507667876.0,
+  "relative_to_root": 7.646975966862874,
+  "experiment_wall_seconds": 15108.475957746003,
+  "n_experiments": 6,
+  "planner_calls": 6,
+  "planner_cost_usd": 0,
+  "loop_wall_seconds": 11248.472000612
+ },
+ "authority_violations": [],
+ "n_planner_failures": 0,
+ "n_invalid_events": 0,
+ "started": "2026-10-20T03:41:00+00:00",
+ "finished": "2026-10-20T06:48:28+00:00",
+ "case": "X2_inlet_shear"
+}

@@ -1,0 +1,213 @@
+{
+  "run_id": "G1_premature_averaging.long100-bf9115c8c872",
+  "status": "completed",
+  "owner_pid": 25156,
+  "created": "2026-10-20T16:25:32+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "G1_premature_averaging.long100",
+    "description": "RUN_LONGER {'additional_convective_times': 60.0} from G1_premature_averaging-17c0143468d7",
+    "mesh": {
+      "refinement": 1.0,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 35,
+      "n_downstream": 111,
+      "n_lateral": 45,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 30.0,
+      "downstream": 50.0,
+      "half_height": 40.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "backward",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 1,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.01,
+      "end_time": 100.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 10.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "d8d104384cd1b776",
+  "parent_run": "G1_premature_averaging-17c0143468d7",
+  "launch_reason": "R0's lift amplitude is still changing (+25.8%) and its window has only 3 cycles, with the window start capped by MSER. Statistics, averaging and physics_regime are all INCONCLUSIVE because of this. Any mesh, time or domain comparison needs a stationary reference record first. Extending R0 costs the least of the primitives and is the prerequisite for interpreting the others. The 60-unit extension costs about 1.5x the root. That leaves budget for later experiments within the 12x compute cap, which the full default 100-unit extension plus the other three primitives would exceed.",
+  "launched_by": "llm_critic",
+  "experiment": {
+    "action": "RUN_LONGER",
+    "params": {
+      "additional_convective_times": 60.0
+    },
+    "parent_run": "G1_premature_averaging-17c0143468d7",
+    "changes": {
+      "time.end_time": {
+        "from": 40.0,
+        "to": 100.0
+      }
+    },
+    "notes": [],
+    "initialisation": {
+      "kind": "restart",
+      "source_run": "G1_premature_averaging-17c0143468d7"
+    },
+    "estimated_cell_steps": 183480000.0
+  },
+  "config_changes_from_parent": {
+    "time.end_time": {
+      "from": 40.0,
+      "to": 100.0
+    }
+  },
+  "initialisation": {
+    "kind": "restart",
+    "source_run": "G1_premature_averaging-17c0143468d7",
+    "consistent": true
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "ca3229040ca0a3a78f96646ee2e525779b8e56b5",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  },
+  "restart_from_time_s": 2.6666666668,
+  "started": "2026-10-20T16:25:34+00:00",
+  "commands": [
+    {
+      "step": "pimpleFoam.restart1",
+      "command": "pimpleFoam",
+      "returncode": 0,
+      "wall_seconds": 724.9597012329978,
+      "log_file": "log.pimpleFoam.restart1"
+    }
+  ],
+  "wall_seconds": 724.9597012329978,
+  "finished": "2026-10-20T16:37:39+00:00",
+  "raw_output_sha256": {
+    "log.checkMesh": "b37e32501adbc782a4a573566cc31d3bf8d0122ca1c2e1b29e86e036505026f9",
+    "log.pimpleFoam": "83b74fa25f2628a5b58e217501709fd62d8040fc812728d4dd09adf91091b897",
+    "log.pimpleFoam.restart1": "03743e9e54d72a537fe036b5a0635d9fa94a417391625f81d10fde9f76235d24"
+  },
+  "postprocessing_sha256": {
+    "flux_bottom/0/surfaceFieldValue.dat": "7dbd59f29411342e65ec98454e51c93dfcd60602379653926ca56ef7ee45bd78",
+    "flux_bottom/2.6666666668/surfaceFieldValue.dat": "a8c4a5b380cffaa5341fdd7202c9e8d7a22c416a089d699e84e9179477f9a899",
+    "flux_inlet/0/surfaceFieldValue.dat": "aa1c047c443818c3ba949de156ca0d739f4332fcf33c49e18b81d22deb541e4b",
+    "flux_inlet/2.6666666668/surfaceFieldValue.dat": "7f0527e9d6cd506e1c657ba593ca40811b94e627d7fe5639b0eda62b75a4778b",
+    "flux_outlet/0/surfaceFieldValue.dat": "5ea7e8da352041d19895203ae7851e85c224fcd95d191556b2c6d05010ef5845",
+    "flux_outlet/2.6666666668/surfaceFieldValue.dat": "b5f14b86d41b769c347f4ec871c90f230cf07aa7bcd210294e7c5bea4d0197ab",
+    "flux_top/0/surfaceFieldValue.dat": "3341cbf9e8a1b0d4f9fc8d7fcf814e7a6db7222802cbbc4ac94913c646983b4d",
+    "flux_top/2.6666666668/surfaceFieldValue.dat": "27335329de7cd22c0c9f5e8804bb77ead8f3396a27a3b7d887a3037289adcf86",
+    "forceCoeffs1/0/coefficient.dat": "f739cb8b11cce1ee44004c88b0c9d6081726adf28939894855605e874c319840",
+    "forceCoeffs1/2.6666666668/coefficient.dat": "b73f04ddb5e29d46bdce6e34cdcb9794f15a419ed59465d241cc68f84a7c89fe",
+    "solverInfo1/0/solverInfo.dat": "a3e97218d965da055a6e8289d5695732eb76dd2aaf21e311d288045a2e76005f",
+    "solverInfo1/2.6666666668/solverInfo.dat": "5c31a0785635957b79a53d1ffc1da4648a7e865f3c5aac3ef8f292f163f110d0"
+  },
+  "final_fields_sha256": {
+    "time": "6.666666667001176",
+    "files": {
+      "U": "b7eb3986c9885461d5eb72c451dc3208cd10ada3c1b478383d6f1d5859f9f5dd",
+      "U_0": "3ea067e6cd5ec85208a03b10904df08d5e5251df38665d343ed6589ca8f6f0b1",
+      "p": "3f30f884dbb440392bacc290b48534d05f8f2b90bcd9ee7ae4a671a1bc1da0af",
+      "phi": "785bc368a8266d5536c3b3e2e12f04785d7c43a51f85c6de2aeb1bebb26454d4",
+      "phi_0": "704b636104ff2080e2b4ceb201d75b02d239a9382e633c84c1ec27890de81143",
+      "uniform/cumulativeContErr": "dc14e9f98881ffa1d2b421ea0d2a2c107b39afed513eb619aa34e517971b7b5b",
+      "uniform/functionObjects/functionObjectProperties": "2e5c7f283010fb5b49ef45c8fc14c5917c7df1c318cbe413bc4c6d40a65a019d",
+      "uniform/time": "007aa765ff4cc4f55996e8c02fdb416ec7478fa6bc299313d79b8bda4317a53e"
+    }
+  }
+}

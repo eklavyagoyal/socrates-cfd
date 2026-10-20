@@ -1,0 +1,100 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 24.71768026299833,
+    "cost_usd": 0.060718975,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13328,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 26,
+     "untraced": [
+      {
+       "token": "69%",
+       "context": "a statistics uncertainty of 0.01039 for drag. That is about 69% of the 1.5% per-component limit (0.5*to"
+      },
+      {
+       "token": "16",
+       "context": "About 16 more shedding cycles. If the lift ampli"
+      }
+     ],
+     "n_untraced": 2
+    },
+    "run_aliases": {
+     "G2_average_from_start-e7384e5a2c24": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed and REJECT is not justified.",
+    "For both mean_drag_coefficient and strouhal_number, the mesh, time and domain components are unmeasured. No REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run exists, so no combined uncertainty can be formed.",
+    "The physics_regime check on R0 is INCONCLUSIVE. The lift amplitude changes by +6.7% across the analysed window, so the record is not yet shown to be a sustained limit cycle.",
+    "In R0 the stationary window start (27.88 convective units) is the MSER cap, and the record is 59.99 units long with only 5 stationary cycles.",
+    "R0 also shows a mean-drag drift of 0.010388 (relative) and a statistics uncertainty of 0.01039 for drag. That is about 69% of the 1.5% per-component limit (0.5*tol).",
+    "R0 reports Strouhal 0.16144 against 0.163 in the stationary window, a bias of 0.953%. Its frequency resolution is 0.016669, which is coarse.",
+    "Any sensitivity comparison (mesh, time or domain) against a parent that may still be in transient would mix a discretisation effect with transient or statistical differences. Settling the baseline first makes the later comparisons interpretable.",
+    "RUN_LONGER on R0 is the cheapest experiment (1060 s estimated). It directly tests the unresolved physics_regime check and reduces the statistics and averaging uncertainties.",
+    "Budget is ample (0 of 6 experiments used, 0 of 12.0 relative compute used). The mesh, time and domain experiments can follow, with REFINE_MESH likely first given R0's coarse wake (wake_last_cell_D 1.0209, representative cell size 0.45745 D)."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error for both quantities (no EXPAND_DOMAIN run)",
+    "Confirmation that R0 has reached a sustained limit cycle (lift amplitude changes +6.7% across the window)",
+    "A stationary window that does not start at the MSER cap, with more than 5 shedding cycles",
+    "A finer Strouhal frequency resolution than 0.016669"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "R0 is still relaxing toward its limit cycle. The lift amplitude is still growing, which biases the mean drag (drift 1.04%) and the shedding frequency.",
+     "test": "RUN_LONGER on R0. If the lift amplitude changes by less than 1-2% over the new window and mean Cd and St stay within their current CIs, the hypothesis is refuted."
+    },
+    {
+     "hypothesis": "The coarse wake (last cell 1.02 D, representative cell 0.457 D) causes spatial error in St or Cd larger than 1.5%.",
+     "test": "REFINE_MESH after the baseline is settled. A change in St or Cd greater than 1.5% confirms it."
+    },
+    {
+     "hypothesis": "The artificial boundaries (blockage 1.25%, symmetry sides, 30 D upstream) shift Cd or St by more than 1.5%.",
+     "test": "EXPAND_DOMAIN with factor 2 after the baseline is settled. A change greater than 1.5% confirms it."
+    }
+   ],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {
+     "additional_convective_times": 100.0
+    },
+    "parent_run": "G2_average_from_start-e7384e5a2c24",
+    "reason": "The physics_regime check is INCONCLUSIVE (lift amplitude +6.7% across the window). The stationary window starts at the MSER cap and holds only 5 cycles. A longer record settles the baseline, so that later mesh, time and domain comparisons are not confounded by transient or statistical noise. It is the cheapest option.",
+    "expected_outcome": "About 16 more shedding cycles. If the lift amplitude plateaus (change under about 1-2%), the stationary window moves earlier and the Cd and St statistical uncertainties shrink, which confirms a sustained limit cycle. If the amplitude keeps drifting, the transient is not over and R0's reported values are not yet trustworthy."
+   },
+   "outcome": "executed -> G2_average_from_start.long160-24e243b2227c (completed)"
+  }
+ ]
+}

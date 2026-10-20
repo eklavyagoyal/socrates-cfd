@@ -1,0 +1,286 @@
+{
+  "run_id": "E1_noslip_side_walls.D3x-5e6cfbc7fe84",
+  "status": "completed",
+  "owner_pid": 25156,
+  "created": "2026-10-20T15:55:56+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "E1_noslip_side_walls.D3x",
+    "description": "EXPAND_DOMAIN {'factor': 3.0} from E1_noslip_side_walls-88a7cd5812e8",
+    "mesh": {
+      "refinement": 1.0,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 48,
+      "n_downstream": 166,
+      "n_lateral": 61,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 90.0,
+      "downstream": 150.0,
+      "half_height": 120.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "noSlipWall",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "backward",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 1,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.01,
+      "end_time": 80.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 40.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "c71d1827220c4750",
+  "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
+  "launch_reason": "Domain is the largest drag component (0.02135) and sits just over the half-tolerance for Strouhal (0.01505). Both domain terms are over budget, and the trends in R4 and R3 are still moving. A 3.0x domain extends the sequence beyond R3 (2x) and tests whether it is converging. It keeps the near-field mesh unchanged and uses root R0 as the parent, so the verifier compares directly with the submitted quantities. It is among the cheapest entries and fits the remaining compute.",
+  "launched_by": "llm_critic",
+  "experiment": {
+    "action": "EXPAND_DOMAIN",
+    "params": {
+      "factor": 3.0
+    },
+    "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
+    "changes": {
+      "averaging.start_time": {
+        "from": 75.0,
+        "to": 40.0
+      },
+      "domain.downstream": {
+        "from": 50.0,
+        "to": 150.0
+      },
+      "domain.half_height": {
+        "from": 40.0,
+        "to": 120.0
+      },
+      "domain.upstream": {
+        "from": 30.0,
+        "to": 90.0
+      },
+      "mesh.n_downstream": {
+        "from": 111,
+        "to": 166
+      },
+      "mesh.n_lateral": {
+        "from": 45,
+        "to": 61
+      },
+      "mesh.n_upstream": {
+        "from": 35,
+        "to": 48
+      },
+      "time.end_time": {
+        "from": 150.0,
+        "to": 80.0
+      }
+    },
+    "notes": [
+      "initialised by mapping the parent's final periodic state; run 80 D/U"
+    ],
+    "initialisation": {
+      "kind": "map",
+      "source_run": "E1_noslip_side_walls-88a7cd5812e8"
+    },
+    "estimated_cell_steps": 380384000.0
+  },
+  "config_changes_from_parent": {
+    "averaging.start_time": {
+      "from": 75.0,
+      "to": 40.0
+    },
+    "domain.downstream": {
+      "from": 50.0,
+      "to": 150.0
+    },
+    "domain.half_height": {
+      "from": 40.0,
+      "to": 120.0
+    },
+    "domain.upstream": {
+      "from": 30.0,
+      "to": 90.0
+    },
+    "mesh.n_downstream": {
+      "from": 111,
+      "to": 166
+    },
+    "mesh.n_lateral": {
+      "from": 45,
+      "to": 61
+    },
+    "mesh.n_upstream": {
+      "from": 35,
+      "to": 48
+    },
+    "time.end_time": {
+      "from": 150.0,
+      "to": 80.0
+    }
+  },
+  "initialisation": {
+    "kind": "map",
+    "source_run": "E1_noslip_side_walls-88a7cd5812e8",
+    "consistent": false
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "ca3229040ca0a3a78f96646ee2e525779b8e56b5",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  },
+  "started": "2026-10-20T15:55:56+00:00",
+  "commands": [
+    {
+      "step": "blockMesh",
+      "command": "blockMesh",
+      "returncode": 0,
+      "wall_seconds": 1.0239805080054794,
+      "log_file": "log.blockMesh"
+    },
+    {
+      "step": "checkMesh",
+      "command": "checkMesh -allGeometry -allTopology",
+      "returncode": 0,
+      "wall_seconds": 1.8815407990041422,
+      "log_file": "log.checkMesh"
+    },
+    {
+      "step": "mapFields",
+      "command": "mapFields /home/user/socrates-cfd/results/runs/E1_noslip_side_walls-88a7cd5812e8/case -sourceTime latestTime",
+      "returncode": 0,
+      "wall_seconds": 2.243172816997685,
+      "log_file": "log.mapFields"
+    },
+    {
+      "step": "pimpleFoam",
+      "command": "pimpleFoam",
+      "returncode": 0,
+      "wall_seconds": 1701.5755753269987,
+      "log_file": "log.pimpleFoam"
+    }
+  ],
+  "wall_seconds": 1706.724269451006,
+  "finished": "2026-10-20T16:24:22+00:00",
+  "raw_output_sha256": {
+    "log.blockMesh": "df67801688855125d1b652dd9c517746f79bd641973506bc5df9c43162041d9e",
+    "log.checkMesh": "1a2ad4d060738225afea834824096fcbb5f7f386b028c69ea76a9588d2f7e2ed",
+    "log.mapFields": "8ead17bffc92a3281e95dae46e8dc555868b6e0ce857239c1aeec2a918518ad6",
+    "log.pimpleFoam": "41a8c398a23a240cbaac2d977b025e299753741dbdfc589aed2c93c2ef960cce"
+  },
+  "postprocessing_sha256": {
+    "flux_bottom/0/surfaceFieldValue.dat": "6c22016d6cb99b2b0f7590a51cad6745a4130cd789b2e5780d24a288f88e0835",
+    "flux_inlet/0/surfaceFieldValue.dat": "c8c37e86c6b77c3f1114058b3669ce7ba0e3bef2d30384a24b026a63864d8c57",
+    "flux_outlet/0/surfaceFieldValue.dat": "7b70a268507420e014df3fef14386592a59059d9aacbc639363d7236156364ca",
+    "flux_top/0/surfaceFieldValue.dat": "4d5d9cdb3764d349a3eee66b69f26400edb479d5b69b48e3a9984312a5ad2019",
+    "forceCoeffs1/0/coefficient.dat": "4a29e6e24100b925c0d7d2ee13c3f335561fc1c1f3ea12158e489b288f14adf5",
+    "solverInfo1/0/solverInfo.dat": "a9cf2b12f2f46cd27d0f1743de31314f65d529b25e641f520e5e97c3c562174f"
+  },
+  "final_fields_sha256": {
+    "time": "5.3333333336",
+    "files": {
+      "U": "008b3677bb770ed75786d9aa65586b9ff6848652c8b42c714a7c01001787886c",
+      "U_0": "75f51723d91ec74c526f32b364bf5307a7f9c24b93f2a3a7c7837d5472c8eb55",
+      "p": "d0b55a47003a8b8c31fc38d62f82388cdc77f2d79c73dd646b9b88a3841929bf",
+      "phi": "e0b4c25700bb56ad33716588270cfd138d89f11ee5be8e354e6e0c9786750f36",
+      "phi_0": "98acc1f18b24b32863df3a87ecaec56aad682508b6f14798fcc3bcaea9bbfe9c",
+      "uniform/cumulativeContErr": "4919b505fcb4ffb254d5e30bdd3487e5ddb3726147254b88fccad27a67093ff9",
+      "uniform/functionObjects/functionObjectProperties": "2e698508ff9ac6b56f5505eb8eb8ea4d5a83403547595a044f43123b7f9a20e3",
+      "uniform/time": "82ce8017dfac0a6b1f1b578c6face9bfcd78237e41e698e11ce7f7f2912539ce"
+    }
+  }
+}

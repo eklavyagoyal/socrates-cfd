@@ -1,0 +1,99 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "averaging",
+     "statistics",
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "averaging",
+     "statistics",
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 27.833874556999945,
+    "cost_usd": 0.06365270999999999,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13343,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 42,
+     "untraced": [
+      {
+       "token": "60",
+       "context": "es and is the prerequisite for interpreting the others. The 60-unit extension costs about 1.5x the roo"
+      }
+     ],
+     "n_untraced": 1
+    },
+    "run_aliases": {
+     "G1_premature_averaging-17c0143468d7": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "HIGH",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed. Nothing measured invalidates R0, so REJECT is not justified either.",
+    "R0 passes the hygiene checks: solver_completion, mesh_quality, mass_conservation (8.333e-11), linear_solver_convergence, courant_number (0.7337), reynolds_consistency, force_reference_consistency and convection_scheme_order. These show the run is valid. They do not show that the answer is converged.",
+    "physics_regime is INCONCLUSIVE. The lift amplitude changes by +25.8% across the analysed window, so R0 is not yet a sustained limit cycle (decaying or still growing). The record ends at 40 convective units.",
+    "The stationary window starts at 15.276, and stationary_window_start_is_mser_cap is true. The start of stationarity is therefore capped, not detected, and the transient may extend further.",
+    "The stationary window has only 3 cycles (< 4). Drag CI95 is 0.044509 and drift is 0.040105 relative. Strouhal statistical uncertainty is 3.58%. Drag drift (4.01%) and Strouhal uncertainty (3.58%) both exceed the 0.03 tolerance, and the required component budget is 0.5*tolerance.",
+    "Drag differs between the submitted setup (1.2961) and the stationary window (1.3039). Strouhal differs between the submitted setup (0.16129) and the stationary window (0.16058, FFT 0.16169). The FFT frequency resolution is 0.033333, which is coarse relative to the 3% tolerance.",
+    "Mesh, time and domain components are all unmeasured. Any refinement, time-step or domain experiment run now would compare two short, non-stationary records. Differences from the transient would be confounded with discretisation or truncation error. RUN_LONGER is therefore the prerequisite experiment: it tests whether the transient has ended and gives the statistics needed to interpret later comparisons.",
+    "Domain extents (30D upstream, 50D downstream, 40D half height, blockage 0.0125) are generous. Mesh (0.45745 D representative cell size) and time step (0.01) are the next suspects once a stationary reference exists."
+   ],
+   "missing_evidence": [
+    "A sustained limit cycle: lift amplitude stable over a long record, and a stationary window start that is detected rather than capped by MSER.",
+    "At least 4 stationary cycles (preferably many more) for both mean drag and Strouhal, with drag drift and CI within 0.5*tolerance, and a Strouhal frequency resolution fine enough for 3%.",
+    "Mesh sensitivity: no REFINE_MESH run exists.",
+    "Time-step sensitivity: no REDUCE_TIME_STEP run exists.",
+    "Domain sensitivity: no EXPAND_DOMAIN run exists.",
+    "Averaging-window bias, which cannot be assessed until the reference window is reliable."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The lift amplitude is still growing or settling at t=40, so R0's stationary window is contaminated by transient. The averaged drag drift (0.040105 relative) and Strouhal estimates are then biased by more than 3%.",
+     "test": "RUN_LONGER on R0. Confirm if the Cl amplitude keeps changing, or the MSER start moves later, or the mean drag shifts by more than the CI. Refute if the amplitude plateaus within a few percent and the stationary mean drag and Strouhal agree with the current values (1.3039, 0.16058) within the CI."
+    },
+    {
+     "hypothesis": "With a stationary record of at least 4 cycles, the statistical uncertainty of drag and Strouhal drops below 0.5*tolerance. The remaining budget can then be spent on mesh, time-step and domain checks.",
+     "test": "Recompute the stationary-window statistics (cycles, CI95, drift, Strouhal uncertainty) on the extended record."
+    },
+    {
+     "hypothesis": "The coarse mesh (0.45745 D representative cell size, wake last cell 1.0209 D) or the dt of 0.01 could shift drag or Strouhal by more than 3%.",
+     "test": "After the extended reference exists, run REFINE_MESH and REDUCE_TIME_STEP against it and compare."
+    }
+   ],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {
+     "additional_convective_times": 60.0
+    },
+    "parent_run": "G1_premature_averaging-17c0143468d7",
+    "reason": "R0's lift amplitude is still changing (+25.8%) and its window has only 3 cycles, with the window start capped by MSER. Statistics, averaging and physics_regime are all INCONCLUSIVE because of this. Any mesh, time or domain comparison needs a stationary reference record first. Extending R0 costs the least of the primitives and is the prerequisite for interpreting the others. The 60-unit extension costs about 1.5x the root. That leaves budget for later experiments within the 12x compute cap, which the full default 100-unit extension plus the other three primitives would exceed.",
+    "expected_outcome": "The record grows from 40 to about 100 convective units. The Cl amplitude saturates and a stationary window starts later than 15.276. The stationary window then holds well over 4 cycles, giving a reliable reference for drag and Strouhal. If the amplitude is still drifting, a further extension is needed before any discretisation study."
+   },
+   "outcome": "executed -> G1_premature_averaging.long100-bf9115c8c872 (completed)"
+  }
+ ]
+}

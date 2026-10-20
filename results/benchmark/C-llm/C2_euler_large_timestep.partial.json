@@ -255,6 +255,104 @@
     "expected_outcome": "The run completes with lower max Courant than R2's 1.1744. If the R2 to R3 changes in Cd and St are clearly smaller than the R0 to R2 changes (1.11% and 1.54%), the sequence is converging and the time component can be bounded within budget. If the changes stay near 1% or larger, R0's dt is inadequate and a time-step-limited result is confirmed. A change above 3% beyond noise would be a FAIL."
    },
    "outcome": "executed -> C2_euler_large_timestep.dt0.01-f9cf9b35455e (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 30.394823395999992,
+    "cost_usd": 0.10785491,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 34458,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 55,
+     "untraced": [
+      {
+       "token": "4.3",
+       "context": "e but not remove the time component, and it would use about 4.3 of the 8.76 root-cost units of compute "
+      },
+      {
+       "token": "8.76",
+       "context": "emove the time component, and it would use about 4.3 of the 8.76 root-cost units of compute left."
+      }
+     ],
+     "n_untraced": 2
+    },
+    "run_aliases": {
+     "C2_euler_large_timestep-268eddd71f94": "R0",
+     "C2_euler_large_timestep.m1.41-eb9ef468444b": "R1",
+     "C2_euler_large_timestep.dt0.02-2f2ce6b4d241": "R2",
+     "C2_euler_large_timestep.dt0.01-f9cf9b35455e": "R3"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and failed_checks is empty. ACCEPT is not allowed, and REJECT is not allowed because there is no deterministic FAIL.",
+    "R0 passes the hygiene, averaging and statistics checks. Mass imbalance is 2.5e-10, there are 12 stationary cycles, drag statistics uncertainty is 0.0001664 and Strouhal statistics uncertainty is 0.0001267.",
+    "The time sequence is now three levels. R0 (dt 0.04), R2 (dt 0.02) and R3 (dt 0.01) give Cd 1.2901, 1.3047, 1.3139 and St 0.15849, 0.16097, 0.16232.",
+    "The step-to-step changes shrink but slowly. Observed order is p=0.66 for Cd and p=0.88 for St, so R3 is not yet time-converged.",
+    "The verifier gives time uncertainty for R0 of 0.03719 (Cd) and 0.04147 (St). Both are above the 0.015 component limit and above the 0.03 tolerance. The demonstrated R0-to-R3 changes are 1.81% (Cd) and 2.36% (St), both within tau, so the check is INCONCLUSIVE and not FAIL. This is a strong warning about R0 as submitted, but I cannot overrule the verifier.",
+    "A fourth dt level (R3 to dt 0.005) would cost 4504 s. The recorded trend suggests it would sharpen the time estimate but not remove the time component, and it would use about 4.3 of the 8.76 root-cost units of compute left.",
+    "The mesh component is still unmeasured for both quantities. R1 (REFINE_MESH from R0) diverged at the unchanged dt 0.04, with max Courant 3.1978e+103 and 73 steps, so it gave no data.",
+    "R2 completed at max Courant 1.1744. It is a stable parent for a mesh refinement, because the refined mesh will have a higher Courant number at the same dt. REFINE_MESH from R2 costs 2260 s, half the cost of R3 as parent.",
+    "The domain component is also unmeasured. EXPAND_DOMAIN from R0 is the cheapest experiment at 748 s and can follow.",
+    "Budget: 3 of 6 experiments used and 3.24 of 12 compute units used. The mesh refinement and a domain expansion both fit."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (R1 diverged and gave no data)",
+    "Domain truncation/blockage error (no EXPAND_DOMAIN run)",
+    "Time-converged value: the observed temporal order is 0.66 (Cd) and 0.88 (St), and the estimated R0 time uncertainty is 0.03719 (Cd) and 0.04147 (St), above the 0.015 limit",
+    "Combined uncertainty against the 0.03 tolerance",
+    "Cause of the R1 divergence (no pre-divergence Courant or residual history recorded)"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The mesh (160 cells around the cylinder, wake_last_cell_D 1.0209, representative size 0.45745 D) carries a mesh error in Cd or St above the 1.5% component limit. The sensitivity to dt suggests the solution is not in a grid- or time-converged regime.",
+     "test": "REFINE_MESH on R2 with factor 1.4142 (stable dt baseline). Compare Cd and St with R2 (1.3047, 0.16097). A change below about 1.5% passes the mesh component. A change above 3% beyond noise is a FAIL for the root."
+    },
+    {
+     "hypothesis": "R1 diverged because the finer mesh at dt 0.04 pushed the Courant number past the PIMPLE stability limit. A refinement from R2, with halved dt, should complete.",
+     "test": "Check that the REFINE_MESH child of R2 completes, and read its recorded dt and max Courant."
+    },
+    {
+     "hypothesis": "Domain truncation (blockage 0.0125, symmetryPlane lateral boundaries at 40 D, 30 D upstream) is within budget.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2 in a later iteration (748 s). Compare Cd and St with R0."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "C2_euler_large_timestep.dt0.02-2f2ce6b4d241",
+    "reason": "Mesh error is the largest unmeasured component for both Cd and St. The only earlier attempt (R1 from R0) diverged at dt 0.04. R2 (dt 0.02, max Courant 1.1744) is a stable baseline and costs 2260 s, half the cost of R3 as parent. Another time halving would cost 4504 s and would only refine an estimate that already exceeds the 0.015 component limit.",
+    "expected_outcome": "The run completes. If Cd and St change by less than about 1.5% from R2 (Cd 1.3047, St 0.16097), the mesh component is within budget. A change above 3% beyond noise would be a FAIL. If it diverges again, the stability margin of the setup is the limiting problem."
+   },
+   "outcome": "executed -> C2_euler_large_timestep.m1.41-9ec9f782d7ff (completed)"
   }
  ]
 }

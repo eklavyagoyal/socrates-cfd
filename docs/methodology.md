@@ -263,8 +263,8 @@ fixing them did not invalidate any verdict.
 | E7 | ERROR results entered the experiment-count, compute and flaw-targeting tallies | Excluded |
 | E8 | 'label unstable' was reported for cases that are flawed under every truth in the interval | Only reported when the interval can change the label |
 | E9 | The baseline's literature check used the narrow band, not the pre-registered band widened by τ | Both shown; criterion 2 uses the widened band |
-| E11 | Attack results carry no decision-code stamp, and a long-running process keeps the modules it loaded at start, so a file written after the last decision-code commit is not proof it used that code | `scripts/replay_verdicts.py` re-runs the current verifier on the stored run graph of every result (benchmark and attacks) and requires the verdict, failed checks, every component status and every component uncertainty to match (relative 1e-9) |
 | E10 | Report assembly: L-judge excerpt showed a trailing caveat; outages shown as INCONCLUSIVE in attack tables; Bexh case reports omitted the experiments; git dirty flag false when git was unavailable | Fixed |
+| E11 | Attack results carry no decision-code stamp, and a long-running process keeps the modules it loaded at start, so a file written after the last decision-code commit is not proof it used that code | `scripts/replay_verdicts.py` re-runs the current verifier on the stored run graph of every result (benchmark and attacks) and requires the verdict, failed checks, every component status and every component uncertainty to match (relative 1e-9) |
 
 The review also showed that the evidence-only LLM judge (L-judge) is a strong baseline on the benchmark cases, whose
 flaws are visible in the configuration. It was therefore added to the attack phase, whose cases are built to look

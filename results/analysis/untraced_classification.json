@@ -1,0 +1,3823 @@
+{
+ "generated_utc": "2026-10-20T15:44Z",
+ "source": "results/analysis/untraced_numbers.json (scripts/dump_untraced.py, written 2026-10-20 15:31:16 UTC; 205 tokens)",
+ "method": "For every LLM call with untraced tokens (135 calls) the evidence package was rebuilt from the stored runs (build_package/judge_package on the run graph, verdict, history, menu and budget at that iteration); re-running critic/audit.py on the stored texts reproduces the stored untraced lists exactly for 135/135 calls. Each token was classified from its context; where a derivation is given, every operand was checked to be in that call's package (at the operand's printed precision, percent strings included) or in the same LLM output, and the formula's value compared with the token.",
+ "categories": [
+  "derived arithmetic",
+  "restated threshold or convention",
+  "rounded package value",
+  "counts or indices",
+  "possible external knowledge",
+  "unclear"
+ ],
+ "counts": {
+  "derived arithmetic": 180,
+  "restated threshold or convention": 15,
+  "rounded package value": 9,
+  "counts or indices": 0,
+  "possible external knowledge": 0,
+  "unclear": 1
+ },
+ "entries": [
+  {
+   "index": 0,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "B1_small_domain",
+   "where": "/history[0]/meta",
+   "token": "7.4%",
+   "context": "Strouhal frequency resolution is 0.013333, which is about 7.4% of St=0.17963. This is coarse compared ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "St frequency resolution as a percentage of R0's St (0.013333/0.17963 = 7.42 %).",
+   "derivation": "100*0.013333/0.17963",
+   "derivation_value": 7.42248,
+   "operand_sources": {
+    "100": "constant",
+    "0.013333": "package",
+    "0.17963": "package"
+   }
+  },
+  {
+   "index": 1,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "C1_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "0.43%",
+   "context": "R3 is indicative only. The Cd change from R2 to R3 is about 0.43% and the St change is about 0.64%. Both ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R2 -> R3 (1.3235 -> 1.3292) = 0.43 %.",
+   "derivation": "100*(1.3292-1.3235)/1.3235",
+   "derivation_value": 0.430676,
+   "operand_sources": {
+    "100": "constant",
+    "1.3292": "package",
+    "1.3235": "package"
+   }
+  },
+  {
+   "index": 2,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "C1_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "0.64%",
+   "context": "nge from R2 to R3 is about 0.43% and the St change is about 0.64%. Both are small against the 0.03 tolera",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R2 -> R3 (reported 0.16362 -> 0.16467) = 0.64 %.",
+   "derivation": "100*(0.16467-0.16362)/0.16362",
+   "derivation_value": 0.641731,
+   "operand_sources": {
+    "100": "constant",
+    "0.16467": "package",
+    "0.16362": "package"
+   }
+  },
+  {
+   "index": 3,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "4.3",
+   "context": "e but not remove the time component, and it would use about 4.3 of the 8.76 root-cost units of compute ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 4504 s divided by the root's 1055.7 s = 4.27 root-cost units.",
+   "derivation": "4504/1055.7",
+   "derivation_value": 4.26636,
+   "operand_sources": {
+    "4504": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 4,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "8.76",
+   "context": "emove the time component, and it would use about 4.3 of the 8.76 root-cost units of compute left.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: limit 12.0 minus used 3.24.",
+   "derivation": "12-3.24",
+   "derivation_value": 8.76,
+   "operand_sources": {
+    "12": "package",
+    "3.24": "package"
+   }
+  },
+  {
+   "index": 5,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "4.28",
+   "context": "compute units used. REFINE_MESH from R3 costs 4520 s, about 4.28 units. That leaves about 2.3 units, eno",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 4520 s / root cost 1055.7 s = 4.28 units.",
+   "derivation": "4520/1055.7",
+   "derivation_value": 4.28152,
+   "operand_sources": {
+    "4520": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 6,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "2.3",
+   "context": "H from R3 costs 4520 s, about 4.28 units. That leaves about 2.3 units, enough for EXPAND_DOMAIN from R0",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining after the proposed run: 12 - 5.38 used - 4.28 (its own derived cost) = 2.34.",
+   "derivation": "12-5.38-4.28",
+   "derivation_value": 2.34,
+   "operand_sources": {
+    "12": "package",
+    "5.38": "package",
+    "4.28": "same LLM output"
+   }
+  },
+  {
+   "index": 7,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "3.03",
+   "context": "6 experiments used and 8.97 of 12 compute units used. About 3.03 units remain, roughly 3200 s at the roo",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 8.97 used.",
+   "derivation": "12-8.97",
+   "derivation_value": 3.03,
+   "operand_sources": {
+    "12": "package",
+    "8.97": "package"
+   }
+  },
+  {
+   "index": 8,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "3200",
+   "context": " of 12 compute units used. About 3.03 units remain, roughly 3200 s at the root cost scale. Only one expe",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining 3.03 units x root cost 1055.7 s = 3199 s.",
+   "derivation": "3.03*1055.7",
+   "derivation_value": 3198.77,
+   "operand_sources": {
+    "3.03": "same LLM output",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 9,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "3.03",
+   "context": " the cheapest option and fits the remaining budget of about 3.03 compute units. Mesh now has a completed",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 8.97 used.",
+   "derivation": "12-8.97",
+   "derivation_value": 3.03,
+   "operand_sources": {
+    "12": "package",
+    "8.97": "package"
+   }
+  },
+  {
+   "index": 10,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[0]/meta",
+   "token": "95%",
+   "context": "R0 drag drift is 0.040105 relative and the 95% CI is 0.044509. Both exceed the 0.03 to",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI (field ci95); a convention, not a measured value."
+  },
+  {
+   "index": 11,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[0]/meta",
+   "token": "2.5",
+   "context": "RUN_LONGER on R0 costs an estimated 979 s, roughly 2.5x the root cost of 391.64 s. It is the c",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 979 s / root cost 391.64 s = 2.50.",
+   "derivation": "979/391.64",
+   "derivation_value": 2.49974,
+   "operand_sources": {
+    "979": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 12,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[0]/meta",
+   "token": "0.015",
+   "context": "t and CI, and the Strouhal statistical uncertainty, fall to 0.015 or below, which is 0.5*tolerance. If me",
+   "mechanical_triage": "other",
+   "category": "restated threshold or convention",
+   "kind": "threshold restatement",
+   "justification": "Per-component budget 0.5 x tolerance (stated as such in the text and in the package's error_budget_rule).",
+   "derivation": "0.5*0.03",
+   "derivation_value": 0.015,
+   "operand_sources": {
+    "0.5": "constant",
+    "0.03": "package"
+   }
+  },
+  {
+   "index": 13,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[1]/meta",
+   "token": "0.0037",
+   "context": ", 0.02631 of the 0.03 tolerance is already used. Only about 0.0037 is left for the root-sum-square of the ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic (error budget)",
+   "justification": "Tolerance 0.03 minus the measured averaging bias 0.02631 (2.631 % in the package) = 0.0037.",
+   "derivation": "0.03-0.02631",
+   "derivation_value": 0.00369,
+   "operand_sources": {
+    "0.03": "package",
+    "0.02631": "package"
+   }
+  },
+  {
+   "index": 14,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[1]/meta",
+   "token": "9.5",
+   "context": "experiments used and 2.5x of 12x compute used, which leaves 9.5x, about 3720 s. REFINE_MESH from R1 cos",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 2.5 used.",
+   "derivation": "12-2.5",
+   "derivation_value": 9.5,
+   "operand_sources": {
+    "12": "package",
+    "2.5": "package"
+   }
+  },
+  {
+   "index": 15,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[1]/meta",
+   "token": "3720",
+   "context": "used and 2.5x of 12x compute used, which leaves 9.5x, about 3720 s. REFINE_MESH from R1 costs 1812 s (ab",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining 9.5 units x root cost 391.64 s = 3721 s.",
+   "derivation": "9.5*391.64",
+   "derivation_value": 3720.58,
+   "operand_sources": {
+    "9.5": "same LLM output",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 16,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[1]/meta",
+   "token": "4.6",
+   "context": "9.5x, about 3720 s. REFINE_MESH from R1 costs 1812 s (about 4.6x), so it is affordable. Running mesh, t",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1812 s / root cost 391.64 s = 4.63.",
+   "derivation": "1812/391.64",
+   "derivation_value": 4.6267,
+   "operand_sources": {
+    "1812": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 17,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[1]/meta",
+   "token": "4419",
+   "context": "o it is affordable. Running mesh, time and domain together (4419 s) would exceed the remaining budget. T",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Sum of the three menu costs from R1 (mesh 1812 s, time 1567 s, domain 1040 s).",
+   "derivation": "1812+1567+1040",
+   "derivation_value": 4419.0,
+   "operand_sources": {
+    "1812": "package",
+    "1567": "package",
+    "1040": "package"
+   }
+  },
+  {
+   "index": 18,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "0.0037",
+   "context": "ing bias of 0.02631 is added linearly and leaves only about 0.0037 of the 0.03 tolerance for the other com",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic (error budget)",
+   "justification": "Tolerance 0.03 minus the measured averaging bias 0.02631 (2.631 % in the package) = 0.0037.",
+   "derivation": "0.03-0.02631",
+   "derivation_value": 0.00369,
+   "operand_sources": {
+    "0.03": "package",
+    "0.02631": "package"
+   }
+  },
+  {
+   "index": 19,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "4.87",
+   "context": "Budget: compute used is 7.13 of 12.0, so 4.87 root-cost units remain. Only EXPAND_DOM",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 7.13 used.",
+   "derivation": "12-7.13",
+   "derivation_value": 4.87,
+   "operand_sources": {
+    "12": "package",
+    "7.13": "package"
+   }
+  },
+  {
+   "index": 20,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "4.87",
+   "context": "s the cheapest affordable primitive (1040 s). After it, the 4.87 remaining cost units cannot cover anoth",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 7.13 used.",
+   "derivation": "12-7.13",
+   "derivation_value": 4.87,
+   "operand_sources": {
+    "12": "package",
+    "7.13": "package"
+   }
+  },
+  {
+   "index": 21,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "0.0037",
+   "context": ".16129 vs 0.16343). It is added linearly, so drag has about 0.0037 of the 0.03 tolerance left for mesh, ti",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic (error budget)",
+   "justification": "Tolerance 0.03 minus the measured averaging bias 0.02631 (2.631 % in the package) = 0.0037.",
+   "derivation": "0.03-0.02631",
+   "derivation_value": 0.00369,
+   "operand_sources": {
+    "0.03": "package",
+    "0.02631": "package"
+   }
+  },
+  {
+   "index": 22,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "2.22",
+   "context": "Budget: 9.78 of 12.0 root-cost units are used, so 2.22 units remain, which is about 869 s at t",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 9.78 used.",
+   "derivation": "12-9.78",
+   "derivation_value": 2.22,
+   "operand_sources": {
+    "12": "package",
+    "9.78": "package"
+   }
+  },
+  {
+   "index": 23,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "869",
+   "context": "t-cost units are used, so 2.22 units remain, which is about 869 s at the root cost of 391.64 s. The che",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining 2.22 units x root cost 391.64 s = 869 s.",
+   "derivation": "2.22*391.64",
+   "derivation_value": 869.441,
+   "operand_sources": {
+    "2.22": "same LLM output",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 24,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "2.22",
+   "context": "Budget: the remaining 2.22 root-cost units (about 869 s) are below",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 9.78 used.",
+   "derivation": "12-9.78",
+   "derivation_value": 2.22,
+   "operand_sources": {
+    "12": "package",
+    "9.78": "package"
+   }
+  },
+  {
+   "index": 25,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "869",
+   "context": "Budget: the remaining 2.22 root-cost units (about 869 s) are below the cheapest menu cost of ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining 2.22 units x root cost 391.64 s = 869 s.",
+   "derivation": "2.22*391.64",
+   "derivation_value": 869.441,
+   "operand_sources": {
+    "2.22": "same LLM output",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 26,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[1]/meta",
+   "token": "2.1%",
+   "context": " root-sum-square of mesh, time and domain must fit in about 2.1% (Cd) and 1.8% (St). Any large discretis",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic (error budget)",
+   "justification": "Tolerance 3 % minus the measured Cd averaging bias 0.864 % = 2.14 %.",
+   "derivation": "3-0.864",
+   "derivation_value": 2.136,
+   "operand_sources": {
+    "3": "package",
+    "0.864": "package"
+   }
+  },
+  {
+   "index": 27,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[1]/meta",
+   "token": "1.8%",
+   "context": "re of mesh, time and domain must fit in about 2.1% (Cd) and 1.8% (St). Any large discretisation error wo",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic (error budget)",
+   "justification": "Tolerance 3 % minus the measured St averaging bias 1.219 % = 1.78 %.",
+   "derivation": "3-1.219",
+   "derivation_value": 1.781,
+   "operand_sources": {
+    "3": "package",
+    "1.219": "package"
+   }
+  },
+  {
+   "index": 28,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[1]/meta",
+   "token": "3.1",
+   "context": "units used. The mesh refinement costs about 1963 s, roughly 3.1 root runs, which fits.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1963 s / root cost 636.22 s = 3.09 root runs.",
+   "derivation": "1963/636.22",
+   "derivation_value": 3.08541,
+   "operand_sources": {
+    "1963": "package",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 29,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[1]/meta",
+   "token": "1.8%",
+   "context": " biases Cd or St by more than the remaining margin of about 1.8% to 2.1%.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic (error budget)",
+   "justification": "Tolerance 3 % minus the measured St averaging bias 1.219 % = 1.78 %.",
+   "derivation": "3-1.219",
+   "derivation_value": 1.781,
+   "operand_sources": {
+    "3": "package",
+    "1.219": "package"
+   }
+  },
+  {
+   "index": 30,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[1]/meta",
+   "token": "2.1%",
+   "context": "Cd or St by more than the remaining margin of about 1.8% to 2.1%.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic (error budget)",
+   "justification": "Tolerance 3 % minus the measured Cd averaging bias 0.864 % = 2.14 %.",
+   "derivation": "3-0.864",
+   "derivation_value": 2.136,
+   "operand_sources": {
+    "3": "package",
+    "0.864": "package"
+   }
+  },
+  {
+   "index": 31,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[1]/meta",
+   "token": "613",
+   "context": "Temporal error is negligible at 613 steps per period with a second-order ba",
+   "mechanical_triage": "other",
+   "category": "rounded package value",
+   "kind": "truncated package value",
+   "justification": "R0 steps_per_shedding_period is 613.51; written as 613 (truncated, so it misses the audit's +-0.5 tolerance by 0.01).",
+   "package_value": "613.51"
+  },
+  {
+   "index": 32,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[2]/meta",
+   "token": "1.64",
+   "context": "of 12.0 root-relative compute units are used, leaving about 1.64. R2 consumed most of it.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 10.36 used.",
+   "derivation": "12-10.36",
+   "derivation_value": 1.64,
+   "operand_sources": {
+    "12": "package",
+    "10.36": "package"
+   }
+  },
+  {
+   "index": 33,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[2]/meta",
+   "token": "2.7",
+   "context": "REDUCE_TIME_STEP from R0 or R1 is listed at 1697 s, about 2.7 root units. That exceeds the remaining ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1697 s / root cost 636.22 s = 2.67 ('about 2.7').",
+   "derivation": "1697/636.22",
+   "derivation_value": 2.66732,
+   "operand_sources": {
+    "1697": "package",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 34,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[2]/meta",
+   "token": "1.64",
+   "context": " s at the default factor 2.0, which is marginal against the 1.64 units left. The 1.5 minimum factor adds",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 10.36 used.",
+   "derivation": "12-10.36",
+   "derivation_value": 1.64,
+   "operand_sources": {
+    "12": "package",
+    "10.36": "package"
+   }
+  },
+  {
+   "index": 35,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[2]/meta",
+   "token": "1.64",
+   "context": "Only EXPAND_DOMAIN may fit the remaining budget of about 1.64 root units. R1 is the long stationary b",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 10.36 used.",
+   "derivation": "12-10.36",
+   "derivation_value": 1.64,
+   "operand_sources": {
+    "12": "package",
+    "10.36": "package"
+   }
+  },
+  {
+   "index": 36,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[3]/meta",
+   "token": "0.05",
+   "context": "et: compute_used_relative_to_root is 11.95 of 12.0, leaving 0.05 root units. R0 costs 636.22 s, so 0.05 ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 11.95 used.",
+   "derivation": "12-11.95",
+   "derivation_value": 0.05,
+   "operand_sources": {
+    "12": "package",
+    "11.95": "package"
+   }
+  },
+  {
+   "index": 37,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[3]/meta",
+   "token": "0.05",
+   "context": ".95 of 12.0, leaving 0.05 root units. R0 costs 636.22 s, so 0.05 units is far below any menu entry. The ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 11.95 used.",
+   "derivation": "12-11.95",
+   "derivation_value": 0.05,
+   "operand_sources": {
+    "12": "package",
+    "11.95": "package"
+   }
+  },
+  {
+   "index": 38,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "G2_average_from_start",
+   "where": "/history[3]/meta",
+   "token": "1.67",
+   "context": "eapest listed option is RUN_LONGER from R1 at 1060 s, about 1.67 root units. REDUCE_TIME_STEP from R1 is",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1060 s / root cost 636.22 s = 1.67.",
+   "derivation": "1060/636.22",
+   "derivation_value": 1.66609,
+   "operand_sources": {
+    "1060": "package",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 39,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K1_central_scheme",
+   "where": "/history[5]/meta",
+   "token": "2.95",
+   "context": ". REDUCE_TIME_STEP on R1 costs 12074 s at factor 2.0, about 2.95 units, so the total stays under 12. Onl",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 12074 s / root cost 4094 s = 2.95.",
+   "derivation": "12074/4094",
+   "derivation_value": 2.94919,
+   "operand_sources": {
+    "12074": "package",
+    "4094": "package"
+   }
+  },
+  {
+   "index": 40,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K1_central_scheme",
+   "where": "/history[5]/meta",
+   "token": "0.69%",
+   "context": "The domain effect (R0 to R3 drag 0.69%, R3 to R5 0.31%) is partly an artefact ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R0 -> R3 (domain expansion), 1.3403 -> 1.3311 = 0.69 %.",
+   "derivation": "100*(1.3403-1.3311)/1.3403",
+   "derivation_value": 0.686413,
+   "operand_sources": {
+    "100": "constant",
+    "1.3403": "package",
+    "1.3311": "package"
+   }
+  },
+  {
+   "index": 41,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K1_central_scheme",
+   "where": "/history[5]/meta",
+   "token": "1.63",
+   "context": "R1 has dt 0.008148, so factor 1.63 gives dt of about 0.005, the same as R4",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter (computed)",
+   "justification": "Time-step reduction factor that takes R1's dt 0.008148 to 0.005 (R4's dt) = 1.63.",
+   "derivation": "0.008148/0.005",
+   "derivation_value": 1.6296,
+   "operand_sources": {
+    "0.008148": "package",
+    "0.005": "package"
+   }
+  },
+  {
+   "index": 42,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K1_central_scheme",
+   "where": "/history[5]/meta",
+   "token": "0.16%",
+   "context": "rag change between R4 and the new run is small (below about 0.16%) and St stays near 0.1643, the spatial ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction threshold",
+   "justification": "Threshold in an expected outcome; matches the recorded R0 -> R1 drag change (1.3403 -> 1.3382 = 0.157 %); a judgement threshold, not a claimed measurement.",
+   "derivation": "100*(1.3403-1.3382)/1.3403",
+   "derivation_value": 0.156681,
+   "operand_sources": {
+    "100": "constant",
+    "1.3403": "package",
+    "1.3382": "package"
+   }
+  },
+  {
+   "index": 43,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "3.99",
+   "context": "16220 cells, over the 160000 limit. 216220 / 54244 is about 3.99, so the factor scales cell count roughl",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "Rejected child cell count 216220 (validator message in the package) / R0's 54244 cells = 3.99.",
+   "derivation": "216220/54244",
+   "derivation_value": 3.98606,
+   "operand_sources": {
+    "216220": "package",
+    "54244": "package"
+   }
+  },
+  {
+   "index": 44,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "1.717",
+   "context": "he limit of 160000 cells therefore allows a factor of about 1.717 at most.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "Largest refinement factor under the 160000-cell limit: sqrt(160000/54244) = 1.7175.",
+   "derivation": "(160000/54244)**0.5",
+   "derivation_value": 1.71745,
+   "operand_sources": {
+    "160000": "package",
+    "54244": "package",
+    "0.5": "constant"
+   }
+  },
+  {
+   "index": 45,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "1.6",
+   "context": "A factor of 1.6 gives about 2.56x the cells, roughly 13",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter",
+   "justification": "The planner's own refinement factor, chosen below the derived limit 1.717 (sqrt(160000/54244)) and inside the menu range 1.3-2.0; a choice, not a claim about the evidence."
+  },
+  {
+   "index": 46,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "2.56",
+   "context": "A factor of 1.6 gives about 2.56x the cells, roughly 139000 cells. That ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "Cell-count multiplier of a 1.6 linear factor in 2D (1.6^2).",
+   "derivation": "1.6**2",
+   "derivation_value": 2.56,
+   "operand_sources": {
+    "1.6": "same LLM output",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 47,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "139000",
+   "context": "A factor of 1.6 gives about 2.56x the cells, roughly 139000 cells. That is under the 160000 limit w",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "R0's 54244 cells x 2.56 = 138865 ('roughly 139000').",
+   "derivation": "54244*1.6**2",
+   "derivation_value": 138865.0,
+   "operand_sources": {
+    "54244": "package",
+    "1.6": "same LLM output",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 48,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "1.6",
+   "context": "ause it gave 216220 cells against a limit of 160000. Factor 1.6 gives about 2.56x cells, roughly 139000",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter",
+   "justification": "The planner's own refinement factor, chosen below the derived limit 1.717 (sqrt(160000/54244)) and inside the menu range 1.3-2.0; a choice, not a claim about the evidence."
+  },
+  {
+   "index": 49,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "2.56",
+   "context": "220 cells against a limit of 160000. Factor 1.6 gives about 2.56x cells, roughly 139000, which fits. Sta",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "Cell-count multiplier of a 1.6 linear factor in 2D (1.6^2).",
+   "derivation": "1.6**2",
+   "derivation_value": 2.56,
+   "operand_sources": {
+    "1.6": "same LLM output",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 50,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "139000",
+   "context": "imit of 160000. Factor 1.6 gives about 2.56x cells, roughly 139000, which fits. Statistical noise on R0 is",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "R0's 54244 cells x 2.56 = 138865 ('roughly 139000').",
+   "derivation": "54244*1.6**2",
+   "derivation_value": 138865.0,
+   "operand_sources": {
+    "54244": "package",
+    "1.6": "same LLM output",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 51,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[2]/meta",
+   "token": "1.7",
+   "context": "lready rejected for exceeding the cell limit. A factor near 1.7 would only repeat R1's resolution and w",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic (approximate)",
+   "justification": "'A factor near 1.7': approximately the largest factor allowed under the cell limit (sqrt(160000/54244) = 1.72), close to R1's own refinement.",
+   "derivation": "(160000/54244)**0.5",
+   "derivation_value": 1.71745,
+   "operand_sources": {
+    "160000": "package",
+    "54244": "package",
+    "0.5": "constant"
+   }
+  },
+  {
+   "index": 52,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[6]/meta",
+   "token": "1.69",
+   "context": " R0 has 54244 cells and R1 has 138064, so factor 1.3 (about 1.69x cells, roughly 92000) fits and sits be",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "Cell-count multiplier of factor 1.3 (the menu minimum) in 2D = 1.69.",
+   "derivation": "1.3**2",
+   "derivation_value": 1.69,
+   "operand_sources": {
+    "1.3": "package",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 53,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[6]/meta",
+   "token": "92000",
+   "context": "nd R1 has 138064, so factor 1.3 (about 1.69x cells, roughly 92000) fits and sits between R0 and R1.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "R0's 54244 cells x 1.69 = 91672 ('roughly 92000').",
+   "derivation": "54244*1.3**2",
+   "derivation_value": 91672.4,
+   "operand_sources": {
+    "54244": "package",
+    "1.3": "package",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 54,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[6]/meta",
+   "token": "0.62%",
+   "context": "3 and not by a real domain effect. The Cd changes (R0 to R4 0.62%, R4 to R5 0.08%) are already well below",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R0 -> R4 (1.3278 reported -> 1.3196 window) = 0.62 %.",
+   "derivation": "100*(1.3278-1.3196)/1.3278",
+   "derivation_value": 0.617563,
+   "operand_sources": {
+    "100": "constant",
+    "1.3278": "package",
+    "1.3196": "package"
+   }
+  },
+  {
+   "index": 55,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "K2_fine_large",
+   "where": "/history[6]/meta",
+   "token": "92000",
+   "context": "d order. A factor of 1.3 gives an intermediate level (about 92000 cells, under the 160000 limit) between ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "R0's 54244 cells x 1.69 = 91672 ('roughly 92000').",
+   "derivation": "54244*1.3**2",
+   "derivation_value": 91672.4,
+   "operand_sources": {
+    "54244": "package",
+    "1.3": "package",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 56,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "baseline",
+   "where": "/history[3]/meta",
+   "token": "0.91",
+   "context": "mpute units used. EXPAND_DOMAIN from R2 costs 1319 s, about 0.91 root units, which is affordable.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1319 s / root cost 1441.6 s = 0.91.",
+   "derivation": "1319/1441.6",
+   "derivation_value": 0.914956,
+   "operand_sources": {
+    "1319": "package",
+    "1441.6": "package"
+   }
+  },
+  {
+   "index": 57,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "baseline",
+   "where": "/history[5]/meta",
+   "token": "0.91",
+   "context": "periment remains. EXPAND_DOMAIN from R2 costs 1319 s, about 0.91 root units, and is affordable.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1319 s / root cost 1441.6 s = 0.91.",
+   "derivation": "1319/1441.6",
+   "derivation_value": 0.914956,
+   "operand_sources": {
+    "1319": "package",
+    "1441.6": "package"
+   }
+  },
+  {
+   "index": 58,
+   "phase": "benchmark",
+   "system": "C-llm",
+   "case": "baseline",
+   "where": "/history[5]/meta",
+   "token": "0.91",
+   "context": "eshes. It is the cheapest informative option (1319 s, about 0.91 root units) and stays within the 12-uni",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1319 s / root cost 1441.6 s = 0.91.",
+   "derivation": "1319/1441.6",
+   "derivation_value": 0.914956,
+   "operand_sources": {
+    "1319": "package",
+    "1441.6": "package"
+   }
+  },
+  {
+   "index": 59,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "A1_coarse_mesh",
+   "where": "/history[0]/meta",
+   "token": "8.6",
+   "context": "y_resolution is 0.013333 against St 0.15561, which is about 8.6 % of the value. This is coarse relative",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "St frequency resolution as a percentage of St (0.013333/0.15561 = 8.57 %).",
+   "derivation": "100*0.013333/0.15561",
+   "derivation_value": 8.56822,
+   "operand_sources": {
+    "100": "constant",
+    "0.013333": "package",
+    "0.15561": "package"
+   }
+  },
+  {
+   "index": 60,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "A1_coarse_mesh",
+   "where": "/history[0]/meta",
+   "token": "1.19",
+   "context": "clearer signal than the default 1.4142, which is only about 1.19x per direction. The cost is 302 s, abou",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "Per-direction factor of the default 1.4142 cell-count refinement: sqrt(1.4142) = 1.19.",
+   "derivation": "1.4142**0.5",
+   "derivation_value": 1.1892,
+   "operand_sources": {
+    "1.4142": "package",
+    "0.5": "constant"
+   }
+  },
+  {
+   "index": 61,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "A1_coarse_mesh",
+   "where": "/history[0]/meta",
+   "token": "1.06",
+   "context": "is only about 1.19x per direction. The cost is 302 s, about 1.06x the root run, well inside the compute ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 302 s / root cost 283.84 s = 1.06.",
+   "derivation": "302/283.84",
+   "derivation_value": 1.06398,
+   "operand_sources": {
+    "302": "package",
+    "283.84": "package"
+   }
+  },
+  {
+   "index": 62,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "A2_moderate_mesh",
+   "where": "/history[1]/meta",
+   "token": "0.00297",
+   "context": " is 0.013333 and R1's is 0.025003. Both are larger than the 0.00297 R0-R1 St difference (0.16454 - 0.16157)",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "St difference R1 - R0, stated in the same sentence (0.16454 - 0.16157).",
+   "derivation": "0.16454-0.16157",
+   "derivation_value": 0.00297,
+   "operand_sources": {
+    "0.16454": "package",
+    "0.16157": "package"
+   }
+  },
+  {
+   "index": 63,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "B1_small_domain",
+   "where": "/history[0]/meta",
+   "token": "7%",
+   "context": "tion is 0.013333 against a value of 0.17963, which is about 7%. This is coarser than the 3% tolerance,",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "St frequency resolution / St = 7.42 % ('about 7 %').",
+   "derivation": "100*0.013333/0.17963",
+   "derivation_value": 7.42248,
+   "operand_sources": {
+    "100": "constant",
+    "0.013333": "package",
+    "0.17963": "package"
+   }
+  },
+  {
+   "index": 64,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "B2_moderate_domain",
+   "where": "/history[0]/meta",
+   "token": "8%",
+   "context": " frequency resolution is 0.013333 against St 0.16704, about 8%. This is coarser than the 3% tolerance.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "St frequency resolution / St = 7.98 % ('about 8 %').",
+   "derivation": "100*0.013333/0.16704",
+   "derivation_value": 7.98192,
+   "operand_sources": {
+    "100": "constant",
+    "0.013333": "package",
+    "0.16704": "package"
+   }
+  },
+  {
+   "index": 65,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C1_large_timestep",
+   "where": "/history[1]/meta",
+   "token": "1.7",
+   "context": "The run completes with max Courant near 1.7 and a stationary window. Drag and St ch",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction",
+   "justification": "Expected max Courant after halving dt: R0's max Courant 3.4157 / 2 = 1.71.",
+   "derivation": "3.4157/2",
+   "derivation_value": 1.70785,
+   "operand_sources": {
+    "3.4157": "package",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 66,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C1_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "0.43%",
+   "context": "R0 mesh error is below the 1.5% budget. R3 against R2 shows 0.43% in drag and 0.64% in St.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R2 -> R3 = 0.43 %.",
+   "derivation": "100*(1.3292-1.3235)/1.3235",
+   "derivation_value": 0.430676,
+   "operand_sources": {
+    "100": "constant",
+    "1.3292": "package",
+    "1.3235": "package"
+   }
+  },
+  {
+   "index": 67,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C1_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "0.64%",
+   "context": "elow the 1.5% budget. R3 against R2 shows 0.43% in drag and 0.64% in St.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R2 -> R3 = 0.64 %.",
+   "derivation": "100*(0.16467-0.16362)/0.16362",
+   "derivation_value": 0.641731,
+   "operand_sources": {
+    "100": "constant",
+    "0.16467": "package",
+    "0.16362": "package"
+   }
+  },
+  {
+   "index": 68,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C1_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.43%",
+   "context": "e 1.5% component budget in drag and St. R3 against R2 shows 0.43% in drag and 0.64% in St.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R2 -> R3 = 0.43 %.",
+   "derivation": "100*(1.3292-1.3235)/1.3235",
+   "derivation_value": 0.430676,
+   "operand_sources": {
+    "100": "constant",
+    "1.3292": "package",
+    "1.3235": "package"
+   }
+  },
+  {
+   "index": 69,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C1_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.64%",
+   "context": "udget in drag and St. R3 against R2 shows 0.43% in drag and 0.64% in St.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R2 -> R3 = 0.64 %.",
+   "derivation": "100*(0.16467-0.16362)/0.16362",
+   "derivation_value": 0.641731,
+   "operand_sources": {
+    "100": "constant",
+    "0.16467": "package",
+    "0.16362": "package"
+   }
+  },
+  {
+   "index": 70,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[0]/meta",
+   "token": "1.07",
+   "context": "The cost is about 1126 s, roughly 1.07x the root run. The budget is 0 of 6 exp",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1126 s / root cost 1055.7 s = 1.07.",
+   "derivation": "1126/1055.7",
+   "derivation_value": 1.06659,
+   "operand_sources": {
+    "1126": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 71,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[1]/meta",
+   "token": "2.1",
+   "context": "ompute are used. The chosen run costs about 2252 s, roughly 2.1x the R0 cost.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 2252 s / root cost 1055.7 s = 2.13.",
+   "derivation": "2252/1055.7",
+   "derivation_value": 2.13318,
+   "operand_sources": {
+    "2252": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 72,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[1]/meta",
+   "token": "0.8%",
+   "context": " the new run is about half of the R0 to R1 change: St about 0.8% and Cd about 0.55%. Smaller changes mea",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction",
+   "justification": "Predicted next St change under first order: half the R0 -> R1 change (1.56 %) = 0.78 % ('about 0.8 %').",
+   "derivation": "0.5*100*(0.16096-0.15848)/0.15848",
+   "derivation_value": 0.782433,
+   "operand_sources": {
+    "0.5": "constant",
+    "100": "constant",
+    "0.16096": "package",
+    "0.15848": "package"
+   }
+  },
+  {
+   "index": 73,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[1]/meta",
+   "token": "0.55%",
+   "context": "out half of the R0 to R1 change: St about 0.8% and Cd about 0.55%. Smaller changes mean the time error is",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction (approximate)",
+   "justification": "Predicted next Cd change under first order: half the R0 -> R1 change (1.13 %) = 0.57 % ('about 0.55 %').",
+   "derivation": "0.5*100*(1.3047-1.2901)/1.2901",
+   "derivation_value": 0.565848,
+   "operand_sources": {
+    "0.5": "constant",
+    "100": "constant",
+    "1.3047": "package",
+    "1.2901": "package"
+   }
+  },
+  {
+   "index": 74,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.0146",
+   "context": "g at the first-order rate expected for Euler. Cd changes by 0.0146 and then 0.0092 (ratio 0.63). St change",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "Cd difference R1 - R0.",
+   "derivation": "1.3047-1.2901",
+   "derivation_value": 0.0146,
+   "operand_sources": {
+    "1.3047": "package",
+    "1.2901": "package"
+   }
+  },
+  {
+   "index": 75,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.0092",
+   "context": "rder rate expected for Euler. Cd changes by 0.0146 and then 0.0092 (ratio 0.63). St changes by 0.00248 and",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "Cd difference R2 - R1.",
+   "derivation": "1.3139-1.3047",
+   "derivation_value": 0.0092,
+   "operand_sources": {
+    "1.3139": "package",
+    "1.3047": "package"
+   }
+  },
+  {
+   "index": 76,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.63",
+   "context": "cted for Euler. Cd changes by 0.0146 and then 0.0092 (ratio 0.63). St changes by 0.00248 and then 0.0013",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "ratio",
+   "justification": "Ratio of successive Cd changes 0.0092/0.0146 = 0.63.",
+   "derivation": "(1.3139-1.3047)/(1.3047-1.2901)",
+   "derivation_value": 0.630137,
+   "operand_sources": {
+    "1.3139": "package",
+    "1.3047": "package",
+    "1.2901": "package"
+   }
+  },
+  {
+   "index": 77,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.00248",
+   "context": "anges by 0.0146 and then 0.0092 (ratio 0.63). St changes by 0.00248 and then 0.00135 (ratio 0.54). The veri",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "St difference R1 - R0.",
+   "derivation": "0.16096-0.15848",
+   "derivation_value": 0.00248,
+   "operand_sources": {
+    "0.16096": "package",
+    "0.15848": "package"
+   }
+  },
+  {
+   "index": 78,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.00135",
+   "context": "nd then 0.0092 (ratio 0.63). St changes by 0.00248 and then 0.00135 (ratio 0.54). The verifier's observed o",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "St difference R2 - R1.",
+   "derivation": "0.16231-0.16096",
+   "derivation_value": 0.00135,
+   "operand_sources": {
+    "0.16231": "package",
+    "0.16096": "package"
+   }
+  },
+  {
+   "index": 79,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.54",
+   "context": "(ratio 0.63). St changes by 0.00248 and then 0.00135 (ratio 0.54). The verifier's observed orders are p=",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "ratio",
+   "justification": "Ratio of successive St changes 0.00135/0.00248 = 0.54.",
+   "derivation": "(0.16231-0.16096)/(0.16096-0.15848)",
+   "derivation_value": 0.544355,
+   "operand_sources": {
+    "0.16231": "package",
+    "0.16096": "package",
+    "0.15848": "package"
+   }
+  },
+  {
+   "index": 80,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "4.3",
+   "context": "re used. REDUCE_TIME_STEP from R2 costs about 4504 s (about 4.3x root), which brings compute to about 7",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 4504 s / root cost 1055.7 s = 4.27 ('about 4.3x').",
+   "derivation": "4504/1055.7",
+   "derivation_value": 4.26636,
+   "operand_sources": {
+    "4504": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 81,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "7.5",
+   "context": "out 4504 s (about 4.3x root), which brings compute to about 7.5x. That leaves about 4.5x, enough for RE",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Used 3.2 + 4.27 = 7.47 ('about 7.5x').",
+   "derivation": "3.2+4504/1055.7",
+   "derivation_value": 7.46636,
+   "operand_sources": {
+    "3.2": "package",
+    "4504": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 82,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "4.5",
+   "context": "oot), which brings compute to about 7.5x. That leaves about 4.5x, enough for REFINE_MESH from R0 (about",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "12 - 3.2 - 4.27 = 4.53 ('about 4.5x').",
+   "derivation": "12-3.2-4504/1055.7",
+   "derivation_value": 4.53364,
+   "operand_sources": {
+    "12": "package",
+    "3.2": "package",
+    "4504": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 83,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.71%",
+   "context": ". Cd and St are still moving at the finest level (R1 to R2: 0.71% for Cd, 0.84% for St), and the observed",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R1 -> R2 = 0.71 %.",
+   "derivation": "100*(1.3139-1.3047)/1.3047",
+   "derivation_value": 0.705143,
+   "operand_sources": {
+    "100": "constant",
+    "1.3139": "package",
+    "1.3047": "package"
+   }
+  },
+  {
+   "index": 84,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.84%",
+   "context": "e still moving at the finest level (R1 to R2: 0.71% for Cd, 0.84% for St), and the observed orders are be",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R1 -> R2 = 0.84 %.",
+   "derivation": "100*(0.16231-0.16096)/0.16096",
+   "derivation_value": 0.838718,
+   "operand_sources": {
+    "100": "constant",
+    "0.16231": "package",
+    "0.16096": "package"
+   }
+  },
+  {
+   "index": 85,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.4",
+   "context": "If the error is still first-order-like, Cd rises by about 0.4 to 0.6% and St by about 0.4 to 0.6% fro",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction (approximate range)",
+   "justification": "Lower end of a predicted range for the next Cd change under first order (about half of the last change 0.71 %, i.e. 0.35 %); the range ends are rounded judgement.",
+   "derivation": "0.5*100*(1.3139-1.3047)/1.3047",
+   "derivation_value": 0.352571,
+   "operand_sources": {
+    "0.5": "constant",
+    "100": "constant",
+    "1.3139": "package",
+    "1.3047": "package"
+   }
+  },
+  {
+   "index": 86,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.6%",
+   "context": "e error is still first-order-like, Cd rises by about 0.4 to 0.6% and St by about 0.4 to 0.6% from R2, so",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction (approximate range)",
+   "justification": "Upper end of the same predicted range (0.4-0.6 %); a rounded judgement bound around the first-order extrapolation of the recorded R1 -> R2 changes (0.71 %, 0.84 %), not a measurement."
+  },
+  {
+   "index": 87,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.4",
+   "context": "t-order-like, Cd rises by about 0.4 to 0.6% and St by about 0.4 to 0.6% from R2, so the cumulative R0 t",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction (approximate range)",
+   "justification": "Lower end of a predicted range for the next St change under first order (about half of the last change 0.84 %, i.e. 0.42 %).",
+   "derivation": "0.5*100*(0.16231-0.16096)/0.16096",
+   "derivation_value": 0.419359,
+   "operand_sources": {
+    "0.5": "constant",
+    "100": "constant",
+    "0.16231": "package",
+    "0.16096": "package"
+   }
+  },
+  {
+   "index": 88,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "0.6%",
+   "context": "-like, Cd rises by about 0.4 to 0.6% and St by about 0.4 to 0.6% from R2, so the cumulative R0 to R3 cha",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction (approximate range)",
+   "justification": "Upper end of the same predicted range (0.4-0.6 %); a rounded judgement bound around the first-order extrapolation of the recorded R1 -> R2 changes (0.71 %, 0.84 %), not a measurement."
+  },
+  {
+   "index": 89,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "2.3",
+   "context": "e cumulative R0 to R3 change approaches 3% for St and about 2.3 to 2.5% for Cd. Then the root's time er",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction (approximate)",
+   "justification": "Cumulative Cd change R0 -> R2 (1.84 %) plus the predicted 0.4-0.6 % = 2.2-2.4 % ('about 2.3 to 2.5 %').",
+   "derivation": "100*(1.3139-1.2901)/1.2901+0.4",
+   "derivation_value": 2.24482,
+   "operand_sources": {
+    "100": "constant",
+    "1.3139": "package",
+    "1.2901": "package",
+    "0.4": "same LLM output"
+   }
+  },
+  {
+   "index": 90,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "4.5",
+   "context": "onent can pass. After this run, the remaining budget (about 4.5x) can cover REFINE_MESH and EXPAND_DOMA",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "12 - 3.2 - 4.27 = 4.53 ('about 4.5x').",
+   "derivation": "12-3.2-4504/1055.7",
+   "derivation_value": 4.53364,
+   "operand_sources": {
+    "12": "package",
+    "3.2": "package",
+    "4504": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 91,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "0.0146",
+   "context": "The step-to-step changes are shrinking. Cd changes by 0.0146, 0.0092 and then 0.0049. St changes by ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "Cd difference R1 - R0.",
+   "derivation": "1.3047-1.2901",
+   "derivation_value": 0.0146,
+   "operand_sources": {
+    "1.3047": "package",
+    "1.2901": "package"
+   }
+  },
+  {
+   "index": 92,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "0.0092",
+   "context": "e step-to-step changes are shrinking. Cd changes by 0.0146, 0.0092 and then 0.0049. St changes by 0.00248,",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "Cd difference R2 - R1.",
+   "derivation": "1.3139-1.3047",
+   "derivation_value": 0.0092,
+   "operand_sources": {
+    "1.3139": "package",
+    "1.3047": "package"
+   }
+  },
+  {
+   "index": 93,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "0.0049",
+   "context": "hanges are shrinking. Cd changes by 0.0146, 0.0092 and then 0.0049. St changes by 0.00248, 0.00135 and the",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "Cd difference R3 - R2.",
+   "derivation": "1.3188-1.3139",
+   "derivation_value": 0.0049,
+   "operand_sources": {
+    "1.3188": "package",
+    "1.3139": "package"
+   }
+  },
+  {
+   "index": 94,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "0.00248",
+   "context": "Cd changes by 0.0146, 0.0092 and then 0.0049. St changes by 0.00248, 0.00135 and then 0.00068. So the time ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "St difference R1 - R0.",
+   "derivation": "0.16096-0.15848",
+   "derivation_value": 0.00248,
+   "operand_sources": {
+    "0.16096": "package",
+    "0.15848": "package"
+   }
+  },
+  {
+   "index": 95,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "0.00135",
+   "context": "s by 0.0146, 0.0092 and then 0.0049. St changes by 0.00248, 0.00135 and then 0.00068. So the time series is",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "St difference R2 - R1.",
+   "derivation": "0.16231-0.16096",
+   "derivation_value": 0.00135,
+   "operand_sources": {
+    "0.16231": "package",
+    "0.16096": "package"
+   }
+  },
+  {
+   "index": 96,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "0.00068",
+   "context": "92 and then 0.0049. St changes by 0.00248, 0.00135 and then 0.00068. So the time series is approaching conv",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "St difference R3 - R2 (reported values).",
+   "derivation": "0.163-0.16232",
+   "derivation_value": 0.00068,
+   "operand_sources": {
+    "0.163": "package",
+    "0.16232": "package"
+   }
+  },
+  {
+   "index": 97,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "2.14",
+   "context": "ept and the mesh effect is isolated. R1 costs 2260 s, about 2.14x root.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 2260 s / root cost 1055.7 s = 2.14.",
+   "derivation": "2260/1055.7",
+   "derivation_value": 2.14076,
+   "operand_sources": {
+    "2260": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 98,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "2.4",
+   "context": " 7.47 of 12x compute are used. After the R1 mesh run, about 2.4x remains. That is enough for EXPAND_DOM",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "12 - 7.47 used - 2.14 = 2.39 ('about 2.4x').",
+   "derivation": "12-7.47-2260/1055.7",
+   "derivation_value": 2.38924,
+   "operand_sources": {
+    "12": "package",
+    "7.47": "package",
+    "2260": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 99,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "0.7",
+   "context": "ins. That is enough for EXPAND_DOMAIN from R0 (748 s, about 0.7x) or from R1 (1495 s, about 1.4x).",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 748 s / root cost 1055.7 s = 0.71.",
+   "derivation": "748/1055.7",
+   "derivation_value": 0.708535,
+   "operand_sources": {
+    "748": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 100,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "0.00068",
+   "context": "fting upward at R3 at a rate comparable to the St change of 0.00068 between R2 and R3.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "difference between runs",
+   "justification": "St difference R3 - R2 (reported values).",
+   "derivation": "0.163-0.16232",
+   "derivation_value": 0.00068,
+   "operand_sources": {
+    "0.163": "package",
+    "0.16232": "package"
+   }
+  },
+  {
+   "index": 101,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "2.14",
+   "context": "gger an automatic dt reduction. Cost is about 2260 s (about 2.14x root), which fits the remaining comput",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 2260 s / root cost 1055.7 s = 2.14.",
+   "derivation": "2260/1055.7",
+   "derivation_value": 2.14076,
+   "operand_sources": {
+    "2260": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 102,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "77%",
+   "context": "Treating R4 as a mesh effect would be a hidden failure. A 77% drop in Cd and a 155-fold St jump are b",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd drop of the diverged run R4 against its parent R1: 1 - 0.30334/1.3047 = 76.8 %.",
+   "derivation": "100*(1-0.30334/1.3047)",
+   "derivation_value": 76.7502,
+   "operand_sources": {
+    "100": "constant",
+    "1": "package",
+    "0.30334": "package",
+    "1.3047": "package"
+   }
+  },
+  {
+   "index": 103,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "155",
+   "context": "sh effect would be a hidden failure. A 77% drop in Cd and a 155-fold St jump are blow-up signatures. Th",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "ratio",
+   "justification": "St jump of the diverged run R4 (reported 25.0) against R1 (0.16097) = 155-fold.",
+   "derivation": "25.0/0.16097",
+   "derivation_value": 155.308,
+   "operand_sources": {
+    "25.0": "package",
+    "0.16097": "package"
+   }
+  },
+  {
+   "index": 104,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "2.39",
+   "context": "of 6 experiments and 9.61 of 12x compute are used, so about 2.39x (about 2500 s) remains. REFINE_MESH fr",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 9.61 used.",
+   "derivation": "12-9.61",
+   "derivation_value": 2.39,
+   "operand_sources": {
+    "12": "package",
+    "9.61": "package"
+   }
+  },
+  {
+   "index": 105,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "2500",
+   "context": "nts and 9.61 of 12x compute are used, so about 2.39x (about 2500 s) remains. REFINE_MESH from R1 (2260 s",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "2.39 units x root cost 1055.7 s = 2523 s ('about 2500 s').",
+   "derivation": "2.39*1055.7",
+   "derivation_value": 2523.12,
+   "operand_sources": {
+    "2.39": "same LLM output",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 106,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "2.39",
+   "context": "e cheapest parent (1130 s), and the remaining budget (about 2.39x root) also covers EXPAND_DOMAIN from R",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 9.61 used.",
+   "derivation": "12-9.61",
+   "derivation_value": 2.39,
+   "operand_sources": {
+    "12": "package",
+    "9.61": "package"
+   }
+  },
+  {
+   "index": 107,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "2.36",
+   "context": "the remaining budget. The budget has 1 experiment and about 2.36x root compute left, which is roughly 24",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 9.64 used.",
+   "derivation": "12-9.64",
+   "derivation_value": 2.36,
+   "operand_sources": {
+    "12": "package",
+    "9.64": "package"
+   }
+  },
+  {
+   "index": 108,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "2490",
+   "context": "eriment and about 2.36x root compute left, which is roughly 2490 s given the root cost of 1055.7 s. R1 m",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "2.36 units x root cost 1055.7 s = 2491 s.",
+   "derivation": "2.36*1055.7",
+   "derivation_value": 2491.45,
+   "operand_sources": {
+    "2.36": "same LLM output",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 109,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.42%",
+   "context": "or St, with Cd close behind. The R2 to R3 changes are still 0.42% for Cd and 0.42% for St.",
+   "mechanical_triage": "other",
+   "category": "unclear",
+   "kind": "not derivable (probable slip)",
+   "justification": "Stated as the R2 -> R3 Cd change, but the package gives 1.3139 -> 1.3188 = 0.37 % (the same run's earlier text correctly gives the step as 0.0049). 0.42 % is the St change; most likely the St value was repeated for Cd. Not in the literature range of any requested quantity.",
+   "comparison": "100*(1.3188-1.3139)/1.3139",
+   "comparison_value": 0.372936,
+   "operand_sources": {
+    "100": "constant",
+    "1.3188": "package",
+    "1.3139": "package"
+   }
+  },
+  {
+   "index": 110,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.42%",
+   "context": "ose behind. The R2 to R3 changes are still 0.42% for Cd and 0.42% for St.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R2 -> R3 (reported 0.16232 -> 0.163) = 0.42 %.",
+   "derivation": "100*(0.163-0.16232)/0.16232",
+   "derivation_value": 0.418926,
+   "operand_sources": {
+    "100": "constant",
+    "0.163": "package",
+    "0.16232": "package"
+   }
+  },
+  {
+   "index": 111,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "E1_noslip_side_walls",
+   "where": "/history[4]/meta",
+   "token": "0.35%",
+   "context": "R3). St went 0.16428, 0.16301, 0.16259. The R2-to-R3 steps (0.35% for Cd, 0.26% for St) are smaller than ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R2 -> R3, values quoted in the same sentence = 0.35 %.",
+   "derivation": "100*(1.3259-1.3213)/1.3259",
+   "derivation_value": 0.346934,
+   "operand_sources": {
+    "100": "constant",
+    "1.3259": "package",
+    "1.3213": "package"
+   }
+  },
+  {
+   "index": 112,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "E1_noslip_side_walls",
+   "where": "/history[4]/meta",
+   "token": "0.26%",
+   "context": ".16428, 0.16301, 0.16259. The R2-to-R3 steps (0.35% for Cd, 0.26% for St) are smaller than R0-to-R2, so t",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R2 -> R3, values quoted in the same sentence = 0.26 %.",
+   "derivation": "100*(0.16301-0.16259)/0.16301",
+   "derivation_value": 0.257653,
+   "operand_sources": {
+    "100": "constant",
+    "0.16301": "package",
+    "0.16259": "package"
+   }
+  },
+  {
+   "index": 113,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G1_premature_averaging",
+   "where": "/history[1]/meta",
+   "token": "4.63",
+   "context": "re used. The menu costs relative to R0's 391.64 s are about 4.63 for REFINE_MESH, 4.0 for REDUCE_TIME_ST",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1812 s / root cost 391.64 s = 4.63 (the text says it is derived).",
+   "derivation": "1812/391.64",
+   "derivation_value": 4.6267,
+   "operand_sources": {
+    "1812": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 114,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G1_premature_averaging",
+   "where": "/history[1]/meta",
+   "token": "2.66",
+   "context": "re about 4.63 for REFINE_MESH, 4.0 for REDUCE_TIME_STEP and 2.66 for EXPAND_DOMAIN. This is derived from",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1040 s / root cost 391.64 s = 2.66.",
+   "derivation": "1040/391.64",
+   "derivation_value": 2.6555,
+   "operand_sources": {
+    "1040": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 115,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "4.63",
+   "context": " s (RUN_LONGER). Relative to R0's 391.64 s, these are about 4.63, 4.0, 2.66 and 2.5 units. These ratios ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1812 s / root cost 391.64 s = 4.63 (the text says it is derived).",
+   "derivation": "1812/391.64",
+   "derivation_value": 4.6267,
+   "operand_sources": {
+    "1812": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 116,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "2.66",
+   "context": "GER). Relative to R0's 391.64 s, these are about 4.63, 4.0, 2.66 and 2.5 units. These ratios are derived",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1040 s / root cost 391.64 s = 2.66.",
+   "derivation": "1040/391.64",
+   "derivation_value": 2.6555,
+   "operand_sources": {
+    "1040": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 117,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "2.5",
+   "context": "ative to R0's 391.64 s, these are about 4.63, 4.0, 2.66 and 2.5 units. These ratios are derived, not re",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 979 s / root cost 391.64 s = 2.50.",
+   "derivation": "979/391.64",
+   "derivation_value": 2.49974,
+   "operand_sources": {
+    "979": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 118,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "4.87",
+   "context": "t recorded. Only one more experiment fits in the remaining ~4.87 units. Experiments from R2 (2265-4164 s",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 7.13 used.",
+   "derivation": "12-7.13",
+   "derivation_value": 4.87,
+   "operand_sources": {
+    "12": "package",
+    "7.13": "package"
+   }
+  },
+  {
+   "index": 119,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "2.2",
+   "context": "Caveat: after this run, the remaining budget (about 2.2 units) cannot cover REDUCE_TIME_STEP. T",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining after the proposed 2.66-unit run: 4.87 - 2.66 = 2.21.",
+   "derivation": "12-7.13-1040/391.64",
+   "derivation_value": 2.2145,
+   "operand_sources": {
+    "12": "package",
+    "7.13": "package",
+    "1040": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 120,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "2.22",
+   "context": "xperiments used and 9.78 of 12 compute units used, so about 2.22 units remain. At R0's 391.64 s that is ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 9.78 used.",
+   "derivation": "12-9.78",
+   "derivation_value": 2.22,
+   "operand_sources": {
+    "12": "package",
+    "9.78": "package"
+   }
+  },
+  {
+   "index": 121,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "869",
+   "context": " so about 2.22 units remain. At R0's 391.64 s that is about 869 s. This is derived from the recorded bu",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "2.22 units x root cost 391.64 s = 869 s.",
+   "derivation": "2.22*391.64",
+   "derivation_value": 869.441,
+   "operand_sources": {
+    "2.22": "same LLM output",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 122,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[2]/meta",
+   "token": "1.77",
+   "context": " of 12.0 root-compute units. EXPAND_DOMAIN on R1 adds about 1.77 units. A REDUCE_TIME_STEP run (about 2.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1126 s / root cost 636.22 s = 1.77.",
+   "derivation": "1126/636.22",
+   "derivation_value": 1.76983,
+   "operand_sources": {
+    "1126": "package",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 123,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[2]/meta",
+   "token": "2.67",
+   "context": " on R1 adds about 1.77 units. A REDUCE_TIME_STEP run (about 2.67 units) can still follow it.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1697 s / root cost 636.22 s = 2.67.",
+   "derivation": "1697/636.22",
+   "derivation_value": 2.66732,
+   "operand_sources": {
+    "1697": "package",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 124,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[3]/meta",
+   "token": "5.48",
+   "context": "6.52 of 12.0 root-compute units are used. That leaves about 5.48 units, or about 3490 s at the root cost",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 6.52 used.",
+   "derivation": "12-6.52",
+   "derivation_value": 5.48,
+   "operand_sources": {
+    "12": "package",
+    "6.52": "package"
+   }
+  },
+  {
+   "index": 125,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[3]/meta",
+   "token": "3490",
+   "context": "pute units are used. That leaves about 5.48 units, or about 3490 s at the root cost of 636.22 s. REDUCE_",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "5.48 units x root cost 636.22 s = 3486 s ('about 3490 s').",
+   "derivation": "5.48*636.22",
+   "derivation_value": 3486.49,
+   "operand_sources": {
+    "5.48": "same LLM output",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 126,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[3]/meta",
+   "token": "2.67",
+   "context": "ost of 636.22 s. REDUCE_TIME_STEP on R1 costs 1697 s (about 2.67 units) and is affordable. A third mesh ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1697 s / root cost 636.22 s = 2.67.",
+   "derivation": "1697/636.22",
+   "derivation_value": 2.66732,
+   "operand_sources": {
+    "1697": "package",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 127,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[3]/meta",
+   "token": "2.67",
+   "context": "n be attributed to the time step. The cost of 1697 s (about 2.67 root units) fits the remaining budget a",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 1697 s / root cost 636.22 s = 2.67.",
+   "derivation": "1697/636.22",
+   "derivation_value": 2.66732,
+   "operand_sources": {
+    "1697": "package",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 128,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[4]/meta",
+   "token": "2.8",
+   "context": "3 s and on R2 costs 4510 s. The remaining headroom is about 2.8 root units, about 1790 s at the R0 cost",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 9.19 used = 2.81 ('about 2.8').",
+   "derivation": "12-9.19",
+   "derivation_value": 2.81,
+   "operand_sources": {
+    "12": "package",
+    "9.19": "package"
+   }
+  },
+  {
+   "index": 129,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[4]/meta",
+   "token": "1790",
+   "context": "10 s. The remaining headroom is about 2.8 root units, about 1790 s at the R0 cost of 636.22 s.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "2.81 units x root cost 636.22 s = 1788 s ('about 1790 s').",
+   "derivation": "(12-9.19)*636.22",
+   "derivation_value": 1787.78,
+   "operand_sources": {
+    "12": "package",
+    "9.19": "package",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 130,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[5]/meta",
+   "token": "1.23",
+   "context": "y menu entry. Compute used is 10.77 of 12.0 root units. The 1.23 left is about 783 s at the R0 cost of 6",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 10.77 used.",
+   "derivation": "12-10.77",
+   "derivation_value": 1.23,
+   "operand_sources": {
+    "12": "package",
+    "10.77": "package"
+   }
+  },
+  {
+   "index": 131,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "G2_average_from_start",
+   "where": "/history[5]/meta",
+   "token": "783",
+   "context": "te used is 10.77 of 12.0 root units. The 1.23 left is about 783 s at the R0 cost of 636.22 s. The cheap",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "1.23 units x root cost 636.22 s = 783 s.",
+   "derivation": "1.23*636.22",
+   "derivation_value": 782.551,
+   "operand_sources": {
+    "1.23": "same LLM output",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 132,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K1_central_scheme",
+   "where": "/history[0]/meta",
+   "token": "1.25",
+   "context": "Boundary truncation at 30 D / 50 D / 40 D, including the 1.25 % blockage, biases Cd and St by an amou",
+   "mechanical_triage": "leakage-check",
+   "category": "derived arithmetic",
+   "kind": "percent conversion",
+   "justification": "Blockage ratio 0.0125 in the package, written as '1.25 %' (the space before % makes the audit compare 1.25 with the raw 0.0125). In the Cd literature range only by coincidence.",
+   "derivation": "100*0.0125",
+   "derivation_value": 1.25,
+   "operand_sources": {
+    "100": "constant",
+    "0.0125": "package"
+   }
+  },
+  {
+   "index": 133,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K1_central_scheme",
+   "where": "/history[3]/meta",
+   "token": "1.07",
+   "context": "REDUCE_TIME_STEP on R0 costs 4367 s, about 1.07 compute units. That brings use to about",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 4367 s / root cost 4094 s = 1.07.",
+   "derivation": "4367/4094",
+   "derivation_value": 1.06668,
+   "operand_sources": {
+    "4367": "package",
+    "4094": "package"
+   }
+  },
+  {
+   "index": 134,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K1_central_scheme",
+   "where": "/history[3]/meta",
+   "token": "6.1",
+   "context": " 4367 s, about 1.07 compute units. That brings use to about 6.1 of 12.0 and 4 of 6 experiments. A later",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Used 5.03 + 1.07 = 6.10.",
+   "derivation": "5.03+4367/4094",
+   "derivation_value": 6.09668,
+   "operand_sources": {
+    "5.03": "package",
+    "4367": "package",
+    "4094": "package"
+   }
+  },
+  {
+   "index": 135,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[0]/meta",
+   "token": "95%",
+   "context": "278 as reported and 1.3277 in the stationary window. The Cd 95% CI is 1.0366e-05, and the averaging unc",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 136,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[0]/meta",
+   "token": "8%",
+   "context": "requency resolution is 0.013334 against St = 0.16382, about 8% of the value. That is coarser than the ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "St frequency resolution / St = 8.14 % ('about 8 %').",
+   "derivation": "100*0.013334/0.16382",
+   "derivation_value": 8.13942,
+   "operand_sources": {
+    "100": "constant",
+    "0.013334": "package",
+    "0.16382": "package"
+   }
+  },
+  {
+   "index": 137,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "95%",
+   "context": "ss for both quantities. R0 has 13 stationary cycles. The Cd 95% CI is 1.0366e-05 and the Cd drift is -2",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 138,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[3]/meta",
+   "token": "1.7",
+   "context": "ed further, but REFINE_MESH from R0 at a factor up to about 1.7 stays under the 160000-cell limit.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "Largest refinement factor from R0 under the 160000-cell limit = 1.72 ('up to about 1.7').",
+   "derivation": "(160000/54244)**0.5",
+   "derivation_value": 1.71745,
+   "operand_sources": {
+    "160000": "package",
+    "54244": "package",
+    "0.5": "constant"
+   }
+  },
+  {
+   "index": 139,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[4]/meta",
+   "token": "1.65",
+   "context": "caled by about the square of the linear factor. A factor of 1.65 gives about 148000 cells. A factor of 1",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter",
+   "justification": "The planner's own refinement factor, chosen below the derived limit 1.717 to leave margin under the cell limit (menu range 1.3-2.0); a choice, not a claim about the evidence."
+  },
+  {
+   "index": 140,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[4]/meta",
+   "token": "148000",
+   "context": "e square of the linear factor. A factor of 1.65 gives about 148000 cells. A factor of 1.7 would be about 1",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "R0's 54244 cells x 1.65^2 = 147679 ('about 148000').",
+   "derivation": "54244*1.65**2",
+   "derivation_value": 147679.0,
+   "operand_sources": {
+    "54244": "package",
+    "1.65": "package",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 141,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[4]/meta",
+   "token": "1.7",
+   "context": "tor. A factor of 1.65 gives about 148000 cells. A factor of 1.7 would be about 157000 cells, too close ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter",
+   "justification": "Alternative factor the planner considered and rejected (too close to the cell limit); a choice, not a claim about the evidence."
+  },
+  {
+   "index": 142,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[4]/meta",
+   "token": "157000",
+   "context": "65 gives about 148000 cells. A factor of 1.7 would be about 157000 cells, too close to the 160000 limit.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "R0's 54244 cells x 1.7^2 = 156765 ('about 157000').",
+   "derivation": "54244*1.7**2",
+   "derivation_value": 156765.0,
+   "operand_sources": {
+    "54244": "package",
+    "1.7": "package",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 143,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[4]/meta",
+   "token": "1.65",
+   "context": "be refined further because of the 160000 cell limit. Factor 1.65 gives about 148000 cells, which stays u",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter",
+   "justification": "The planner's own refinement factor, chosen below the derived limit 1.717 to leave margin under the cell limit (menu range 1.3-2.0); a choice, not a claim about the evidence."
+  },
+  {
+   "index": 144,
+   "phase": "benchmark",
+   "system": "C-llm-r2",
+   "case": "K2_fine_large",
+   "where": "/history[4]/meta",
+   "token": "148000",
+   "context": "r because of the 160000 cell limit. Factor 1.65 gives about 148000 cells, which stays under the limit with",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "R0's 54244 cells x 1.65^2 = 147679 ('about 148000').",
+   "derivation": "54244*1.65**2",
+   "derivation_value": 147679.0,
+   "operand_sources": {
+    "54244": "package",
+    "1.65": "package",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 145,
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K1_central_scheme",
+   "where": "/history[0]/meta",
+   "token": "1.24",
+   "context": "FINE_MESH at the default factor costs about 5070 s, roughly 1.24 times the root cost.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 5070 s / root cost 4094 s = 1.24.",
+   "derivation": "5070/4094",
+   "derivation_value": 1.2384,
+   "operand_sources": {
+    "5070": "package",
+    "4094": "package"
+   }
+  },
+  {
+   "index": 146,
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K1_central_scheme",
+   "where": "/history[1]/meta",
+   "token": "0.71",
+   "context": "is the cheapest unmeasured component (2899 s from R0, about 0.71x the root cost). It has not been tested",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 2899 s / root cost 4094 s = 0.71.",
+   "derivation": "2899/4094",
+   "derivation_value": 0.708109,
+   "operand_sources": {
+    "2899": "package",
+    "4094": "package"
+   }
+  },
+  {
+   "index": 147,
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K1_central_scheme",
+   "where": "/history[1]/meta",
+   "token": "0.71",
+   "context": " used. The domain, time-step and R1-parent mesh runs (about 0.71, 1.07 and 2.84 root-costs) all fit in t",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 2899 s / root cost 4094 s = 0.71.",
+   "derivation": "2899/4094",
+   "derivation_value": 0.708109,
+   "operand_sources": {
+    "2899": "package",
+    "4094": "package"
+   }
+  },
+  {
+   "index": 148,
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K1_central_scheme",
+   "where": "/history[1]/meta",
+   "token": "1.07",
+   "context": " The domain, time-step and R1-parent mesh runs (about 0.71, 1.07 and 2.84 root-costs) all fit in the rem",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 4367 s / root cost 4094 s = 1.07.",
+   "derivation": "4367/4094",
+   "derivation_value": 1.06668,
+   "operand_sources": {
+    "4367": "package",
+    "4094": "package"
+   }
+  },
+  {
+   "index": 149,
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K1_central_scheme",
+   "where": "/history[1]/meta",
+   "token": "2.84",
+   "context": "in, time-step and R1-parent mesh runs (about 0.71, 1.07 and 2.84 root-costs) all fit in the remaining bu",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 11642 s / root cost 4094 s = 2.84.",
+   "derivation": "11642/4094",
+   "derivation_value": 2.84367,
+   "operand_sources": {
+    "11642": "package",
+    "4094": "package"
+   }
+  },
+  {
+   "index": 150,
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K1_central_scheme",
+   "where": "/history[4]/meta",
+   "token": "2.84",
+   "context": "cost units are used. REFINE_MESH on R1 costs 11642 s, about 2.84 root units. That leaves 1 experiment an",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 11642 s / root cost 4094 s = 2.84.",
+   "derivation": "11642/4094",
+   "derivation_value": 2.84367,
+   "operand_sources": {
+    "11642": "package",
+    "4094": "package"
+   }
+  },
+  {
+   "index": 151,
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K1_central_scheme",
+   "where": "/history[5]/meta",
+   "token": "5.31",
+   "context": " 5 of 6 experiments are used, so exactly one remains. About 5.31 root-cost units of compute remain (6.69",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 6.69 used.",
+   "derivation": "12-6.69",
+   "derivation_value": 5.31,
+   "operand_sources": {
+    "12": "package",
+    "6.69": "package"
+   }
+  },
+  {
+   "index": 152,
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K1_central_scheme",
+   "where": "/history[5]/meta",
+   "token": "1.7284",
+   "context": "he remaining budget (about 10140 s at factor 2, and less at 1.7284).",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter (computed)",
+   "justification": "Time-step reduction factor that takes R1's dt 0.0086422 to 0.005 = 1.7284.",
+   "derivation": "0.0086422/0.005",
+   "derivation_value": 1.72844,
+   "operand_sources": {
+    "0.0086422": "package",
+    "0.005": "package"
+   }
+  },
+  {
+   "index": 153,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "A1_coarse_mesh",
+   "where": "",
+   "token": "95%",
+   "context": "12 stationary cycles, a mean-drag drift of 0.00018797 and a 95% CI of 5.8758e-05. The inlet is uniform ",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 154,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "A1_coarse_mesh",
+   "where": "",
+   "token": "6.4",
+   "context": " cell is 2.0173 D. The shed vortices have a period of about 6.4 convective units, so the far wake canno",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "period",
+   "justification": "Shedding period = steps per period 642.64 x dt 0.01 = 6.43 (equivalently 1/St = 1/0.15561).",
+   "derivation": "642.64*0.01",
+   "derivation_value": 6.4264,
+   "operand_sources": {
+    "642.64": "package",
+    "0.01": "package"
+   }
+  },
+  {
+   "index": 155,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "A1_coarse_mesh",
+   "where": "",
+   "token": "8.6%",
+   "context": "e Strouhal frequency resolution is 0.013333, which is about 8.6% of the reported St of 0.15561. That is ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "St frequency resolution / St = 8.57 %.",
+   "derivation": "100*0.013333/0.15561",
+   "derivation_value": 8.56822,
+   "operand_sources": {
+    "100": "constant",
+    "0.013333": "package",
+    "0.15561": "package"
+   }
+  },
+  {
+   "index": 156,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "A2_moderate_mesh",
+   "where": "",
+   "token": "95%",
+   "context": "very good. The stationary window has 12 cycles. The mean-Cd 95% CI is 2.1297e-05, drift is 7.1653e-05, ",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 157,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "A2_moderate_mesh",
+   "where": "",
+   "token": "6.189",
+   "context": "istent with the period (618.93 steps at dt 0.01 gives about 6.189 convective units, so St is about 0.1616",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "period",
+   "justification": "Shedding period = 618.93 steps x dt 0.01 = 6.189.",
+   "derivation": "618.93*0.01",
+   "derivation_value": 6.1893,
+   "operand_sources": {
+    "618.93": "package",
+    "0.01": "package"
+   }
+  },
+  {
+   "index": 158,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "A2_moderate_mesh",
+   "where": "",
+   "token": "1.416",
+   "context": "bout 0.1616). Cl amplitude 0.3113 over rms 0.21989 is about 1.416, i.e. a clean sinusoidal shedding signa",
+   "mechanical_triage": "leakage-check",
+   "category": "derived arithmetic",
+   "kind": "amplitude ratio",
+   "justification": "Cl amplitude / rms, both quoted in the same sentence = 1.416 (sqrt 2 for a sinusoid). In the Cd literature range only by coincidence.",
+   "derivation": "0.3113/0.21989",
+   "derivation_value": 1.41571,
+   "operand_sources": {
+    "0.3113": "package",
+    "0.21989": "package"
+   }
+  },
+  {
+   "index": 159,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "A2_moderate_mesh",
+   "where": "",
+   "token": "8%",
+   "context": "MSER cap. The FFT frequency resolution of 0.013333 is about 8% of St, so St rests on the cycle-based e",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "St frequency resolution / St = 8.25 % ('about 8 %').",
+   "derivation": "100*0.013333/0.16157",
+   "derivation_value": 8.25215,
+   "operand_sources": {
+    "100": "constant",
+    "0.013333": "package",
+    "0.16157": "package"
+   }
+  },
+  {
+   "index": 160,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "C1_large_timestep",
+   "where": "",
+   "token": "95%",
+   "context": "relative, the half-window difference is 4.4499e-05, and the 95% CI is 3.1562e-05. Mean Cd is 1.3237 in ",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 161,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "C1_large_timestep",
+   "where": "",
+   "token": "0.2167",
+   "context": "0.05). The Cl amplitude of 0.30641 divided by sqrt(2) gives 0.2167, which matches the rms Cl of 0.21662. T",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "amplitude ratio",
+   "justification": "Cl amplitude 0.30641 / sqrt 2 = 0.2167 (compared with the recorded rms 0.21662).",
+   "derivation": "0.30641/2**0.5",
+   "derivation_value": 0.216665,
+   "operand_sources": {
+    "0.30641": "package",
+    "2": "constant",
+    "0.5": "constant"
+   }
+  },
+  {
+   "index": 162,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "C2_euler_large_timestep",
+   "where": "",
+   "token": "95%",
+   "context": "stationary window holds 12 cycles. Mean Cd is 1.2901 with a 95% CI of 5.2336e-05 and relative drift of ",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 163,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "C2_euler_large_timestep",
+   "where": "",
+   "token": "8%",
+   "context": "8. The FFT frequency resolution is 0.013333, which is about 8% of St, so the St figure relies on the t",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "St frequency resolution / St = 8.41 % ('about 8 %').",
+   "derivation": "100*0.013333/0.15848",
+   "derivation_value": 8.41305,
+   "operand_sources": {
+    "100": "constant",
+    "0.013333": "package",
+    "0.15848": "package"
+   }
+  },
+  {
+   "index": 164,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "E1_noslip_side_walls",
+   "where": "",
+   "token": "95%",
+   "context": "relative, the half-window difference is 0.00060692, and the 95% CI is 0.00029469. All are far below the",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 165,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "G1_premature_averaging",
+   "where": "",
+   "token": "3.4",
+   "context": " cycles. The 95 % CI on mean Cd is 0.044509, which is about 3.4 % of 1.3039 and already above 3 %. The ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "95 % CI 0.044509 as a percentage of mean Cd 1.3039 = 3.41 %.",
+   "derivation": "100*0.044509/1.3039",
+   "derivation_value": 3.41353,
+   "operand_sources": {
+    "100": "constant",
+    "0.044509": "package",
+    "1.3039": "package"
+   }
+  },
+  {
+   "index": 166,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "G2_average_from_start",
+   "where": "",
+   "token": "95%",
+   "context": "lly stable. The stationary-window mean Cd is 1.3266, with a 95% CI of 0.0058205 (about 0.4%), drift of ",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 167,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "G2_average_from_start",
+   "where": "",
+   "token": "0.4%",
+   "context": "window mean Cd is 1.3266, with a 95% CI of 0.0058205 (about 0.4%), drift of 0.010388 and half-window dif",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "95 % CI 0.0058205 as a percentage of mean Cd 1.3266 = 0.44 % ('about 0.4 %').",
+   "derivation": "100*0.0058205/1.3266",
+   "derivation_value": 0.438753,
+   "operand_sources": {
+    "100": "constant",
+    "0.0058205": "package",
+    "1.3266": "package"
+   }
+  },
+  {
+   "index": 168,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "H1_dynamic_viscosity",
+   "where": "",
+   "token": "1.8e-05",
+   "context": " = 0.15 and D = 0.01 fixed, Re = 83.333 implies nu of about 1.8e-05. That does not match the specified 1.5e",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "physical-parameter arithmetic",
+   "justification": "nu = U D / Re = 0.15 x 0.01 / 83.333 (configured Re in the package) = 1.8e-05.",
+   "derivation": "0.15*0.01/83.333",
+   "derivation_value": 1.80001e-05,
+   "operand_sources": {
+    "0.15": "package",
+    "0.01": "package",
+    "83.333": "package"
+   }
+  },
+  {
+   "index": 169,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "H1_dynamic_viscosity",
+   "where": "",
+   "token": "20%",
+   "context": "Drag coefficient and Strouhal number both depend on Re. A 20% error in Re is far larger than the 0.03",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "physical-parameter arithmetic",
+   "justification": "Configured Re 83.333 against the specified 100: 20 % error.",
+   "derivation": "100*(100/83.333-1)",
+   "derivation_value": 20.0005,
+   "operand_sources": {
+    "100": "constant",
+    "83.333": "package",
+    "1": "package"
+   }
+  },
+  {
+   "index": 170,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "I1_force_reference",
+   "where": "",
+   "token": "0.879",
+   "context": "Cd of 1.1699 is too low by a factor of (0.15/0.16)^2, about 0.879. Rescaled to the true inlet speed, Cd w",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "physical-parameter arithmetic",
+   "justification": "Force-reference rescale (measured inlet 0.15 / magUInf 0.16)^2 = 0.879.",
+   "derivation": "(0.15/0.16)**2",
+   "derivation_value": 0.878906,
+   "operand_sources": {
+    "0.15": "package",
+    "0.16": "package",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 171,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "I1_force_reference",
+   "where": "",
+   "token": "1.33",
+   "context": "rue inlet speed, Cd would be about 1.1699 x (0.16/0.15)^2 ≈ 1.33. That is about 14 % away from the repor",
+   "mechanical_triage": "leakage-check",
+   "category": "derived arithmetic",
+   "kind": "physical-parameter arithmetic",
+   "justification": "Recorded Cd 1.1699 rescaled by (magUInf 0.16 / measured inlet 0.15)^2 = 1.331. Lies in the Cd literature range, but the arithmetic is shown in the text and every operand is in the package.",
+   "derivation": "1.1699*(0.16/0.15)**2",
+   "derivation_value": 1.33109,
+   "operand_sources": {
+    "1.1699": "package",
+    "0.16": "package",
+    "0.15": "package",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 172,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "I1_force_reference",
+   "where": "",
+   "token": "14",
+   "context": "would be about 1.1699 x (0.16/0.15)^2 ≈ 1.33. That is about 14 % away from the reported value, well ou",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change",
+   "justification": "Relative size of the rescale: (0.16/0.15)^2 - 1 = 13.8 % ('about 14 %').",
+   "derivation": "100*((0.16/0.15)**2-1)",
+   "derivation_value": 13.7778,
+   "operand_sources": {
+    "100": "constant",
+    "0.16": "package",
+    "0.15": "package",
+    "2": "constant",
+    "1": "package"
+   }
+  },
+  {
+   "index": 173,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "I1_force_reference",
+   "where": "",
+   "token": "6.7",
+   "context": "sed in convective units, and St = fD/U would shift by about 6.7 % if U = 0.16 were used instead of 0.15",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "physical-parameter arithmetic",
+   "justification": "St = fD/U shifts by 0.16/0.15 - 1 = 6.67 % if the other velocity were used.",
+   "derivation": "100*(0.16/0.15-1)",
+   "derivation_value": 6.66667,
+   "operand_sources": {
+    "100": "constant",
+    "0.16": "package",
+    "0.15": "package",
+    "1": "package"
+   }
+  },
+  {
+   "index": 174,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "K1_central_scheme",
+   "where": "",
+   "token": "95%",
+   "context": "elative, the half-window difference is -6.5091e-05, and the 95% CI is 3.62e-05. The window-based Cd of ",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 175,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "K1_central_scheme",
+   "where": "",
+   "token": "6.1239",
+   "context": "sistent across methods. The period is 612.39 steps * 0.01 = 6.1239 convective units, so St = 0.16329. This",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "period",
+   "justification": "Shedding period = 612.39 steps x dt 0.01 = 6.1239.",
+   "derivation": "612.39*0.01",
+   "derivation_value": 6.1239,
+   "operand_sources": {
+    "612.39": "package",
+    "0.01": "package"
+   }
+  },
+  {
+   "index": 176,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "K1_central_scheme",
+   "where": "",
+   "token": "0.2458",
+   "context": "l amplitude of 0.3476 is self-consistent, since 0.3476/√2 ≈ 0.2458.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "amplitude ratio",
+   "justification": "Cl amplitude 0.3476 / sqrt 2 = 0.2458 (compared with the recorded rms 0.2456).",
+   "derivation": "0.3476/2**0.5",
+   "derivation_value": 0.24579,
+   "operand_sources": {
+    "0.3476": "package",
+    "2": "constant",
+    "0.5": "constant"
+   }
+  },
+  {
+   "index": 177,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "K2_fine_large",
+   "where": "",
+   "token": "95%",
+   "context": "ndow is 1.3277, against 1.3278 for the submitted setup. The 95% CI is 1.0366e-05, relative drift is -2.",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 178,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "baseline",
+   "where": "",
+   "token": "6.1187",
+   "context": "4 (reported). A period of 611.87 steps at dt = 0.01 gives 1/6.1187 = 0.16343. The listed FFT frequency res",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "period",
+   "justification": "Shedding period = 611.87 steps x dt 0.01 = 6.1187.",
+   "derivation": "611.87*0.01",
+   "derivation_value": 6.1187,
+   "operand_sources": {
+    "611.87": "package",
+    "0.01": "package"
+   }
+  },
+  {
+   "index": 179,
+   "phase": "benchmark",
+   "system": "L-judge",
+   "case": "baseline",
+   "where": "",
+   "token": "0.45",
+   "context": " time-step refinement study. The average wake cell is about 0.45D (111 cells over 50D, last cell 1.0209D",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "ratio",
+   "justification": "Average wake cell = 50 D downstream / 111 wake cells = 0.45 D (both quoted in the same sentence).",
+   "derivation": "50/111",
+   "derivation_value": 0.45045,
+   "operand_sources": {
+    "50": "package",
+    "111": "package"
+   }
+  },
+  {
+   "index": 180,
+   "phase": "attacks",
+   "system": "C-llm-v1",
+   "case": "X1_cylinder_geometry",
+   "where": "/history[0]/meta",
+   "token": "1.25",
+   "context": "Boundary truncation or blockage (1.25 %) shifts Cd or St by less than 1.5 %.",
+   "mechanical_triage": "leakage-check",
+   "category": "derived arithmetic",
+   "kind": "percent conversion",
+   "justification": "Blockage ratio 0.0125 written as '1.25 %' (space before %). In the Cd literature range only by coincidence.",
+   "derivation": "100*0.0125",
+   "derivation_value": 1.25,
+   "operand_sources": {
+    "100": "constant",
+    "0.0125": "package"
+   }
+  },
+  {
+   "index": 181,
+   "phase": "attacks",
+   "system": "C-llm-v1",
+   "case": "X2_inlet_shear",
+   "where": "/history[2]/meta",
+   "token": "0.019654",
+   "context": "le. Its Cd uncertainty is 0.02625 and its St uncertainty is 0.019654. Both exceed the 0.015 component budget",
+   "mechanical_triage": "other",
+   "category": "rounded package value",
+   "kind": "truncated package value",
+   "justification": "The verifier's check reason in the package lists R2's St uncertainty as 0.019654541917742144; written as 0.019654 (truncated, not rounded), it misses the audit's +-5e-7 tolerance by 4e-8.",
+   "package_value": "0.019654541917742144"
+  },
+  {
+   "index": 182,
+   "phase": "attacks",
+   "system": "C-llm-v1",
+   "case": "X2_inlet_shear",
+   "where": "/history[2]/meta",
+   "token": "200",
+   "context": "NGER on R2 is estimated at 1756 s at the default length, so 200 units should fit comfortably.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter",
+   "justification": "The planner's own RUN_LONGER length (additional_convective_times), inside the menu range 25-300 (default 100); a choice, not a claim about the evidence."
+  },
+  {
+   "index": 183,
+   "phase": "attacks",
+   "system": "C-llm-v1",
+   "case": "X2_inlet_shear",
+   "where": "/history[2]/meta",
+   "token": "0.019654",
+   "context": "625) and the resulting Cd and St uncertainties (0.02625 and 0.019654) come from a slowly decaying start-up t",
+   "mechanical_triage": "other",
+   "category": "rounded package value",
+   "kind": "truncated package value",
+   "justification": "The verifier's check reason in the package lists R2's St uncertainty as 0.019654541917742144; written as 0.019654 (truncated, not rounded), it misses the audit's +-5e-7 tolerance by 4e-8.",
+   "package_value": "0.019654541917742144"
+  },
+  {
+   "index": 184,
+   "phase": "attacks",
+   "system": "C-llm-v1",
+   "case": "X2_inlet_shear",
+   "where": "/history[2]/meta",
+   "token": "0.019654",
+   "context": "tistically reliable (Cd uncertainty 0.02625, St uncertainty 0.019654, drift_rel -0.02625, window start 107.2",
+   "mechanical_triage": "other",
+   "category": "rounded package value",
+   "kind": "truncated package value",
+   "justification": "The verifier's check reason in the package lists R2's St uncertainty as 0.019654541917742144; written as 0.019654 (truncated, not rounded), it misses the audit's +-5e-7 tolerance by 4e-8.",
+   "package_value": "0.019654541917742144"
+  },
+  {
+   "index": 185,
+   "phase": "attacks",
+   "system": "C-llm-v1",
+   "case": "X2_inlet_shear",
+   "where": "/history[4]/meta",
+   "token": "1.07",
+   "context": "mpute is used. REDUCE_TIME_STEP from R0 costs 2116 s, about 1.07 times the root cost, so one more experi",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 2116 s / root cost 1983.8 s = 1.07.",
+   "derivation": "2116/1983.8",
+   "derivation_value": 1.06664,
+   "operand_sources": {
+    "2116": "package",
+    "1983.8": "package"
+   }
+  },
+  {
+   "index": 186,
+   "phase": "attacks",
+   "system": "C-llm-v1",
+   "case": "X2_inlet_shear",
+   "where": "/history[5]/meta",
+   "token": "700",
+   "context": "e used is 6.1 of 12 relative to the root, which is about 11,700 s left. Open items: the St mesh uncerta",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic (tokenisation artefact)",
+   "justification": "The text says '11,700 s'; the audit's tokeniser splits it at the comma and reports '700'. (12 - 6.1) x root cost 1983.8 s = 11704 s.",
+   "derivation": "(12-6.1)*1983.8",
+   "derivation_value": 11704.4,
+   "operand_sources": {
+    "12": "package",
+    "6.1": "package",
+    "1983.8": "package"
+   }
+  },
+  {
+   "index": 187,
+   "phase": "attacks",
+   "system": "C-llm-v1",
+   "case": "X2_inlet_shear",
+   "where": "/history[5]/meta",
+   "token": "8.97",
+   "context": "h estimate. Cost is 5695 s, which brings the total to about 8.97 of 12. A large change would give a dete",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Used 6.1 + menu cost 5695 s / root cost 1983.8 s (2.87) = 8.97.",
+   "derivation": "6.1+5695/1983.8",
+   "derivation_value": 8.97075,
+   "operand_sources": {
+    "6.1": "package",
+    "5695": "package",
+    "1983.8": "package"
+   }
+  },
+  {
+   "index": 188,
+   "phase": "attacks",
+   "system": "C-llm-v1",
+   "case": "X2_inlet_shear",
+   "where": "/history[5]/meta",
+   "token": "8.97",
+   "context": "osts 5695 s, which fits within the remaining compute (about 8.97 of 12 relative to the root afterwards).",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Used 6.1 + menu cost 5695 s / root cost 1983.8 s (2.87) = 8.97.",
+   "derivation": "6.1+5695/1983.8",
+   "derivation_value": 8.97075,
+   "operand_sources": {
+    "6.1": "package",
+    "5695": "package",
+    "1983.8": "package"
+   }
+  },
+  {
+   "index": 189,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X1_cylinder_geometry",
+   "where": "/history[3]/meta",
+   "token": "0.68%",
+   "context": "0), 1.3847 (R2) and 1.3811 (R3). The successive changes are 0.68% and then 0.26%, so the shift is shrinki",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R0 -> R2, values quoted in the same sentence = 0.68 %.",
+   "derivation": "100*(1.3941-1.3847)/1.3847",
+   "derivation_value": 0.678847,
+   "operand_sources": {
+    "100": "constant",
+    "1.3941": "package",
+    "1.3847": "package"
+   }
+  },
+  {
+   "index": 190,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X1_cylinder_geometry",
+   "where": "/history[3]/meta",
+   "token": "0.26%",
+   "context": " and 1.3811 (R3). The successive changes are 0.68% and then 0.26%, so the shift is shrinking. St is 0.158",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R2 -> R3, values quoted in the same sentence = 0.26 %.",
+   "derivation": "100*(1.3847-1.3811)/1.3847",
+   "derivation_value": 0.259984,
+   "operand_sources": {
+    "100": "constant",
+    "1.3847": "package",
+    "1.3811": "package"
+   }
+  },
+  {
+   "index": 191,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X2_inlet_shear",
+   "where": "/history[3]/meta",
+   "token": "0.019654",
+   "context": "ift_rel -0.02625, Cd uncertainty 0.02625 and St uncertainty 0.019654. R2 (Cd 1.329, St 0.16325) agrees with ",
+   "mechanical_triage": "other",
+   "category": "rounded package value",
+   "kind": "truncated package value",
+   "justification": "The verifier's check reason in the package lists R2's St uncertainty as 0.019654541917742144; written as 0.019654 (truncated, not rounded), it misses the audit's +-5e-7 tolerance by 4e-8.",
+   "package_value": "0.019654541917742144"
+  },
+  {
+   "index": 192,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X2_inlet_shear",
+   "where": "/history[3]/meta",
+   "token": "2.9",
+   "context": "7 of 12.0 compute. REFINE_MESH from R3 costs about 5695 s (~2.9x root), leaving enough for REDUCE_TIME_",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Menu cost 5695 s / root cost 1983.8 s = 2.87 ('~2.9x').",
+   "derivation": "5695/1983.8",
+   "derivation_value": 2.87075,
+   "operand_sources": {
+    "5695": "package",
+    "1983.8": "package"
+   }
+  },
+  {
+   "index": 193,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X2_inlet_shear",
+   "where": "/history[3]/meta",
+   "token": "0.019654",
+   "context": "Cd drift_rel -0.02625 and uncertainties of 0.02625 (Cd) and 0.019654 (St), above the 0.015 budget",
+   "mechanical_triage": "other",
+   "category": "rounded package value",
+   "kind": "truncated package value",
+   "justification": "The verifier's check reason in the package lists R2's St uncertainty as 0.019654541917742144; written as 0.019654 (truncated, not rounded), it misses the audit's +-5e-7 tolerance by 4e-8.",
+   "package_value": "0.019654541917742144"
+  },
+  {
+   "index": 194,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X2_inlet_shear",
+   "where": "/history[4]/meta",
+   "token": "0.019654",
+   "context": "ift_rel -0.02625, Cd uncertainty 0.02625 and St uncertainty 0.019654. R2's window values (Cd 1.329, St 0.163",
+   "mechanical_triage": "other",
+   "category": "rounded package value",
+   "kind": "truncated package value",
+   "justification": "The verifier's check reason in the package lists R2's St uncertainty as 0.019654541917742144; written as 0.019654 (truncated, not rounded), it misses the audit's +-5e-7 tolerance by 4e-8.",
+   "package_value": "0.019654541917742144"
+  },
+  {
+   "index": 195,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X2_inlet_shear",
+   "where": "/history[4]/meta",
+   "token": "0.019654",
+   "context": "and uncertainty at or below 0.015 (currently Cd 0.02625, St 0.019654) so the R0 vs R2 comparison can be cert",
+   "mechanical_triage": "other",
+   "category": "rounded package value",
+   "kind": "truncated package value",
+   "justification": "The verifier's check reason in the package lists R2's St uncertainty as 0.019654541917742144; written as 0.019654 (truncated, not rounded), it misses the audit's +-5e-7 tolerance by 4e-8.",
+   "package_value": "0.019654541917742144"
+  },
+  {
+   "index": 196,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X2_inlet_shear",
+   "where": "/history[4]/meta",
+   "token": "0.019654",
+   "context": " drift_rel -0.02625, Cd uncertainty 0.02625, St uncertainty 0.019654). R2's window start (107.29) is an MSER",
+   "mechanical_triage": "other",
+   "category": "rounded package value",
+   "kind": "truncated package value",
+   "justification": "The verifier's check reason in the package lists R2's St uncertainty as 0.019654541917742144; written as 0.019654 (truncated, not rounded), it misses the audit's +-5e-7 tolerance by 4e-8.",
+   "package_value": "0.019654541917742144"
+  },
+  {
+   "index": 197,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X3_compensating_errors",
+   "where": "/history[0]/meta",
+   "token": "8.33",
+   "context": "The 8.33 % blockage with 6D half-height symmetry",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent conversion",
+   "justification": "Blockage ratio 0.083333 (D / 2H with H = 6 D) written as '8.33 %'.",
+   "derivation": "100*0.083333",
+   "derivation_value": 8.3333,
+   "operand_sources": {
+    "100": "constant",
+    "0.083333": "package"
+   }
+  },
+  {
+   "index": 198,
+   "phase": "attacks",
+   "system": "C-llm-v1+review",
+   "case": "X3_compensating_errors",
+   "where": "/history[0]/meta",
+   "token": "8.33",
+   "context": "The question requires an unbounded stream, but R0 has 8.33 % blockage with symmetry lateral bounda",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent conversion",
+   "justification": "Blockage ratio 0.083333 (D / 2H with H = 6 D) written as '8.33 %'.",
+   "derivation": "100*0.083333",
+   "derivation_value": 8.3333,
+   "operand_sources": {
+    "100": "constant",
+    "0.083333": "package"
+   }
+  },
+  {
+   "index": 199,
+   "phase": "attacks",
+   "system": "L-judge",
+   "case": "X1_cylinder_geometry",
+   "where": "",
+   "token": "5%",
+   "context": " and y, but the specified diameter is 0.01 m. That is about 5% larger than specified, which is more th",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change",
+   "justification": "Measured patch extent 0.0105 m against the specified 0.01 m = 5 %.",
+   "derivation": "100*(0.0105/0.01-1)",
+   "derivation_value": 5.0,
+   "operand_sources": {
+    "100": "constant",
+    "0.0105": "package",
+    "0.01": "package",
+    "1": "package"
+   }
+  },
+  {
+   "index": 200,
+   "phase": "attacks",
+   "system": "L-judge",
+   "case": "X1_cylinder_geometry",
+   "where": "",
+   "token": "105",
+   "context": "rong length. The actual Reynolds number would also be about 105 rather than 100. Either effect can shif",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "physical-parameter arithmetic",
+   "justification": "Re scaled with the measured extent: 100 x 0.0105/0.01 = 105.",
+   "derivation": "100*0.0105/0.01",
+   "derivation_value": 105.0,
+   "operand_sources": {
+    "100": "constant",
+    "0.0105": "package",
+    "0.01": "package"
+   }
+  },
+  {
+   "index": 201,
+   "phase": "attacks",
+   "system": "L-judge",
+   "case": "X1_cylinder_geometry",
+   "where": "",
+   "token": "95%",
+   "context": "mass imbalance is 8.3333e-11. Cd drift is 9.2298e-5 and the 95% confidence interval is 2.7463e-05. Ther",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 202,
+   "phase": "attacks",
+   "system": "L-judge",
+   "case": "X1_cylinder_geometry",
+   "where": "",
+   "token": "1.41",
+   "context": "ationary cycles, and the Cl amplitude-to-RMS ratio is about 1.41, which is consistent with clean periodi",
+   "mechanical_triage": "leakage-check",
+   "category": "derived arithmetic",
+   "kind": "amplitude ratio",
+   "justification": "Cl amplitude 0.35967 / rms 0.25417 = 1.415 ('about 1.41'). In the Cd literature range only by coincidence.",
+   "derivation": "0.35967/0.25417",
+   "derivation_value": 1.41508,
+   "operand_sources": {
+    "0.35967": "package",
+    "0.25417": "package"
+   }
+  },
+  {
+   "index": 203,
+   "phase": "attacks",
+   "system": "L-judge",
+   "case": "X2_inlet_shear",
+   "where": "",
+   "token": "95%",
+   "context": "e run itself looks well converged: 11 stationary cycles, Cd 95% CI 0.00097218, drift -0.0022666, Couran",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  },
+  {
+   "index": 204,
+   "phase": "attacks",
+   "system": "L-judge",
+   "case": "X3_compensating_errors",
+   "where": "",
+   "token": "95%",
+   "context": "clean. The record has 13 stationary cycles, and the mean-Cd 95% CI is 2.3708e-05. Drift is 6.9266e-05 a",
+   "mechanical_triage": "convention",
+   "category": "restated threshold or convention",
+   "kind": "statistical convention",
+   "justification": "Confidence level of the recorded 95 % CI; a convention."
+  }
+ ]
+}

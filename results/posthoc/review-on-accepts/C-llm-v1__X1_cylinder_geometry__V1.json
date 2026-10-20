@@ -1,0 +1,36 @@
+{
+ "case": "X1_cylinder_geometry",
+ "system": "C-llm-v1",
+ "note": "post-hoc counterfactual: verdict as the combined-only rule (V1) would give it; does the veto-only LLM acceptance review block it?",
+ "relaxed_checks": [
+  "domain_sensitivity[mean_drag_coefficient] U=0.0176",
+  "domain_sensitivity[strouhal_number] U=0.0194"
+ ],
+ "combined_uncertainty": {
+  "mean_drag_coefficient": 0.023412714031722313,
+  "strouhal_number": 0.024285716459191642
+ },
+ "review_verdict": "ACCEPT",
+ "review": {
+  "latency_s": 22.482970744997147,
+  "cost_usd": 0.13527991,
+  "attempts": 1,
+  "errors": [],
+  "model_fingerprint": "6ad399b27406",
+  "concur": true,
+  "blocking_concerns": [],
+  "uncited_concerns": [],
+  "reasoning_summary": [
+   "Spec and simulation agree. D is 0.01 m, inlet velocity is 0.15 m/s and nu is 1.5e-05. These give Re 100, and configured_reynolds is 100.0. force_reference_used (magUInf 0.15, lRef 0.01, Aref 0.0001, rhoInf 1.2) matches the spec.",
+   "The measured inlet is uniform in every run: ux_min = ux_max = 0.15, ux_nonuniformity 0.0 and uy_max_abs 0.0. The cylinder BC is noSlip. The domain is large for an unbounded stream, with blockage_ratio 0.0125 in R0 and 0.003125 in R5.",
+   "The requested quantities are Cd and St. Both are reported, in quantities_reported_by_submitted_setup and in the stationary window, with matching values: Cd 1.3941 and St 0.15804 (FFT 0.15804). R0 has 12 stationary cycles, Cd drift of 9.2298e-05 and Cd CI95 of 2.7463e-05.",
+   "The sensitivity runs bound the answer well inside 3 %. Cd is 1.3941 in R0, 1.3990 in R1 (mesh) and 1.3903 in R2 (time step). St is 0.15804 in R0, 0.15946 in R1 and 0.15817 in R2. Cd across the domain sequence R0 to R5 is 1.3941, 1.3847, 1.3811 and 1.3795. St is 0.15804, 0.15732, 0.15702 and 0.15709. The largest demonstrated change is 1.06 % for Cd and 0.89 % for St. The combined uncertainties are 0.02341 for Cd and 0.02429 for St, both below 0.03.",
+   "Residual weaknesses do not point to unmodelled physics. The domain components (0.01762 for Cd, 0.01937 for St) are above 0.5*tolerance. The domain runs R3 to R5 have checkMesh_ok false and are noisier, with Cd drift of about 1.5e-03 to 1.8e-03. The deterministic verifier already includes these effects in its budget. The failing checkMesh runs share R0's non-orthogonality and skewness, so the cause looks like far-field cell size, not a flaw in the physical setup. No recorded field shows a mismatch with the question that would invalidate the result."
+  ],
+  "numeric_audit": {
+   "traced": 42,
+   "untraced": [],
+   "n_untraced": 0
+  }
+ }
+}

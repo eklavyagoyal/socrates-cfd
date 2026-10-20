@@ -1,0 +1,67 @@
+{
+ "case": "X1_cylinder_geometry",
+ "system": "C-rule-v1",
+ "note": "post-hoc counterfactual: verdict as the combined-only rule (V1) would give it; does the veto-only LLM acceptance review block it?",
+ "relaxed_checks": [
+  "domain_sensitivity[mean_drag_coefficient] U=0.0192"
+ ],
+ "combined_uncertainty": {
+  "mean_drag_coefficient": 0.022815587232896256,
+  "strouhal_number": 0.016246667160863707
+ },
+ "review_verdict": "INCONCLUSIVE",
+ "review": {
+  "latency_s": 22.763125946999935,
+  "cost_usd": 0.09508181,
+  "attempts": 1,
+  "errors": [],
+  "model_fingerprint": "6ad399b27406",
+  "concur": false,
+  "blocking_concerns": [
+   {
+    "concern": "The domain component for mean drag is not converged and its estimate is unreliable. Mean drag falls monotonically as the domain grows: 1.3941 (R0), 1.3847 (R4), 1.3795 (R5), with the sign of the change unchanged. The observed Celik order is only p=0.85, so the runs are not in the asymptotic range. The domain uncertainty is 0.01919, which exceeds the 0.5*tolerance limit of 0.015 that the stated error_budget_rule requires of each component. The verifier still marked it PASS, noting that 'more refinement would be needed'. The planner could not run a further expansion because the cumulative domain factor exceeded 4.0. The ACCEPT therefore rests on a relaxed rule. The drag combined uncertainty of 0.02282 against a tolerance of 0.03 is dominated by this poorly characterised term.",
+    "evidence_fields": [
+     "deterministic_verifier.per_quantity.mean_drag_coefficient.component_uncertainty.domain",
+     "deterministic_verifier.checks[domain_sensitivity, mean_drag_coefficient].reason",
+     "deterministic_verifier.error_budget_rule",
+     "runs[R0,R4,R5].quantities_stationary_window.mean_drag_coefficient",
+     "previous_critic_decisions[5,6].outcome"
+    ]
+   },
+   {
+    "concern": "The domain-study runs R4 and R5 have checkMesh_ok=false, while R0 to R3 have true. Their far-field and wake resolution is also much coarser than R0. Wake_last_cell_D is 1.9729 for R4 and 3.8756 for R5, against 1.0209 for R0. Representative cell size is 0.79405 and 1.397, against 0.45745. The domain effect is therefore confounded with a wake and far-field mesh change on meshes that failed checkMesh. The verifier's mesh_quality check covered only R0. The measured domain sensitivity for drag and Strouhal number may not reflect blockage and boundary effects alone.",
+    "evidence_fields": [
+     "runs[R4].mesh.checkMesh_ok",
+     "runs[R5].mesh.checkMesh_ok",
+     "runs[R4].mesh.wake_last_cell_D",
+     "runs[R5].mesh.wake_last_cell_D",
+     "runs[R4].mesh.representative_cell_size_D",
+     "runs[R5].mesh.representative_cell_size_D",
+     "deterministic_verifier.checks[mesh_quality].runs"
+    ]
+   },
+   {
+    "concern": "Every run's stationary window starts at the MSER cap, so the transient may not be fully discarded. The refinement and domain runs (R1 to R5) have only 6 stationary cycles. R4 and R5 show much larger drag drift and CI than R0: drift_rel of -0.0015793 and -0.0018255, and ci95 of 0.0007818 and 0.0008247. These are the runs that set the domain uncertainty. The Strouhal frequency resolution for these runs is 0.025, which is coarse against the 3 % tolerance.",
+    "evidence_fields": [
+     "runs[R0..R5].temporal_behavior.stationary_window_start_is_mser_cap",
+     "runs[R4].quantities_stationary_window.mean_drag_coefficient_drift_rel",
+     "runs[R5].quantities_stationary_window.mean_drag_coefficient_drift_rel",
+     "runs[R1..R5].temporal_behavior.stationary_cycles",
+     "runs[R4].quantities_reported_by_submitted_setup.strouhal_frequency_resolution"
+    ]
+   }
+  ],
+  "uncited_concerns": [],
+  "reasoning_summary": [
+   "Inputs match the specification. Re=100 follows from 0.15 m/s, 0.01 m and 1.5e-5 m2/s, the force reference values are consistent, and the inlet is measured as uniform. No spec mismatch in geometry, inlet or boundary-condition types is visible.",
+   "The residual risk is in the domain-sensitivity evidence for mean drag. Drag decreases monotonically with domain size at observed order p=0.85. The domain uncertainty of 1.92% exceeds the stated 0.5*tolerance per-component limit, yet it is marked PASS.",
+   "The domain runs R4 and R5 failed checkMesh and use a much coarser wake and far field than R0, so the domain effect is confounded with mesh changes. They also have larger drift and CI and only 6 cycles.",
+   "Because the drag ACCEPT depends on this weakly supported domain estimate, and the planner stopped with domain still listed as missing, the result should go to human review."
+  ],
+  "numeric_audit": {
+   "traced": 27,
+   "untraced": [],
+   "n_untraced": 0
+  }
+ }
+}

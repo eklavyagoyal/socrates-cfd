@@ -1,0 +1,33 @@
+{
+ "case": "baseline",
+ "system": "C-llm-r3",
+ "note": "post-hoc: LLM acceptance review (veto-only) applied to a stored deterministic ACCEPT",
+ "verdict": "ACCEPT",
+ "review": {
+  "latency_s": 29.409097671996278,
+  "cost_usd": 0.12821951,
+  "attempts": 1,
+  "errors": [],
+  "model_fingerprint": "6ad399b27406",
+  "concur": true,
+  "blocking_concerns": [],
+  "uncited_concerns": [],
+  "reasoning_summary": [
+   "The simulated problem matches the question. In every run, cylinder_diameter 0.01 matches the patch extents (0.01 m in x and y). The inlet velocity of 0.15 m/s was measured at the inlet as uniform (ux_nonuniformity 0.0, uy_max_abs 0.0). Re is 100 in both case and spec, and 0.15*0.01/1.5e-5 gives 100. The reference quantities magUInf 0.15, lRef 0.01, Aref 0.0001 and rhoInf 1.2 match the spec. The cylinder wall is noSlip.",
+   "The domain is set up as an unbounded stream. Blockage is 0.0125 in R0, falling to 0.0083333 in R4 and 0.00625 in R2. Cd moves monotonically with domain size: 1.3311 (R0), 1.3251 (R4), 1.3226 (R2). The estimated domain uncertainty is 1.23% for Cd and 0.79% for St, both within budget.",
+   "R2 has checkMesh_ok=false and a coarser mesh, so its domain signal is confounded with mesh coarsening. This is not blocking. The mesh_quality figures recorded for R2 equal R0's (max_non_orthogonality_deg 43.313, max_skewness 0.53384). R4 has a clean mesh and shows the same trend. A coarser mesh would also be expected to push Cd the same way as the R0-to-R5 mesh trend, so the domain estimate is more likely conservative than optimistic.",
+   "The quantities are consistent across independent runs. R0 and R3 agree on St (0.16344 vs 0.16357) and on Cd (1.3311 vs 1.3275). The mesh-refined runs R5 and R1 agree on Cd (1.3349 and 1.3349) and are within 0.26% of each other on St (0.16443 and 0.16486). The R0 St frequency resolution of 0.013333 is coarse, but the FFT and zero-crossing values agree (0.16344 vs 0.16343) and match the other runs. The 12 stationary cycles with drift of 8.2286e-05 show the averaging window is stationary.",
+   "The combined uncertainties are 1.87% for Cd and 1.59% for St, against a 3% tolerance. I found no recorded evidence of a mismatch between what was simulated and what was asked, so I have no field-specific blocking concern."
+  ],
+  "numeric_audit": {
+   "traced": 38,
+   "untraced": [
+    {
+     "token": "0.26%",
+     "context": "ns R5 and R1 agree on Cd (1.3349 and 1.3349) and are within 0.26% of each other on St (0.16443 and 0.1648"
+    }
+   ],
+   "n_untraced": 1
+  }
+ }
+}

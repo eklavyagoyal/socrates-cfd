@@ -1,0 +1,35 @@
+{
+ "case": "K2_fine_large",
+ "system": "C-llm-r2",
+ "note": "post-hoc: LLM acceptance review (veto-only) applied to a stored deterministic ACCEPT",
+ "verdict": "ACCEPT",
+ "review": {
+  "latency_s": 20.2608147380015,
+  "cost_usd": 0.12583121,
+  "attempts": 1,
+  "errors": [],
+  "model_fingerprint": "6ad399b27406",
+  "concur": true,
+  "blocking_concerns": [],
+  "uncited_concerns": [],
+  "reasoning_summary": [
+   "Specification matches the simulated case. Cylinder patch extent is 0.01 m in x and y in R0 (D = 0.01). Inlet ux is uniform at 0.15 (min = max = mean, nonuniformity 0.0, uy_max_abs 0.0). With nu = 1.5e-5, Re = 0.15*0.01/1.5e-5 = 100, and the configured Re is 100.",
+   "Force reference is consistent with the specification: magUInf 0.15, lRef 0.01, Aref 0.0001 (D times the mesh span), rhoInf 1.2. Cd is therefore normalised with the measured inlet speed and the spec density and diameter. The cylinder BC is noSlip.",
+   "The stream is treated as unbounded. R0 has a blockage ratio of 0.0083333 with a 40 D / 60 D / 60 D domain. Over R0, R2 and R4 (blockage 0.0083333, 0.0041667, 0.0027778) Cd goes 1.3277, 1.3208, 1.3185 and St goes 0.16382, 0.1633, 0.16324. The root-to-finest change is about 0.7% for Cd and 0.36% for St. The domain uncertainties (1.27% and 1.34%) are inside the 3% tolerance.",
+   "R2 and R4 have checkMesh_ok false, coarser far fields and only 6 cycles. R2 has Cd drift of -0.002 and CI95 of 0.00089. These confound the domain study somewhat. The Cd and St shifts are monotonic and far below the 3% tolerance. This looks like a limitation of the study, not specific evidence that R0 is wrong.",
+   "Internal consistency checks agree. The shedding period from steps_per_shedding_period times dt gives St = 1/(872.03*0.007) = 0.16382 for R0, matching the reported St, so the coarse FFT bin width of 0.013334 does not undermine it. R3 gives 1/(1742.9*0.0035) = 0.16393. Rms Cl (0.2275) against Cl amplitude (0.3218) has ratio about 1.41, as expected for a sinusoid.",
+   "R0 has 13 stationary cycles and tiny drift (-2.9e-5). The reported and stationary-window values agree (Cd 1.3278 against 1.3277). Mass imbalance is 0.0 and max Courant is 0.648. The mesh and time studies show changes of 0.2% or less for Cd and about 0.4% or less for St.",
+   "I found no recorded evidence field showing a mismatch between what was simulated and what the question and specification ask for, so I concur."
+  ],
+  "numeric_audit": {
+   "traced": 50,
+   "untraced": [
+    {
+     "token": "1.41",
+     "context": "s Cl (0.2275) against Cl amplitude (0.3218) has ratio about 1.41, as expected for a sinusoid."
+    }
+   ],
+   "n_untraced": 1
+  }
+ }
+}

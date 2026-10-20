@@ -270,6 +270,26 @@ The review also showed that the evidence-only LLM judge (L-judge) is a strong ba
 flaws are visible in the configuration. It was therefore added to the attack phase, whose cases are built to look
 clean in their configuration.
 
+### Decision rule for success criterion 5b (fixed 2026-10-20 09:20 UTC)
+
+design.md §19 requires the LLM planner to "beat the pre-registered rule-based planner on accuracy or cost" but names
+no cost metric, margin or test. A review found this gap after 15 of 17 C-llm results were known, so the rule below is
+**not blind** to those 15; it is fixed before the last two (K1, K2) and before any repeat run is analysed.
+
+- **Pairing.** C-llm (first run) against C-rule, over the cases where both have a current, non-error result.
+  Repeats (C-llm-r2, …) measure variance only and do not enter this comparison.
+- **Accuracy.** The LLM planner beats the rule planner if, in either label view, it makes more correct decisions
+  (flawed → REJECT, credible → ACCEPT) on the paired cases, and in neither view more false acceptances or false
+  rejections.
+- **Cost.** The primary metric is experiment cell-steps relative to the root (the compute the planner requested).
+  Wall time is excluded: CPU oversubscription and queueing contaminate it (two runs with identical cell-steps took
+  1442 s and 4804 s). LLM cost in USD is reported alongside and counts against the LLM. The LLM planner beats on cost
+  only if (i) its total paired relative compute is lower **and** (ii) an exact two-sided sign test over the paired
+  cases whose costs differ by more than 5 % gives p < 0.05 in its favour.
+- **Otherwise** the final report states, as §19 requires, that the LLM planner adds no measurable value on this
+  benchmark. Other differences (first-experiment targeting, savings on single cases) are reported descriptively and
+  do not meet the criterion.
+
 ### Observations logged during the evaluation (not changed in the pre-registered verifier)
 
 - **J1 (coarse wake):** `checkMesh -allGeometry` reports "Cells with small determinant (< 0.001): 48", which OpenFOAM counts as a failed check, so `mesh_quality` FAILs and every system REJECTs J1. Its reported Cd/St are within ~1 % of the baseline, so if the measured label is *credible*, this is a false rejection caused by an extended-geometry quality heuristic rather than by an accuracy problem. A post-hoc variant that treats `-allGeometry`-only failures as INCONCLUSIVE (to be discharged by mesh refinement) is evaluated separately and reported as a protocol deviation.

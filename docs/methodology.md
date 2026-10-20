@@ -270,7 +270,7 @@ The review also showed that the evidence-only LLM judge (L-judge) is a strong ba
 flaws are visible in the configuration. It was therefore added to the attack phase, whose cases are built to look
 clean in their configuration.
 
-### Decision rule for success criterion 5b (fixed 2026-10-20 09:20 UTC)
+### Decision rule for success criterion 5b (fixed 2026-10-20, commit 3ee09b1 at 09:17 UTC)
 
 design.md §19 requires the LLM planner to "beat the pre-registered rule-based planner on accuracy or cost" but names
 no cost metric, margin or test. A review found this gap after 15 of 17 C-llm results were known, so the rule below is

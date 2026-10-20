@@ -247,6 +247,92 @@
     "expected_outcome": "If drag (R0: 1.3402) and Strouhal (R0: 0.16428) change by less than about 1% relative to R0, the domain component passes its 0.015 budget. A change above 3% would make the verifier return FAIL. An intermediate change would show that the domain contributes materially to the budget."
    },
    "outcome": "executed -> E1_noslip_side_walls.D2x-1620b1098386 (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 24.68067114600126,
+    "cost_usd": 0.10239681,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 35507,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 49,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "E1_noslip_side_walls-88a7cd5812e8": "R0",
+     "E1_noslip_side_walls.m2-39a4571e43e5": "R1",
+     "E1_noslip_side_walls.m1.41-f15d7e2db685": "R2",
+     "E1_noslip_side_walls.D2x-1620b1098386": "R3"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed and REJECT is not justified.",
+    "Averaging and statistics pass for both quantities. Drag: 9.319e-05 and 0.001199. Strouhal: 6.507e-05 and 0.0009705. R0 has 13 stationary cycles, so RUN_LONGER adds little.",
+    "Drag mesh passes (0.01143, observed p=2.57). Drag is 1.3402 (R0), 1.3475 (R2), 1.3505 (R1), which is monotonic. Strouhal mesh is INCONCLUSIVE: 0.0212 against a half-tolerance of 0.015, p=1.84. The demonstrated change of 1.23% is below the 3% tolerance.",
+    "Domain is now measured but unresolved. R3 (domain 2x R0) gives drag 1.3259 against 1.3402 for R0, a change of 1.08%. It gives Strouhal 0.16301 against 0.16428, a change of 0.78%. Both are below 3%, so there is no FAIL.",
+    "The domain uncertainty is 0.0647 for drag and 0.04674 for Strouhal. Both come from a two-level Richardson with assumed p=1 and Fs=3, so they are dominated by the assumed order and safety factor. They exceed the 0.015 half-tolerance and are the largest components.",
+    "R3 reports checkMesh_ok false. Its far-field mesh is also coarser than R0: representative_cell_size_D is 0.79405 against 0.45745 and wake_last_cell_D is 1.9729 against 1.0209. The R0-to-R3 change may therefore mix domain and mesh effects, and the measured domain trend is not clean.",
+    "A third domain size between R0 and R3 gives a three-level family with an observed order. EXPAND_DOMAIN on R0 with factor 1.5 gives domain scales 1, 1.5 and 2 with near-constant ratios. It is the cheapest option (estimate 1311 s).",
+    "Time uncertainty is still unmeasured for both quantities. It is required for ACCEPT and is the next priority. Budget used is 3 of 6 experiments and 5.42 of 12.0 relative compute, so the domain run and the time-step run both fit. Menu cost estimates have been lower than recorded costs, so I treat them as lower bounds."
+   ],
+   "missing_evidence": [
+    "Observed domain convergence order for drag and Strouhal. Only a two-level comparison with assumed p=1 exists.",
+    "Whether R3 is a trustworthy domain comparison. Its checkMesh_ok is false and its far-field mesh is coarser than R0.",
+    "Temporal discretisation uncertainty for both quantities at fixed mesh (no REDUCE_TIME_STEP run).",
+    "Strouhal mesh uncertainty of 0.0212 against the 0.015 half-tolerance. Closing it needs a finer level, but the cumulative refinement limit of 2.0 restricts options.",
+    "Combined uncertainty for each quantity, which needs the time and domain components."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The domain uncertainty is smaller than the p=1, Fs=3 estimate. The R0-to-R3 changes (1.08% drag, 0.78% Strouhal) converge faster than first order with domain size, so the intermediate domain lies between R0 and R3 and gives an observed order of at least about 1.",
+     "test": "EXPAND_DOMAIN on R0 with factor 1.5. If drag lies between 1.3402 and 1.3259 and Strouhal between 0.16428 and 0.16301, with an observed order of about 1 or more, the domain uncertainty falls toward or below 0.015. Non-monotonic values or a lower order would refute this."
+    },
+    {
+     "hypothesis": "The temporal error of the backward scheme at 0.01 D/U (608.73 steps per period) is negligible for both quantities.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2.0 in the next iteration. A change below about 1% refutes a significant time error."
+    },
+    {
+     "hypothesis": "The R0-to-R3 change is partly caused by the coarser far-field mesh of R3 (checkMesh_ok false) and not by the domain size alone.",
+     "test": "Compare the factor-1.5 domain run with R0 and R3. If the trend with domain size is not monotonic, the mesh confounding is confirmed."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 1.5
+    },
+    "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
+    "reason": "Domain is the largest uncertainty component: 0.0647 for drag and 0.04674 for Strouhal, both from a two-level estimate with assumed order p=1 and Fs=3. R3 gives only two domain levels, and its checkMesh_ok is false. A run at 1.5x R0 gives a three-level family (1, 1.5, 2) with an observed order. It is the cheapest menu entry on R0 and keeps the near-field mesh unchanged.",
+    "expected_outcome": "Drag falls between R0 (1.3402) and R3 (1.3259), and Strouhal between 0.16428 and 0.16301. A monotonic trend with observed order near 1 or higher would cut the domain uncertainty below its 0.015 half-tolerance. A non-monotonic trend would show that the R3 mesh effect confounds the domain signal and would keep the domain component unresolved."
+   },
+   "outcome": "executed -> E1_noslip_side_walls.D1.5x-f702a7c7fa9d (completed)"
   }
  ]
 }

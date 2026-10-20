@@ -1,0 +1,48 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.304 (Claude Code)",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 29.83416726099999,
+ "cost_usd": 0.03791701,
+ "errors": [],
+ "model_fingerprint": "6ad399b27406",
+ "verdict": "REJECT",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "The meshed cylinder patch extent is 0.0105 m in both x and y, but the specified diameter is 0.01 m. That is about 5% larger than specified, which is more than the 3% tolerance.",
+  "The force reference uses lRef 0.01 and Aref 0.0001, and Strouhal is non-dimensionalised with D = 0.01. If the real body diameter is 0.0105, Cd and St are normalised with the wrong length. The actual Reynolds number would also be about 105 rather than 100. Either effect can shift Cd and St by more than 3%.",
+  "The numerical hygiene looks good. The inlet is uniform, Courant number is 0.70408 and mass imbalance is 8.3333e-11. Cd drift is 9.2298e-5 and the 95% confidence interval is 2.7463e-05. There are 12 stationary cycles, and the Cl amplitude-to-RMS ratio is about 1.41, which is consistent with clean periodic shedding. These statistics show the time-averaging is tight. They do not show that the geometry is correct.",
+  "No mesh-refinement or domain-sensitivity evidence is available. The 30580-cell mesh has a wake last-cell size of 1.0209 D, which is coarse far downstream. The blockage ratio is 0.0125, so the unbounded-stream assumption is only approximate. Without a convergence study the 3% discretisation error cannot be confirmed.",
+  "The geometry mismatch is the decisive problem. Cd = 1.3941 and St = 0.15804 therefore cannot be trusted to 3%."
+ ],
+ "numeric_audit": {
+  "traced": 21,
+  "untraced": [
+   {
+    "token": "5%",
+    "context": " and y, but the specified diameter is 0.01 m. That is about 5% larger than specified, which is more th"
+   },
+   {
+    "token": "105",
+    "context": "rong length. The actual Reynolds number would also be about 105 rather than 100. Either effect can shif"
+   },
+   {
+    "token": "95%",
+    "context": "mass imbalance is 8.3333e-11. Cd drift is 9.2298e-5 and the 95% confidence interval is 2.7463e-05. Ther"
+   },
+   {
+    "token": "1.41",
+    "context": "ationary cycles, and the Cl amplitude-to-RMS ratio is about 1.41, which is consistent with clean periodi"
+   }
+  ],
+  "n_untraced": 4
+ },
+ "case": "X1_cylinder_geometry",
+ "root_run": "X1_cylinder_geometry-53f173b2191e"
+}

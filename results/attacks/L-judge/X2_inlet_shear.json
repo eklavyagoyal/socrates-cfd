@@ -1,0 +1,37 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.304 (Claude Code)",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 15.690336105,
+ "cost_usd": 0.02135031,
+ "errors": [],
+ "model_fingerprint": "6ad399b27406",
+ "verdict": "REJECT",
+ "confidence": "HIGH",
+ "reasoning_summary": [
+  "The problem asks for a uniform free stream at 0.15 m/s. The measured inlet is not uniform: at time 10.0 on 130 faces, ux ranges from 0.1125 to 0.1875, with ux_nonuniformity 0.5 and a mean of 0.15.",
+  "The inlet therefore carries a shear profile, and the cylinder sees a sheared approach flow instead of the uniform one the question specifies. The inflow differs from the specification, so the case is a different physical problem.",
+  "Cd and St are normalised with magUInf 0.15. The local approach velocity at the cylinder differs from that reference. A shear of this size can change the mean drag and the shedding frequency by more than the 3 % tolerance, and the evidence gives no way to bound the effect.",
+  "The run itself looks well converged: 11 stationary cycles, Cd 95% CI 0.00097218, drift -0.0022666, Courant 0.7323, mass imbalance 8.3333e-11. That precision does not fix a wrong inflow condition.",
+  "Resolution is also marginal for a 3 % target. The representative cell size is 0.45745 D, and the last wake cell is 1.0209 D. The mesh has 30580 cells, with 160 cells around the cylinder. The stationary window starts at the MSER cap, and St has a frequency resolution of 0.013333, which is about 8 % of St 0.16312. This adds to the doubt, but the inlet defect alone is enough to reject.",
+  "No other run is available to separate the effect of the shear from the discretisation error. The Cd 1.3306 and St 0.16318 values from this run cannot be trusted to 3 %."
+ ],
+ "numeric_audit": {
+  "traced": 21,
+  "untraced": [
+   {
+    "token": "95%",
+    "context": "e run itself looks well converged: 11 stationary cycles, Cd 95% CI 0.00097218, drift -0.0022666, Couran"
+   }
+  ],
+  "n_untraced": 1
+ },
+ "case": "X2_inlet_shear",
+ "root_run": "X2_inlet_shear-32168bfbca6b"
+}

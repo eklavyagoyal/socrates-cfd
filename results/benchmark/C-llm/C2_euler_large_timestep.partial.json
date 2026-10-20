@@ -22,18 +22,18 @@
      "backend": "claude-cli",
      "model": "cli-default",
      "effort": "high",
-     "cli_version": "2.1.303 (Claude Code)",
+     "cli_version": "2.1.304 (Claude Code)",
      "timeout_s": 300.0,
      "max_attempts": 3
     },
-    "latency_s": 39.76111875100105,
-    "cost_usd": 0.05396541,
+    "latency_s": 25.898753002000007,
+    "cost_usd": 0.05689741,
     "attempts": 1,
     "errors": [],
     "prompt_chars": 13279,
     "model_fingerprint": "6ad399b27406",
     "numeric_audit": {
-     "traced": 34,
+     "traced": 35,
      "untraced": [],
      "n_untraced": 0
     },
@@ -44,45 +44,46 @@
    "decision": "MORE_EVIDENCE",
    "confidence": "MEDIUM",
    "reasoning_summary": [
-    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed. Rejection is not justified either, because nothing measured contradicts R0.",
-    "Mesh, time and domain uncertainty are all unmeasured for both mean_drag_coefficient and strouhal_number. The check status for each is INCONCLUSIVE because no REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run exists.",
-    "Averaging and statistics are small and PASS for R0. Drag: averaging 9.486e-07 and statistics 0.0001664. Strouhal: averaging 1.575e-05 and statistics 0.0001267. Both are far below the 0.03 tolerance. The stationary window has 12 cycles and the drag drift is 0.00016636. Sampling is therefore not the limiting issue.",
-    "R0 resolves the wake coarsely. It has 30580 cells and a representative cell size of 0.45745 D. There are 111 streamwise wake cells over 50 D, and the last wake cell is 1.0209 D. This is the most likely source of a discretisation error larger than 3 % in the shedding frequency and drag.",
-    "The time discretisation is a secondary concern. R0 uses first-order Euler with max Courant 2.9248, and the Courant check is INCONCLUSIVE. The 157.74 steps per shedding period are fairly fine.",
-    "The domain looks generous: 30 D upstream, 50 D downstream, 40 D half-height and blockage 0.0125. Domain error is the least likely of the three to exceed tolerance, but it is still unmeasured.",
-    "The stationary window start is flagged as the MSER cap (73.298 vs. the declared 75). The 12 cycles and the small drift 0.00016636 suggest this is benign. RUN_LONGER would add little compared with a mesh study.",
-    "The budget is ample: 0 of 6 experiments and 0 of 12 relative compute used. Mesh refinement from R0 is the most informative first step, and the time and domain studies can follow."
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed and REJECT is not justified.",
+    "R0 passes the numerical-hygiene checks: solver completed, checkMesh OK, mass imbalance 2.5e-10, final linear residual max 9.999e-08, and Re consistent at 100.",
+    "R0 passes the averaging and statistics components for both quantities. Drag statistics uncertainty is 0.0001664 and Strouhal statistics uncertainty is 0.0001267, against a tolerance of 0.03. There are 12 stationary cycles.",
+    "Three uncertainty components are unmeasured for both quantities: mesh, time and domain. No combined uncertainty can be formed.",
+    "Mesh is the largest unmeasured risk. R0 has 30580 cells, representative cell size 0.45745 D and wake_last_cell_D 1.0209. The wake is coarse in the far field, where shedding vortices are advected and dissipated, and this could shift Strouhal number and drag.",
+    "Time is also unmeasured. The check is INCONCLUSIVE: max Courant is 2.9248 with Euler time stepping and dt = 0.04. There are 157.74 steps per shedding period.",
+    "Domain is the least worrying. R0 has 30 D upstream, 50 D downstream, 40 D half-height and blockage ratio 0.0125, but it is still unmeasured.",
+    "Stationary-window start 73.298 is flagged as the MSER cap. Drift is small (mean_drag_coefficient_drift_rel 0.00016636), so this is a lower-priority concern.",
+    "REFINE_MESH on R0 is chosen first. It costs about the same as the time-step experiment (1130 s vs 1126 s) and fits the budget (0 of 6 experiments used)."
    ],
    "missing_evidence": [
     "Mesh discretisation error for mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
-    "Temporal discretisation error at max Courant 2.9248 with Euler (no REDUCE_TIME_STEP run)",
+    "Temporal discretisation error at max Courant 2.92 with Euler scheme (no REDUCE_TIME_STEP run)",
     "Domain truncation/blockage error (no EXPAND_DOMAIN run)",
-    "Combined uncertainty for each quantity against the 0.03 tolerance"
+    "Combined uncertainty against the 0.03 tolerance"
    ],
    "hypotheses": [
     {
-     "hypothesis": "The coarse wake mesh in R0 (representative cell 0.45745 D, last wake cell 1.0209 D) biases St and mean Cd by more than the 3 % tolerance.",
-     "test": "REFINE_MESH from R0 with factor 2.0. If both quantities change by less than about 1.5 % relative to R0 the mesh component passes. A change above 3 % would be a FAIL for R0."
+     "hypothesis": "The coarse wake and far-field mesh (wake_last_cell_D 1.0209, representative cell size 0.45745 D) introduces a mesh error in mean drag or Strouhal number of more than 1.5% (half the tolerance).",
+     "test": "REFINE_MESH on R0 with factor 1.4142. If the relative changes in both quantities are well below 1.5%, the mesh component passes. If a change exceeds 3% beyond noise, it is a FAIL."
     },
     {
-     "hypothesis": "First-order Euler at max Courant 2.9248 shifts the shedding frequency, and therefore St.",
-     "test": "Later REDUCE_TIME_STEP with factor 2 on the identical mesh. Compare St and mean Cd with R0."
+     "hypothesis": "Euler time stepping at Co 2.92 and dt = 0.04 biases Strouhal number and drag.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2 as a follow-up. Compare St and Cd with R0."
     },
     {
-     "hypothesis": "Boundary truncation (30 D upstream, 50 D downstream, 40 D half-height, symmetry lateral boundaries) has a negligible effect on the results.",
-     "test": "Later EXPAND_DOMAIN with factor 2 on the same near-field mesh. Compare St and mean Cd with R0."
+     "hypothesis": "Artificial boundaries (blockage 1.25%, symmetry lateral walls, 30 D inlet) bias the results.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2 as a follow-up. Compare Cd and St."
     }
    ],
    "next_experiment": {
     "action": "REFINE_MESH",
     "parameters": {
-     "factor": 2.0
+     "factor": 1.4142
     },
     "parent_run": "C2_euler_large_timestep-268eddd71f94",
-    "reason": "Mesh error is the largest unmeasured uncertainty component. R0's wake is coarse and its mesh is the lowest-resolution of the three discretisation dimensions. A factor of 2.0 gives a clear signal for both St and mean Cd.",
-    "expected_outcome": "If St and mean Cd change by less than about 1.5 % relative to R0 (R0: 0.15849 and 1.2901), the mesh component can be bounded within budget. A larger shift would show that R0 is under-resolved and that further refinement is needed. A shift above 3 % would give a deterministic FAIL."
+    "reason": "Mesh error is unmeasured and R0's grid is coarse in the wake (last wake cell 1.0209 D, representative size 0.45745 D). This is the experiment most likely to shift drag or Strouhal number by more than the 3% tolerance. Time and domain checks remain for later iterations.",
+    "expected_outcome": "If drag and Strouhal number each change by less than about 1.5% relative to R0, the mesh component is within budget, and time and domain checks can follow. A change above 3% beyond noise would be a FAIL and mean R0 cannot be trusted."
    },
-   "outcome": "executed -> C2_euler_large_timestep.m2-f70b6f7f3d2d (failed)"
+   "outcome": "executed -> C2_euler_large_timestep.m1.41-eb9ef468444b (failed)"
   },
   {
    "iteration": 2,
@@ -105,57 +106,56 @@
      "backend": "claude-cli",
      "model": "cli-default",
      "effort": "high",
-     "cli_version": "2.1.303 (Claude Code)",
+     "cli_version": "2.1.304 (Claude Code)",
      "timeout_s": 300.0,
      "max_attempts": 3
     },
-    "latency_s": 23.175039727000694,
-    "cost_usd": 0.07067777500000001,
+    "latency_s": 19.862739798999996,
+    "cost_usd": 0.06573901,
     "attempts": 1,
     "errors": [],
-    "prompt_chars": 19998,
+    "prompt_chars": 19596,
     "model_fingerprint": "6ad399b27406",
     "numeric_audit": {
-     "traced": 39,
+     "traced": 33,
      "untraced": [],
      "n_untraced": 0
     },
     "run_aliases": {
      "C2_euler_large_timestep-268eddd71f94": "R0",
-     "C2_euler_large_timestep.m2-f70b6f7f3d2d": "R1"
+     "C2_euler_large_timestep.m1.41-eb9ef468444b": "R1"
     }
    },
    "decision": "MORE_EVIDENCE",
    "confidence": "MEDIUM",
    "reasoning_summary": [
-    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed, and REJECT is not justified because nothing measured contradicts R0.",
-    "R1 (REFINE_MESH from R0) did not complete. It stopped after 64 steps with record length 2.48 convective units. Its max_courant is 3.5831e+103 and its mass_imbalance_max is 3.4692e+91, so it diverged numerically. It gives no mesh evidence, and its quantities are null.",
-    "R1 kept time_step_convective_units at 0.04, the same as R0. Its mesh is finer (cells 122320 vs 30580, wall_first_cell_D 0.0025143 vs 0.005, representative_cell_size_D 0.22873 vs 0.45745). The Courant number must therefore have risen sharply relative to R0's 2.9248, and the two-outer-corrector PIMPLE setup was probably pushed past its stability limit. This is a hypothesis. The package does not record the cause of the divergence.",
-    "R1 cannot be used as a parent. REFINE_MESH from R1 is not allowed (cumulative refinement 2.83 > 2.0). RUN_LONGER from R1 is not allowed because the run did not complete. EXPAND_DOMAIN from R1 is not allowed (child has 162400 cells > limit 160000). Only R0 is a usable parent.",
-    "R0 itself is well sampled. The stationary window has 12 cycles. The drag statistics uncertainty is 0.0001664 and the drag averaging bias is 9.486e-07. The Strouhal statistics uncertainty is 0.0001267 and the Strouhal averaging bias is 1.575e-05. All of these are far below the 0.03 tolerance. RUN_LONGER would add little.",
-    "The courant_number check for R0 is INCONCLUSIVE: max Courant 2.9248 with first-order Euler and 2 outer correctors. The time component is unmeasured for both quantities. R0 runs at Courant above 1, and the R1 divergence points at the time step as a likely limiting factor. A REDUCE_TIME_STEP run on R0 gives a stable, cheap (1126 s estimated) measurement of the time error. It also tests whether a smaller step is the route to a stable mesh study.",
-    "A repeat REFINE_MESH from R0 would very likely keep dt unchanged and diverge again, as R1 did. It would risk wasting an experiment.",
-    "Mesh and domain components remain unmeasured. Budget remains: 1 of 6 experiments and 0.07 of 12 relative compute used."
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed. REJECT is not justified, because R1 is a numerical blow-up and not a measured change in Cd or St.",
+    "R0 passes the hygiene, averaging and statistics checks. Mass imbalance is 2.5e-10. There are 12 stationary cycles. Drag statistics uncertainty is 0.0001664 and Strouhal statistics uncertainty is 0.0001267, against a tolerance of 0.03.",
+    "R1 (REFINE_MESH from R0) did not complete. It stopped after 73 time steps, with max Courant 3.1978e+103 and mass imbalance 1.8456e+76. It produced no usable Cd or St, so the mesh component is still unmeasured.",
+    "R1 kept time_step_convective_units at 0.04, the same as R0. Its representative cell size fell from 0.45745 D to 0.32292 D, and its wall-first-cell size from 0.005 D to 0.0035832 D. R0 already ran at max Courant 2.9248 with 2 outer correctors, so R1 plausibly ran at a higher Courant number. I cannot prove this from the package, because R1 recorded no pre-divergence Courant value.",
+    "Repeating REFINE_MESH at the same dt would probably blow up again. R1 cannot be a parent for REFINE_MESH or REDUCE_TIME_STEP in a useful way, since RUN_LONGER on R1 is explicitly not allowed and its cost is about double.",
+    "The time component is unmeasured. The courant_number check is INCONCLUSIVE at 2.925. A time-step reduction from R0 measures the temporal error directly. It also tests whether R0's large Courant number is the suspected cause of the R1 divergence. It is cheap (1126 s) and uses a mesh already known to be stable.",
+    "Budget: 1 of 6 experiments used, and relative compute used is 0.04 of 12. There is room for more experiments."
    ],
    "missing_evidence": [
-    "Temporal discretisation error for mean_drag_coefficient and strouhal_number (no completed REDUCE_TIME_STEP run)",
-    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (R1 diverged, so there is no valid refined result)",
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (R1 diverged and gave no data)",
+    "Temporal discretisation error at max Courant 2.92 with Euler scheme (no REDUCE_TIME_STEP run)",
     "Domain truncation/blockage error (no EXPAND_DOMAIN run)",
-    "Cause of the R1 divergence (time step versus Courant limit versus mesh/boundary conditions)",
-    "Combined uncertainty for each quantity against the 0.03 tolerance"
+    "Root cause of the R1 divergence (no pre-divergence Courant or residual history recorded)",
+    "Combined uncertainty against the 0.03 tolerance"
    ],
    "hypotheses": [
     {
-     "hypothesis": "The R1 divergence was caused by an unchanged time step (0.04) on a finer mesh, which pushed the Courant number beyond the stability limit of the PIMPLE setup. R0's Courant number of 2.9248 may also be affecting R0's accuracy.",
-     "test": "REDUCE_TIME_STEP on R0 with factor 2. A stable run with a clean stationary window supports the hypothesis that a smaller step is stable. If St and Cd change by less than about 1.5 % from R0 (0.15849 and 1.2901), the time component passes. A change above 3 % is a FAIL for R0."
+     "hypothesis": "R1 diverged because dt = 0.04 was kept on a finer mesh, so the Courant number rose beyond the stable limit of the PIMPLE setup. R0 at Co 2.92 is already near that limit, so it may also carry a temporal error in St or Cd.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2, giving Co of about 1.5. A completed run with St and Cd within about 1.5% of R0 means the time component passes. A larger change shows R0 is time-step limited. A clean completion supports the stability explanation for R1."
     },
     {
-     "hypothesis": "After the time step is understood, the mesh error of R0 (representative cell size 0.45745 D, last wake cell 1.0209 D) can be measured with a refinement that stays stable.",
-     "test": "Later REFINE_MESH from R0 with a smaller factor (e.g. 1.3), once the time-step study shows the Courant number needed for stability. Compare St and Cd with R0."
+     "hypothesis": "Once dt is confirmed adequate, the mesh error is within budget at R0's resolution (0.45745 D representative size, wake_last_cell_D 1.0209).",
+     "test": "After the dt experiment, REFINE_MESH on R0 with factor 1.3 to 1.4142. Use the refined run only if the system also reduces dt. The next iteration should check whether the refined run's dt was reduced."
     },
     {
-     "hypothesis": "Boundary truncation (30 D upstream, 50 D downstream, 40 D half-height, blockage 0.0125) has a negligible effect.",
-     "test": "Later EXPAND_DOMAIN from R0 with factor 1.5 to 2, near-field mesh unchanged. Compare St and Cd with R0."
+     "hypothesis": "Domain truncation (blockage 0.0125, symmetry lateral boundaries) is negligible.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2 in a later iteration. Compare Cd and St."
     }
    ],
    "next_experiment": {
@@ -164,8 +164,8 @@
      "factor": 2.0
     },
     "parent_run": "C2_euler_large_timestep-268eddd71f94",
-    "reason": "R1 diverged, and only R0 can serve as a parent. The time component is unmeasured and R0 operates at max Courant 2.9248 with first-order Euler. Halving the step on the identical mesh is cheap (1126 s estimated), measures the time error directly, and shows whether lower Courant operation is stable and consistent with R0. This is the most informative experiment that avoids repeating the failed mesh refinement at an unchanged dt.",
-    "expected_outcome": "A completed run with max Courant near half of R0's value. If St and mean Cd stay within about 1.5 % of R0 (0.15849 and 1.2901), the time component passes. A change above 3 % would give a deterministic FAIL for R0. Either outcome informs how to set up a stable mesh-refinement study."
+    "reason": "R1 (REFINE_MESH) blew up at the unchanged dt of 0.04, so the mesh component cannot be measured until the time-step stability margin is understood. R0 runs at max Courant 2.9248, and its time error is unmeasured. Halving dt on R0's known-stable mesh measures the temporal error directly. It is cheap at 1126 s, and it tests the cause of the R1 failure.",
+    "expected_outcome": "The run completes with max Courant of about 1.5. If Cd and St each differ from R0 (Cd 1.2901, St 0.15849) by less than about 1.5%, the time component is within budget and a later mesh refinement can be run at a reduced dt. A change above 3% beyond noise would be a FAIL for R0 as submitted."
    },
    "outcome": "executed -> C2_euler_large_timestep.dt0.02-2f2ce6b4d241 (completed)"
   },
@@ -190,64 +190,59 @@
      "backend": "claude-cli",
      "model": "cli-default",
      "effort": "high",
-     "cli_version": "2.1.303 (Claude Code)",
+     "cli_version": "2.1.304 (Claude Code)",
      "timeout_s": 300.0,
      "max_attempts": 3
     },
-    "latency_s": 23.669780659001844,
-    "cost_usd": 0.08734900999999999,
+    "latency_s": 25.11074285700002,
+    "cost_usd": 0.08730821000000001,
     "attempts": 1,
     "errors": [],
-    "prompt_chars": 28287,
+    "prompt_chars": 27177,
     "model_fingerprint": "6ad399b27406",
     "numeric_audit": {
-     "traced": 42,
-     "untraced": [
-      {
-       "token": "0.59",
-       "context": "x Courant of 1.1744, still above 1. One more halving (about 0.59, scaled from recorded values) would app"
-      }
-     ],
-     "n_untraced": 1
+     "traced": 46,
+     "untraced": [],
+     "n_untraced": 0
     },
     "run_aliases": {
      "C2_euler_large_timestep-268eddd71f94": "R0",
-     "C2_euler_large_timestep.m2-f70b6f7f3d2d": "R1",
+     "C2_euler_large_timestep.m1.41-eb9ef468444b": "R1",
      "C2_euler_large_timestep.dt0.02-2f2ce6b4d241": "R2"
     }
    },
    "decision": "MORE_EVIDENCE",
    "confidence": "MEDIUM",
    "reasoning_summary": [
-    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed. REJECT is not justified, because no measured check contradicts R0 at the 0.03 tolerance.",
-    "R1 (REFINE_MESH from R0) diverged: max_courant 3.5831e+103, 64 steps, no quantities. It gives no mesh evidence and cannot be a parent.",
-    "R2 (REDUCE_TIME_STEP from R0, dt 0.04 -> 0.02) completed. Max Courant is 1.1744 and there are 6 stationary cycles. It is on the same mesh as R0, so the change is purely temporal.",
-    "Halving dt moved mean_drag_coefficient from 1.2901 (R0) to 1.3047 (R2), a change of 1.11%. It moved strouhal_number from 0.15849 to 0.16097, a change of 1.54%. Neither change exceeds the 0.03 tolerance, so there is no deterministic FAIL.",
-    "Euler time stepping is first order, and the change from R0 to R2 is not small relative to the budget. The verifier's time uncertainty is 0.06683 for drag and 0.09224 for Strouhal. Both exceed the 0.5*tolerance = 0.015 component limit, so the time component is still INCONCLUSIVE. That estimate rests on an assumed order p=1 and a safety factor Fs=3, not on a measured order.",
-    "A third time level would give an observed convergence order and a tighter time bound. That is the cheapest way to resolve the largest quantified uncertainty. R2 has a max Courant of 1.1744, still above 1. One more halving (about 0.59, scaled from recorded values) would approach Co < 1.",
-    "Averaging and statistics are negligible for R0. Drag: averaging 9.486e-07, statistics 0.0001664. Strouhal: averaging 1.575e-05, statistics 0.0001267. RUN_LONGER adds little.",
-    "Mesh and domain remain unmeasured. Budget remains: 2 of 6 experiments used and 1.13 of 12 relative compute used. That is enough for one more time run, then one mesh run and one domain run, with one spare experiment.",
-    "The mesh study should wait until the time-step behaviour is understood. R1 diverged at the same dt as R0, and the time error is currently comparable to the tolerance."
+    "Deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed. REJECT is not justified, because no demonstrated change exceeds the 0.03 tolerance.",
+    "R0 passes hygiene, averaging and statistics checks: mass imbalance 2.5e-10, 12 stationary cycles, drag statistics uncertainty 0.0001664 and Strouhal statistics uncertainty 0.0001267.",
+    "R1 (REFINE_MESH from R0) did not complete: 73 steps, max Courant 3.1978e+103. It gave no Cd or St, so the mesh component is still unmeasured.",
+    "R2 (REDUCE_TIME_STEP, dt 0.04 -> 0.02, same mesh) completed with max Courant 1.1744. This supports the view that R0's max Courant 2.9248 was close to the stable limit.",
+    "R2 differs from R0 in Cd (1.2901 -> 1.3047, demonstrated change 1.11%) and in St (0.15849 -> 0.16097, demonstrated change 1.54%). Both changes are below tau, but they are not negligible next to the 1.5% per-component budget.",
+    "The verifier's two-level Richardson estimate assumes order p=1 and gives time uncertainty of 0.06683 for Cd and 0.09224 for St. Both are far above the 1.5% component limit. Two time levels cannot show whether the sequence is converging or what the observed order is.",
+    "Mesh and domain are still unmeasured for both quantities, so no combined uncertainty can be formed.",
+    "A further halving of dt on R2 gives three levels (0.04, 0.02, 0.01). That allows an observed convergence order and a justified time uncertainty. R2 is also the stable baseline for a later REFINE_MESH, because R1 diverged at R0's dt.",
+    "Budget: 2 of 6 experiments used, and relative compute used is 1.11 of 12. The listed cost of 2252 s is affordable."
    ],
    "missing_evidence": [
-    "Observed temporal convergence order and a bounded time uncertainty for mean_drag_coefficient and strouhal_number (only two time levels, dt 0.04 and 0.02, so p=1 is assumed)",
-    "Mesh discretisation error for both quantities (R1 diverged, no valid refined result)",
+    "Third time-step level, to give the observed temporal order and a justified time uncertainty for Cd and St",
+    "Mesh discretisation error for Cd and St (R1 diverged and gave no data)",
     "Domain truncation/blockage error (no EXPAND_DOMAIN run)",
-    "Cause of the R1 divergence, and whether a stable refined-mesh run is possible",
-    "Combined uncertainty for each quantity against the 0.03 tolerance"
+    "Combined uncertainty against the 0.03 tolerance",
+    "Cause of the R1 divergence (no pre-divergence Courant or residual history recorded)"
    ],
    "hypotheses": [
     {
-     "hypothesis": "The time error in R0 is not yet converged. The first-order Euler trend from R0 to R2 (St +1.54%, Cd +1.11%) suggests R0's St error may be near or above the 3% tolerance, and R2 itself may still carry an error comparable to the change seen between R0 and R2.",
-     "test": "REDUCE_TIME_STEP with factor 2 from R2 (dt 0.02 -> 0.01). A further change much smaller than 1.54% for St and 1.11% for Cd, consistent with first-order scaling, would bound the time error. A change well above the 3% tolerance relative to R0 would be a deterministic FAIL."
+     "hypothesis": "Euler time stepping is still not time-converged at dt 0.02, so Cd and St keep drifting upward as dt falls. The R0 to R2 changes (Cd 1.11%, St 1.54%) would then be first-order behaviour, and the true time error at R2 would be of similar size.",
+     "test": "REDUCE_TIME_STEP on R2 with factor 2. If the R2 to R3 changes are about half the R0 to R2 changes, convergence is first order and the extrapolated error can be bounded. If they are much smaller, the time component passes. If they are equal or larger, the sequence is not in the asymptotic range."
     },
     {
-     "hypothesis": "The R1 divergence came from the Courant number on the finer mesh at an unchanged dt, not from the mesh itself.",
-     "test": "After the time study, run REFINE_MESH from R0 with a smaller factor (about 1.3 to 1.4). The tool reduces dt automatically if the predicted Courant number exceeds the PISO limit. Check that it completes and compare St and Cd with R0 and R2."
+     "hypothesis": "The mesh error (160 cells around the cylinder, wake_last_cell_D 1.0209) is larger than 1.5% for Cd or St.",
+     "test": "After the time study, run REFINE_MESH with parent R2 (dt already halved) at factor 1.3 to 1.4142. Check that it completes and compare Cd and St with R2."
     },
     {
-     "hypothesis": "Boundary truncation (30 D upstream, 50 D downstream, 40 D half-height, symmetry lateral boundaries, blockage 0.0125) has a negligible effect.",
-     "test": "Later EXPAND_DOMAIN from R0 with factor 1.5 to 2, near-field mesh unchanged. Compare St and Cd with R0."
+     "hypothesis": "Domain truncation (blockage 0.0125, symmetryPlane lateral boundaries) is within budget.",
+     "test": "EXPAND_DOMAIN on R0 with factor 2. Compare Cd and St with R0."
     }
    ],
    "next_experiment": {
@@ -256,8 +251,8 @@
      "factor": 2.0
     },
     "parent_run": "C2_euler_large_timestep.dt0.02-2f2ce6b4d241",
-    "reason": "The time component is the largest quantified uncertainty: 0.06683 for drag and 0.09224 for Strouhal, both from an assumed p=1. Continuing the dt sequence from R2 (dt 0.02 -> 0.01) gives a third time level, an observed order, and a bound on the remaining temporal error. R2 is the finest completed run in this family. Cost is an estimated 2252 s, which fits the budget and leaves experiments for the mesh and domain studies.",
-    "expected_outcome": "A completed run with max Courant roughly half of R2's 1.1744. If the St and Cd changes shrink consistently with first-order behaviour, the time uncertainty can be bounded within budget. If the changes from R0 stay below 0.03 and the sequence converges, the time component passes. If St or Cd drifts by more than 3% relative to R0, that is a deterministic FAIL of R0."
+    "reason": "R0 to R2 showed a St change of 1.54% and a Cd change of 1.11%. Two levels with an assumed order p=1 give time uncertainty of 0.09224 (St) and 0.06683 (Cd), which cannot be resolved without a third level. Continuing the dt sequence from R2 (dt 0.02 -> 0.01) gives an observed order. It also provides a time-converged baseline for the mesh study that follows.",
+    "expected_outcome": "The run completes with lower max Courant than R2's 1.1744. If the R2 to R3 changes in Cd and St are clearly smaller than the R0 to R2 changes (1.11% and 1.54%), the sequence is converging and the time component can be bounded within budget. If the changes stay near 1% or larger, R0's dt is inadequate and a time-step-limited result is confirmed. A change above 3% beyond noise would be a FAIL."
    },
    "outcome": "executed -> C2_euler_large_timestep.dt0.01-f9cf9b35455e (completed)"
   }

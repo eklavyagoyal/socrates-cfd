@@ -1,8 +1,8 @@
 {
   "run_id": "K2_fine_large.m2-e923e7640822",
   "status": "running",
-  "owner_pid": 10692,
-  "created": "2026-10-19T10:02:19+00:00",
+  "owner_pid": 1506,
+  "created": "2026-10-20T01:16:12+00:00",
   "problem_spec": {
     "problem": {
       "id": "cylinder2d_re100",
@@ -118,7 +118,7 @@
   },
   "config_hash": "e5575fc603265573",
   "parent_run": "K2_fine_large-2d999cd1eb7c",
-  "launch_reason": "Mesh sensitivity is the largest unmeasured component and the most likely to shift the answer by more than 3 %. Factor 2.0 was rejected for exceeding the 160000-cell limit (216220 cells). Factor 1.6 keeps the child near 2.56x the 54244 cells of R0, which should fit the limit and still give a measurable signal.",
+  "launch_reason": "The mesh is the most likely source of an error above tolerance, and mesh error is unmeasured for both quantities. The previous factor 2.0 produced 216220 cells, above the 160000 limit, so the factor is reduced. Factor 1.6 gives about 2.56x the 54244 R0 cells, under the limit, and still 1.6x linear refinement.",
   "launched_by": "llm_critic",
   "experiment": {
     "action": "REFINE_MESH",
@@ -187,7 +187,7 @@
     "python": "3.13.16",
     "numpy": "2.5.3",
     "scipy": "1.18.1",
-    "socrates_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+    "socrates_git_commit": "296beaa7f7bcdfda68830b68f0a2f89c19c547f4",
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4

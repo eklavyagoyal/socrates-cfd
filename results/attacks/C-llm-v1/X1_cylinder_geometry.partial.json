@@ -22,20 +22,29 @@
      "backend": "claude-cli",
      "model": "cli-default",
      "effort": "high",
-     "cli_version": "2.1.303 (Claude Code)",
+     "cli_version": "2.1.304 (Claude Code)",
      "timeout_s": 300.0,
      "max_attempts": 3
     },
-    "latency_s": 23.250752177998947,
-    "cost_usd": 0.056887309999999996,
+    "latency_s": 25.131859734000003,
+    "cost_usd": 0.026638810000000002,
     "attempts": 1,
     "errors": [],
     "prompt_chars": 13257,
     "model_fingerprint": "6ad399b27406",
     "numeric_audit": {
-     "traced": 44,
-     "untraced": [],
-     "n_untraced": 0
+     "traced": 34,
+     "untraced": [
+      {
+       "token": "1.19",
+       "context": "rer signal than the default 1.4142 cell-count factor (about 1.19 linear)."
+      },
+      {
+       "token": "1.25",
+       "context": "Boundary truncation (1.25 % blockage, 40 D symmetry sides) shifts"
+      }
+     ],
+     "n_untraced": 2
     },
     "run_aliases": {
      "X1_cylinder_geometry-53f173b2191e": "R0"
@@ -44,52 +53,49 @@
    "decision": "MORE_EVIDENCE",
    "confidence": "MEDIUM",
    "reasoning_summary": [
-    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT and REJECT are both unavailable.",
-    "R0 is clean on averaging and statistics. The averaging uncertainty is 2.147e-05 for Cd and 4.791e-06 for St. The statistics uncertainty is 9.23e-05 for Cd and 7.54e-05 for St. The stationary window has 12 cycles.",
-    "Mesh, time and domain uncertainty are all unmeasured for both Cd and St. Each is INCONCLUSIVE, and absence of evidence is not a pass.",
-    "R0 is coarse: 30580 cells, representative cell size 0.45745 D, 160 cells around the cylinder, wake last cell 1.0209 D and 111 streamwise wake cells. Under-resolution of the near wake could shift Cd (1.3941) and St (0.15804) by more than the 0.03 tolerance. Spatial discretisation is the likeliest unmeasured error to exceed the budget.",
-    "The time step is 0.01 D/U with max Courant number 0.70408 and 632.77 steps per shedding period. This is comparatively well resolved, and the backward scheme is used. Time error is therefore the less likely dominant unknown.",
-    "The domain has 30 D upstream, 50 D downstream and 40 D half-height, with a blockage ratio of 0.0125. This is moderate, and the symmetry lateral boundaries and fixed-pressure outlet could still bias the results. It is cheaper to test (1006 s) but ranks second to mesh.",
-    "The stationary window start (73.434) is the MSER cap, but the measured Cd drift is only 9.2298e-05 relative. This is a minor concern. RUN_LONGER is low priority.",
-    "The best first experiment is REFINE_MESH on R0. It tests the most likely dominant error source and sets up a refinement sequence. Factor 1.5 is a compromise: a large enough change to separate from noise, while leaving budget (max 6 experiments, 12x root compute, none used) for the time-step and domain checks."
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT and REJECT are both ruled out. The mesh, time and domain components are unmeasured for both quantities.",
+    "R0 averaging and statistics are small. Drag averaging is 2.147e-05 and statistics is 9.23e-05. Strouhal averaging is 4.791e-06 and statistics is 7.54e-05. These are far below the 0.03 tolerance. R0 has 12 stationary cycles and a drag drift of 9.2298e-05. More run length would add little.",
+    "The mesh is the least resolved part of the setup. R0 has 30580 cells and representative_cell_size_D of 0.45745. The wake has 111 streamwise cells, and the last wake cell is 1.0209 D. The wall-adjacent cell is 0.00475 D, with 160 cells around the cylinder. A coarse wake can shift both shedding frequency and drag, so mesh error is the most likely source of an error larger than 3 %.",
+    "The time-step risk is lower. R0 uses a backward (second-order) time scheme, max Courant is 0.70408, and there are 632.77 steps per shedding period.",
+    "The domain risk is moderate. Blockage is 0.0125, with 30 D upstream, 50 D downstream and a 40 D half-height with symmetryPlane sides. It is still worth measuring, but I rank it after the mesh.",
+    "Budget is ample: 0 of 6 experiments used and 0 of 12 relative compute used. A factor of 2.0 gives a linear refinement of about 1.41, which is a clearer signal than the default 1.4142 cell-count factor (about 1.19 linear)."
    ],
    "missing_evidence": [
-    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (no REFINE_MESH run yet)",
-    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run yet)",
-    "Domain truncation/blockage error for both quantities (no EXPAND_DOMAIN run yet)",
-    "Combined uncertainty against the 0.03 tolerance (null for both quantities)"
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (no REFINE_MESH run).",
+    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run).",
+    "Domain truncation and blockage error for both quantities (no EXPAND_DOMAIN run).",
+    "Combined uncertainty against the 0.03 tolerance, which cannot be computed until the three missing components are measured."
    ],
    "hypotheses": [
     {
-     "hypothesis": "The coarse R0 mesh (representative cell size 0.45745 D, wake last cell 1.0209 D) under-resolves the near wake. Cd and/or St will shift by more than 3% (or more than 0.5 x tolerance) under refinement.",
-     "test": "REFINE_MESH on R0 with factor 1.5. Compare Cd (R0: 1.3941) and St (R0: 0.15804) from the stationary window. A change above 1.5% means the mesh component fails its half-tolerance budget and needs a further refinement. A change well below that supports mesh independence."
+     "hypothesis": "The coarse wake and body-adjacent resolution of R0 biases Cd and St by more than 1.5 % (0.5 x tolerance).",
+     "test": "REFINE_MESH on R0 with factor 2.0. If the relative changes in mean Cd and St are below roughly 1.5 %, the hypothesis is refuted. If they exceed 3 %, the check FAILs."
     },
     {
-     "hypothesis": "Domain truncation (blockage 0.0125, symmetry lateral boundaries at 40 D, outlet at 50 D) biases Cd and St by less than 1.5%.",
-     "test": "EXPAND_DOMAIN on R0 after the mesh test, and compare Cd and St."
+     "hypothesis": "Boundary truncation (1.25 % blockage, 40 D symmetry sides) shifts Cd and St by more than the budget.",
+     "test": "EXPAND_DOMAIN on R0 with a factor of 2, to follow the mesh study."
     },
     {
-     "hypothesis": "Time error at 0.01 D/U (632.77 steps per period, Courant number 0.70408) is negligible.",
-     "test": "REDUCE_TIME_STEP on R0 with factor 2 after the mesh and domain tests, and compare Cd and St."
+     "hypothesis": "Temporal error at a time step of 0.01 D/U is negligible.",
+     "test": "REDUCE_TIME_STEP on R0 with a factor of 2, to follow the mesh and domain studies."
     }
    ],
    "next_experiment": {
     "action": "REFINE_MESH",
     "parameters": {
-     "factor": 1.5
+     "factor": 2.0
     },
     "parent_run": "X1_cylinder_geometry-53f173b2191e",
-    "reason": "Mesh error is unmeasured and is the most likely error to exceed the 3% tolerance, given the coarse R0 mesh (30580 cells, representative cell size 0.45745 D, wake last cell 1.0209 D). Time step and domain are better resolved. This also starts a refinement family that can be continued for a convergence estimate.",
-    "expected_outcome": "If Cd and St change by less than about 1.5% relative to R0 (Cd 1.3941, St 0.15804), the mesh component can be bounded within budget, and time and domain checks follow. If either changes by more than the tolerance (beyond 2x noise), the verifier will FAIL the mesh check. R0 would then be rejected, or a further refinement would be needed."
+    "reason": "Mesh error is unmeasured for both quantities. R0's wake and cell sizes are the coarsest part of the setup (representative_cell_size_D 0.45745, 111 wake cells, last wake cell 1.0209 D). It is the most likely source of an error larger than the 3 % tolerance. Factor 2.0 gives a stronger signal than the default, and the budget is ample.",
+    "expected_outcome": "If mean Cd and St change by less than about 1.5 % relative to R0 (Cd 1.3941, St 0.15804), the mesh component passes and the domain and time studies follow. A change above 3 % would be a demonstrated FAIL, and a change between 1.5 % and 3 % would call for a further refinement."
    },
-   "outcome": "executed -> X1_cylinder_geometry.m1.5-4f1242ab559c (completed)"
+   "outcome": "executed -> X1_cylinder_geometry.m2-4b1380d73d43 (completed)"
   },
   {
    "iteration": 2,
    "deterministic_verdict": "INCONCLUSIVE",
    "missing_components": {
     "mean_drag_coefficient": [
-     "mesh",
      "time",
      "domain"
     ],
@@ -105,56 +111,56 @@
      "backend": "claude-cli",
      "model": "cli-default",
      "effort": "high",
-     "cli_version": "2.1.303 (Claude Code)",
+     "cli_version": "2.1.304 (Claude Code)",
      "timeout_s": 300.0,
      "max_attempts": 3
     },
-    "latency_s": 23.810326555998472,
-    "cost_usd": 0.07637287499999999,
+    "latency_s": 24.06827918399999,
+    "cost_usd": 0.07179501,
     "attempts": 1,
     "errors": [],
-    "prompt_chars": 20815,
+    "prompt_chars": 20197,
     "model_fingerprint": "6ad399b27406",
     "numeric_audit": {
-     "traced": 52,
+     "traced": 50,
      "untraced": [],
      "n_untraced": 0
     },
     "run_aliases": {
      "X1_cylinder_geometry-53f173b2191e": "R0",
-     "X1_cylinder_geometry.m1.5-4f1242ab559c": "R1"
+     "X1_cylinder_geometry.m2-4b1380d73d43": "R1"
     }
    },
    "decision": "MORE_EVIDENCE",
    "confidence": "MEDIUM",
    "reasoning_summary": [
-    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT and REJECT are both unavailable, so the answer is MORE_EVIDENCE.",
-    "R0 is clean on averaging and statistics. Averaging uncertainty is 2.147e-05 for Cd and 4.791e-06 for St. Statistics uncertainty is 9.23e-05 for Cd and 7.54e-05 for St. The stationary window has 12 cycles.",
-    "R0 to R1 mesh refinement (30580 to 68888 cells, 160 to 240 cells around the cylinder) moved Cd from 1.3941 to 1.3991 (0.36%) and St from 0.15804 to 0.1591 (0.67%). Both changes are well below the 0.03 tolerance.",
-    "The verifier mesh component is still INCONCLUSIVE. Mesh uncertainty is 1.95% for Cd and 3.61% for St, from a two-level Richardson estimate with assumed p=2 and Fs=3. The St value exceeds 0.5*tolerance. This is a conservative bound, not a demonstrated error, because the observed change is small.",
-    "Time and domain components are still unmeasured for both quantities. No REDUCE_TIME_STEP or EXPAND_DOMAIN run exists, and each must be measured before any ACCEPT.",
-    "The domain is the largest unmeasured risk to the answer. R0 has 30 D upstream, 50 D downstream, 40 D half-height, symmetryPlane lateral boundaries and a fixedValue outlet pressure. The question asks to treat the stream as unbounded, and blockage ratio is 0.0125. The mesh change was small, so a domain effect is the likelier source of a shift larger than tolerance.",
-    "Time-step resolution looks adequate: 0.01 D/U, max Courant 0.70408 and 632.77 steps per period. Time error is less likely to dominate than domain error.",
-    "EXPAND_DOMAIN on R0 costs 1006 s, the cheapest informative option. The near-field mesh is unchanged, so any change is attributable to the boundaries. Using R0 as parent keeps the comparison clean. Budget used is 1 of 6 experiments and 1.41 of 12x compute, so time-step and a further mesh level remain affordable afterwards."
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT and REJECT are both ruled out. Missing for Cd: time and domain. Missing for St: mesh, time and domain.",
+    "R0 averaging and statistics are negligible. Cd averaging is 2.147e-05 and Cd statistics is 9.23e-05. St averaging is 4.791e-06 and St statistics is 7.54e-05. R0 has 12 stationary cycles and Cd drift is 9.2298e-05. RUN_LONGER would add nothing useful.",
+    "R1 refined the mesh and passed for Cd. The R0-to-R1 Cd change is 0.351% (1.3941 to 1.399), and the mesh uncertainty is 0.01405, within 0.015.",
+    "For St the demonstrated mesh change is 0.89% (0.15804 to 0.15946). The estimated uncertainty is 0.0356, above 0.015, because it assumes p=2 with Fs=3. A further mesh level from R0 is possible, but only at a factor of at most 2.0 cumulative, so it would need a small factor. R1 cannot be refined further because cumulative refinement 2.83 exceeds the limit of 2.0. A third mesh level would not fix the missing domain and time components.",
+    "The domain is completely unmeasured. The setup has 1.25% blockage, 40 D symmetry lateral boundaries, 30 D upstream and 50 D downstream, with a fixedValue outlet pressure. The task says to treat the stream as unbounded. The domain error is not covered by any other run and could be the largest remaining uncertainty for both quantities.",
+    "EXPAND_DOMAIN from R0 costs an estimated 1006 s, the cheapest experiment on the menu. From R1 it is not allowed (162400 cells > 160000).",
+    "The time risk is lower. The scheme is second-order backward, max Courant is 0.70408, and there are 632.77 steps per shedding period. I rank it after the domain study.",
+    "Budget is ample: 1 of 6 experiments used, and 3.34 of 12 relative compute used."
    ],
    "missing_evidence": [
-    "Domain truncation/blockage error for mean_drag_coefficient and strouhal_number (no EXPAND_DOMAIN run)",
-    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run)",
-    "A mesh uncertainty for St that is below 0.5*tolerance. This needs either a third refinement level to measure the observed order, or a smaller bound than the assumed-order estimate.",
-    "Combined uncertainty against the 0.03 tolerance (null for both quantities)"
+    "Domain truncation and blockage error for mean_drag_coefficient and strouhal_number (no EXPAND_DOMAIN run).",
+    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run).",
+    "A mesh uncertainty for strouhal_number within 0.015. The current two-level estimate is 0.0356, and the demonstrated change is 0.89%.",
+    "Combined uncertainty against the 0.03 tolerance, which cannot be computed until time and domain are measured."
    ],
    "hypotheses": [
     {
-     "hypothesis": "Artificial boundaries (symmetry lateral at 40 D, outlet at 50 D, inlet at 30 D, blockage 0.0125) bias Cd and/or St by less than 1.5%. Refutation: a change above 1.5% (a FAIL if above 3%).",
-     "test": "EXPAND_DOMAIN on R0 with factor 2.0. Compare the stationary-window Cd (R0: 1.3941) and St (R0: 0.15804). A change within the noise floor and below 1.5% supports the hypothesis."
+     "hypothesis": "Boundary truncation and blockage (1.25% blockage, 40 D symmetry sides, 30 D inlet, 50 D outlet) shift Cd or St by more than 1.5% (0.5 x tolerance).",
+     "test": "EXPAND_DOMAIN on R0 with factor 2.0. A relative change in Cd and St below about 1.5% refutes the hypothesis. A change above 3% is a demonstrated FAIL."
     },
     {
-     "hypothesis": "The St mesh uncertainty of 3.61% is an overestimate from the assumed order p=2. The true spatial error is of the order of the observed 0.67% change or smaller.",
-     "test": "After the domain test, run REFINE_MESH on R0 with factor 2.0 (cumulative 2.0, allowed). This gives a third mesh level and an observed convergence order from R0, R1 and the new run."
+     "hypothesis": "The St mesh uncertainty of 0.0356 is inflated by the assumed order p=2 and Fs=3, and a third mesh level would give a smaller measured value.",
+     "test": "After the domain study, REFINE_MESH on R0 with a small factor (for example 1.5) to get a three-level set and an observed order."
     },
     {
-     "hypothesis": "Time error at 0.01 D/U is negligible for Cd and St.",
-     "test": "REDUCE_TIME_STEP on R0 with factor 2 and compare the stationary-window Cd and St."
+     "hypothesis": "Temporal error at 0.01 D/U (632.77 steps per period) is negligible with the second-order backward scheme.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2, and check that Cd and St change by less than 1.5%."
     }
    ],
    "next_experiment": {
@@ -163,8 +169,8 @@
      "factor": 2.0
     },
     "parent_run": "X1_cylinder_geometry-53f173b2191e",
-    "reason": "Domain error is entirely unmeasured and could shift Cd or St by more than the tolerance. The request says to treat the stream as unbounded, yet R0 uses symmetry lateral boundaries at 40 D and a fixed-pressure outlet at 50 D. Mesh refinement from R0 to R1 moved Cd by only 0.36% and St by 0.67%, so the domain is now the likeliest source of a larger shift. It is the cheapest informative experiment (1006 s on R0). The near-field mesh stays the same, so the comparison with R0 isolates the boundary effect.",
-    "expected_outcome": "If Cd (R0: 1.3941) and St (R0: 0.15804) change by less than about 1.5% against R0, the domain component is within budget and time-step and mesh-order checks can follow. If either changes by more than 3% beyond 2x noise, the verifier will FAIL the domain check and R0 will be rejected. A change between 1.5% and 3% would call for a further expansion."
+    "reason": "The domain component is unmeasured for both quantities and is a required budget term. It is the cheapest experiment (about 1006 s) and R1 is not allowed as a parent for it. The setup has 1.25% blockage and symmetry sides at 40 D, so truncation error is a plausible source of a shift larger than the budget. Neither mesh nor time refinement can reveal it.",
+    "expected_outcome": "If Cd (R0: 1.3941) and St (R0: 0.15804) change by less than about 1.5% relative to R0, the domain component passes for both quantities, and the time and extra mesh studies can follow. A change above 3% would be a demonstrated FAIL. A change between 1.5% and 3% would call for a further domain expansion."
    },
    "outcome": "executed -> X1_cylinder_geometry.D2x-bfc063153665 (completed)"
   }

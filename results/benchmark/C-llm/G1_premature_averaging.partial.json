@@ -26,25 +26,45 @@
      "backend": "claude-cli",
      "model": "cli-default",
      "effort": "high",
-     "cli_version": "2.1.303 (Claude Code)",
+     "cli_version": "2.1.304 (Claude Code)",
      "timeout_s": 300.0,
      "max_attempts": 3
     },
-    "latency_s": 40.97575613000117,
-    "cost_usd": 0.05395271,
+    "latency_s": 25.698948677999994,
+    "cost_usd": 0.05491071,
     "attempts": 1,
     "errors": [],
     "prompt_chars": 13343,
     "model_fingerprint": "6ad399b27406",
     "numeric_audit": {
-     "traced": 28,
+     "traced": 37,
      "untraced": [
       {
+       "token": "6.2",
+       "context": " 622.74 steps at 0.01 convective units per step, i.e. about 6.2 convective units."
+      },
+      {
        "token": "95%",
-       "context": "The drag statistics are unreliable. The 95% CI is 0.044509 on a mean of 1.3039. The"
+       "context": "ver the stationary window. The Cd drift is 4.01% and the Cd 95% CI is 0.044509. The reported St is 0.16"
+      },
+      {
+       "token": "21%",
+       "context": " is 0.16169. The St frequency resolution is 0.033333 (about 21% of St), and the St statistical uncertai"
+      },
+      {
+       "token": "4700",
+       "context": "e-step experiments within the 12x-root compute cap of about 4700 s. The default 100 D/U adds roughly 16 "
+      },
+      {
+       "token": "16",
+       "context": "mpute cap of about 4700 s. The default 100 D/U adds roughly 16 shedding cycles."
+      },
+      {
+       "token": "1.5%",
+       "context": "e St statistical uncertainty then fall below 0.5*tolerance (1.5%). The averaging and statistics componen"
       }
      ],
-     "n_untraced": 1
+     "n_untraced": 6
     },
     "run_aliases": {
      "G1_premature_averaging-17c0143468d7": "R0"
@@ -53,31 +73,30 @@
    "decision": "MORE_EVIDENCE",
    "confidence": "HIGH",
    "reasoning_summary": [
-    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed. REJECT is not justified either, because no FAIL has been measured.",
-    "All five uncertainty components (averaging, statistics, mesh, time, domain) are unmeasured for both mean_drag_coefficient and strouhal_number.",
-    "R0 is not shown to be in a sustained limit cycle. The physics_regime check is INCONCLUSIVE because the lift amplitude changes by +25.8% across the analysed window.",
-    "The stationary window start (15.276) is the MSER cap (stationary_window_start_is_mser_cap = true). The window has only 3 cycles, and the record ends at 39.99 convective units.",
-    "The drag statistics are unreliable. The 95% CI is 0.044509 on a mean of 1.3039. The relative drift is 0.040105, which is above the 0.03 tolerance. The Strouhal statistical uncertainty is 3.58%.",
-    "The submitted-setup drag (1.2961) and the stationary-window drag (1.3039) differ. The Strouhal numbers also differ: 0.16129 and 0.16058 (window), against an FFT value of 0.16169. These differences are comparable to the tolerance, so the transient is contaminating the statistics.",
-    "Mesh, time-step and domain studies would each compare against a parent that has not reached a stationary state. Any difference would mix discretisation error with transient drift. RUN_LONGER must come first.",
-    "RUN_LONGER is the cheapest option on the menu (979 s, against 1040, 1567 and 1812 s). It also removes the blocking INCONCLUSIVE items in the physics_regime, averaging and statistics checks at once."
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. All five uncertainty components (averaging, statistics, mesh, time, domain) are unmeasured for both quantities, so ACCEPT is not allowed. There is no FAIL to justify REJECT.",
+    "R0's physics_regime check is INCONCLUSIVE. The lift amplitude changes by +25.8% across the analysed window, so the wake is not yet a sustained limit cycle (decaying or still growing).",
+    "The stationary window for R0 starts at 15.276 convective units, which is flagged as the MSER cap. The window holds only 3 cycles (<4), and the record ends at 39.99 convective units. The shedding period is about 622.74 steps at 0.01 convective units per step, i.e. about 6.2 convective units.",
+    "R0 reports a mean Cd of 1.2961 over the submitted averaging window and 1.3039 over the stationary window. The Cd drift is 4.01% and the Cd 95% CI is 0.044509. The reported St is 0.16129, the stationary-window St is 0.16058, and the FFT St is 0.16169. The St frequency resolution is 0.033333 (about 21% of St), and the St statistical uncertainty is 3.58%. Both figures exceed or are close to the 3% tolerance.",
+    "Because the transient has not finished, any mesh, time-step or domain comparison made now would mix discretisation effects with unsteady drift. A longer R0 record must come first.",
+    "The other recorded checks pass, so there is no evidence of a setup defect: mesh OK, max Courant 0.73373, mass imbalance 8.3333e-11, Re matches the spec, force references are consistent, and the scheme is second order.",
+    "RUN_LONGER on R0 is also the cheapest useful step (979 s estimated). It leaves budget for later mesh, domain and time-step experiments within the 12x-root compute cap of about 4700 s. The default 100 D/U adds roughly 16 shedding cycles."
    ],
    "missing_evidence": [
-    "A sustained, stationary limit cycle: lift amplitude settled, with no drift in drag, over at least 4 cycles and preferably many more",
-    "Statistical uncertainty of mean drag and Strouhal number from a longer stationary window",
-    "Averaging-window bias, which can only be assessed once a reliable reference window exists",
-    "Mesh sensitivity (no REFINE_MESH run)",
-    "Time-step sensitivity (no REDUCE_TIME_STEP run)",
-    "Domain/blockage sensitivity (no EXPAND_DOMAIN run). Distances are currently 30D upstream, 50D downstream and 40D half-height, with a symmetryPlane lateral boundary."
+    "A sustained, stationary limit cycle with at least 4 (preferably 10 or more) cycles in the stationary window, with lift amplitude stable",
+    "Mesh sensitivity of Cd and St (no REFINE_MESH run)",
+    "Time-step sensitivity of Cd and St (no REDUCE_TIME_STEP run)",
+    "Domain/truncation sensitivity of Cd and St (no EXPAND_DOMAIN run). The R0 domain has 30D upstream, 50D downstream and 40D half-height, with a symmetryPlane lateral boundary.",
+    "Averaging-bias assessment against a reliable reference window",
+    "Finer St frequency resolution, which needs a longer record"
    ],
    "hypotheses": [
     {
-     "hypothesis": "The wake instability is still growing at t=40 D/U. The lift amplitude has not saturated, and the 15.276 stationary-window start is a cap, not a true onset of stationarity. Extending the run will show the amplitude saturating and the mean drag settling. The mean drag may shift by more than the 0.03 tolerance relative to the R0 window values.",
-     "test": "RUN_LONGER on R0. Check whether the lift-amplitude trend flattens, whether the drag drift falls well below 0.03, and whether the drag CI95 and Strouhal uncertainty fall below half the tolerance once at least 4 stationary cycles are available."
+     "hypothesis": "R0's lift amplitude is still growing or decaying at t=40 D/U, so the 15.3 D/U window start still includes transient. This explains the +25.8% amplitude change, the 4.01% Cd drift and the 3-cycle window.",
+     "test": "Continue R0 by 100 D/U. Confirm that the lift amplitude settles to within a few percent across successive windows, that the Cd drift falls well below the 3% tolerance, and that the stationary window then holds 4 or more cycles with a St frequency resolution much finer than 0.033."
     },
     {
-     "hypothesis": "The Strouhal estimates are limited by frequency resolution and the short window, not by the physics. The reported frequency resolution is 0.033333, and the window and FFT values differ by about 0.001. A longer record will tighten the estimates.",
-     "test": "After RUN_LONGER, compare the window-based and FFT Strouhal numbers and their resolution. They should agree and their resolution should improve."
+     "hypothesis": "Once stationary, the mean Cd and St of R0 differ from the current values by more than 3%. The 3-cycle and drifting window is biased, and the current Cd (1.2961 vs 1.3039) and St (0.16129 vs 0.16058) spread is only a lower bound on the true uncertainty.",
+     "test": "Compare Cd and St from the extended stationary window with the R0 values. A change >3% (beyond noise) confirms the hypothesis, and a change well under 3% refutes it."
     }
    ],
    "next_experiment": {
@@ -86,8 +105,8 @@
      "additional_convective_times": 100.0
     },
     "parent_run": "G1_premature_averaging-17c0143468d7",
-    "reason": "R0 has not demonstrated a sustained limit cycle. Lift amplitude changes by +25.8% across the window, the stationary window has 3 cycles (<4) and starts at the MSER cap, and the drag drift is 0.040105. Until the transient has ended, no mesh, time or domain comparison is interpretable. This is also the cheapest menu entry at 979 s.",
-    "expected_outcome": "The lift amplitude saturates and the drag drift falls below the tolerance. The stationary window then has many more cycles, so the statistical and averaging components can be quantified for both mean drag and Strouhal number. If the amplitude or mean drag shifts markedly, R0's quantities are contaminated by the transient. This also gives a trustworthy parent for the subsequent mesh, time-step and domain experiments."
+    "reason": "The physics_regime check shows the lift amplitude still changing by 25.8%. The stationary window has only 3 cycles, and its start sits at the MSER cap. Averaging and statistics are blocking checks for both quantities, and mesh, time and domain comparisons are only meaningful on a stationary limit cycle. It is also the cheapest experiment (979 s estimated).",
+    "expected_outcome": "The lift amplitude saturates and a stationary window of about 10 or more cycles emerges. The Cd CI and drift and the St statistical uncertainty then fall below 0.5*tolerance (1.5%). The averaging and statistics components become measurable, so mesh, domain and time-step experiments can follow on a valid baseline."
    },
    "outcome": "executed -> G1_premature_averaging.long140-34c6cca905d9 (completed)"
   },
@@ -112,33 +131,25 @@
      "backend": "claude-cli",
      "model": "cli-default",
      "effort": "high",
-     "cli_version": "2.1.303 (Claude Code)",
+     "cli_version": "2.1.304 (Claude Code)",
      "timeout_s": 300.0,
      "max_attempts": 3
     },
-    "latency_s": 27.786798394998186,
-    "cost_usd": 0.07861271,
+    "latency_s": 25.07286611500001,
+    "cost_usd": 0.07381821,
     "attempts": 1,
     "errors": [],
-    "prompt_chars": 20842,
+    "prompt_chars": 20903,
     "model_fingerprint": "6ad399b27406",
     "numeric_audit": {
-     "traced": 41,
+     "traced": 53,
      "untraced": [
       {
-       "token": "0.0037",
-       "context": "ng bias uses 0.02631 of the 0.03 drag tolerance. Only about 0.0037 is left for the root-sum-square of mesh"
-      },
-      {
-       "token": "4.63",
-       "context": "2 relative compute is used. REFINE_MESH costs 1812 s, about 4.63 root units, so it is affordable. After "
-      },
-      {
-       "token": "2.66",
-       "context": "63 root units, so it is affordable. After it, domain (about 2.66) fits, but time (about 4.0) would not. "
+       "token": "3700",
+       "context": "5 of 12.0 root-compute units are used, which leaves roughly 3700 s. The menu costs are 1812 s for REFINE"
       }
      ],
-     "n_untraced": 3
+     "n_untraced": 1
     },
     "run_aliases": {
      "G1_premature_averaging-17c0143468d7": "R0",
@@ -148,32 +159,31 @@
    "decision": "MORE_EVIDENCE",
    "confidence": "MEDIUM",
    "reasoning_summary": [
-    "The deterministic verdict is INCONCLUSIVE and failed_checks is empty. ACCEPT is not allowed, and REJECT is not justified because no FAIL has been measured.",
-    "RUN_LONGER (R1) resolved the transient. R1 has 12 stationary cycles, drag drift 0.0001195, CI95 3.4541e-05, and the FFT and window Strouhal numbers agree at 0.16343. The statistics component now PASSES for both quantities.",
-    "R0's submitted-setup values were biased against R1's stationary window. Drag bias is 2.631% (1.2961 against 1.3311) and Strouhal bias is 1.312%. These biases are measured and are added linearly to the budget.",
-    "Averaging bias uses 0.02631 of the 0.03 drag tolerance. Only about 0.0037 is left for the root-sum-square of mesh, time and domain. This is very tight for R0 as submitted.",
-    "The physics_regime check is still INCONCLUSIVE. It references R0's +25.8% lift-amplitude change. R1 now supplies a longer record with 12 cycles, but the check has not been re-evaluated on it.",
-    "Mesh, time and domain components are all unmeasured for both quantities.",
-    "The mesh is the most likely source of an error larger than tolerance. The representative cell size is 0.45745 D, the wake has 111 streamwise cells ending at 1.0209 D, and R1 has the same 30580-cell mesh. The cylinder has 160 cells around it and the first wall cell is 0.005 D.",
-    "Time and domain look less likely to change the answer by more than 3%. dt is 0.01 convective units with second-order backward differencing, max Courant is 0.73373, and there are 611.87 steps per shedding period. The domain is 30 D upstream, 50 D downstream and 40 D half-height, with blockage 0.0125.",
-    "Budget: 2.5 of 12 relative compute is used. REFINE_MESH costs 1812 s, about 4.63 root units, so it is affordable. After it, domain (about 2.66) fits, but time (about 4.0) would not. Together, mesh, time and domain cannot all be afforded. The most informative single experiment should go first, because a demonstrated change above tolerance would be a FAIL.",
-    "Use R1 as parent. It is the only run with a verified stationary window, so differences against it reflect spatial error and not transient or sampling noise."
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed because mesh, time and domain are unmeasured for both quantities. REJECT is not allowed because there is no FAIL.",
+    "R1 (RUN_LONGER from R0) settled the averaging and statistics components. R1 has 12 stationary cycles. Its Cd CI95 is 3.4541e-05, its Cd drift is 0.0001195, and its St frequency resolution is 0.0076923. Statistics PASS for both quantities.",
+    "R1's stationary-window values are Cd 1.3311, St 0.16343 (FFT 0.16343) and rms Cl 0.22857. R0's reported values were Cd 1.2961 and St 0.16129. R0 was therefore biased by 2.631% in Cd and 1.312% in St. That was the transient-contaminated 3-cycle window.",
+    "The averaging bias is added linearly to the error budget. For Cd, 2.631% of the 3% tolerance is already used, so very little room is left for the mesh, time and domain components. Cd acceptance looks hard for R0 as submitted. Mesh, time and domain are still unmeasured, and no FAIL has been demonstrated, so REJECT is not justified yet.",
+    "The physics_regime check is INCONCLUSIVE only because of R0's 25.8% lift-amplitude change across its short window. R1's 12-cycle record has a stable Cd drift of 0.0001195, which is consistent with the transient having ended.",
+    "The mesh is the most likely source of a change larger than 3%. The representative cell size is 0.45745 D, with 160 cells around the cylinder and 111 streamwise wake cells. The wake's last cell is 1.0209 D and the wall first cell is 0.005 D. Cd and St are both sensitive to near-wake resolution.",
+    "The domain has 30 D upstream, 50 D downstream and 40 D half-height, with a blockage ratio of 0.0125 and a symmetry lateral boundary. It is already fairly large, so domain error is less likely to be the dominant term.",
+    "Budget: 2.5 of 12.0 root-compute units are used, which leaves roughly 3700 s. The menu costs are 1812 s for REFINE_MESH, 1567 s for REDUCE_TIME_STEP and 1040 s for EXPAND_DOMAIN. All three together would not fit, so the most informative one goes first. Courant 0.73373 with second-order backward time stepping makes time error plausibly smaller than mesh error.",
+    "Parent R1 is chosen because its 12-cycle stationary window gives a clean baseline for comparing Cd and St. R0's 3-cycle window would mix mesh effects with transient noise."
    ],
    "missing_evidence": [
-    "Mesh sensitivity of mean drag and Strouhal number (no REFINE_MESH run)",
-    "Time-step sensitivity (no REDUCE_TIME_STEP run)",
-    "Domain/blockage sensitivity (no EXPAND_DOMAIN run)",
-    "Re-evaluation of the physics_regime check on R1's longer record, to confirm a sustained limit cycle",
-    "Combined uncertainty for both quantities, which cannot be formed until mesh, time and domain are measured"
+    "Mesh sensitivity of Cd and St (no REFINE_MESH run)",
+    "Time-step sensitivity of Cd and St (no REDUCE_TIME_STEP run)",
+    "Domain/truncation sensitivity of Cd and St (no EXPAND_DOMAIN run)",
+    "Combined uncertainty for both quantities, which requires the three missing components",
+    "A physics_regime check on R1 showing a sustained limit cycle. The recorded INCONCLUSIVE refers to R0's short window."
    ],
    "hypotheses": [
     {
-     "hypothesis": "The coarse mesh (cell size 0.45745 D, wake cells up to 1.0209 D) biases mean drag and Strouhal number by more than the tolerance. This would show as a change under refinement larger than 0.5 x 0.03 against R1's stationary values of 1.3311 and 0.16343.",
-     "test": "REFINE_MESH on R1 with factor 1.4142. Compare stationary-window drag and Strouhal number against R1. A change above 1.5% marks the mesh component as failing its budget. A change above 3% beyond 2x noise would be a FAIL."
+     "hypothesis": "The mesh (cell size 0.45745 D, wake last cell 1.0209 D) is too coarse in the near wake. Refinement will shift the stationary Cd (1.3311) or St (0.16343) by more than the 3% tolerance, or by more than 1.5% (0.5*tolerance).",
+     "test": "Run REFINE_MESH with factor 1.4142 from R1. Compare the stationary-window Cd and St with R1's values. A change above 3% (beyond 2x noise) is a FAIL that confirms the hypothesis. A change well below 1.5% refutes it."
     },
     {
-     "hypothesis": "The time-step and domain errors are small compared with the mesh error. Courant is below 1 and the boundaries are far from the cylinder.",
-     "test": "If budget remains after the mesh run, run EXPAND_DOMAIN (the cheapest remaining entry at 1040 s) on R1 and compare stationary-window values."
+     "hypothesis": "Time and domain errors are small. Courant 0.73373 with second-order backward stepping and a 1.25% blockage ratio should give changes well below 1.5%.",
+     "test": "Run REDUCE_TIME_STEP and EXPAND_DOMAIN afterwards, as far as the budget allows. Compare the stationary Cd and St with R1's."
     }
    ],
    "next_experiment": {
@@ -182,8 +192,8 @@
      "factor": 1.4142
     },
     "parent_run": "G1_premature_averaging.long140-34c6cca905d9",
-    "reason": "R1 gives a verified stationary reference (12 cycles, drift 0.0001195). Mesh is the largest unmeasured component, given the representative cell size of 0.45745 D and a wake that ends in 1.0209 D cells. Using R1 as parent keeps the comparison free of transient and sampling effects.",
-    "expected_outcome": "The stationary-window drag and Strouhal number change little (below about 1.5%), which makes the mesh component pass its budget. If the change exceeds the 3% tolerance, the verifier records a FAIL and the root run is REJECTED."
+    "reason": "Mesh resolution is the largest unmeasured uncertainty component. The representative cell size is 0.45745 D and the wake last cell is 1.0209 D. R1 provides a stationary 12-cycle baseline. The Cd averaging bias of R0 (2.631%) already takes most of the 3% budget, so a mesh error of even a few tenths of a percent matters.",
+    "expected_outcome": "If the stationary Cd and St change by less than about 1.5% relative to R1 (Cd 1.3311, St 0.16343), the mesh component passes and the remaining budget can go to the time-step or domain run. A change above 3% (beyond noise) would be a deterministic FAIL, which would justify REJECT."
    },
    "outcome": "executed -> G1_premature_averaging.m1.41-5d1d1becf814 (completed)"
   }

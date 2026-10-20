@@ -1,0 +1,38 @@
+{
+ "backend": {
+  "backend": "claude-cli",
+  "model": "cli-default",
+  "effort": "high",
+  "cli_version": "2.1.304 (Claude Code)",
+  "timeout_s": 300.0,
+  "max_attempts": 3
+ },
+ "ok": true,
+ "latency_s": 18.795192876,
+ "cost_usd": 0.033141409999999996,
+ "errors": [],
+ "model_fingerprint": "6ad399b27406",
+ "verdict": "REJECT",
+ "confidence": "MEDIUM",
+ "reasoning_summary": [
+  "The temporal statistics are clean. The record has 13 stationary cycles, and the mean-Cd 95% CI is 2.3708e-05. Drift is 6.9266e-05 and the half-window difference is 3.143e-05. Mass imbalance is 3.8889e-10 and max Courant is 0.3914. Statistical convergence is therefore not the problem.",
+  "The problem asks for an unbounded stream. The run uses half_height_D = 6.0 with symmetryPlane lateral boundaries, so blockage_ratio = 0.083333. Confinement at that level can shift both mean Cd and St by amounts comparable to the 3% tolerance. The evidence has no run that quantifies this effect, so the bias is uncontrolled.",
+  "The mesh is very coarse: 3904 cells in total, representative_cell_size_D = 0.30334 and 80 cells around the cylinder. The wake has only 34 streamwise cells, and the last wake cell is 0.90784 D. Cells this large in the wake can damp or distort the vortex street. That would bias Strouhal number, mean drag and Cl amplitude. There is no refinement study to show 3% mesh independence.",
+  "The St frequency resolution is 0.013333, which is about 8% of St = 0.1642 and larger than the 3% tolerance. The period-based and FFT values agree at 0.1642, but the spectral precision does not support a 3% claim by itself.",
+  "The outlet is only 20 D downstream with an inletOutlet/fixedValue outlet. The inlet pressure is zeroGradient. The scheme is linearUpwind with only 1 outer corrector. No sensitivity of the results to any of these choices is shown.",
+  "The stationary window start (70.397) is flagged as the MSER cap. This is a minor concern because the drift is tiny.",
+  "Because the blockage violates the unbounded requirement and the mesh is coarse with no verification, the Cd = 1.3918 and St = 0.1642 values cannot be trusted to 3%. The tight statistical metrics only show good time-averaging, not discretisation or domain accuracy."
+ ],
+ "numeric_audit": {
+  "traced": 25,
+  "untraced": [
+   {
+    "token": "95%",
+    "context": "clean. The record has 13 stationary cycles, and the mean-Cd 95% CI is 2.3708e-05. Drift is 6.9266e-05 a"
+   }
+  ],
+  "n_untraced": 1
+ },
+ "case": "X3_compensating_errors",
+ "root_run": "X3_compensating_errors-b45927f15797"
+}

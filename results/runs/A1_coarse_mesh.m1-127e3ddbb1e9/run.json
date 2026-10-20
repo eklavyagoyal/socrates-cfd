@@ -1,8 +1,8 @@
 {
   "run_id": "A1_coarse_mesh.m1-127e3ddbb1e9",
   "status": "running",
-  "owner_pid": 10692,
-  "created": "2026-10-19T09:09:21+00:00",
+  "owner_pid": 1506,
+  "created": "2026-10-20T01:15:57+00:00",
   "problem_spec": {
     "problem": {
       "id": "cylinder2d_re100",
@@ -118,7 +118,7 @@
   },
   "config_hash": "bb27416e5014f22f",
   "parent_run": "A1_coarse_mesh-8db269c22d05",
-  "launch_reason": "R0 mesh resolution is the most likely flaw: 7616 cells, representative cell size 0.91664 D, wake last cell 2.0173 D. Mesh uncertainty is unmeasured for both quantities, and the other components are either measured and small or less suspect. A factor of 2.0 gives the largest allowed mesh change, so any resolution sensitivity is easiest to see against the 3% tolerance.",
+  "launch_reason": "R0 has the coarsest-looking resolution of all the unverified components (7616 cells, wake_last_cell_D 2.0173, representative_cell_size_D 0.91664). Mesh error is the most likely flaw to change the answer by more than the 3 % tolerance. The maximum factor gives the strongest signal on a coarse mesh at a cost of about 302 s.",
   "launched_by": "llm_critic",
   "experiment": {
     "action": "REFINE_MESH",
@@ -178,7 +178,7 @@
     "python": "3.13.16",
     "numpy": "2.5.3",
     "scipy": "1.18.1",
-    "socrates_git_commit": "b65bf88e3ab67216e172b050b34485a30908b907",
+    "socrates_git_commit": "296beaa7f7bcdfda68830b68f0a2f89c19c547f4",
     "socrates_src_dirty": false,
     "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
     "cpu_count": 4

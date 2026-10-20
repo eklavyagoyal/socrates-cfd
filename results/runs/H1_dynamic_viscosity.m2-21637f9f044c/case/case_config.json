@@ -1,0 +1,80 @@
+{
+  "name": "H1_dynamic_viscosity.m2",
+  "description": "REFINE_MESH {'factor': 1.4142135623730951} from H1_dynamic_viscosity.m1.41-f0d5b0a7b270",
+  "mesh": {
+    "refinement": 2.0000000000000004,
+    "n_quadrant": 40,
+    "n_ring_inner": 30,
+    "n_ring_outer": 20,
+    "n_upstream": 35,
+    "n_downstream": 111,
+    "n_lateral": 45,
+    "first_cell": 0.005,
+    "r_mid": 1.0,
+    "square_half": 2.5,
+    "span": 1.0,
+    "wake_factor": 1.0,
+    "cylinder_scale": 1.0
+  },
+  "domain": {
+    "upstream": 30.0,
+    "downstream": 50.0,
+    "half_height": 40.0
+  },
+  "physical": {
+    "diameter": 0.01,
+    "inlet_velocity": 0.15,
+    "kinematic_viscosity": 1.8e-05,
+    "density": 1.2
+  },
+  "boundaries": {
+    "lateral": "symmetryPlane",
+    "outlet_velocity": "inletOutlet",
+    "outlet_pressure": "fixedValue",
+    "inlet_pressure": "zeroGradient",
+    "cylinder_velocity": "noSlip",
+    "inlet_shear": 0.0
+  },
+  "numerics": {
+    "solver": "pimpleFoam",
+    "ddt": "backward",
+    "div_U": "Gauss linearUpwind grad(U)",
+    "grad": "Gauss linear",
+    "laplacian": "Gauss linear corrected",
+    "n_outer_correctors": 1,
+    "n_correctors": 2,
+    "n_nonorth_correctors": 0,
+    "steady_iterations": 4000,
+    "steady_residual_target": 1e-05,
+    "relax_U": 0.7,
+    "relax_p": 0.3
+  },
+  "time": {
+    "delta_t": 0.007962990216958269,
+    "end_time": 80.0,
+    "adjust_time_step": false,
+    "max_co": 0.5,
+    "write_interval": 50.0
+  },
+  "forces": {
+    "mag_u_inf": null,
+    "l_ref": null,
+    "a_ref": null,
+    "rho_inf": null
+  },
+  "averaging": {
+    "start_time": 40.0
+  },
+  "perturbation": {
+    "enabled": true,
+    "box_min": [
+      0.5,
+      0.0
+    ],
+    "box_max": [
+      3.0,
+      1.0
+    ],
+    "v_fraction": 0.3
+  }
+}

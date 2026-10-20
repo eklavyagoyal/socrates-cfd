@@ -1,0 +1,226 @@
+{
+  "run_id": "B1_small_domain.D3x-5d5208a40ce1",
+  "status": "running",
+  "owner_pid": 5669,
+  "created": "2026-10-20T07:50:45+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "B1_small_domain.D3x",
+    "description": "EXPAND_DOMAIN {'factor': 3.0} from B1_small_domain-a69ffb97a2e6",
+    "mesh": {
+      "refinement": 1.0,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 34,
+      "n_downstream": 105,
+      "n_lateral": 27,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 24.0,
+      "downstream": 45.0,
+      "half_height": 12.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "backward",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 1,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.01,
+      "end_time": 80.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 40.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "0fcf7c2b79e1680c",
+  "parent_run": "B1_small_domain-a69ffb97a2e6",
+  "launch_reason": "R0 has 12.5% blockage with symmetry lateral boundaries (half height 4D, upstream 8D, downstream 15D), while the question requires an unbounded stream. This is the most likely flaw to change Cd and St by more than 3%. It is also the cheapest discretisation experiment (about 397 s) and leaves the near-field mesh unchanged, so the effect is isolated.",
+  "launched_by": "llm_critic",
+  "experiment": {
+    "action": "EXPAND_DOMAIN",
+    "params": {
+      "factor": 3.0
+    },
+    "parent_run": "B1_small_domain-a69ffb97a2e6",
+    "changes": {
+      "averaging.start_time": {
+        "from": 75.0,
+        "to": 40.0
+      },
+      "domain.downstream": {
+        "from": 15.0,
+        "to": 45.0
+      },
+      "domain.half_height": {
+        "from": 4.0,
+        "to": 12.0
+      },
+      "domain.upstream": {
+        "from": 8.0,
+        "to": 24.0
+      },
+      "mesh.n_downstream": {
+        "from": 56,
+        "to": 105
+      },
+      "mesh.n_lateral": {
+        "from": 9,
+        "to": 27
+      },
+      "mesh.n_upstream": {
+        "from": 19,
+        "to": 34
+      },
+      "time.end_time": {
+        "from": 150.0,
+        "to": 80.0
+      }
+    },
+    "notes": [
+      "initialised by mapping the parent's final periodic state; run 80 D/U"
+    ],
+    "initialisation": {
+      "kind": "map",
+      "source_run": "B1_small_domain-a69ffb97a2e6"
+    },
+    "estimated_cell_steps": 185808000.0
+  },
+  "config_changes_from_parent": {
+    "averaging.start_time": {
+      "from": 75.0,
+      "to": 40.0
+    },
+    "domain.downstream": {
+      "from": 15.0,
+      "to": 45.0
+    },
+    "domain.half_height": {
+      "from": 4.0,
+      "to": 12.0
+    },
+    "domain.upstream": {
+      "from": 8.0,
+      "to": 24.0
+    },
+    "mesh.n_downstream": {
+      "from": 56,
+      "to": 105
+    },
+    "mesh.n_lateral": {
+      "from": 9,
+      "to": 27
+    },
+    "mesh.n_upstream": {
+      "from": 19,
+      "to": 34
+    },
+    "time.end_time": {
+      "from": 150.0,
+      "to": 80.0
+    }
+  },
+  "initialisation": {
+    "kind": "map",
+    "source_run": "B1_small_domain-a69ffb97a2e6",
+    "consistent": false
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "c188f54045d2d2c71314050603a0ebd512661707",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  }
+}

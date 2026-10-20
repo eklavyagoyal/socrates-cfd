@@ -1,0 +1,93 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 38.889294762000645,
+    "cost_usd": 0.05463741,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13279,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 34,
+     "untraced": [
+      {
+       "token": "1.07",
+       "context": "The cost is about 1126 s, roughly 1.07x the root run. The budget is 0 of 6 exp"
+      }
+     ],
+     "n_untraced": 1
+    },
+    "run_aliases": {
+     "C2_euler_large_timestep-268eddd71f94": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed and REJECT is not justified.",
+    "R0 statistics and averaging are well converged. Drag statistical uncertainty is 0.0001664 and Strouhal statistical uncertainty is 0.0001267. There are 12 stationary cycles. These are far below the 0.03 tolerance.",
+    "Mesh, time and domain components are all unmeasured for both quantities, so no combined uncertainty exists.",
+    "Time discretisation is the weakest point of R0. The scheme is first-order Euler at dt = 0.04 D/U, and max Courant is 2.9248 with 2 outer correctors. The Courant check is INCONCLUSIVE because temporal accuracy is unproven without time-step refinement.",
+    "R0 has 157.74 steps per shedding period. Euler numerical dissipation at this Courant number could shift the shedding frequency and mean drag, so a time error above the 0.5*tolerance budget is plausible.",
+    "REDUCE_TIME_STEP isolates the time error on the identical mesh. REFINE_MESH could change dt automatically and confound mesh and time effects.",
+    "Domain truncation looks less likely to dominate. R0 has blockage 0.0125, upstream 30 D, downstream 50 D and half-height 40 D. It is still unmeasured.",
+    "The cost is about 1126 s, roughly 1.07x the root run. The budget is 0 of 6 experiments and 0 of 12x compute used, so it is affordable."
+   ],
+   "missing_evidence": [
+    "Temporal discretisation error of mean drag and Strouhal number (no REDUCE_TIME_STEP run)",
+    "Spatial discretisation error (no REFINE_MESH run). The mesh has 30580 cells, 160 cells around the cylinder and a wake last cell of 1.0209 D.",
+    "Domain truncation and blockage error (no EXPAND_DOMAIN run)",
+    "Combined uncertainty for both quantities against the 0.03 tolerance"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "First-order Euler time stepping at max Courant 2.92 (dt = 0.04 D/U) biases Strouhal number and/or mean drag by more than 0.5*tolerance (1.5 %).",
+     "test": "Run R0 with dt divided by 2. If St and Cd each change by less than about 0.5 % relative, the time error is acceptable. If either changes by more than 1.5 %, the time component fails and a further reduction is needed."
+    },
+    {
+     "hypothesis": "Mesh resolution (0.457 D representative cell size, 1.02 D last wake cell) contributes more than 1.5 % error to Cd or St.",
+     "test": "REFINE_MESH from R0 after the time step is settled. Compare Cd and St against R0."
+    },
+    {
+     "hypothesis": "Lateral symmetry-plane boundaries at 40 D and the 50 D outlet bias Cd or St by more than 1.5 %.",
+     "test": "EXPAND_DOMAIN from R0 with factor 2 and compare Cd and St."
+    }
+   ],
+   "next_experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "C2_euler_large_timestep-268eddd71f94",
+    "reason": "Time error is entirely unmeasured. R0 uses first-order Euler at max Courant 2.92, which is the most likely source of a flaw larger than the tolerance. Halving dt on the same mesh isolates this error without confounding by mesh changes, at a cost of about 1126 s.",
+    "expected_outcome": "If Cd and St change by less than about 0.5 % relative to R0 (Cd 1.2901, St 0.15849), the time component passes. A change above 1.5 % shows temporal error dominates and calls for a further dt reduction. A change above 3 % beyond noise would be a demonstrated FAIL."
+   },
+   "outcome": "executed -> C2_euler_large_timestep.dt0.02-2f2ce6b4d241 (completed)"
+  }
+ ]
+}

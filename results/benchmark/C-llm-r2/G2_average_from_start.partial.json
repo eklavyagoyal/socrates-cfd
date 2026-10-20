@@ -1,0 +1,87 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 38.415921263998825,
+    "cost_usd": 0.05505461,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13328,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 31,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "G2_average_from_start-e7384e5a2c24": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed, and there is no FAIL to justify REJECT.",
+    "R0 mesh, time and domain uncertainties are all unmeasured (no REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run). A missing component is not a pass, for both mean_drag_coefficient and strouhal_number.",
+    "The physics_regime check is INCONCLUSIVE. The lift amplitude changes by +6.7% across the analysed window, so R0 may not yet be a sustained limit cycle.",
+    "The stationary window starts at 27.88 convective times, which is flagged as the MSER cap (stationary_window_start_is_mser_cap = true). It holds only 5 cycles out of a 59.99 record.",
+    "The R0 drag drift is 0.010388 relative and its CI95 is 0.0058205. The statistics uncertainty is 0.01039 for drag and 0.008104 for Strouhal number. The averaging biases are 0.005234 (drag) and 0.009529 (Strouhal number).",
+    "Averaging bias plus statistics already use a large share of the 0.03 tolerance. The error budget requires each component to be <= 0.5*tolerance and the linear-plus-RSS total to be <= tolerance. Little room is left for mesh, time and domain terms, so a longer record that shrinks these terms is valuable.",
+    "If the transient has not ended, every later comparison run (mesh, time step, domain) would inherit a non-stationary window and a 5-cycle noise floor. That would make their differences hard to interpret. Settling stationarity first makes the later experiments meaningful.",
+    "RUN_LONGER on R0 costs 1060 s (default 100 additional convective times). That is cheaper than the other menu entries (1126, 1697, 1963 s). It fits within the budget of 6 experiments and 12x root compute (R0 cost 636.22 s).",
+    "Later experiments are still needed after this one. R0 has a coarse wake (wake_last_cell_D 1.0209, representative_cell_size_D 0.45745), and its time step is 0.01 with 613.51 steps per period. The domain extents are 30D upstream, 50D downstream and 40D half height with symmetry lateral boundaries. Mesh refinement is the likely next choice."
+   ],
+   "missing_evidence": [
+    "Confirmation that R0 reaches a sustained limit cycle (the lift amplitude trend is currently +6.7% across the window)",
+    "Stationary window that is not set by the MSER cap, with more than 5 shedding cycles",
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (REFINE_MESH not run)",
+    "Temporal discretisation error for both quantities (REDUCE_TIME_STEP not run)",
+    "Domain truncation/blockage error for both quantities (EXPAND_DOMAIN not run)",
+    "Combined uncertainty against the 0.03 tolerance for both quantities"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The R0 transient had not fully decayed. The lift amplitude is still drifting (+6.7%) and the stationary window start is capped by MSER, so the reported statistics are biased by the early transient.",
+     "test": "RUN_LONGER on R0. The hypothesis is confirmed if the lift amplitude keeps drifting or the mean drag and Strouhal number shift by more than their current CI. It is refuted if the lift amplitude is flat over many cycles and the new stationary-window values agree with R0 within the CI."
+    },
+    {
+     "hypothesis": "More shedding cycles will cut the drag drift (0.010388) and the Strouhal frequency-resolution uncertainty, leaving room in the budget for the mesh, time and domain terms.",
+     "test": "Compare the statistics and averaging components from the extended record with R0. Each should fall to <= 0.5*tolerance with margin."
+    }
+   ],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {
+     "additional_convective_times": 100.0
+    },
+    "parent_run": "G2_average_from_start-e7384e5a2c24",
+    "reason": "The physics_regime check is INCONCLUSIVE because the lift amplitude is still changing (+6.7%). The stationary window is MSER-capped with only 5 cycles. Averaging and statistics already use a large part of the 0.03 budget. This is the cheapest experiment, and it must be settled before mesh, time-step and domain comparisons can be trusted.",
+    "expected_outcome": "A stationary window with many more cycles and a flat lift amplitude. Mean drag and Strouhal number should fall within the R0 CI, with reduced statistical and averaging uncertainty. If they shift by more than that, the R0 values are transient-contaminated."
+   },
+   "outcome": "executed -> G2_average_from_start.long160-24e243b2227c (completed)"
+  }
+ ]
+}

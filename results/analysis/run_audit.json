@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-20T15:31:22+00:00",
+ "generated": "2026-10-20T19:12:51+00:00",
  "decision_code_fingerprint": "6406c53bb2011ef5",
  "sources": [
   "results/benchmark",
@@ -8,18 +8,18 @@
   "results/posthoc",
   "results/reproducibility"
  ],
- "n_source_files": 294,
+ "n_source_files": 334,
  "doc_sources": [
   "cases",
   "docs",
   "reports",
   "README.md"
  ],
- "n_runs": 206,
+ "n_runs": 214,
  "by_status": {
-  "completed": 185,
+  "completed": 198,
   "failed": 9,
-  "running": 12
+  "running": 7
  },
  "unreadable_run_records": [],
  "unreadable_result_files": [],
@@ -291,16 +291,14 @@
   }
  ],
  "cell_steps": {
-  "all_runs": 97444899087,
+  "all_runs": 105762499517,
   "unreferenced_by_launcher": {
    "benchmark": 1559580,
-   "llm_critic": 2252415184,
-   "rule_based": 0,
-   "exhaustive": 859321320
+   "llm_critic": 2247033104
   },
   "unreferenced_no_live_user_by_launcher": {
    "benchmark": 1559580,
-   "llm_critic": 2252415184
+   "llm_critic": 2247033104
   },
   "replaced_finished_attempts_in_git": 550440000
  },
@@ -308,18 +306,10 @@
   "C1_large_timestep-2c56fe2482da",
   "C1_large_timestep.m1.5-ccd50b275a8c",
   "C1_large_timestep.m2-43ace4fb86f8",
-  "C1_large_timestep.m2-6e4f672cac17",
   "C2_euler_large_timestep.m1.5-0dc5789f0d20",
   "C2_euler_large_timestep.m2-f70b6f7f3d2d",
-  "F1_upwind_convection.dt0.0025-6435cc8d726d",
-  "G1_premature_averaging.dt0.005-bf49ee4d4c3e",
   "G1_premature_averaging.long120-b00e0cc6fd78",
   "G1_premature_averaging.m1.41-0097f3f3f17a",
-  "H1_dynamic_viscosity.long250-9fe13958c389",
-  "H1_dynamic_viscosity.m1.41-f0d5b0a7b270",
-  "H1_dynamic_viscosity.m2-21637f9f044c",
-  "J1_coarse_wake.D2x-8ca51167810d",
-  "K2_fine_large.D3x-7a1272bafc30",
   "X1_cylinder_geometry.m1.4-9e2404581939",
   "X1_cylinder_geometry.m1.5-4f1242ab559c",
   "X2_inlet_shear.long280-73bf3827d017",
@@ -362,15 +352,12 @@
   "K1_central_scheme-e4e5fb66bdca",
   "baseline-408129116207"
  ],
- "referenced_only_by_partial": [
-  "K2_fine_large.D1.5x-c2938461e5bc"
- ],
+ "referenced_only_by_partial": [],
  "llm_planner_unreferenced": {
-  "note": "11 runs launched by the LLM planner are named by no current result and have no live owner process. For 11 of them the store shows when the owner process stopped writing records and which later process took over the same launcher on the same group of cases (columns 'owner' and 'taken over by'; the commits and launch markers in between are under 'Owner processes'). 4 of them are named by a committed version of a partial result that a later loop attempt of the same system and case replaced (columns 'last named in' and 'removed in'); the other 7 are 'running' records that never finished, and a loop names a run only after it has run. For 11 of the 11, a result for the same case was logged by a process launched after the run was created (run_audit.json, `llm_results_logged_after_creation`). They come from loop attempts that ended with their owner process, after which a later process ran the case again from the root. The planner calls that proposed them, and their LLM cost, are not in any current result; lower bounds for 4 of them are in committed partial files: 0.839 USD over 12 planner iterations in 5 superseded attempts (all superseded loop attempts are listed under 'Superseded loop attempts'). Their simulation cost recorded in evidence.json is 2.25e+09 cell-steps. Of the 7 'running' records among them, 6 never started their solver; X2_inlet_shear.long280-73bf3827d017 ran it for 764 s of wall time (log last written 2026-10-20 01:13), recorded only in its solver log. 1 further unnamed LLM-planner runs have a live owner: their loops are still running, and a loop names a run in its partial file once the run has finished.",
+  "note": "10 runs launched by the LLM planner are named by no current result and have no live owner process. For 10 of them the store shows when the owner process stopped writing records and which later process took over the same launcher on the same group of cases (columns 'owner' and 'taken over by'; the commits and launch markers in between are under 'Owner processes'). 3 of them are named by a committed version of a partial result that a later loop attempt of the same system and case replaced (columns 'last named in' and 'removed in'); the other 7 are 'running' records that never finished, and a loop names a run only after it has run. For 10 of the 10, a result for the same case was logged by a process launched after the run was created (run_audit.json, `llm_results_logged_after_creation`). They come from loop attempts that ended with their owner process, after which a later process ran the case again from the root. The planner calls that proposed them, and their LLM cost, are not in any current result; lower bounds for 3 of them are in committed partial files: 0.486 USD over 7 planner iterations in 3 superseded attempts (all superseded loop attempts are listed under 'Superseded loop attempts'). Their simulation cost recorded in evidence.json is 2.25e+09 cell-steps. Of the 7 'running' records among them, 6 never started their solver; X2_inlet_shear.long280-73bf3827d017 ran it for 764 s of wall time (log last written 2026-10-20 01:13), recorded only in its solver log. 0 further unnamed LLM-planner runs have a live owner: their loops are still running, and a loop names a run in its partial file once the run has finished.",
   "no_live_owner": [
    "C1_large_timestep.m1.5-ccd50b275a8c",
    "C1_large_timestep.m2-43ace4fb86f8",
-   "C1_large_timestep.m2-6e4f672cac17",
    "C2_euler_large_timestep.m1.5-0dc5789f0d20",
    "C2_euler_large_timestep.m2-f70b6f7f3d2d",
    "G1_premature_averaging.long120-b00e0cc6fd78",
@@ -380,9 +367,7 @@
    "X2_inlet_shear.long280-73bf3827d017",
    "X2_inlet_shear.m2-8ee7c87760a6"
   ],
-  "live_owner": [
-   "K2_fine_large.D3x-7a1272bafc30"
-  ]
+  "live_owner": []
  },
  "loop_attempts": [
   {
@@ -1146,6 +1131,7 @@
    "case": "A1_coarse_mesh",
    "file": "benchmark/C-llm-r3/A1_coarse_mesh.partial.json",
    "commits": [
+    "b0fc7a2",
     "working tree"
    ],
    "last_time": null,
@@ -1164,16 +1150,272 @@
    "case": "A2_moderate_mesh",
    "file": "benchmark/C-llm-r3/A2_moderate_mesh.partial.json",
    "commits": [
+    "b0fc7a2",
+    "e61afad",
+    "4daccbf",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 6,
+   "cost_usd": 0.5692785250000001,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "A2_moderate_mesh-1c5ea01594aa",
+    "A2_moderate_mesh.D1.5x-0eba1d38476e",
+    "A2_moderate_mesh.D2x-4a8a18327a27",
+    "A2_moderate_mesh.dt0.005-4720e4eddcde",
+    "A2_moderate_mesh.m1.06-c5d153eb41a5",
+    "A2_moderate_mesh.m1.5-773c4ec70534"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "B1_small_domain",
+   "file": "benchmark/C-llm-r3/B1_small_domain.partial.json",
+   "commits": [
+    "4daccbf",
     "working tree"
    ],
    "last_time": null,
    "n_iterations": 1,
-   "cost_usd": 0.04985331,
+   "cost_usd": 0.049585010000000006,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "B1_small_domain-a69ffb97a2e6",
+    "B1_small_domain.D2x-1e192fc39a3e"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "B2_moderate_domain",
+   "file": "benchmark/C-llm-r3/B2_moderate_domain.partial.json",
+   "commits": [
+    "4daccbf",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 2,
+   "cost_usd": 0.12524972,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "B2_moderate_domain-55b85b2cd33e",
+    "B2_moderate_domain.D2x-39e861cedde4",
+    "B2_moderate_domain.D2x-44c88f366919"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C1_large_timestep",
+   "file": "benchmark/C-llm-r3/C1_large_timestep.partial.json",
+   "commits": [
+    "4daccbf",
+    "fe351fd",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 6,
+   "cost_usd": 0.57686986,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "C1_large_timestep-49d90ffccdac",
+    "C1_large_timestep.D2x-f2b47ea2de80",
+    "C1_large_timestep.D3x-f035e789cb02",
+    "C1_large_timestep.dt0.025-610f857bd6ea",
+    "C1_large_timestep.m1.41-ad97e5a246ce",
+    "C1_large_timestep.m1.41-c9c1535204d3",
+    "C1_large_timestep.m2-6e4f672cac17"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "file": "benchmark/C-llm-r3/C2_euler_large_timestep.partial.json",
+   "commits": [
+    "fe351fd",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 6,
+   "cost_usd": 0.61916976,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "C2_euler_large_timestep-268eddd71f94",
+    "C2_euler_large_timestep.D2x-a912f88e2d43",
+    "C2_euler_large_timestep.dt0.005-752b3af02251",
+    "C2_euler_large_timestep.dt0.01-f9cf9b35455e",
+    "C2_euler_large_timestep.dt0.02-2f2ce6b4d241",
+    "C2_euler_large_timestep.m1.41-9ec9f782d7ff",
+    "C2_euler_large_timestep.m1.41-eb9ef468444b"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "D1_steady_solver",
+   "file": "benchmark/C-llm-r3/D1_steady_solver.partial.json",
+   "commits": [
+    "fe351fd",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 0,
+   "cost_usd": 0,
    "status": "current, no final result",
    "superseded_in": null,
    "runs_named": [
-    "A2_moderate_mesh-1c5ea01594aa",
-    "A2_moderate_mesh.m1.5-773c4ec70534"
+    "D1_steady_solver-9cd0391edef9"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "E1_noslip_side_walls",
+   "file": "benchmark/C-llm-r3/E1_noslip_side_walls.partial.json",
+   "commits": [
+    "fe351fd",
+    "d5cbdd6",
+    "dee999d",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 6,
+   "cost_usd": 0.57818276,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "E1_noslip_side_walls-88a7cd5812e8",
+    "E1_noslip_side_walls.D1.5x-f702a7c7fa9d",
+    "E1_noslip_side_walls.D2x-1620b1098386",
+    "E1_noslip_side_walls.D3x-5e6cfbc7fe84",
+    "E1_noslip_side_walls.dt0.005-c41af2c90410",
+    "E1_noslip_side_walls.m1.41-f15d7e2db685",
+    "E1_noslip_side_walls.m2-39a4571e43e5"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "F1_upwind_convection",
+   "file": "benchmark/C-llm-r3/F1_upwind_convection.partial.json",
+   "commits": [
+    "dee999d",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 2,
+   "cost_usd": 0.12752618500000001,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "F1_upwind_convection-e460c39ac86c",
+    "F1_upwind_convection.long350-3e56ac0814bc",
+    "F1_upwind_convection.m2-a5b11786bf96"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G1_premature_averaging",
+   "file": "benchmark/C-llm-r3/G1_premature_averaging.partial.json",
+   "commits": [
+    "dee999d",
+    "3929bad",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 4,
+   "cost_usd": 0.35064566999999996,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "G1_premature_averaging-17c0143468d7",
+    "G1_premature_averaging.D2x-6e506d02ef0a",
+    "G1_premature_averaging.long100-bf9115c8c872",
+    "G1_premature_averaging.m1.41-f8bb4a846d17"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G2_average_from_start",
+   "file": "benchmark/C-llm-r3/G2_average_from_start.partial.json",
+   "commits": [
+    "dee999d",
+    "3929bad",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 3,
+   "cost_usd": 0.216673395,
+   "status": "current, final result",
+   "superseded_in": null,
+   "runs_named": [
+    "G2_average_from_start-e7384e5a2c24",
+    "G2_average_from_start.long160-24e243b2227c",
+    "G2_average_from_start.m2-6c5d2e554b4f"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "H1_dynamic_viscosity",
+   "file": "benchmark/C-llm-r3/H1_dynamic_viscosity.partial.json",
+   "commits": [
+    "dee999d",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 0,
+   "cost_usd": 0,
+   "status": "current, no final result",
+   "superseded_in": null,
+   "runs_named": [
+    "H1_dynamic_viscosity-4ab90bfffff4"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "I1_force_reference",
+   "file": "benchmark/C-llm-r3/I1_force_reference.partial.json",
+   "commits": [
+    "dee999d",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 0,
+   "cost_usd": 0,
+   "status": "current, no final result",
+   "superseded_in": null,
+   "runs_named": [
+    "I1_force_reference-43978f7eb1a8"
+   ]
+  },
+  {
+   "group": "benchmark",
+   "system": "C-llm-r3",
+   "case": "J1_coarse_wake",
+   "file": "benchmark/C-llm-r3/J1_coarse_wake.partial.json",
+   "commits": [
+    "dee999d",
+    "working tree"
+   ],
+   "last_time": null,
+   "n_iterations": 0,
+   "cost_usd": 0,
+   "status": "current, no final result",
+   "superseded_in": null,
+   "runs_named": [
+    "J1_coarse_wake-a7868b40e5b3"
    ]
   },
   {
@@ -1183,6 +1425,7 @@
    "file": "benchmark/C-llm-r3/K1_central_scheme.partial.json",
    "commits": [
     "ca32290",
+    "b0fc7a2",
     "working tree"
    ],
    "last_time": null,
@@ -1208,17 +1451,20 @@
    "commits": [
     "ca32290",
     "284d547",
+    "b0fc7a2",
+    "dee999d",
     "working tree"
    ],
    "last_time": null,
-   "n_iterations": 6,
-   "cost_usd": 0.5893849250000001,
-   "status": "current, no final result",
+   "n_iterations": 7,
+   "cost_usd": 0.7358284350000001,
+   "status": "current, final result",
    "superseded_in": null,
    "runs_named": [
     "K2_fine_large-2d999cd1eb7c",
     "K2_fine_large.D1.5x-c2938461e5bc",
     "K2_fine_large.D2x-bc527461f36d",
+    "K2_fine_large.D3x-7a1272bafc30",
     "K2_fine_large.dt0.0035-6a0f9a80f290",
     "K2_fine_large.long180-dda8a9c17278",
     "K2_fine_large.m2-e923e7640822"
@@ -2014,15 +2260,18 @@
    "commits": [
     "a295a37",
     "ca32290",
+    "3929bad",
     "working tree"
    ],
    "last_time": null,
-   "n_iterations": 4,
+   "n_iterations": 8,
    "cost_usd": 0.0,
-   "status": "current, no final result",
+   "status": "current, final result",
    "superseded_in": null,
    "runs_named": [
     "F1_upwind_convection-e460c39ac86c",
+    "F1_upwind_convection.dt0.00125-89de2cdbb4e8",
+    "F1_upwind_convection.dt0.0025-6435cc8d726d",
     "F1_upwind_convection.dt0.005-ab4ff52f420f",
     "F1_upwind_convection.m1.41-777f4291b366",
     "F1_upwind_convection.m2-b8b419d05dcd"
@@ -2035,15 +2284,17 @@
    "file": "benchmark/C-rule-prereg/G1_premature_averaging.partial.json",
    "commits": [
     "a295a37",
+    "ffbdc41",
     "working tree"
    ],
    "last_time": null,
-   "n_iterations": 2,
+   "n_iterations": 6,
    "cost_usd": 0.0,
-   "status": "current, no final result",
+   "status": "current, final result",
    "superseded_in": null,
    "runs_named": [
     "G1_premature_averaging-17c0143468d7",
+    "G1_premature_averaging.dt0.005-bf49ee4d4c3e",
     "G1_premature_averaging.long140-34c6cca905d9",
     "G1_premature_averaging.m1.41-5d1d1becf814"
    ]
@@ -2200,13 +2451,14 @@
     "working tree"
    ],
    "last_time": null,
-   "n_iterations": 5,
+   "n_iterations": 8,
    "cost_usd": 0.0,
-   "status": "current, no final result",
+   "status": "current, final result",
    "superseded_in": null,
    "runs_named": [
     "J1_coarse_wake-a7868b40e5b3",
     "J1_coarse_wake.D2x-59e747f0bd71",
+    "J1_coarse_wake.D2x-8ca51167810d",
     "J1_coarse_wake.dt0.005-12edfa23616b",
     "J1_coarse_wake.m1.41-eeef8dc41497",
     "J1_coarse_wake.m2-4e289fbff8ee"
@@ -2287,8 +2539,7 @@
     "rule_based"
    ],
    "groups": [
-    "attacks",
-    "benchmark"
+    "attacks"
    ],
    "records": [
     [
@@ -2439,6 +2690,14 @@
      "2026-10-20T06:49:28+00:00"
     ],
     [
+     "H1_dynamic_viscosity.D2x-643a7dd2c873",
+     "2026-10-20T16:22:38+00:00"
+    ],
+    [
+     "H1_dynamic_viscosity.dt0.005-f10119c4bb2c",
+     "2026-10-20T15:31:51+00:00"
+    ],
+    [
      "H1_dynamic_viscosity.m1.41-f0d5b0a7b270",
      "2026-10-20T06:49:23+00:00"
     ],
@@ -2460,9 +2719,9 @@
     ]
    ],
    "first": "2026-10-20T06:49:20+00:00",
-   "last": "2026-10-20T14:25:01+00:00",
-   "state": "alive",
-   "command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "last": "2026-10-20T16:45:44+00:00",
+   "state": "no such process",
+   "command": null,
    "successor": null,
    "events_between": [],
    "earlier_attempts": 0
@@ -2474,8 +2733,7 @@
     "rule_based"
    ],
    "groups": [
-    "attacks",
-    "benchmark"
+    "attacks"
    ],
    "records": [
     [
@@ -2674,8 +2932,7 @@
     "exhaustive"
    ],
    "groups": [
-    "attacks",
-    "benchmark"
+    "attacks"
    ],
    "records": [
     [
@@ -2825,8 +3082,7 @@
     "llm_critic"
    ],
    "groups": [
-    "attacks",
-    "benchmark"
+    "attacks"
    ],
    "records": [
     [
@@ -3030,8 +3286,7 @@
     "rule_based"
    ],
    "groups": [
-    "attacks",
-    "benchmark"
+    "attacks"
    ],
    "records": [
     [
@@ -3720,6 +3975,10 @@
    ],
    "records": [
     [
+     "F1_upwind_convection.dt0.00125-89de2cdbb4e8",
+     "2026-10-20T17:29:21+00:00"
+    ],
+    [
      "F1_upwind_convection.dt0.0025-6435cc8d726d",
      "2026-10-20T13:47:57+00:00"
     ],
@@ -3729,9 +3988,9 @@
     ]
    ],
    "first": "2026-10-20T12:54:07+00:00",
-   "last": "2026-10-20T13:47:57+00:00",
-   "state": "alive",
-   "command": "python3 scripts/run_rule_prereg.py --workers 17",
+   "last": "2026-10-20T19:11:14+00:00",
+   "state": "no such process",
+   "command": null,
    "successor": null,
    "events_between": [],
    "earlier_attempts": 0
@@ -3751,9 +4010,9 @@
     ]
    ],
    "first": "2026-10-20T13:19:49+00:00",
-   "last": "2026-10-20T13:19:49+00:00",
-   "state": "alive",
-   "command": "python3 scripts/posthoc_allgeometry.py --adaptive",
+   "last": "2026-10-20T15:53:22+00:00",
+   "state": "no such process",
+   "command": null,
    "successor": null,
    "events_between": [],
    "earlier_attempts": 0
@@ -3764,8 +4023,7 @@
     "benchmark"
    ],
    "groups": [
-    "attacks",
-    "benchmark"
+    "attacks"
    ],
    "records": [
     [
@@ -3815,8 +4073,7 @@
     "exhaustive"
    ],
    "groups": [
-    "attacks",
-    "benchmark"
+    "attacks"
    ],
    "records": [
     [
@@ -4229,10 +4486,29 @@
     "llm_critic"
    ],
    "groups": [
-    "attacks",
-    "benchmark"
+    "attacks"
    ],
    "records": [
+    [
+     "A2_moderate_mesh.D1.5x-0eba1d38476e",
+     "2026-10-20T15:32:55+00:00"
+    ],
+    [
+     "E1_noslip_side_walls.D3x-5e6cfbc7fe84",
+     "2026-10-20T15:55:56+00:00"
+    ],
+    [
+     "G1_premature_averaging.D2x-6e506d02ef0a",
+     "2026-10-20T17:25:02+00:00"
+    ],
+    [
+     "G1_premature_averaging.long100-bf9115c8c872",
+     "2026-10-20T16:25:32+00:00"
+    ],
+    [
+     "G1_premature_averaging.m1.41-f8bb4a846d17",
+     "2026-10-20T16:38:05+00:00"
+    ],
     [
      "K1_central_scheme.dt0.005-5fad5168407b",
      "2026-10-20T14:14:26+00:00"
@@ -4247,9 +4523,9 @@
     ]
    ],
    "first": "2026-10-20T14:14:26+00:00",
-   "last": "2026-10-20T15:30:36+00:00",
-   "state": "alive",
-   "command": "python3 scripts/run_benchmark.py --systems C-llm-r3 --workers 2",
+   "last": "2026-10-20T17:46:42+00:00",
+   "state": "no such process",
+   "command": null,
    "successor": null,
    "events_between": [],
    "earlier_attempts": 0
@@ -4334,8 +4610,7 @@
     "exhaustive"
    ],
    "groups": [
-    "attacks",
-    "benchmark"
+    "attacks"
    ],
    "records": [
     [
@@ -6382,8 +6657,8 @@
    "wall_seconds": 269.07941527599905,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -6403,8 +6678,8 @@
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
    }
@@ -6922,6 +7197,7 @@
     "benchmark/Bexh/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.partial.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.json",
     "benchmark/C-llm-r3/A2_moderate_mesh.partial.json",
     "benchmark/C-llm/A2_moderate_mesh.json",
     "benchmark/C-llm/A2_moderate_mesh.partial.json",
@@ -6936,6 +7212,7 @@
    "mentioned_in": [
     "reports/cases/A2_moderate_mesh__Bexh.md",
     "reports/cases/A2_moderate_mesh__C-llm-r2.md",
+    "reports/cases/A2_moderate_mesh__C-llm-r3.md",
     "reports/cases/A2_moderate_mesh__C-llm.md",
     "reports/cases/A2_moderate_mesh__C-rule.md"
    ],
@@ -6945,6 +7222,59 @@
     "pid": 18399,
     "state": "no such process",
     "last_record": "2026-10-19T09:32:59+00:00",
+    "successor": null,
+    "events_between": []
+   }
+  },
+  "A2_moderate_mesh.D1.5x-0eba1d38476e": {
+   "run_id": "A2_moderate_mesh.D1.5x-0eba1d38476e",
+   "status": "completed",
+   "launched_by": "llm_critic",
+   "created": "2026-10-20T15:32:55+00:00",
+   "finished": "2026-10-20T15:46:00+00:00",
+   "parent_run": "A2_moderate_mesh.D2x-4a8a18327a27",
+   "root_run": "A2_moderate_mesh-1c5ea01594aa",
+   "root_case": "A2_moderate_mesh",
+   "missing_ancestor": null,
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 1.5
+   },
+   "launch_reason": "Domain uncertainty is INCONCLUSIVE for both quantities (drag 0.04147, Strouhal 0.02803). It rests on an assumed p=1 and Fs=3 from two levels (R0, R3). A third domain level from R3 gives an observed order. This is the cheapest listed experiment (1949 s) that addresses a component missing for both quantities. Mesh and time are otherwise resolved or cannot be advanced.",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 213760000,
+   "wall_seconds": 785.4287090539947,
+   "owner_pid": 25156,
+   "owner": 25156,
+   "owner_state": "no such process",
+   "owner_command": null,
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-llm-r3/A2_moderate_mesh.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.partial.json"
+   ],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [
+    "reports/cases/A2_moderate_mesh__C-llm-r3.md"
+   ],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [
+    "C-llm-v1",
+    "C-llm-v1+review"
+   ],
+   "owner_process": {
+    "pid": 25156,
+    "state": "no such process",
+    "last_record": "2026-10-20T17:46:42+00:00",
     "successor": null,
     "events_between": []
    }
@@ -6976,7 +7306,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 6,
+   "cache_hits": 7,
    "requests": [
     {
      "time": "2026-10-20T01:00:34+00:00",
@@ -7001,6 +7331,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:32:02+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -7010,6 +7344,8 @@
     "benchmark/Bexh/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.partial.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.partial.json",
     "benchmark/C-llm/A2_moderate_mesh.json",
     "benchmark/C-llm/A2_moderate_mesh.partial.json",
     "benchmark/C-rule-prereg/A2_moderate_mesh.json",
@@ -7021,6 +7357,7 @@
     "reports/benchmark_results.md",
     "reports/cases/A2_moderate_mesh__Bexh.md",
     "reports/cases/A2_moderate_mesh__C-llm-r2.md",
+    "reports/cases/A2_moderate_mesh__C-llm-r3.md",
     "reports/cases/A2_moderate_mesh__C-llm.md",
     "reports/cases/A2_moderate_mesh__C-rule.md"
    ],
@@ -7202,7 +7539,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 7,
+   "cache_hits": 8,
    "requests": [
     {
      "time": "2026-10-19T17:41:56+00:00",
@@ -7231,6 +7568,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:32:30+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -7240,6 +7581,8 @@
     "benchmark/Bexh/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.partial.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.partial.json",
     "benchmark/C-llm/A2_moderate_mesh.json",
     "benchmark/C-llm/A2_moderate_mesh.partial.json",
     "benchmark/C-rule-prereg/A2_moderate_mesh.json",
@@ -7251,6 +7594,7 @@
     "reports/benchmark_results.md",
     "reports/cases/A2_moderate_mesh__Bexh.md",
     "reports/cases/A2_moderate_mesh__C-llm-r2.md",
+    "reports/cases/A2_moderate_mesh__C-llm-r3.md",
     "reports/cases/A2_moderate_mesh__C-llm.md",
     "reports/cases/A2_moderate_mesh__C-rule.md"
    ],
@@ -7424,7 +7768,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 6,
+   "cache_hits": 7,
    "requests": [
     {
      "time": "2026-10-19T17:41:56+00:00",
@@ -7449,6 +7793,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:31:39+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -7458,6 +7806,8 @@
     "benchmark/Bexh/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.partial.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.partial.json",
     "benchmark/C-rule-prereg/A2_moderate_mesh.json",
     "benchmark/C-rule-prereg/A2_moderate_mesh.partial.json",
     "benchmark/C-rule/A2_moderate_mesh.json"
@@ -7467,6 +7817,7 @@
     "reports/benchmark_results.md",
     "reports/cases/A2_moderate_mesh__Bexh.md",
     "reports/cases/A2_moderate_mesh__C-llm-r2.md",
+    "reports/cases/A2_moderate_mesh__C-llm-r3.md",
     "reports/cases/A2_moderate_mesh__C-rule.md"
    ],
    "pid_cleared_in": null,
@@ -7678,6 +8029,7 @@
    "referenced_by": [
     "benchmark/C-llm-r2/A2_moderate_mesh.json",
     "benchmark/C-llm-r2/A2_moderate_mesh.partial.json",
+    "benchmark/C-llm-r3/A2_moderate_mesh.json",
     "benchmark/C-llm-r3/A2_moderate_mesh.partial.json",
     "benchmark/C-llm/A2_moderate_mesh.json",
     "benchmark/C-llm/A2_moderate_mesh.partial.json"
@@ -7686,6 +8038,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/A2_moderate_mesh__C-llm-r2.md",
+    "reports/cases/A2_moderate_mesh__C-llm-r3.md",
     "reports/cases/A2_moderate_mesh__C-llm.md"
    ],
    "pid_cleared_in": null,
@@ -7733,7 +8086,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 42,
+   "cache_hits": 43,
    "requests": [
     {
      "time": "2026-10-19T07:25:26+00:00",
@@ -7902,6 +8255,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T15:46:33+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -7914,6 +8271,8 @@
     "benchmark/Bexh/B1_small_domain.json",
     "benchmark/C-llm-r2/B1_small_domain.json",
     "benchmark/C-llm-r2/B1_small_domain.partial.json",
+    "benchmark/C-llm-r3/B1_small_domain.json",
+    "benchmark/C-llm-r3/B1_small_domain.partial.json",
     "benchmark/C-llm/B1_small_domain.json",
     "benchmark/C-llm/B1_small_domain.partial.json",
     "benchmark/C-rule-prereg/B1_small_domain.json",
@@ -7927,6 +8286,7 @@
    "mentioned_in": [
     "reports/cases/B1_small_domain__Bexh.md",
     "reports/cases/B1_small_domain__C-llm-r2.md",
+    "reports/cases/B1_small_domain__C-llm-r3.md",
     "reports/cases/B1_small_domain__C-llm.md",
     "reports/cases/B1_small_domain__C-rule.md"
    ],
@@ -7962,7 +8322,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 3,
+   "cache_hits": 4,
    "requests": [
     {
      "time": "2026-10-19T13:46:01+00:00",
@@ -7975,6 +8335,10 @@
     {
      "time": "2026-10-20T14:25:04+00:00",
      "launched_by": "exhaustive"
+    },
+    {
+     "time": "2026-10-20T15:46:50+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -7982,6 +8346,8 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/B1_small_domain.json",
+    "benchmark/C-llm-r3/B1_small_domain.json",
+    "benchmark/C-llm-r3/B1_small_domain.partial.json",
     "benchmark/C-llm/B1_small_domain.json",
     "benchmark/C-llm/B1_small_domain.partial.json",
     "benchmark/C-rule-prereg/B1_small_domain.json",
@@ -7992,6 +8358,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/B1_small_domain__Bexh.md",
+    "reports/cases/B1_small_domain__C-llm-r3.md",
     "reports/cases/B1_small_domain__C-llm.md",
     "reports/cases/B1_small_domain__C-rule.md"
    ],
@@ -8168,8 +8535,8 @@
    "wall_seconds": 483.03856122299476,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -8189,8 +8556,8 @@
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
    }
@@ -8366,7 +8733,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 40,
+   "cache_hits": 41,
    "requests": [
     {
      "time": "2026-10-19T07:49:51+00:00",
@@ -8527,6 +8894,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T15:46:50+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -8539,6 +8910,8 @@
     "benchmark/Bexh/B2_moderate_domain.json",
     "benchmark/C-llm-r2/B2_moderate_domain.json",
     "benchmark/C-llm-r2/B2_moderate_domain.partial.json",
+    "benchmark/C-llm-r3/B2_moderate_domain.json",
+    "benchmark/C-llm-r3/B2_moderate_domain.partial.json",
     "benchmark/C-llm/B2_moderate_domain.json",
     "benchmark/C-llm/B2_moderate_domain.partial.json",
     "benchmark/C-rule-prereg/B2_moderate_domain.json",
@@ -8552,6 +8925,7 @@
    "mentioned_in": [
     "reports/cases/B2_moderate_domain__Bexh.md",
     "reports/cases/B2_moderate_domain__C-llm-r2.md",
+    "reports/cases/B2_moderate_domain__C-llm-r3.md",
     "reports/cases/B2_moderate_domain__C-llm.md",
     "reports/cases/B2_moderate_domain__C-rule.md"
    ],
@@ -8593,7 +8967,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 3,
+   "cache_hits": 4,
    "requests": [
     {
      "time": "2026-10-20T06:19:07+00:00",
@@ -8606,6 +8980,10 @@
     {
      "time": "2026-10-20T12:54:07+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:47:31+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -8614,6 +8992,8 @@
    "referenced_by": [
     "benchmark/C-llm-r2/B2_moderate_domain.json",
     "benchmark/C-llm-r2/B2_moderate_domain.partial.json",
+    "benchmark/C-llm-r3/B2_moderate_domain.json",
+    "benchmark/C-llm-r3/B2_moderate_domain.partial.json",
     "benchmark/C-llm/B2_moderate_domain.json",
     "benchmark/C-llm/B2_moderate_domain.partial.json",
     "benchmark/C-rule-prereg/B2_moderate_domain.json",
@@ -8624,6 +9004,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/B2_moderate_domain__C-llm-r2.md",
+    "reports/cases/B2_moderate_domain__C-llm-r3.md",
     "reports/cases/B2_moderate_domain__C-llm.md",
     "reports/cases/B2_moderate_domain__C-rule.md"
    ],
@@ -8674,7 +9055,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 4,
+   "cache_hits": 5,
    "requests": [
     {
      "time": "2026-10-20T06:19:07+00:00",
@@ -8691,6 +9072,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:47:08+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -8700,6 +9085,8 @@
     "benchmark/Bexh/B2_moderate_domain.json",
     "benchmark/C-llm-r2/B2_moderate_domain.json",
     "benchmark/C-llm-r2/B2_moderate_domain.partial.json",
+    "benchmark/C-llm-r3/B2_moderate_domain.json",
+    "benchmark/C-llm-r3/B2_moderate_domain.partial.json",
     "benchmark/C-llm/B2_moderate_domain.json",
     "benchmark/C-llm/B2_moderate_domain.partial.json",
     "benchmark/C-rule-prereg/B2_moderate_domain.json",
@@ -8712,6 +9099,7 @@
     "reports/benchmark_results.md",
     "reports/cases/B2_moderate_domain__Bexh.md",
     "reports/cases/B2_moderate_domain__C-llm-r2.md",
+    "reports/cases/B2_moderate_domain__C-llm-r3.md",
     "reports/cases/B2_moderate_domain__C-llm.md",
     "reports/cases/B2_moderate_domain__C-rule.md"
    ],
@@ -9097,7 +9485,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 30,
+   "cache_hits": 31,
    "requests": [
     {
      "time": "2026-10-19T09:08:41+00:00",
@@ -9218,6 +9606,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T15:47:31+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -9230,6 +9622,8 @@
     "benchmark/Bexh/C1_large_timestep.json",
     "benchmark/C-llm-r2/C1_large_timestep.json",
     "benchmark/C-llm-r2/C1_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C1_large_timestep.json",
+    "benchmark/C-llm-r3/C1_large_timestep.partial.json",
     "benchmark/C-llm/C1_large_timestep.json",
     "benchmark/C-llm/C1_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C1_large_timestep.json",
@@ -9243,6 +9637,7 @@
    "mentioned_in": [
     "reports/cases/C1_large_timestep__Bexh.md",
     "reports/cases/C1_large_timestep__C-llm-r2.md",
+    "reports/cases/C1_large_timestep__C-llm-r3.md",
     "reports/cases/C1_large_timestep__C-llm.md",
     "reports/cases/C1_large_timestep__C-rule.md"
    ],
@@ -9402,7 +9797,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 4,
+   "cache_hits": 5,
    "requests": [
     {
      "time": "2026-10-20T05:15:47+00:00",
@@ -9419,6 +9814,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:49:30+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -9428,6 +9827,8 @@
     "benchmark/Bexh/C1_large_timestep.json",
     "benchmark/C-llm-r2/C1_large_timestep.json",
     "benchmark/C-llm-r2/C1_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C1_large_timestep.json",
+    "benchmark/C-llm-r3/C1_large_timestep.partial.json",
     "benchmark/C-llm/C1_large_timestep.json",
     "benchmark/C-llm/C1_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C1_large_timestep.json",
@@ -9439,6 +9840,7 @@
     "reports/benchmark_results.md",
     "reports/cases/C1_large_timestep__Bexh.md",
     "reports/cases/C1_large_timestep__C-llm-r2.md",
+    "reports/cases/C1_large_timestep__C-llm-r3.md",
     "reports/cases/C1_large_timestep__C-llm.md",
     "reports/cases/C1_large_timestep__C-rule.md"
    ],
@@ -9487,18 +9889,26 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 0,
-   "requests": [],
+   "cache_hits": 1,
+   "requests": [
+    {
+     "time": "2026-10-20T15:50:13+00:00",
+     "launched_by": "llm_critic"
+    }
+   ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/C-llm-r2/C1_large_timestep.json",
-    "benchmark/C-llm-r2/C1_large_timestep.partial.json"
+    "benchmark/C-llm-r2/C1_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C1_large_timestep.json",
+    "benchmark/C-llm-r3/C1_large_timestep.partial.json"
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
-    "reports/cases/C1_large_timestep__C-llm-r2.md"
+    "reports/cases/C1_large_timestep__C-llm-r2.md",
+    "reports/cases/C1_large_timestep__C-llm-r3.md"
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
@@ -9545,7 +9955,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 6,
+   "cache_hits": 7,
    "requests": [
     {
      "time": "2026-10-20T01:16:16+00:00",
@@ -9570,6 +9980,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:48:39+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -9579,6 +9993,8 @@
     "benchmark/Bexh/C1_large_timestep.json",
     "benchmark/C-llm-r2/C1_large_timestep.json",
     "benchmark/C-llm-r2/C1_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C1_large_timestep.json",
+    "benchmark/C-llm-r3/C1_large_timestep.partial.json",
     "benchmark/C-llm/C1_large_timestep.json",
     "benchmark/C-llm/C1_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C1_large_timestep.json",
@@ -9590,6 +10006,7 @@
     "reports/benchmark_results.md",
     "reports/cases/C1_large_timestep__Bexh.md",
     "reports/cases/C1_large_timestep__C-llm-r2.md",
+    "reports/cases/C1_large_timestep__C-llm-r3.md",
     "reports/cases/C1_large_timestep__C-llm.md",
     "reports/cases/C1_large_timestep__C-rule.md"
    ],
@@ -9778,10 +10195,14 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 1,
+   "cache_hits": 2,
    "requests": [
     {
      "time": "2026-10-20T07:51:21+00:00",
+     "launched_by": "llm_critic"
+    },
+    {
+     "time": "2026-10-20T15:49:04+00:00",
      "launched_by": "llm_critic"
     }
    ],
@@ -9791,6 +10212,8 @@
    "referenced_by": [
     "benchmark/C-llm-r2/C1_large_timestep.json",
     "benchmark/C-llm-r2/C1_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C1_large_timestep.json",
+    "benchmark/C-llm-r3/C1_large_timestep.partial.json",
     "benchmark/C-llm/C1_large_timestep.json",
     "benchmark/C-llm/C1_large_timestep.partial.json"
    ],
@@ -9798,6 +10221,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/C1_large_timestep__C-llm-r2.md",
+    "reports/cases/C1_large_timestep__C-llm-r3.md",
     "reports/cases/C1_large_timestep__C-llm.md"
    ],
    "pid_cleared_in": null,
@@ -9845,7 +10269,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 4,
+   "cache_hits": 5,
    "requests": [
     {
      "time": "2026-10-20T04:12:05+00:00",
@@ -9862,6 +10286,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:48:15+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -9871,6 +10299,8 @@
     "benchmark/Bexh/C1_large_timestep.json",
     "benchmark/C-llm-r2/C1_large_timestep.json",
     "benchmark/C-llm-r2/C1_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C1_large_timestep.json",
+    "benchmark/C-llm-r3/C1_large_timestep.partial.json",
     "benchmark/C-llm/C1_large_timestep.json",
     "benchmark/C-llm/C1_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C1_large_timestep.json",
@@ -9882,6 +10312,7 @@
     "reports/benchmark_results.md",
     "reports/cases/C1_large_timestep__Bexh.md",
     "reports/cases/C1_large_timestep__C-llm-r2.md",
+    "reports/cases/C1_large_timestep__C-llm-r3.md",
     "reports/cases/C1_large_timestep__C-llm.md",
     "reports/cases/C1_large_timestep__C-rule.md"
    ],
@@ -9969,7 +10400,8 @@
    "last_named_in_git": null,
    "llm_results_logged_after_creation": [
     "C-llm after 'relaunch after container restart 2' (2026-10-20 03:40, logs/benchmark.log)",
-    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)"
+    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)",
+    "C-llm-r3 after 'C-llm-r3 launch' (2026-10-20 14:11, logs/repeats.log)"
    ]
   },
   "C1_large_timestep.m2-43ace4fb86f8": {
@@ -10037,7 +10469,8 @@
    "last_named_in_git": null,
    "llm_results_logged_after_creation": [
     "C-llm after 'relaunch after container restart 2' (2026-10-20 03:40, logs/benchmark.log)",
-    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)"
+    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)",
+    "C-llm-r3 after 'C-llm-r3 launch' (2026-10-20 14:11, logs/repeats.log)"
    ]
   },
   "C1_large_timestep.m2-6e4f672cac17": {
@@ -10067,19 +10500,28 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 1,
+   "cache_hits": 2,
    "requests": [
     {
      "time": "2026-10-20T01:15:55+00:00",
+     "launched_by": "llm_critic"
+    },
+    {
+     "time": "2026-10-20T15:47:47+00:00",
      "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
-   "referenced_by": [],
+   "referenced_by": [
+    "benchmark/C-llm-r3/C1_large_timestep.json",
+    "benchmark/C-llm-r3/C1_large_timestep.partial.json"
+   ],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/C1_large_timestep__C-llm-r3.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
     "C-llm-v1",
@@ -10098,26 +10540,7 @@
      "relaunch after container restart (2026-10-20 01:15)",
      "commit 8225c78: Relaunch after container restart; L-judge on the attacks (2026-10-20 01:17)"
     ]
-   },
-   "in_use": null,
-   "last_named_in_git": {
-    "file": "benchmark/C-llm/C1_large_timestep.partial.json",
-    "commit": "8225c78",
-    "time": "2026-10-20T01:17:26+00:00",
-    "removed_in": "9ee7f4c"
-   },
-   "loop_attempt": {
-    "system": "C-llm",
-    "case": "C1_large_timestep",
-    "status": "aborted",
-    "n_iterations": 2,
-    "cost_usd": 0.12055291999999998,
-    "superseded_in": "9ee7f4c"
-   },
-   "llm_results_logged_after_creation": [
-    "C-llm after 'relaunch after container restart 2' (2026-10-20 03:40, logs/benchmark.log)",
-    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)"
-   ]
+   }
   },
   "C1_large_timestep.m2-a3ed547121c5": {
    "run_id": "C1_large_timestep.m2-a3ed547121c5",
@@ -10141,8 +10564,8 @@
    "wall_seconds": null,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -10163,8 +10586,8 @@
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
    }
@@ -10194,7 +10617,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 35,
+   "cache_hits": 36,
    "requests": [
     {
      "time": "2026-10-19T08:42:45+00:00",
@@ -10335,6 +10758,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T15:50:13+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -10347,6 +10774,8 @@
     "benchmark/Bexh/C2_euler_large_timestep.json",
     "benchmark/C-llm-r2/C2_euler_large_timestep.json",
     "benchmark/C-llm-r2/C2_euler_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.partial.json",
     "benchmark/C-llm/C2_euler_large_timestep.json",
     "benchmark/C-llm/C2_euler_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C2_euler_large_timestep.json",
@@ -10360,6 +10789,7 @@
    "mentioned_in": [
     "reports/cases/C2_euler_large_timestep__Bexh.md",
     "reports/cases/C2_euler_large_timestep__C-llm-r2.md",
+    "reports/cases/C2_euler_large_timestep__C-llm-r3.md",
     "reports/cases/C2_euler_large_timestep__C-llm.md",
     "reports/cases/C2_euler_large_timestep__C-rule.md"
    ],
@@ -10395,7 +10825,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 4,
+   "cache_hits": 5,
    "requests": [
     {
      "time": "2026-10-19T20:56:36+00:00",
@@ -10412,6 +10842,10 @@
     {
      "time": "2026-10-20T12:54:07+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:53:11+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -10421,6 +10855,8 @@
     "benchmark/Bexh/C2_euler_large_timestep.json",
     "benchmark/C-llm-r2/C2_euler_large_timestep.json",
     "benchmark/C-llm-r2/C2_euler_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.partial.json",
     "benchmark/C-llm/C2_euler_large_timestep.json",
     "benchmark/C-llm/C2_euler_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C2_euler_large_timestep.json",
@@ -10432,6 +10868,7 @@
     "reports/benchmark_results.md",
     "reports/cases/C2_euler_large_timestep__Bexh.md",
     "reports/cases/C2_euler_large_timestep__C-llm-r2.md",
+    "reports/cases/C2_euler_large_timestep__C-llm-r3.md",
     "reports/cases/C2_euler_large_timestep__C-llm.md",
     "reports/cases/C2_euler_large_timestep__C-rule.md"
    ],
@@ -10550,7 +10987,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 2,
+   "cache_hits": 3,
    "requests": [
     {
      "time": "2026-10-20T07:51:44+00:00",
@@ -10559,6 +10996,10 @@
     {
      "time": "2026-10-20T12:54:07+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:51:26+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -10567,6 +11008,8 @@
    "referenced_by": [
     "benchmark/C-llm-r2/C2_euler_large_timestep.json",
     "benchmark/C-llm-r2/C2_euler_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C2_euler_large_timestep.json",
     "benchmark/C-rule-prereg/C2_euler_large_timestep.partial.json",
     "benchmark/C-rule/C2_euler_large_timestep.json"
@@ -10575,6 +11018,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/C2_euler_large_timestep__C-llm-r2.md",
+    "reports/cases/C2_euler_large_timestep__C-llm-r3.md",
     "reports/cases/C2_euler_large_timestep__C-rule.md"
    ],
    "pid_cleared_in": null,
@@ -10624,7 +11068,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 4,
+   "cache_hits": 5,
    "requests": [
     {
      "time": "2026-10-19T19:42:57+00:00",
@@ -10641,6 +11085,10 @@
     {
      "time": "2026-10-20T12:54:07+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:50:51+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -10649,6 +11097,8 @@
    "referenced_by": [
     "benchmark/C-llm-r2/C2_euler_large_timestep.json",
     "benchmark/C-llm-r2/C2_euler_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.partial.json",
     "benchmark/C-llm/C2_euler_large_timestep.json",
     "benchmark/C-llm/C2_euler_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C2_euler_large_timestep.json",
@@ -10659,6 +11109,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/C2_euler_large_timestep__C-llm-r2.md",
+    "reports/cases/C2_euler_large_timestep__C-llm-r3.md",
     "reports/cases/C2_euler_large_timestep__C-llm.md",
     "reports/cases/C2_euler_large_timestep__C-rule.md"
    ],
@@ -10709,7 +11160,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 5,
+   "cache_hits": 6,
    "requests": [
     {
      "time": "2026-10-19T19:14:28+00:00",
@@ -10730,6 +11181,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:50:32+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -10739,6 +11194,8 @@
     "benchmark/Bexh/C2_euler_large_timestep.json",
     "benchmark/C-llm-r2/C2_euler_large_timestep.json",
     "benchmark/C-llm-r2/C2_euler_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.partial.json",
     "benchmark/C-llm/C2_euler_large_timestep.json",
     "benchmark/C-llm/C2_euler_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C2_euler_large_timestep.json",
@@ -10750,6 +11207,7 @@
     "reports/benchmark_results.md",
     "reports/cases/C2_euler_large_timestep__Bexh.md",
     "reports/cases/C2_euler_large_timestep__C-llm-r2.md",
+    "reports/cases/C2_euler_large_timestep__C-llm-r3.md",
     "reports/cases/C2_euler_large_timestep__C-llm.md",
     "reports/cases/C2_euler_large_timestep__C-rule.md"
    ],
@@ -10976,10 +11434,14 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 1,
+   "cache_hits": 2,
    "requests": [
     {
      "time": "2026-10-20T07:52:16+00:00",
+     "launched_by": "llm_critic"
+    },
+    {
+     "time": "2026-10-20T15:52:23+00:00",
      "launched_by": "llm_critic"
     }
    ],
@@ -10989,6 +11451,8 @@
    "referenced_by": [
     "benchmark/C-llm-r2/C2_euler_large_timestep.json",
     "benchmark/C-llm-r2/C2_euler_large_timestep.partial.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.partial.json",
     "benchmark/C-llm/C2_euler_large_timestep.json",
     "benchmark/C-llm/C2_euler_large_timestep.partial.json"
    ],
@@ -10996,6 +11460,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/C2_euler_large_timestep__C-llm-r2.md",
+    "reports/cases/C2_euler_large_timestep__C-llm-r3.md",
     "reports/cases/C2_euler_large_timestep__C-llm.md"
    ],
    "pid_cleared_in": null,
@@ -11044,7 +11509,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 3,
+   "cache_hits": 4,
    "requests": [
     {
      "time": "2026-10-19T17:02:32+00:00",
@@ -11057,6 +11522,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:51:52+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -11064,6 +11533,8 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/C2_euler_large_timestep.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.json",
+    "benchmark/C-llm-r3/C2_euler_large_timestep.partial.json",
     "benchmark/C-llm/C2_euler_large_timestep.json",
     "benchmark/C-llm/C2_euler_large_timestep.partial.json",
     "benchmark/C-rule-prereg/C2_euler_large_timestep.json",
@@ -11074,6 +11545,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/C2_euler_large_timestep__Bexh.md",
+    "reports/cases/C2_euler_large_timestep__C-llm-r3.md",
     "reports/cases/C2_euler_large_timestep__C-llm.md",
     "reports/cases/C2_euler_large_timestep__C-rule.md"
    ],
@@ -11164,7 +11636,8 @@
    "llm_results_logged_after_creation": [
     "C-llm after 'relaunch after container restart' (2026-10-20 01:15, logs/benchmark.log)",
     "C-llm after 'relaunch after container restart 2' (2026-10-20 03:40, logs/benchmark.log)",
-    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)"
+    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)",
+    "C-llm-r3 after 'C-llm-r3 launch' (2026-10-20 14:11, logs/repeats.log)"
    ]
   },
   "C2_euler_large_timestep.m2-4c431502ff02": {
@@ -11300,7 +11773,8 @@
    "llm_results_logged_after_creation": [
     "C-llm after 'relaunch after container restart' (2026-10-20 01:15, logs/benchmark.log)",
     "C-llm after 'relaunch after container restart 2' (2026-10-20 03:40, logs/benchmark.log)",
-    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)"
+    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)",
+    "C-llm-r3 after 'C-llm-r3 launch' (2026-10-20 14:11, logs/repeats.log)"
    ]
   },
   "D1_steady_solver-9cd0391edef9": {
@@ -11328,7 +11802,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 43,
+   "cache_hits": 44,
    "requests": [
     {
      "time": "2026-10-19T07:25:26+00:00",
@@ -11501,6 +11975,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T15:53:11+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -11513,6 +11991,8 @@
     "benchmark/Bexh/D1_steady_solver.json",
     "benchmark/C-llm-r2/D1_steady_solver.json",
     "benchmark/C-llm-r2/D1_steady_solver.partial.json",
+    "benchmark/C-llm-r3/D1_steady_solver.json",
+    "benchmark/C-llm-r3/D1_steady_solver.partial.json",
     "benchmark/C-llm/D1_steady_solver.json",
     "benchmark/C-llm/D1_steady_solver.partial.json",
     "benchmark/C-rule-prereg/D1_steady_solver.json",
@@ -11526,6 +12006,7 @@
    "mentioned_in": [
     "reports/cases/D1_steady_solver__Bexh.md",
     "reports/cases/D1_steady_solver__C-llm-r2.md",
+    "reports/cases/D1_steady_solver__C-llm-r3.md",
     "reports/cases/D1_steady_solver__C-llm.md",
     "reports/cases/D1_steady_solver__C-rule.md"
    ],
@@ -11715,7 +12196,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 40,
+   "cache_hits": 41,
    "requests": [
     {
      "time": "2026-10-19T07:47:51+00:00",
@@ -11876,6 +12357,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T15:53:12+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -11888,6 +12373,8 @@
     "benchmark/Bexh/E1_noslip_side_walls.json",
     "benchmark/C-llm-r2/E1_noslip_side_walls.json",
     "benchmark/C-llm-r2/E1_noslip_side_walls.partial.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.partial.json",
     "benchmark/C-llm/E1_noslip_side_walls.json",
     "benchmark/C-llm/E1_noslip_side_walls.partial.json",
     "benchmark/C-rule-prereg/E1_noslip_side_walls.json",
@@ -11901,6 +12388,7 @@
    "mentioned_in": [
     "reports/cases/E1_noslip_side_walls__Bexh.md",
     "reports/cases/E1_noslip_side_walls__C-llm-r2.md",
+    "reports/cases/E1_noslip_side_walls__C-llm-r3.md",
     "reports/cases/E1_noslip_side_walls__C-llm.md",
     "reports/cases/E1_noslip_side_walls__C-rule.md"
    ],
@@ -12000,18 +12488,26 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 0,
-   "requests": [],
+   "cache_hits": 1,
+   "requests": [
+    {
+     "time": "2026-10-20T15:54:54+00:00",
+     "launched_by": "llm_critic"
+    }
+   ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/C-llm-r3/E1_noslip_side_walls.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.partial.json",
     "benchmark/C-llm/E1_noslip_side_walls.json",
     "benchmark/C-llm/E1_noslip_side_walls.partial.json"
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "reports/benchmark_results.md",
+    "reports/cases/E1_noslip_side_walls__C-llm-r3.md",
     "reports/cases/E1_noslip_side_walls__C-llm.md"
    ],
    "pid_cleared_in": null,
@@ -12060,7 +12556,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 5,
+   "cache_hits": 6,
    "requests": [
     {
      "time": "2026-10-20T01:15:56+00:00",
@@ -12081,6 +12577,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:54:29+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -12090,6 +12590,8 @@
     "benchmark/Bexh/E1_noslip_side_walls.json",
     "benchmark/C-llm-r2/E1_noslip_side_walls.json",
     "benchmark/C-llm-r2/E1_noslip_side_walls.partial.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.partial.json",
     "benchmark/C-llm/E1_noslip_side_walls.json",
     "benchmark/C-llm/E1_noslip_side_walls.partial.json",
     "benchmark/C-rule-prereg/E1_noslip_side_walls.json",
@@ -12101,6 +12603,7 @@
     "reports/benchmark_results.md",
     "reports/cases/E1_noslip_side_walls__Bexh.md",
     "reports/cases/E1_noslip_side_walls__C-llm-r2.md",
+    "reports/cases/E1_noslip_side_walls__C-llm-r3.md",
     "reports/cases/E1_noslip_side_walls__C-llm.md",
     "reports/cases/E1_noslip_side_walls__C-rule.md"
    ],
@@ -12197,6 +12700,59 @@
     ]
    }
   },
+  "E1_noslip_side_walls.D3x-5e6cfbc7fe84": {
+   "run_id": "E1_noslip_side_walls.D3x-5e6cfbc7fe84",
+   "status": "completed",
+   "launched_by": "llm_critic",
+   "created": "2026-10-20T15:55:56+00:00",
+   "finished": "2026-10-20T16:24:22+00:00",
+   "parent_run": "E1_noslip_side_walls-88a7cd5812e8",
+   "root_run": "E1_noslip_side_walls-88a7cd5812e8",
+   "root_case": "E1_noslip_side_walls",
+   "missing_ancestor": null,
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 3.0
+   },
+   "launch_reason": "Domain is the largest drag component (0.02135) and sits just over the half-tolerance for Strouhal (0.01505). Both domain terms are over budget, and the trends in R4 and R3 are still moving. A 3.0x domain extends the sequence beyond R3 (2x) and tests whether it is converging. It keeps the near-field mesh unchanged and uses root R0 as the parent, so the verifier compares directly with the submitted quantities. It is among the cheapest entries and fits the remaining compute.",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 380384000,
+   "wall_seconds": 1706.724269451006,
+   "owner_pid": 25156,
+   "owner": 25156,
+   "owner_state": "no such process",
+   "owner_command": null,
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-llm-r3/E1_noslip_side_walls.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.partial.json"
+   ],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [
+    "reports/cases/E1_noslip_side_walls__C-llm-r3.md"
+   ],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [
+    "C-llm-v1",
+    "C-llm-v1+review"
+   ],
+   "owner_process": {
+    "pid": 25156,
+    "state": "no such process",
+    "last_record": "2026-10-20T17:46:42+00:00",
+    "successor": null,
+    "events_between": []
+   }
+  },
   "E1_noslip_side_walls.dt0.005-c41af2c90410": {
    "run_id": "E1_noslip_side_walls.dt0.005-c41af2c90410",
    "status": "completed",
@@ -12224,7 +12780,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 4,
+   "cache_hits": 5,
    "requests": [
     {
      "time": "2026-10-20T02:45:12+00:00",
@@ -12241,6 +12797,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:55:25+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -12250,6 +12810,8 @@
     "benchmark/Bexh/E1_noslip_side_walls.json",
     "benchmark/C-llm-r2/E1_noslip_side_walls.json",
     "benchmark/C-llm-r2/E1_noslip_side_walls.partial.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.partial.json",
     "benchmark/C-llm/E1_noslip_side_walls.json",
     "benchmark/C-llm/E1_noslip_side_walls.partial.json",
     "benchmark/C-rule-prereg/E1_noslip_side_walls.json",
@@ -12261,6 +12823,7 @@
     "reports/benchmark_results.md",
     "reports/cases/E1_noslip_side_walls__Bexh.md",
     "reports/cases/E1_noslip_side_walls__C-llm-r2.md",
+    "reports/cases/E1_noslip_side_walls__C-llm-r3.md",
     "reports/cases/E1_noslip_side_walls__C-llm.md",
     "reports/cases/E1_noslip_side_walls__C-rule.md"
    ],
@@ -12375,7 +12938,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 6,
+   "cache_hits": 7,
    "requests": [
     {
      "time": "2026-10-19T20:14:13+00:00",
@@ -12400,6 +12963,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "rule_based"
+    },
+    {
+     "time": "2026-10-20T15:53:56+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -12407,6 +12974,8 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/E1_noslip_side_walls.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.partial.json",
     "benchmark/C-llm/E1_noslip_side_walls.json",
     "benchmark/C-llm/E1_noslip_side_walls.partial.json",
     "benchmark/C-rule-prereg/E1_noslip_side_walls.json",
@@ -12417,6 +12986,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/E1_noslip_side_walls__Bexh.md",
+    "reports/cases/E1_noslip_side_walls__C-llm-r3.md",
     "reports/cases/E1_noslip_side_walls__C-llm.md",
     "reports/cases/E1_noslip_side_walls__C-rule.md"
    ],
@@ -12604,10 +13174,14 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 1,
+   "cache_hits": 2,
    "requests": [
     {
      "time": "2026-10-20T11:26:39+00:00",
+     "launched_by": "llm_critic"
+    },
+    {
+     "time": "2026-10-20T15:53:29+00:00",
      "launched_by": "llm_critic"
     }
    ],
@@ -12616,11 +13190,14 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/C-llm-r2/E1_noslip_side_walls.json",
-    "benchmark/C-llm-r2/E1_noslip_side_walls.partial.json"
+    "benchmark/C-llm-r2/E1_noslip_side_walls.partial.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.json",
+    "benchmark/C-llm-r3/E1_noslip_side_walls.partial.json"
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
-    "reports/cases/E1_noslip_side_walls__C-llm-r2.md"
+    "reports/cases/E1_noslip_side_walls__C-llm-r2.md",
+    "reports/cases/E1_noslip_side_walls__C-llm-r3.md"
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
@@ -12667,7 +13244,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 40,
+   "cache_hits": 41,
    "requests": [
     {
      "time": "2026-10-19T07:37:51+00:00",
@@ -12828,6 +13405,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T16:24:23+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -12840,8 +13421,11 @@
     "benchmark/Bexh/F1_upwind_convection.json",
     "benchmark/C-llm-r2/F1_upwind_convection.json",
     "benchmark/C-llm-r2/F1_upwind_convection.partial.json",
+    "benchmark/C-llm-r3/F1_upwind_convection.json",
+    "benchmark/C-llm-r3/F1_upwind_convection.partial.json",
     "benchmark/C-llm/F1_upwind_convection.json",
     "benchmark/C-llm/F1_upwind_convection.partial.json",
+    "benchmark/C-rule-prereg/F1_upwind_convection.json",
     "benchmark/C-rule-prereg/F1_upwind_convection.partial.json",
     "benchmark/C-rule/F1_upwind_convection.json",
     "benchmark/L-judge/F1_upwind_convection.json",
@@ -12852,6 +13436,7 @@
    "mentioned_in": [
     "reports/cases/F1_upwind_convection__Bexh.md",
     "reports/cases/F1_upwind_convection__C-llm-r2.md",
+    "reports/cases/F1_upwind_convection__C-llm-r3.md",
     "reports/cases/F1_upwind_convection__C-llm.md",
     "reports/cases/F1_upwind_convection__C-rule.md"
    ],
@@ -12882,8 +13467,8 @@
    "wall_seconds": 1466.419694807002,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -12903,18 +13488,69 @@
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
+    "successor": null,
+    "events_between": []
+   }
+  },
+  "F1_upwind_convection.dt0.00125-89de2cdbb4e8": {
+   "run_id": "F1_upwind_convection.dt0.00125-89de2cdbb4e8",
+   "status": "completed",
+   "launched_by": "rule_based",
+   "created": "2026-10-20T17:29:21+00:00",
+   "finished": "2026-10-20T19:11:14+00:00",
+   "parent_run": "F1_upwind_convection.dt0.0025-6435cc8d726d",
+   "root_run": "F1_upwind_convection-e460c39ac86c",
+   "root_case": "F1_upwind_convection",
+   "missing_ancestor": null,
+   "action": "REDUCE_TIME_STEP",
+   "params": {
+    "factor": 2.0
+   },
+   "launch_reason": "time uncertainty component is unmeasured or not yet within budget",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 1957120000,
+   "wall_seconds": 4552.620561682008,
+   "owner_pid": 17642,
+   "owner": 17642,
+   "owner_state": "no such process",
+   "owner_command": null,
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-rule-prereg/F1_upwind_convection.json",
+    "benchmark/C-rule-prereg/F1_upwind_convection.partial.json"
+   ],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [
+    "C-rule-v1",
+    "C-rule-v2"
+   ],
+   "owner_process": {
+    "pid": 17642,
+    "state": "no such process",
+    "last_record": "2026-10-20T19:11:14+00:00",
     "successor": null,
     "events_between": []
    }
   },
   "F1_upwind_convection.dt0.0025-6435cc8d726d": {
    "run_id": "F1_upwind_convection.dt0.0025-6435cc8d726d",
-   "status": "running",
+   "status": "completed",
    "launched_by": "rule_based",
    "created": "2026-10-20T13:47:57+00:00",
-   "finished": null,
+   "finished": "2026-10-20T17:29:18+00:00",
    "parent_run": "F1_upwind_convection.dt0.005-ab4ff52f420f",
    "root_run": "F1_upwind_convection-e460c39ac86c",
    "root_case": "F1_upwind_convection",
@@ -12927,22 +13563,24 @@
    "failure_kind": null,
    "failure_step": null,
    "failure_returncode": null,
-   "cell_steps": null,
-   "wall_seconds": null,
+   "cell_steps": 978560000,
+   "wall_seconds": 2614.3254196699927,
    "owner_pid": 17642,
    "owner": 17642,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_rule_prereg.py --workers 17",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
    "cache_hits": 0,
    "requests": [],
    "unreadable_request_lines": 0,
-   "has_postprocessing_sha256": false,
-   "has_final_fields_sha256": false,
-   "solver_started": false,
-   "referenced_by": [],
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-rule-prereg/F1_upwind_convection.json",
+    "benchmark/C-rule-prereg/F1_upwind_convection.partial.json"
+   ],
    "referenced_only_by_partial": false,
    "mentioned_in": [],
    "pid_cleared_in": null,
@@ -12952,13 +13590,11 @@
    ],
    "owner_process": {
     "pid": 17642,
-    "state": "alive",
-    "last_record": "2026-10-20T13:47:57+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T19:11:14+00:00",
     "successor": null,
     "events_between": []
-   },
-   "in_use": "live owner",
-   "last_named_in_git": null
+   }
   },
   "F1_upwind_convection.dt0.005-ab4ff52f420f": {
    "run_id": "F1_upwind_convection.dt0.005-ab4ff52f420f",
@@ -12982,8 +13618,8 @@
    "wall_seconds": 1608.39586289601,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -12999,6 +13635,7 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/F1_upwind_convection.json",
+    "benchmark/C-rule-prereg/F1_upwind_convection.json",
     "benchmark/C-rule-prereg/F1_upwind_convection.partial.json"
    ],
    "referenced_only_by_partial": false,
@@ -13009,8 +13646,8 @@
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
    }
@@ -13187,18 +13824,26 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 0,
-   "requests": [],
+   "cache_hits": 1,
+   "requests": [
+    {
+     "time": "2026-10-20T16:25:04+00:00",
+     "launched_by": "llm_critic"
+    }
+   ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/C-llm-r3/F1_upwind_convection.json",
+    "benchmark/C-llm-r3/F1_upwind_convection.partial.json",
     "benchmark/C-llm/F1_upwind_convection.json",
     "benchmark/C-llm/F1_upwind_convection.partial.json"
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "reports/benchmark_results.md",
+    "reports/cases/F1_upwind_convection__C-llm-r3.md",
     "reports/cases/F1_upwind_convection__C-llm.md"
    ],
    "pid_cleared_in": null,
@@ -13466,6 +14111,7 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/F1_upwind_convection.json",
+    "benchmark/C-rule-prereg/F1_upwind_convection.json",
     "benchmark/C-rule-prereg/F1_upwind_convection.partial.json"
    ],
    "referenced_only_by_partial": false,
@@ -13578,10 +14224,14 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 1,
+   "cache_hits": 2,
    "requests": [
     {
      "time": "2026-10-20T07:50:42+00:00",
+     "launched_by": "llm_critic"
+    },
+    {
+     "time": "2026-10-20T16:24:42+00:00",
      "launched_by": "llm_critic"
     }
    ],
@@ -13591,6 +14241,8 @@
    "referenced_by": [
     "benchmark/C-llm-r2/F1_upwind_convection.json",
     "benchmark/C-llm-r2/F1_upwind_convection.partial.json",
+    "benchmark/C-llm-r3/F1_upwind_convection.json",
+    "benchmark/C-llm-r3/F1_upwind_convection.partial.json",
     "benchmark/C-llm/F1_upwind_convection.json",
     "benchmark/C-llm/F1_upwind_convection.partial.json"
    ],
@@ -13598,6 +14250,7 @@
    "mentioned_in": [
     "reports/benchmark_results.md",
     "reports/cases/F1_upwind_convection__C-llm-r2.md",
+    "reports/cases/F1_upwind_convection__C-llm-r3.md",
     "reports/cases/F1_upwind_convection__C-llm.md"
    ],
    "pid_cleared_in": null,
@@ -13663,6 +14316,7 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/F1_upwind_convection.json",
+    "benchmark/C-rule-prereg/F1_upwind_convection.json",
     "benchmark/C-rule-prereg/F1_upwind_convection.partial.json"
    ],
    "referenced_only_by_partial": false,
@@ -13715,7 +14369,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 37,
+   "cache_hits": 38,
    "requests": [
     {
      "time": "2026-10-19T07:49:26+00:00",
@@ -13864,6 +14518,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T16:25:04+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -13876,8 +14534,11 @@
     "benchmark/Bexh/G1_premature_averaging.json",
     "benchmark/C-llm-r2/G1_premature_averaging.json",
     "benchmark/C-llm-r2/G1_premature_averaging.partial.json",
+    "benchmark/C-llm-r3/G1_premature_averaging.json",
+    "benchmark/C-llm-r3/G1_premature_averaging.partial.json",
     "benchmark/C-llm/G1_premature_averaging.json",
     "benchmark/C-llm/G1_premature_averaging.partial.json",
+    "benchmark/C-rule-prereg/G1_premature_averaging.json",
     "benchmark/C-rule-prereg/G1_premature_averaging.partial.json",
     "benchmark/C-rule/G1_premature_averaging.json",
     "benchmark/L-judge/G1_premature_averaging.json",
@@ -13888,6 +14549,7 @@
    "mentioned_in": [
     "reports/cases/G1_premature_averaging__Bexh.md",
     "reports/cases/G1_premature_averaging__C-llm-r2.md",
+    "reports/cases/G1_premature_averaging__C-llm-r3.md",
     "reports/cases/G1_premature_averaging__C-llm.md",
     "reports/cases/G1_premature_averaging__C-rule.md"
    ],
@@ -13969,6 +14631,59 @@
     ]
    }
   },
+  "G1_premature_averaging.D2x-6e506d02ef0a": {
+   "run_id": "G1_premature_averaging.D2x-6e506d02ef0a",
+   "status": "completed",
+   "launched_by": "llm_critic",
+   "created": "2026-10-20T17:25:02+00:00",
+   "finished": "2026-10-20T17:46:42+00:00",
+   "parent_run": "G1_premature_averaging.long100-bf9115c8c872",
+   "root_run": "G1_premature_averaging-17c0143468d7",
+   "root_case": "G1_premature_averaging",
+   "missing_ancestor": null,
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 2.0
+   },
+   "launch_reason": "The domain component is unmeasured for both quantities and cannot be inferred from the recorded configuration. EXPAND_DOMAIN is the cheapest primitive for an unmeasured component (1040 s from R1), so it is affordable within the remaining budget. R1 is the stationary 8-cycle reference on the same mesh and time step as the expanded run, so any change can be attributed to the domain.",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 324800000,
+   "wall_seconds": 1299.9376450950003,
+   "owner_pid": 25156,
+   "owner": 25156,
+   "owner_state": "no such process",
+   "owner_command": null,
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-llm-r3/G1_premature_averaging.json",
+    "benchmark/C-llm-r3/G1_premature_averaging.partial.json"
+   ],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [
+    "reports/cases/G1_premature_averaging__C-llm-r3.md"
+   ],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [
+    "C-llm-v1",
+    "C-llm-v1+review"
+   ],
+   "owner_process": {
+    "pid": 25156,
+    "state": "no such process",
+    "last_record": "2026-10-20T17:46:42+00:00",
+    "successor": null,
+    "events_between": []
+   }
+  },
   "G1_premature_averaging.D2x-8095ac8f3890": {
    "run_id": "G1_premature_averaging.D2x-8095ac8f3890",
    "status": "completed",
@@ -13991,8 +14706,8 @@
    "wall_seconds": 1451.5695383859984,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -14012,8 +14727,8 @@
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
    }
@@ -14092,10 +14807,10 @@
   },
   "G1_premature_averaging.dt0.005-bf49ee4d4c3e": {
    "run_id": "G1_premature_averaging.dt0.005-bf49ee4d4c3e",
-   "status": "running",
+   "status": "completed",
    "launched_by": "rule_based",
    "created": "2026-10-20T12:54:07+00:00",
-   "finished": null,
+   "finished": "2026-10-20T17:55:20+00:00",
    "parent_run": "G1_premature_averaging.long140-34c6cca905d9",
    "root_run": "G1_premature_averaging-17c0143468d7",
    "root_case": "G1_premature_averaging",
@@ -14108,22 +14823,24 @@
    "failure_kind": null,
    "failure_step": null,
    "failure_returncode": null,
-   "cell_steps": null,
-   "wall_seconds": null,
+   "cell_steps": 489280000,
+   "wall_seconds": 1559.5676670800021,
    "owner_pid": 17642,
    "owner": 17642,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_rule_prereg.py --workers 17",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
    "cache_hits": 0,
    "requests": [],
    "unreadable_request_lines": 0,
-   "has_postprocessing_sha256": false,
-   "has_final_fields_sha256": false,
-   "solver_started": false,
-   "referenced_by": [],
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-rule-prereg/G1_premature_averaging.json",
+    "benchmark/C-rule-prereg/G1_premature_averaging.partial.json"
+   ],
    "referenced_only_by_partial": false,
    "mentioned_in": [],
    "pid_cleared_in": null,
@@ -14133,13 +14850,64 @@
    ],
    "owner_process": {
     "pid": 17642,
-    "state": "alive",
-    "last_record": "2026-10-20T13:47:57+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T19:11:14+00:00",
     "successor": null,
     "events_between": []
+   }
+  },
+  "G1_premature_averaging.long100-bf9115c8c872": {
+   "run_id": "G1_premature_averaging.long100-bf9115c8c872",
+   "status": "completed",
+   "launched_by": "llm_critic",
+   "created": "2026-10-20T16:25:32+00:00",
+   "finished": "2026-10-20T16:37:39+00:00",
+   "parent_run": "G1_premature_averaging-17c0143468d7",
+   "root_run": "G1_premature_averaging-17c0143468d7",
+   "root_case": "G1_premature_averaging",
+   "missing_ancestor": null,
+   "action": "RUN_LONGER",
+   "params": {
+    "additional_convective_times": 60.0
    },
-   "in_use": "live owner",
-   "last_named_in_git": null
+   "launch_reason": "R0's lift amplitude is still changing (+25.8%) and its window has only 3 cycles, with the window start capped by MSER. Statistics, averaging and physics_regime are all INCONCLUSIVE because of this. Any mesh, time or domain comparison needs a stationary reference record first. Extending R0 costs the least of the primitives and is the prerequisite for interpreting the others. The 60-unit extension costs about 1.5x the root. That leaves budget for later experiments within the 12x compute cap, which the full default 100-unit extension plus the other three primitives would exceed.",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 183480000,
+   "wall_seconds": 724.9597012329978,
+   "owner_pid": 25156,
+   "owner": 25156,
+   "owner_state": "no such process",
+   "owner_command": null,
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-llm-r3/G1_premature_averaging.json",
+    "benchmark/C-llm-r3/G1_premature_averaging.partial.json"
+   ],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [
+    "reports/cases/G1_premature_averaging__C-llm-r3.md"
+   ],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [
+    "C-llm-v1",
+    "C-llm-v1+review"
+   ],
+   "owner_process": {
+    "pid": 25156,
+    "state": "no such process",
+    "last_record": "2026-10-20T17:46:42+00:00",
+    "successor": null,
+    "events_between": []
+   }
   },
   "G1_premature_averaging.long120-b00e0cc6fd78": {
    "run_id": "G1_premature_averaging.long120-b00e0cc6fd78",
@@ -14206,7 +14974,8 @@
    "last_named_in_git": null,
    "llm_results_logged_after_creation": [
     "C-llm after 'relaunch after container restart 2' (2026-10-20 03:40, logs/benchmark.log)",
-    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)"
+    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)",
+    "C-llm-r3 after 'C-llm-r3 launch' (2026-10-20 14:11, logs/repeats.log)"
    ]
   },
   "G1_premature_averaging.long140-34c6cca905d9": {
@@ -14284,6 +15053,7 @@
     "benchmark/C-llm-r2/G1_premature_averaging.partial.json",
     "benchmark/C-llm/G1_premature_averaging.json",
     "benchmark/C-llm/G1_premature_averaging.partial.json",
+    "benchmark/C-rule-prereg/G1_premature_averaging.json",
     "benchmark/C-rule-prereg/G1_premature_averaging.partial.json",
     "benchmark/C-rule/G1_premature_averaging.json"
    ],
@@ -14561,7 +15331,8 @@
    "last_named_in_git": null,
    "llm_results_logged_after_creation": [
     "C-llm after 'relaunch after container restart 2' (2026-10-20 03:40, logs/benchmark.log)",
-    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)"
+    "C-llm-r2 after 'C-llm-r2 launch' (2026-10-20 07:50, logs/repeats.log)",
+    "C-llm-r3 after 'C-llm-r3 launch' (2026-10-20 14:11, logs/repeats.log)"
    ]
   },
   "G1_premature_averaging.m1.41-5d1d1becf814": {
@@ -14618,6 +15389,7 @@
     "benchmark/C-llm-r2/G1_premature_averaging.partial.json",
     "benchmark/C-llm/G1_premature_averaging.json",
     "benchmark/C-llm/G1_premature_averaging.partial.json",
+    "benchmark/C-rule-prereg/G1_premature_averaging.json",
     "benchmark/C-rule-prereg/G1_premature_averaging.partial.json"
    ],
    "referenced_only_by_partial": false,
@@ -14711,6 +15483,59 @@
     ]
    }
   },
+  "G1_premature_averaging.m1.41-f8bb4a846d17": {
+   "run_id": "G1_premature_averaging.m1.41-f8bb4a846d17",
+   "status": "completed",
+   "launched_by": "llm_critic",
+   "created": "2026-10-20T16:38:05+00:00",
+   "finished": "2026-10-20T17:24:33+00:00",
+   "parent_run": "G1_premature_averaging.long100-bf9115c8c872",
+   "root_run": "G1_premature_averaging-17c0143468d7",
+   "root_case": "G1_premature_averaging",
+   "missing_ancestor": null,
+   "action": "REFINE_MESH",
+   "params": {
+    "factor": 1.4142135623730951
+   },
+   "launch_reason": "Mesh resolution is the most likely source of an error larger than the tolerance (0.45745 D representative cell size, 1.0209 D last wake cell). The mesh component is unmeasured for both quantities. R1 is the stationary reference, with 8 cycles and drag CI95 0.00037742, so a refined child can be compared against it cleanly.",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 566039984,
+   "wall_seconds": 2787.7159453910062,
+   "owner_pid": 25156,
+   "owner": 25156,
+   "owner_state": "no such process",
+   "owner_command": null,
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-llm-r3/G1_premature_averaging.json",
+    "benchmark/C-llm-r3/G1_premature_averaging.partial.json"
+   ],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [
+    "reports/cases/G1_premature_averaging__C-llm-r3.md"
+   ],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [
+    "C-llm-v1",
+    "C-llm-v1+review"
+   ],
+   "owner_process": {
+    "pid": 25156,
+    "state": "no such process",
+    "last_record": "2026-10-20T17:46:42+00:00",
+    "successor": null,
+    "events_between": []
+   }
+  },
   "G1_premature_averaging.m2-4626a1ae57d2": {
    "run_id": "G1_premature_averaging.m2-4626a1ae57d2",
    "status": "completed",
@@ -14801,7 +15626,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 40,
+   "cache_hits": 41,
    "requests": [
     {
      "time": "2026-10-19T08:00:11+00:00",
@@ -14962,6 +15787,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T16:45:42+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -14974,6 +15803,8 @@
     "benchmark/Bexh/G2_average_from_start.json",
     "benchmark/C-llm-r2/G2_average_from_start.json",
     "benchmark/C-llm-r2/G2_average_from_start.partial.json",
+    "benchmark/C-llm-r3/G2_average_from_start.json",
+    "benchmark/C-llm-r3/G2_average_from_start.partial.json",
     "benchmark/C-llm/G2_average_from_start.json",
     "benchmark/C-llm/G2_average_from_start.partial.json",
     "benchmark/C-rule-prereg/G2_average_from_start.json",
@@ -14987,6 +15818,7 @@
    "mentioned_in": [
     "reports/cases/G2_average_from_start__Bexh.md",
     "reports/cases/G2_average_from_start__C-llm-r2.md",
+    "reports/cases/G2_average_from_start__C-llm-r3.md",
     "reports/cases/G2_average_from_start__C-llm.md",
     "reports/cases/G2_average_from_start__C-rule.md"
    ],
@@ -15340,7 +16172,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 7,
+   "cache_hits": 8,
    "requests": [
     {
      "time": "2026-10-19T10:44:31+00:00",
@@ -15369,6 +16201,10 @@
     {
      "time": "2026-10-20T07:50:47+00:00",
      "launched_by": "llm_critic"
+    },
+    {
+     "time": "2026-10-20T16:46:07+00:00",
+     "launched_by": "llm_critic"
     }
    ],
    "unreadable_request_lines": 0,
@@ -15378,6 +16214,8 @@
     "benchmark/Bexh/G2_average_from_start.json",
     "benchmark/C-llm-r2/G2_average_from_start.json",
     "benchmark/C-llm-r2/G2_average_from_start.partial.json",
+    "benchmark/C-llm-r3/G2_average_from_start.json",
+    "benchmark/C-llm-r3/G2_average_from_start.partial.json",
     "benchmark/C-llm/G2_average_from_start.json",
     "benchmark/C-llm/G2_average_from_start.partial.json",
     "benchmark/C-rule/G2_average_from_start.json"
@@ -15387,6 +16225,7 @@
     "reports/benchmark_results.md",
     "reports/cases/G2_average_from_start__Bexh.md",
     "reports/cases/G2_average_from_start__C-llm-r2.md",
+    "reports/cases/G2_average_from_start__C-llm-r3.md",
     "reports/cases/G2_average_from_start__C-llm.md",
     "reports/cases/G2_average_from_start__C-rule.md"
    ],
@@ -15902,18 +16741,26 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 0,
-   "requests": [],
+   "cache_hits": 1,
+   "requests": [
+    {
+     "time": "2026-10-20T16:46:29+00:00",
+     "launched_by": "llm_critic"
+    }
+   ],
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/C-llm-r3/G2_average_from_start.json",
+    "benchmark/C-llm-r3/G2_average_from_start.partial.json",
     "benchmark/C-llm/G2_average_from_start.json",
     "benchmark/C-llm/G2_average_from_start.partial.json"
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "reports/benchmark_results.md",
+    "reports/cases/G2_average_from_start__C-llm-r3.md",
     "reports/cases/G2_average_from_start__C-llm.md"
    ],
    "pid_cleared_in": null,
@@ -16028,7 +16875,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 40,
+   "cache_hits": 41,
    "requests": [
     {
      "time": "2026-10-19T07:47:21+00:00",
@@ -16189,6 +17036,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T16:45:42+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -16198,8 +17049,11 @@
     "attacks/B-v2-on-benchmark/H1_dynamic_viscosity.json",
     "benchmark/A/H1_dynamic_viscosity.json",
     "benchmark/B/H1_dynamic_viscosity.json",
+    "benchmark/Bexh/H1_dynamic_viscosity.json",
     "benchmark/C-llm-r2/H1_dynamic_viscosity.json",
     "benchmark/C-llm-r2/H1_dynamic_viscosity.partial.json",
+    "benchmark/C-llm-r3/H1_dynamic_viscosity.json",
+    "benchmark/C-llm-r3/H1_dynamic_viscosity.partial.json",
     "benchmark/C-llm/H1_dynamic_viscosity.json",
     "benchmark/C-llm/H1_dynamic_viscosity.partial.json",
     "benchmark/C-rule-prereg/H1_dynamic_viscosity.json",
@@ -16211,7 +17065,9 @@
    ],
    "referenced_only_by_partial": false,
    "mentioned_in": [
+    "reports/cases/H1_dynamic_viscosity__Bexh.md",
     "reports/cases/H1_dynamic_viscosity__C-llm-r2.md",
+    "reports/cases/H1_dynamic_viscosity__C-llm-r3.md",
     "reports/cases/H1_dynamic_viscosity__C-llm.md",
     "reports/cases/H1_dynamic_viscosity__C-rule.md"
    ],
@@ -16225,6 +17081,104 @@
     "events_between": []
    },
    "created_before_r19_commit": true
+  },
+  "H1_dynamic_viscosity.D2x-643a7dd2c873": {
+   "run_id": "H1_dynamic_viscosity.D2x-643a7dd2c873",
+   "status": "completed",
+   "launched_by": "exhaustive",
+   "created": "2026-10-20T16:22:38+00:00",
+   "finished": "2026-10-20T16:45:44+00:00",
+   "parent_run": "H1_dynamic_viscosity-4ab90bfffff4",
+   "root_run": "H1_dynamic_viscosity-4ab90bfffff4",
+   "root_case": "H1_dynamic_viscosity",
+   "missing_ancestor": null,
+   "action": "EXPAND_DOMAIN",
+   "params": {
+    "factor": 2.0
+   },
+   "launch_reason": "exhaustive protocol: EXPAND_DOMAIN",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 324800000,
+   "wall_seconds": 1386.2820175089946,
+   "owner_pid": 712,
+   "owner": 712,
+   "owner_state": "no such process",
+   "owner_command": null,
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/Bexh/H1_dynamic_viscosity.json"
+   ],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [
+    "reports/cases/H1_dynamic_viscosity__Bexh.md"
+   ],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [],
+   "owner_process": {
+    "pid": 712,
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
+    "successor": null,
+    "events_between": []
+   }
+  },
+  "H1_dynamic_viscosity.dt0.005-f10119c4bb2c": {
+   "run_id": "H1_dynamic_viscosity.dt0.005-f10119c4bb2c",
+   "status": "completed",
+   "launched_by": "exhaustive",
+   "created": "2026-10-20T15:31:51+00:00",
+   "finished": "2026-10-20T16:22:36+00:00",
+   "parent_run": "H1_dynamic_viscosity-4ab90bfffff4",
+   "root_run": "H1_dynamic_viscosity-4ab90bfffff4",
+   "root_case": "H1_dynamic_viscosity",
+   "missing_ancestor": null,
+   "action": "REDUCE_TIME_STEP",
+   "params": {
+    "factor": 2.0
+   },
+   "launch_reason": "exhaustive protocol: REDUCE_TIME_STEP",
+   "failure_kind": null,
+   "failure_step": null,
+   "failure_returncode": null,
+   "cell_steps": 489280000,
+   "wall_seconds": 1754.5993469220048,
+   "owner_pid": 712,
+   "owner": 712,
+   "owner_state": "no such process",
+   "owner_command": null,
+   "stale_owner_pid_cleared": null,
+   "adopted_orphan": false,
+   "processes_in_case_dir": [],
+   "cache_hits": 0,
+   "requests": [],
+   "unreadable_request_lines": 0,
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/Bexh/H1_dynamic_viscosity.json"
+   ],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [
+    "reports/cases/H1_dynamic_viscosity__Bexh.md"
+   ],
+   "pid_cleared_in": null,
+   "systems_without_final_result": [],
+   "owner_process": {
+    "pid": 712,
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
+    "successor": null,
+    "events_between": []
+   }
   },
   "H1_dynamic_viscosity.long250-9fe13958c389": {
    "run_id": "H1_dynamic_viscosity.long250-9fe13958c389",
@@ -16263,9 +17217,13 @@
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
-   "referenced_by": [],
+   "referenced_by": [
+    "benchmark/Bexh/H1_dynamic_viscosity.json"
+   ],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/H1_dynamic_viscosity__Bexh.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [],
    "owner_process": {
@@ -16285,9 +17243,7 @@
      "Bexh launch (2026-10-20 06:49)",
      "commit a91ba95: Results snapshot: attack phase complete; Bexh resumed (2026-10-20 06:50)"
     ]
-   },
-   "in_use": "cache hit by live pid 712 at 2026-10-20 06:49",
-   "last_named_in_git": null
+   }
   },
   "H1_dynamic_viscosity.m1.41-f0d5b0a7b270": {
    "run_id": "H1_dynamic_viscosity.m1.41-f0d5b0a7b270",
@@ -16311,8 +17267,8 @@
    "wall_seconds": 3056.2312512479984,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -16321,27 +17277,29 @@
    "unreadable_request_lines": 0,
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
-   "referenced_by": [],
+   "referenced_by": [
+    "benchmark/Bexh/H1_dynamic_viscosity.json"
+   ],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/H1_dynamic_viscosity__Bexh.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
-   },
-   "in_use": "live owner",
-   "last_named_in_git": null
+   }
   },
   "H1_dynamic_viscosity.m2-21637f9f044c": {
    "run_id": "H1_dynamic_viscosity.m2-21637f9f044c",
-   "status": "running",
+   "status": "completed",
    "launched_by": "exhaustive",
    "created": "2026-10-20T13:01:58+00:00",
-   "finished": null,
+   "finished": "2026-10-20T15:31:50+00:00",
    "parent_run": "H1_dynamic_viscosity.m1.41-f0d5b0a7b270",
    "root_run": "H1_dynamic_viscosity-4ab90bfffff4",
    "root_case": "H1_dynamic_viscosity",
@@ -16354,44 +17312,36 @@
    "failure_kind": null,
    "failure_step": null,
    "failure_returncode": null,
-   "cell_steps": null,
-   "wall_seconds": null,
+   "cell_steps": 1228826720,
+   "wall_seconds": 7921.511536765,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
-   "processes_in_case_dir": [
-    "pimpleFoam"
-   ],
+   "processes_in_case_dir": [],
    "cache_hits": 0,
    "requests": [],
    "unreadable_request_lines": 0,
-   "has_postprocessing_sha256": false,
-   "has_final_fields_sha256": false,
-   "solver_started": true,
-   "solver_logs": [
-    "log.pimpleFoam"
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/Bexh/H1_dynamic_viscosity.json"
    ],
-   "solver_log": "log.pimpleFoam",
-   "last_time_s": 5.313437939,
-   "clock_time_s": 7875.0,
-   "log_modified": "2026-10-20T15:31:22+00:00",
-   "referenced_by": [],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/H1_dynamic_viscosity__Bexh.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
-   },
-   "in_use": "live owner",
-   "last_named_in_git": null
+   }
   },
   "I1_force_reference-43978f7eb1a8": {
    "run_id": "I1_force_reference-43978f7eb1a8",
@@ -16418,7 +17368,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": true,
    "processes_in_case_dir": [],
-   "cache_hits": 30,
+   "cache_hits": 31,
    "requests": [
     {
      "time": "2026-10-19T09:45:13+00:00",
@@ -16539,6 +17489,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T16:45:42+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -16551,6 +17505,8 @@
     "benchmark/Bexh/I1_force_reference.json",
     "benchmark/C-llm-r2/I1_force_reference.json",
     "benchmark/C-llm-r2/I1_force_reference.partial.json",
+    "benchmark/C-llm-r3/I1_force_reference.json",
+    "benchmark/C-llm-r3/I1_force_reference.partial.json",
     "benchmark/C-llm/I1_force_reference.json",
     "benchmark/C-llm/I1_force_reference.partial.json",
     "benchmark/C-rule-prereg/I1_force_reference.json",
@@ -16564,6 +17520,7 @@
    "mentioned_in": [
     "reports/cases/I1_force_reference__Bexh.md",
     "reports/cases/I1_force_reference__C-llm-r2.md",
+    "reports/cases/I1_force_reference__C-llm-r3.md",
     "reports/cases/I1_force_reference__C-llm.md",
     "reports/cases/I1_force_reference__C-rule.md"
    ],
@@ -16900,7 +17857,7 @@
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
-   "cache_hits": 40,
+   "cache_hits": 41,
    "requests": [
     {
      "time": "2026-10-19T07:43:21+00:00",
@@ -17061,6 +18018,10 @@
     {
      "time": "2026-10-20T12:54:06+00:00",
      "launched_by": "benchmark"
+    },
+    {
+     "time": "2026-10-20T16:45:42+00:00",
+     "launched_by": "benchmark"
     }
    ],
    "unreadable_request_lines": 0,
@@ -17073,6 +18034,8 @@
     "benchmark/Bexh/J1_coarse_wake.json",
     "benchmark/C-llm-r2/J1_coarse_wake.json",
     "benchmark/C-llm-r2/J1_coarse_wake.partial.json",
+    "benchmark/C-llm-r3/J1_coarse_wake.json",
+    "benchmark/C-llm-r3/J1_coarse_wake.partial.json",
     "benchmark/C-llm/J1_coarse_wake.json",
     "benchmark/C-llm/J1_coarse_wake.partial.json",
     "benchmark/C-rule-prereg/J1_coarse_wake.json",
@@ -17080,6 +18043,7 @@
     "benchmark/C-rule/J1_coarse_wake.json",
     "benchmark/L-judge/J1_coarse_wake.json",
     "posthoc/B-allgeo/J1_coarse_wake.json",
+    "posthoc/C-rule-allgeo/J1_coarse_wake.json",
     "posthoc/C-rule-allgeo/J1_coarse_wake.partial.json",
     "posthoc/acceptance_rule.json",
     "posthoc/flagged_cells.txt"
@@ -17088,6 +18052,7 @@
    "mentioned_in": [
     "reports/cases/J1_coarse_wake__Bexh.md",
     "reports/cases/J1_coarse_wake__C-llm-r2.md",
+    "reports/cases/J1_coarse_wake__C-llm-r3.md",
     "reports/cases/J1_coarse_wake__C-llm.md",
     "reports/cases/J1_coarse_wake__C-rule.md"
    ],
@@ -17124,8 +18089,8 @@
    "wall_seconds": 1069.8148549160032,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -17141,6 +18106,7 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/J1_coarse_wake.json",
+    "posthoc/C-rule-allgeo/J1_coarse_wake.json",
     "posthoc/C-rule-allgeo/J1_coarse_wake.partial.json"
    ],
    "referenced_only_by_partial": false,
@@ -17151,18 +18117,18 @@
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
    }
   },
   "J1_coarse_wake.D2x-8ca51167810d": {
    "run_id": "J1_coarse_wake.D2x-8ca51167810d",
-   "status": "running",
+   "status": "completed",
    "launched_by": "rule_based",
    "created": "2026-10-20T13:19:49+00:00",
-   "finished": null,
+   "finished": "2026-10-20T15:53:22+00:00",
    "parent_run": "J1_coarse_wake.D2x-59e747f0bd71",
    "root_run": "J1_coarse_wake-a7868b40e5b3",
    "root_case": "J1_coarse_wake",
@@ -17175,22 +18141,24 @@
    "failure_kind": null,
    "failure_step": null,
    "failure_returncode": null,
-   "cell_steps": null,
-   "wall_seconds": null,
+   "cell_steps": 236160000,
+   "wall_seconds": 1290.928172022992,
    "owner_pid": 18345,
    "owner": 18345,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/posthoc_allgeometry.py --adaptive",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
    "cache_hits": 0,
    "requests": [],
    "unreadable_request_lines": 0,
-   "has_postprocessing_sha256": false,
-   "has_final_fields_sha256": false,
-   "solver_started": false,
-   "referenced_by": [],
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "posthoc/C-rule-allgeo/J1_coarse_wake.json",
+    "posthoc/C-rule-allgeo/J1_coarse_wake.partial.json"
+   ],
    "referenced_only_by_partial": false,
    "mentioned_in": [],
    "pid_cleared_in": null,
@@ -17200,13 +18168,11 @@
    ],
    "owner_process": {
     "pid": 18345,
-    "state": "alive",
-    "last_record": "2026-10-20T13:19:49+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T15:53:22+00:00",
     "successor": null,
     "events_between": []
-   },
-   "in_use": "live owner",
-   "last_named_in_git": null
+   }
   },
   "J1_coarse_wake.dt0.005-12edfa23616b": {
    "run_id": "J1_coarse_wake.dt0.005-12edfa23616b",
@@ -17230,8 +18196,8 @@
    "wall_seconds": 1444.8745110929995,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -17247,6 +18213,7 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/J1_coarse_wake.json",
+    "posthoc/C-rule-allgeo/J1_coarse_wake.json",
     "posthoc/C-rule-allgeo/J1_coarse_wake.partial.json"
    ],
    "referenced_only_by_partial": false,
@@ -17257,8 +18224,8 @@
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
    }
@@ -17374,6 +18341,7 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/J1_coarse_wake.json",
+    "posthoc/C-rule-allgeo/J1_coarse_wake.json",
     "posthoc/C-rule-allgeo/J1_coarse_wake.partial.json"
    ],
    "referenced_only_by_partial": false,
@@ -17427,8 +18395,8 @@
    "wall_seconds": 7455.381236336994,
    "owner_pid": 712,
    "owner": 712,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems Bexh --workers 24",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -17444,6 +18412,7 @@
    "has_final_fields_sha256": true,
    "referenced_by": [
     "benchmark/Bexh/J1_coarse_wake.json",
+    "posthoc/C-rule-allgeo/J1_coarse_wake.json",
     "posthoc/C-rule-allgeo/J1_coarse_wake.partial.json"
    ],
    "referenced_only_by_partial": false,
@@ -17454,8 +18423,8 @@
    "systems_without_final_result": [],
    "owner_process": {
     "pid": 712,
-    "state": "alive",
-    "last_record": "2026-10-20T14:25:01+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T16:45:44+00:00",
     "successor": null,
     "events_between": []
    }
@@ -18013,8 +18982,8 @@
    "wall_seconds": 4570.086919993992,
    "owner_pid": 25156,
    "owner": 25156,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems C-llm-r3 --workers 2",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -18038,8 +19007,8 @@
    ],
    "owner_process": {
     "pid": 25156,
-    "state": "alive",
-    "last_record": "2026-10-20T15:30:36+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T17:46:42+00:00",
     "successor": null,
     "events_between": []
    }
@@ -18640,11 +19609,13 @@
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "attacks/B-v2-on-benchmark/K2_fine_large.json",
     "benchmark/A/K2_fine_large.json",
     "benchmark/B/K2_fine_large.json",
     "benchmark/Bexh/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.partial.json",
+    "benchmark/C-llm-r3/K2_fine_large.json",
     "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json",
@@ -18659,6 +19630,7 @@
    "mentioned_in": [
     "reports/cases/K2_fine_large__Bexh.md",
     "reports/cases/K2_fine_large__C-llm-r2.md",
+    "reports/cases/K2_fine_large__C-llm-r3.md",
     "reports/cases/K2_fine_large__C-llm.md",
     "reports/cases/K2_fine_large__C-rule.md"
    ],
@@ -18714,7 +19686,8 @@
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
-    "C-llm-r3"
+    "C-llm-v1",
+    "C-llm-v1+review"
    ],
    "owner_process": {
     "pid": 5669,
@@ -18751,8 +19724,8 @@
    "wall_seconds": 4059.4539978339963,
    "owner_pid": 25156,
    "owner": 25156,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems C-llm-r3 --workers 2",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
    "processes_in_case_dir": [],
@@ -18762,18 +19735,22 @@
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/C-llm-r3/K2_fine_large.json",
     "benchmark/C-llm-r3/K2_fine_large.partial.json"
    ],
-   "referenced_only_by_partial": true,
-   "mentioned_in": [],
+   "referenced_only_by_partial": false,
+   "mentioned_in": [
+    "reports/cases/K2_fine_large__C-llm-r3.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
-    "C-llm-r3"
+    "C-llm-v1",
+    "C-llm-v1+review"
    ],
    "owner_process": {
     "pid": 25156,
-    "state": "alive",
-    "last_record": "2026-10-20T15:30:36+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T17:46:42+00:00",
     "successor": null,
     "events_between": []
    }
@@ -18821,7 +19798,8 @@
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
-    "C-llm-r3"
+    "C-llm-v1",
+    "C-llm-v1+review"
    ],
    "owner_process": {
     "pid": 509,
@@ -18884,7 +19862,10 @@
     "reports/cases/K2_fine_large__C-rule.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-rule-v1",
+    "C-rule-v2"
+   ],
    "owner_process": {
     "pid": 509,
     "state": "no such process",
@@ -18955,6 +19936,7 @@
     "benchmark/Bexh/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.partial.json",
+    "benchmark/C-llm-r3/K2_fine_large.json",
     "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json",
@@ -18967,11 +19949,15 @@
     "reports/benchmark_results.md",
     "reports/cases/K2_fine_large__Bexh.md",
     "reports/cases/K2_fine_large__C-llm-r2.md",
+    "reports/cases/K2_fine_large__C-llm-r3.md",
     "reports/cases/K2_fine_large__C-llm.md",
     "reports/cases/K2_fine_large__C-rule.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-rule-v1",
+    "C-rule-v2"
+   ],
    "owner_process": {
     "pid": 509,
     "state": "no such process",
@@ -18987,10 +19973,10 @@
   },
   "K2_fine_large.D3x-7a1272bafc30": {
    "run_id": "K2_fine_large.D3x-7a1272bafc30",
-   "status": "running",
+   "status": "completed",
    "launched_by": "llm_critic",
    "created": "2026-10-20T15:24:08+00:00",
-   "finished": null,
+   "finished": "2026-10-20T16:45:41+00:00",
    "parent_run": "K2_fine_large-2d999cd1eb7c",
    "root_run": "K2_fine_large-2d999cd1eb7c",
    "root_case": "K2_fine_large",
@@ -19003,47 +19989,40 @@
    "failure_kind": null,
    "failure_step": null,
    "failure_returncode": null,
-   "cell_steps": null,
-   "wall_seconds": null,
+   "cell_steps": 945109726,
+   "wall_seconds": 4893.462282645996,
    "owner_pid": 25156,
    "owner": 25156,
-   "owner_state": "alive",
-   "owner_command": "python3 scripts/run_benchmark.py --systems C-llm-r3 --workers 2",
+   "owner_state": "no such process",
+   "owner_command": null,
    "stale_owner_pid_cleared": null,
    "adopted_orphan": false,
-   "processes_in_case_dir": [
-    "pimpleFoam"
-   ],
+   "processes_in_case_dir": [],
    "cache_hits": 0,
    "requests": [],
    "unreadable_request_lines": 0,
-   "has_postprocessing_sha256": false,
-   "has_final_fields_sha256": false,
-   "solver_started": true,
-   "solver_logs": [
-    "log.pimpleFoam"
+   "has_postprocessing_sha256": true,
+   "has_final_fields_sha256": true,
+   "referenced_by": [
+    "benchmark/C-llm-r3/K2_fine_large.json",
+    "benchmark/C-llm-r3/K2_fine_large.partial.json"
    ],
-   "solver_log": "log.pimpleFoam",
-   "last_time_s": 0.4466,
-   "clock_time_s": 425.0,
-   "log_modified": "2026-10-20T15:31:22+00:00",
-   "referenced_by": [],
    "referenced_only_by_partial": false,
-   "mentioned_in": [],
+   "mentioned_in": [
+    "reports/cases/K2_fine_large__C-llm-r3.md"
+   ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
-    "C-llm-r3"
+    "C-llm-v1",
+    "C-llm-v1+review"
    ],
    "owner_process": {
     "pid": 25156,
-    "state": "alive",
-    "last_record": "2026-10-20T15:30:36+00:00",
+    "state": "no such process",
+    "last_record": "2026-10-20T17:46:42+00:00",
     "successor": null,
     "events_between": []
-   },
-   "in_use": "live owner",
-   "last_named_in_git": null,
-   "llm_results_logged_after_creation": []
+   }
   },
   "K2_fine_large.dt0.0035-6a0f9a80f290": {
    "run_id": "K2_fine_large.dt0.0035-6a0f9a80f290",
@@ -19106,6 +20085,7 @@
     "benchmark/Bexh/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.json",
     "benchmark/C-llm-r2/K2_fine_large.partial.json",
+    "benchmark/C-llm-r3/K2_fine_large.json",
     "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json",
@@ -19118,11 +20098,15 @@
     "reports/benchmark_results.md",
     "reports/cases/K2_fine_large__Bexh.md",
     "reports/cases/K2_fine_large__C-llm-r2.md",
+    "reports/cases/K2_fine_large__C-llm-r3.md",
     "reports/cases/K2_fine_large__C-llm.md",
     "reports/cases/K2_fine_large__C-rule.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-rule-v1",
+    "C-rule-v2"
+   ],
    "owner_process": {
     "pid": 1506,
     "state": "no such process",
@@ -19175,6 +20159,7 @@
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/C-llm-r3/K2_fine_large.json",
     "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json"
@@ -19182,11 +20167,13 @@
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "reports/benchmark_results.md",
+    "reports/cases/K2_fine_large__C-llm-r3.md",
     "reports/cases/K2_fine_large__C-llm.md"
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
-    "C-llm-r3"
+    "C-llm-v1",
+    "C-llm-v1+review"
    ],
    "owner_process": {
     "pid": 509,
@@ -19309,7 +20296,8 @@
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
-    "C-llm-r3"
+    "C-llm-v1",
+    "C-llm-v1+review"
    ],
    "owner_process": {
     "pid": 509,
@@ -19393,7 +20381,10 @@
     "reports/cases/K2_fine_large__C-rule.md"
    ],
    "pid_cleared_in": null,
-   "systems_without_final_result": [],
+   "systems_without_final_result": [
+    "C-rule-v1",
+    "C-rule-v2"
+   ],
    "owner_process": {
     "pid": 10692,
     "state": "no such process",
@@ -19447,6 +20438,7 @@
    "has_postprocessing_sha256": true,
    "has_final_fields_sha256": true,
    "referenced_by": [
+    "benchmark/C-llm-r3/K2_fine_large.json",
     "benchmark/C-llm-r3/K2_fine_large.partial.json",
     "benchmark/C-llm/K2_fine_large.json",
     "benchmark/C-llm/K2_fine_large.partial.json"
@@ -19454,11 +20446,13 @@
    "referenced_only_by_partial": false,
    "mentioned_in": [
     "reports/benchmark_results.md",
+    "reports/cases/K2_fine_large__C-llm-r3.md",
     "reports/cases/K2_fine_large__C-llm.md"
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
-    "C-llm-r3"
+    "C-llm-v1",
+    "C-llm-v1+review"
    ],
    "owner_process": {
     "pid": 509,
@@ -19515,7 +20509,8 @@
    ],
    "pid_cleared_in": null,
    "systems_without_final_result": [
-    "C-llm-r3"
+    "C-llm-v1",
+    "C-llm-v1+review"
    ],
    "owner_process": {
     "pid": 5669,
@@ -20070,8 +21065,8 @@
    "in_use": null,
    "last_named_in_git": null,
    "llm_results_logged_after_creation": [
-    "C-llm-v1+review after 'relaunch after container restart 2' (2026-10-20 03:40, logs/attacks.log)",
-    "C-llm-v1 after 'relaunch after container restart 2' (2026-10-20 03:40, logs/attacks.log)"
+    "C-llm-v1 after 'relaunch after container restart 2' (2026-10-20 03:40, logs/attacks.log)",
+    "C-llm-v1+review after 'relaunch after container restart 2' (2026-10-20 03:40, logs/attacks.log)"
    ]
   },
   "X1_cylinder_geometry.m1.41-fd9653d19a94": {
@@ -20229,8 +21224,8 @@
     "superseded_in": "8225c78"
    },
    "llm_results_logged_after_creation": [
-    "C-llm-v1+review after 'relaunch after container restart 2' (2026-10-20 03:40, logs/attacks.log)",
-    "C-llm-v1 after 'relaunch after container restart 2' (2026-10-20 03:40, logs/attacks.log)"
+    "C-llm-v1 after 'relaunch after container restart 2' (2026-10-20 03:40, logs/attacks.log)",
+    "C-llm-v1+review after 'relaunch after container restart 2' (2026-10-20 03:40, logs/attacks.log)"
    ]
   },
   "X1_cylinder_geometry.m2-4b1380d73d43": {

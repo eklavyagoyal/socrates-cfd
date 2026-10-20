@@ -1,0 +1,86 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 31.096235708999302,
+    "cost_usd": 0.061541610000000004,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13256,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 37,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "baseline-408129116207": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT and REJECT are both ruled out. Mesh, time and domain uncertainty are unmeasured for both quantities (R0).",
+    "R0 averaging and statistics components are measured and tiny. For drag they are 9.366e-05 and 8.229e-05. For Strouhal they are 1.551e-05 and 6.605e-05. Averaging and statistics are not the limiting factor, so RUN_LONGER would add little.",
+    "R0 completed (15000 steps, max Courant 0.73373). It has 12 stationary cycles and 611.87 steps per shedding period. Mass imbalance is 8.3333e-11, and the checks for linear-solver convergence, Reynolds consistency and force reference all pass. Together these make time-step error less likely to be the dominant error than spatial error.",
+    "R0 spatial resolution is the weakest recorded point. The representative cell size is 0.45745 D on 30580 cells, and the last wake cell is 1.0209 D. Wake resolution controls shedding frequency and the mean drag. Strouhal number and drag could therefore shift by more than 3% on refinement.",
+    "The domain is 30 D upstream, 50 D downstream and 40 D half-height, with blockage ratio 0.0125. It is already fairly large, so domain error is a lower-priority hypothesis than mesh error.",
+    "REFINE_MESH from R0 is the most informative single experiment. It addresses both requested quantities. It costs 1779 s, and the budget allows 6 experiments and 12x the root compute, with none used so far."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error for both quantities (no EXPAND_DOMAIN run)",
+    "Combined uncertainty against the 0.03 tolerance for both quantities"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "R0 wake and far-field resolution (representative cell size 0.45745 D, last wake cell 1.0209 D) is too coarse. The mean drag or Strouhal number would then change by more than 1.5% under systematic refinement.",
+     "test": "REFINE_MESH from R0 with factor 1.4142. Compare the stationary-window mean_drag_coefficient (R0: 1.3311) and strouhal_number (R0: 0.16343). A relative change below 1.5% for both supports mesh adequacy. A change above 3% is a FAIL."
+    },
+    {
+     "hypothesis": "Domain truncation (blockage 0.0125, symmetry lateral boundaries) biases the results by less than 1.5%.",
+     "test": "A later EXPAND_DOMAIN run from R0, if mesh error is acceptable."
+    },
+    {
+     "hypothesis": "Time-step error is small at 0.01 convective units (about 612 steps per period, Courant 0.73373).",
+     "test": "A later REDUCE_TIME_STEP run from R0 with factor 2."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "baseline-408129116207",
+    "reason": "Mesh error is the largest unmeasured component and the most likely to move the mean drag or Strouhal number by more than the 3% tolerance. R0 has a coarse representative cell size (0.45745 D) and a coarse far wake (last cell 1.0209 D). The other recorded components (averaging, statistics, Courant, mass balance, solver residuals) are already well controlled.",
+    "expected_outcome": "If both quantities change by less than about 1.5% relative to R0 (drag 1.3311, Strouhal 0.16343), the mesh component passes and the next experiments are EXPAND_DOMAIN and REDUCE_TIME_STEP. If either changes by more than 3%, the verifier records a FAIL for R0. A change between 1.5% and 3% would call for a second refinement to confirm convergence."
+   },
+   "outcome": "executed -> baseline.m1.41-807cdf343a51 (completed)"
+  }
+ ]
+}

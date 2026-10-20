@@ -1,0 +1,95 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "averaging",
+     "statistics",
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "averaging",
+     "statistics",
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 35.82065956199949,
+    "cost_usd": 0.05356471,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13343,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 33,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "G1_premature_averaging-17c0143468d7": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "HIGH",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed. REJECT is also not justified, because no measured FAIL invalidates R0.",
+    "R0 passes the basic sanity checks: solver_completion, mesh_quality, mass_conservation (8.333e-11), linear_solver_convergence, courant_number (max 0.7337), reynolds_consistency, force_reference_consistency and convection_scheme_order.",
+    "physics_regime is INCONCLUSIVE: the lift amplitude changes by +25.8% across the analysed window, so R0 is not yet a sustained limit cycle. The record is only 39.99 convective units.",
+    "The stationary window start (15.276) is the MSER cap (stationary_window_start_is_mser_cap = true). Only 3 stationary cycles are available, below the minimum of 4.",
+    "Drag statistical uncertainty is too large for the 3% tolerance: CI95 is 0.044509 and the drift is 0.040105 relative, both above the 3% tolerance. The Strouhal statistical/stationarity uncertainty is 3.58%.",
+    "The submitted-setup and stationary-window values differ. Mean drag is 1.2961 vs 1.3039, and Strouhal is 0.16129 vs 0.16058 (FFT 0.16169). The Strouhal frequency resolution of 0.033333 is coarse relative to a 3% tolerance.",
+    "The averaging, statistics, mesh, time and domain components are all unmeasured. Every other experiment would be compared against a non-stationary, under-sampled baseline, so its effect could not be separated from transient and sampling noise. Establishing the limit cycle first is the most informative step.",
+    "RUN_LONGER on R0 costs an estimated 979 s, the cheapest of the four options except EXPAND_DOMAIN (1040 s). It fits well within the budget (0 of 6 experiments used, 0 of 12 relative compute used)."
+   ],
+   "missing_evidence": [
+    "Evidence that the lift amplitude has saturated into a sustained limit cycle (physics_regime currently shows +25.8% amplitude change)",
+    "A stationary window with at least 4 cycles, ideally many more, free of the MSER cap",
+    "Reduced statistical and averaging uncertainty for mean drag and Strouhal number",
+    "Mesh sensitivity (no REFINE_MESH run)",
+    "Time-step sensitivity (no REDUCE_TIME_STEP run)",
+    "Domain/blockage sensitivity (no EXPAND_DOMAIN run); R0 has 30D upstream, 50D downstream and 40D half height with symmetry lateral boundaries",
+    "Finer Strouhal frequency resolution; the current resolution is 0.033333"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "R0 is still in its initial transient. The lift amplitude is still growing, so the 15.276 window start is too early and the current mean drag and Strouhal number are biased by non-stationary data.",
+     "test": "RUN_LONGER on R0. Confirmed if the lift amplitude keeps changing and the mean drag shifts by more than the 3% tolerance once the window moves later. Refuted if the amplitude saturates and the mean drag stays within the current CI95 of 0.044509."
+    },
+    {
+     "hypothesis": "The 3-cycle statistical uncertainty (drag 4.01%, Strouhal 3.58%) is the dominant limit on trust. More cycles will bring both below 0.5*tolerance.",
+     "test": "After RUN_LONGER, recompute the stationary-window statistics with at least 4 cycles, ideally more than 10. Confirmed if the drag CI95 and drift and the Strouhal uncertainty drop to 1.5% or below."
+    },
+    {
+     "hypothesis": "The mesh, time step and domain may each contribute errors comparable to the 3% tolerance. The mesh has a representative cell size of 0.45745 D and the lateral boundaries are symmetry planes.",
+     "test": "Once a stationary baseline exists, run REFINE_MESH, REDUCE_TIME_STEP and EXPAND_DOMAIN against it and compare the mean drag and Strouhal number to the baseline."
+    }
+   ],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {
+     "additional_convective_times": 100.0
+    },
+    "parent_run": "G1_premature_averaging-17c0143468d7",
+    "reason": "R0 is not a demonstrated stationary limit cycle. The lift amplitude changes by +25.8% across the window, the window start is the MSER cap, and only 3 cycles are available (below 4). The averaging and statistics components are INCONCLUSIVE for both quantities. A longer record is required before any mesh, time or domain comparison is meaningful, and it is among the cheapest experiments.",
+    "expected_outcome": "The lift amplitude saturates and a stationary window with many more cycles becomes available. The drag CI95 and drift and the Strouhal uncertainty fall below 0.5*tolerance, and the averaging bias is quantified. If the amplitude or mean drag keeps drifting, the transient is longer than assumed and a further extension is needed."
+   },
+   "outcome": "executed -> G1_premature_averaging.long140-34c6cca905d9 (completed)"
+  }
+ ]
+}

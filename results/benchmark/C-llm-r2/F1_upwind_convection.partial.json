@@ -1,0 +1,88 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 33.472521527000936,
+    "cost_usd": 0.052666910000000004,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13381,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 26,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "F1_upwind_convection-e460c39ac86c": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed, and REJECT is not justified because no FAIL has been measured.",
+    "Three uncertainty components are unmeasured for both Cd and St: mesh, time and domain. There are 0 of 6 experiments used and 0.0 of 12.0 compute used, so there is budget for experiments.",
+    "R0 uses 'Gauss upwind', which is first order. The convection_scheme_order check is INCONCLUSIVE because numerical diffusion must be shown negligible by mesh refinement.",
+    "R0 is coarse: representative_cell_size_D is 0.45745, wake_last_cell_D is 1.0209, and there are 30580 cells. Numerical diffusion on this mesh could shift the Cd and St results by more than the 0.03 tolerance. This is a hypothesis, not a measurement.",
+    "The time-step evidence is weaker: backward (second-order) time scheme, 794.84 steps per shedding period, max Courant 0.73198. The domain is large (upstream_D 30, downstream_D 50, half_height_D 40, blockage_ratio 0.0125), so a domain effect is less likely to dominate.",
+    "Statistical margins are thin. St statistics uncertainty is 0.01474 against a 0.015 limit. Cd drift_rel is 0.010692. The stationary window start is the MSER cap (67.226), and the physics_regime check is INCONCLUSIVE because lift amplitude changes by +11.3%. RUN_LONGER is the next candidate after the mesh result.",
+    "REFINE_MESH on R0 targets the largest likely error source. It also clears the convection_scheme_order check if the change is small. Factor 2.0 gives the most discriminating signal for a first-order scheme. Its estimated cost is about 1691 s (R0 took 1373.7 s), which fits the budget."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error for mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error for both quantities (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error for both quantities (no EXPAND_DOMAIN run)",
+    "Evidence that the lift oscillation is a sustained limit cycle (amplitude changes +11.3% across the window; stationary window start is the MSER cap)",
+    "Demonstration that numerical diffusion from the first-order upwind scheme is negligible"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "Numerical diffusion from first-order upwind on the coarse R0 mesh (cell size 0.45745 D) biases Cd and/or St by more than 3%.",
+     "test": "REFINE_MESH on R0 with factor 2.0. If the Cd or St change relative to R0 exceeds the 0.03 tolerance (beyond 2x noise), the verifier will FAIL R0 on mesh. If the changes are well below 0.015, the mesh component passes."
+    },
+    {
+     "hypothesis": "The transient has not fully ended in R0, so the window start is biased and the lift amplitude is still drifting (+11.3%).",
+     "test": "Follow up with RUN_LONGER on the finest run to check whether the amplitude, Cd and St stabilise and the statistical uncertainty falls."
+    },
+    {
+     "hypothesis": "Boundary truncation and time-step error are small compared with the 3% tolerance.",
+     "test": "EXPAND_DOMAIN and REDUCE_TIME_STEP on the finest or root run after the mesh result."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "F1_upwind_convection-e460c39ac86c",
+    "reason": "R0 uses first-order upwind convection on a coarse mesh. Mesh error is unmeasured for both Cd and St, and it is the component most likely to change the answer by more than 3%.",
+    "expected_outcome": "If Cd and St change by well under 1.5% relative to R0, the mesh component passes and the upwind order check is cleared. If either changes by more than 3%, R0 is shown to be mesh-dependent, the verifier will FAIL it, and the refinement sequence continues."
+   },
+   "outcome": "executed -> F1_upwind_convection.m2-a5b11786bf96 (completed)"
+  }
+ ]
+}

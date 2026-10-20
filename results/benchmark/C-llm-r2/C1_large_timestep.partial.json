@@ -1,0 +1,86 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 35.47417749000124,
+    "cost_usd": 0.050601610000000005,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13282,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 32,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "C1_large_timestep-49d90ffccdac": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks, so ACCEPT is not allowed and there is no basis for REJECT.",
+    "R0 averaging and statistics components pass with tiny uncertainties. Drag: 8.688e-05 and 0.0001028. Strouhal: 1.261e-05 and 8.418e-05. The run has 12 stationary cycles. The tolerance is 0.03 for each quantity.",
+    "Mesh, time and domain components are all unmeasured for both quantities: no REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run exists, so no combined uncertainty can be formed.",
+    "R0 mesh is coarse: 30580 cells, representative cell size 0.45745 D, and wake_last_cell_D 1.0209. Coarse wake cells can bias both the Strouhal number and the mean drag, and the verifier has no mesh evidence yet. Mesh is therefore my leading suspect for an error larger than 3%.",
+    "Time and domain are secondary suspects. Max Courant is 3.4157 with 122.32 steps per shedding period and backward time scheme. Blockage is 0.0125, with lateral symmetryPlane boundaries at 40 D and the outlet at 50 D.",
+    "Budget is ample: 0 of 6 experiments used and 0 of 12 relative compute used. REFINE_MESH from R0 costs about 1240 s against a 1158.6 s root. The default factor keeps that cost estimate valid, and the experiment is expected to resolve the mesh component for both quantities."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error of mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error of both quantities (no REDUCE_TIME_STEP run; max Courant 3.4157)",
+    "Domain truncation/blockage error of both quantities (no EXPAND_DOMAIN run)",
+    "Combined uncertainty against the 0.03 tolerance for each quantity"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse mesh (cell size 0.45745 D, wake cells up to 1.0209 D) biases the mean drag or the Strouhal number by more than the 0.5*tolerance component budget of 1.5%.",
+     "test": "REFINE_MESH from R0 with factor 1.4142. If drag or St changes by more than 1.5% (or more than 3%), the hypothesis is confirmed. A change well below 1.5%, with a stationary window in the refined run, refutes it."
+    },
+    {
+     "hypothesis": "Temporal error at max Courant 3.4157 is not negligible.",
+     "test": "REDUCE_TIME_STEP on R0 afterwards. This is lower priority."
+    },
+    {
+     "hypothesis": "The 30/50/40 D domain with 1.25% blockage and symmetry sides shifts drag or St by more than 1.5%.",
+     "test": "EXPAND_DOMAIN on R0 afterwards. This is lower priority."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "C1_large_timestep-49d90ffccdac",
+    "reason": "Mesh error is the largest unmeasured component and the most likely to exceed the 3% tolerance, given the coarse near-wake resolution. It is needed for both quantities, and the budget affords it.",
+    "expected_outcome": "Drag and St from the refined run differ from R0 by less than 1.5%, which would leave the mesh component within budget. A larger change would show that R0 is under-resolved, and a further refinement would then be required."
+   },
+   "outcome": "executed -> C1_large_timestep.m1.41-c9c1535204d3 (failed)"
+  }
+ ]
+}

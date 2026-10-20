@@ -1,0 +1,87 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 33.082138236999526,
+    "cost_usd": 0.051457310000000006,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13257,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 36,
+     "untraced": [],
+     "n_untraced": 0
+    },
+    "run_aliases": {
+     "A2_moderate_mesh-1c5ea01594aa": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "Deterministic verdict is INCONCLUSIVE with no failed checks. ACCEPT is not allowed, and REJECT has no measured FAIL to rest on.",
+    "R0 averaging and statistics components pass for both quantities. Drag: averaging 4.434e-05, statistics 7.165e-05. Strouhal: averaging 8.516e-06, statistics 5.21e-05. The stationary window has 12 cycles.",
+    "Mesh, time and domain components are all unmeasured, because no REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run exists. The budget rule needs a measured value for each component.",
+    "R0 is coarse for a shedding wake. Representative cell size is 0.61063 D, the wake has 83 streamwise cells, and the last wake cell is 1.3639 D. The mesh has 17162 cells with 120 around the cylinder. Spatial error is the component most likely to exceed 0.5*tolerance (0.015) for drag and Strouhal.",
+    "Time and domain look less suspect on the recorded configuration. Time: dt is 0.01 convective units, max Courant is 0.56482, there are 618.93 steps per period, and the scheme is backward. Domain: blockage is 0.0125, with 30 D upstream, 50 D downstream and 40 D half-height. These two are lower priority, but still unmeasured.",
+    "The first experiment is REFINE_MESH from R0 at factor 2.0. The larger factor gives a clearer signal against the 0.03 tolerance. Its cost is within the 12x-root compute budget (R0 cost 2124 s, default-factor estimate 2266 s)."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error of mean_drag_coefficient and strouhal_number (no REFINE_MESH run)",
+    "Temporal discretisation error of both quantities (no REDUCE_TIME_STEP run)",
+    "Domain truncation/blockage error of both quantities (no EXPAND_DOMAIN run)",
+    "Combined uncertainty is null, so it cannot be compared with the 0.03 tolerance",
+    "The MSER window start (71.557) is at its cap and 4 convective times before the declared 75.0. Drift is small (7.1653e-05), but there is no independent check from a longer run."
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse R0 mesh (0.61063 D representative size, 1.3639 D last wake cell) biases mean drag and/or Strouhal frequency by more than 1.5%.",
+     "test": "REFINE_MESH from R0 at factor 2.0. Compare mean_drag_coefficient (R0: 1.3222) and strouhal_number (R0: 0.16157) over the stationary window. A relative change above 0.015 confirms the hypothesis. A change well below it supports mesh adequacy."
+    },
+    {
+     "hypothesis": "Boundary truncation and blockage (0.0125) are negligible at the 3% level.",
+     "test": "Later, EXPAND_DOMAIN from R0 at factor 2.0. Expect changes below 0.015 in both quantities."
+    },
+    {
+     "hypothesis": "Temporal error is negligible at dt=0.01 with the backward scheme and max Courant 0.56482.",
+     "test": "Later, REDUCE_TIME_STEP from R0 at factor 2.0. Expect changes below 0.015 in both quantities."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "A2_moderate_mesh-1c5ea01594aa",
+    "reason": "Mesh error is the largest unmeasured component. R0 is coarse for resolving the shedding wake, so spatial error is the most likely flaw to move drag or Strouhal by more than the 3% tolerance.",
+    "expected_outcome": "If the mesh error on both quantities is below 0.015, the mesh component can be closed. A larger change would show R0 is not mesh-converged and justify further refinement or a REJECT if the change exceeds tolerance beyond noise."
+   },
+   "outcome": "executed -> A2_moderate_mesh.m1.5-773c4ec70534 (completed)"
+  }
+ ]
+}

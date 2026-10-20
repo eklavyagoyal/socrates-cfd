@@ -1,0 +1,93 @@
+{
+ "partial": true,
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 36.66343618999963,
+    "cost_usd": 0.05248631,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 13243,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 46,
+     "untraced": [
+      {
+       "token": "8%",
+       "context": " frequency resolution is 0.013333 against St 0.16704, about 8%. This is coarser than the 3% tolerance."
+      }
+     ],
+     "n_untraced": 1
+    },
+    "run_aliases": {
+     "B2_moderate_domain-55b85b2cd33e": "R0"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "No deterministic FAIL in the package, so REJECT is not allowed. The verdict is INCONCLUSIVE, so ACCEPT is not allowed.",
+    "R0 averaging and statistics pass for both quantities. For Cd the uncertainties are 1.858e-06 (averaging) and 2.492e-05 (statistics). For St they are 7.006e-06 and 9.904e-06. The window covers 13 stationary cycles.",
+    "Mesh, time and domain components are all INCONCLUSIVE because no REFINE_MESH, REDUCE_TIME_STEP or EXPAND_DOMAIN run exists. No combined uncertainty can be formed against the 0.03 tolerance.",
+    "Domain is the most likely source of an error larger than 3%. The case is declared unbounded, but R0 uses half_height_D 10.0 with symmetryPlane lateral boundaries, which gives blockage_ratio 0.05. Upstream is 15 D and downstream is 25 D. The 5% blockage is a recorded confinement that conflicts with the 'unbounded' requirement.",
+    "Time and mesh risks are secondary. Time: dt is 0.01 D/U, max Courant is 0.73526, there are 598.66 steps per period, and the scheme is second-order backward. Mesh: 19160 cells, 160 cells around the cylinder, wall_first_cell_D 0.005. Mesh is a real risk because wake_last_cell_D is 0.55293 and representative_cell_size_D is 0.20424. I would run it next if the domain effect is small.",
+    "EXPAND_DOMAIN is also the cheapest informative option, at an estimated 763 s against 1258 s for REFINE_MESH and 1088 s for REDUCE_TIME_STEP. The budget is ample: 0 of 6 experiments used and 0 of 12 compute units used.",
+    "The St frequency resolution is 0.013333 against St 0.16704, about 8%. This is coarser than the 3% tolerance. A change in St between runs smaller than this resolution may not be detectable from the FFT alone. The verifier's St uncertainty (9.904e-06) therefore needs care. The domain run will show whether the Cd difference is resolvable even if the St difference is not."
+   ],
+   "missing_evidence": [
+    "Domain truncation/blockage error for Cd and St (no EXPAND_DOMAIN run)",
+    "Spatial discretisation error for Cd and St (no REFINE_MESH run), especially in the coarse wake",
+    "Temporal discretisation error for Cd and St (no REDUCE_TIME_STEP run)",
+    "St frequency resolution (0.013333) is coarse relative to the 3% tolerance; the resolved St uncertainty is not demonstrated",
+    "Whether the stationary window start (69.5, flagged as an MSER cap) hides a longer transient; this is lower priority given the recorded drift of 2.4921e-05"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The 5% blockage with symmetry-plane lateral boundaries and the finite 15 D / 25 D extents bias Cd and/or St by more than 3% relative to an unbounded stream.",
+     "test": "EXPAND_DOMAIN with factor 2.0 on R0. A relative change in Cd or St greater than 3% (beyond noise) confirms it. A change well under 1.5% (half the tolerance) refutes it."
+    },
+    {
+     "hypothesis": "The coarse wake mesh (last wake cell 0.55293 D, 19160 cells) causes a spatial error above tolerance, mostly in St.",
+     "test": "REFINE_MESH on R0 with factor 1.4142, after the domain result."
+    },
+    {
+     "hypothesis": "Temporal error at dt = 0.01 D/U is negligible.",
+     "test": "REDUCE_TIME_STEP on R0 with factor 2.0, if budget allows."
+    }
+   ],
+   "next_experiment": {
+    "action": "EXPAND_DOMAIN",
+    "parameters": {
+     "factor": 2.0
+    },
+    "parent_run": "B2_moderate_domain-55b85b2cd33e",
+    "reason": "R0 has 5% blockage with symmetry lateral boundaries, 15 D upstream and 25 D downstream, but the question requires an unbounded stream. Domain confinement is the most likely error to exceed the 3% tolerance, and this is the cheapest experiment (about 763 s).",
+    "expected_outcome": "If the confinement bias is large, Cd and/or St change by more than 3%, which will produce a FAIL or a large domain uncertainty. If they change by less than 1.5%, the domain component can be accepted and the next step is REFINE_MESH, then REDUCE_TIME_STEP."
+   },
+   "outcome": "executed -> B2_moderate_domain.D2x-44c88f366919 (completed)"
+  }
+ ]
+}

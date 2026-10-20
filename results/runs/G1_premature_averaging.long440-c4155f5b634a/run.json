@@ -1,0 +1,234 @@
+{
+  "run_id": "G1_premature_averaging.long440-c4155f5b634a",
+  "status": "completed",
+  "owner_pid": 509,
+  "created": "2026-10-20T07:29:58+00:00",
+  "problem_spec": {
+    "problem": {
+      "id": "cylinder2d_re100",
+      "type": "cylinder_external_flow",
+      "dimensionality": "2D",
+      "question": "A long circular rod of diameter 10 mm is placed across a uniform, slow stream of air (0.15 m/s, ~20 degC).  Estimate the time-mean drag coefficient and the vortex-shedding Strouhal number of the rod, per unit span, to within 3 % each.  Treat the stream as unbounded.",
+      "fluid": {
+        "name": "air (~20 degC, 1 atm)",
+        "kinematic_viscosity": 1.5e-05,
+        "density": 1.2
+      },
+      "flow_regime_assumption": "laminar, incompressible (Mach ~ 4e-4)"
+    },
+    "geometry": {
+      "cylinder_diameter": 0.01,
+      "unbounded": true
+    },
+    "operating_conditions": {
+      "inlet_velocity": 0.15,
+      "reynolds_number": 100.0
+    },
+    "requested_outputs": [
+      "mean_drag_coefficient",
+      "strouhal_number"
+    ],
+    "verification": {
+      "requested_tolerance": {
+        "mean_drag_coefficient": 0.03,
+        "strouhal_number": 0.03
+      },
+      "reference_mode": "blind"
+    }
+  },
+  "case_config": {
+    "name": "G1_premature_averaging.long440",
+    "description": "RUN_LONGER {'additional_convective_times': 100.0} from G1_premature_averaging.long340-807cb251d414",
+    "mesh": {
+      "refinement": 1.0,
+      "n_quadrant": 40,
+      "n_ring_inner": 30,
+      "n_ring_outer": 20,
+      "n_upstream": 35,
+      "n_downstream": 111,
+      "n_lateral": 45,
+      "first_cell": 0.005,
+      "r_mid": 1.0,
+      "square_half": 2.5,
+      "span": 1.0,
+      "wake_factor": 1.0,
+      "cylinder_scale": 1.0
+    },
+    "domain": {
+      "upstream": 30.0,
+      "downstream": 50.0,
+      "half_height": 40.0
+    },
+    "physical": {
+      "diameter": 0.01,
+      "inlet_velocity": 0.15,
+      "kinematic_viscosity": 1.5e-05,
+      "density": 1.2
+    },
+    "boundaries": {
+      "lateral": "symmetryPlane",
+      "outlet_velocity": "inletOutlet",
+      "outlet_pressure": "fixedValue",
+      "inlet_pressure": "zeroGradient",
+      "cylinder_velocity": "noSlip",
+      "inlet_shear": 0.0
+    },
+    "numerics": {
+      "solver": "pimpleFoam",
+      "ddt": "backward",
+      "div_U": "Gauss linearUpwind grad(U)",
+      "grad": "Gauss linear",
+      "laplacian": "Gauss linear corrected",
+      "n_outer_correctors": 1,
+      "n_correctors": 2,
+      "n_nonorth_correctors": 0,
+      "steady_iterations": 4000,
+      "steady_residual_target": 1e-05,
+      "relax_U": 0.7,
+      "relax_p": 0.3
+    },
+    "time": {
+      "delta_t": 0.01,
+      "end_time": 440.0,
+      "adjust_time_step": false,
+      "max_co": 0.5,
+      "write_interval": 50.0
+    },
+    "forces": {
+      "mag_u_inf": null,
+      "l_ref": null,
+      "a_ref": null,
+      "rho_inf": null
+    },
+    "averaging": {
+      "start_time": 10.0
+    },
+    "perturbation": {
+      "enabled": true,
+      "box_min": [
+        0.5,
+        0.0
+      ],
+      "box_max": [
+        3.0,
+        1.0
+      ],
+      "v_fraction": 0.3
+    }
+  },
+  "config_hash": "a4830c9854c48963",
+  "parent_run": "G1_premature_averaging.long340-807cb251d414",
+  "launch_reason": "lift oscillation not yet a sustained limit cycle",
+  "launched_by": "rule_based",
+  "experiment": {
+    "action": "RUN_LONGER",
+    "params": {
+      "additional_convective_times": 100.0
+    },
+    "parent_run": "G1_premature_averaging.long340-807cb251d414",
+    "changes": {
+      "time.end_time": {
+        "from": 340.0,
+        "to": 440.0
+      }
+    },
+    "notes": [],
+    "initialisation": {
+      "kind": "restart",
+      "source_run": "G1_premature_averaging.long340-807cb251d414"
+    },
+    "estimated_cell_steps": 305800000.0
+  },
+  "config_changes_from_parent": {
+    "time.end_time": {
+      "from": 340.0,
+      "to": 440.0
+    }
+  },
+  "initialisation": {
+    "kind": "restart",
+    "source_run": "G1_premature_averaging.long340-807cb251d414",
+    "consistent": true
+  },
+  "software": {
+    "openfoam": {
+      "bashrc": "/usr/lib/openfoam/openfoam2412/etc/bashrc",
+      "WM_PROJECT_VERSION": "v2412",
+      "WM_OPTIONS": "linux64GccDPInt32Opt",
+      "package_version": "2412.260127-1"
+    },
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "socrates_git_commit": "1f1d047ee076506a65d1ac60b0d2d99f37b0c25c",
+    "socrates_src_dirty": false,
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "cpu_count": 4
+  },
+  "restart_from_time_s": 22.666666667789894,
+  "started": "2026-10-20T07:29:58+00:00",
+  "commands": [
+    {
+      "step": "pimpleFoam.restart4",
+      "command": "pimpleFoam",
+      "returncode": 0,
+      "wall_seconds": 1168.1345846579989,
+      "log_file": "log.pimpleFoam.restart4"
+    }
+  ],
+  "wall_seconds": 1168.1345846579989,
+  "finished": "2026-10-20T07:49:26+00:00",
+  "raw_output_sha256": {
+    "log.checkMesh": "b37e32501adbc782a4a573566cc31d3bf8d0122ca1c2e1b29e86e036505026f9",
+    "log.pimpleFoam": "83b74fa25f2628a5b58e217501709fd62d8040fc812728d4dd09adf91091b897",
+    "log.pimpleFoam.restart1": "7a4dd0d5e3f9e4a57a1f0806d2a6e2818db401b6d0dafb6a3b911216e827fe19",
+    "log.pimpleFoam.restart2": "00f07fd4f42703da6d9ec65773bd037ebcc56a6a8179e0ce0d6ecb4f66c9a716",
+    "log.pimpleFoam.restart3": "b7ec139ee32f38db7b5eee5704657fffc7fc684125d5a4438ee7a13e53828db0",
+    "log.pimpleFoam.restart4": "8fc9a57fb6eb478fd01471a84a5156716313a6ade59485d1a6413f2dcbbe55e8"
+  },
+  "postprocessing_sha256": {
+    "flux_bottom/0/surfaceFieldValue.dat": "7dbd59f29411342e65ec98454e51c93dfcd60602379653926ca56ef7ee45bd78",
+    "flux_bottom/16.0000000007953354/surfaceFieldValue.dat": "92d6ae19c2935391f33382083d9f3fe48be429ff62c4e0903e452c08284b6efc",
+    "flux_bottom/2.6666666668/surfaceFieldValue.dat": "302d1add302bf08ca4b7ec124e46e1400fa9d34ead45175d5bd370c9db55bf6a",
+    "flux_bottom/22.6666666677898938/surfaceFieldValue.dat": "0b2d1956ab59633c5e6dd1231cf5a14e0c629f0ee2e7eb910d0e9030f0ce497f",
+    "flux_bottom/9.333333333800775/surfaceFieldValue.dat": "e828089092c74ba524dac3d20bdd3c930ef78c7dcc67fd01fa04ad95a2f6c930",
+    "flux_inlet/0/surfaceFieldValue.dat": "aa1c047c443818c3ba949de156ca0d739f4332fcf33c49e18b81d22deb541e4b",
+    "flux_inlet/16.0000000007953354/surfaceFieldValue.dat": "adf1895744d27ef6fad8e095808e69673765463dc2ac42f3617a580180ac7eff",
+    "flux_inlet/2.6666666668/surfaceFieldValue.dat": "a719156d7ee778051b22c19ff74eaf99d2feb8e14829190e0e97c9bc2ab16356",
+    "flux_inlet/22.6666666677898938/surfaceFieldValue.dat": "8dea0527b0400e890ce0990d314fea748367afec7fc074d3e6f6509b544a025b",
+    "flux_inlet/9.333333333800775/surfaceFieldValue.dat": "496a5fe4b3f34f0c4934467a5263786bed0da240e29fc480df838ee84e93e09a",
+    "flux_outlet/0/surfaceFieldValue.dat": "5ea7e8da352041d19895203ae7851e85c224fcd95d191556b2c6d05010ef5845",
+    "flux_outlet/16.0000000007953354/surfaceFieldValue.dat": "9810487f5e3b2157f61a1e0d065785efdb53c856a8d122d77a8688ab5377492f",
+    "flux_outlet/2.6666666668/surfaceFieldValue.dat": "d88b862725489f2644db728e1c3ab180495146a6bc9349f34580e9baa5910cce",
+    "flux_outlet/22.6666666677898938/surfaceFieldValue.dat": "07a372a934aae10fb91938f6ec5a194a7817a27932296fd405f27d0362661b58",
+    "flux_outlet/9.333333333800775/surfaceFieldValue.dat": "44edbbdbc8be41225db58052f8137750737f9093018d908dee03df21d22820b5",
+    "flux_top/0/surfaceFieldValue.dat": "3341cbf9e8a1b0d4f9fc8d7fcf814e7a6db7222802cbbc4ac94913c646983b4d",
+    "flux_top/16.0000000007953354/surfaceFieldValue.dat": "9e7f3b43b36594c13ea41db050203b4289bc079f6ae4f295ad89ebad0412f7ae",
+    "flux_top/2.6666666668/surfaceFieldValue.dat": "e17efbd2648e0c58c1be5b531448f239d01205c83b1b25871dc31342c03eec42",
+    "flux_top/22.6666666677898938/surfaceFieldValue.dat": "7eb9b79df0273b1f3c045a89b41e8e9c315f94c53eb3540b0fe66be5595af998",
+    "flux_top/9.333333333800775/surfaceFieldValue.dat": "d4631c26c3b6123f46a30388d06d95e6f51555265372bdf0f93186ae3941431a",
+    "forceCoeffs1/0/coefficient.dat": "f739cb8b11cce1ee44004c88b0c9d6081726adf28939894855605e874c319840",
+    "forceCoeffs1/16.0000000007953354/coefficient.dat": "754a54bc87dfb97559394fa74153f4750cab3d2c349b68bde52f6accc411a8a4",
+    "forceCoeffs1/2.6666666668/coefficient.dat": "5615c63c6b2f8881d896a6bc16cbda1e0925ec740f59853434eb1df509a11775",
+    "forceCoeffs1/22.6666666677898938/coefficient.dat": "f96c59a9cf8d41c5e023f3ca284d4a4ad1cde0323550caacd1bd99adc03fdbbf",
+    "forceCoeffs1/9.333333333800775/coefficient.dat": "a0e1694afe3ff82de9793bc806c8dbaa139dfb753e78dfb7d378c8340056ef98",
+    "solverInfo1/0/solverInfo.dat": "a3e97218d965da055a6e8289d5695732eb76dd2aaf21e311d288045a2e76005f",
+    "solverInfo1/16.0000000007953354/solverInfo.dat": "031e09dfb10801558229d400c9069b01b86fb716c134c5e1d096b6307f65715d",
+    "solverInfo1/2.6666666668/solverInfo.dat": "4ebfe1b0284f0c222abe42b99b7907c5c3f83fcc2e53045f879cbd45a3ead1de",
+    "solverInfo1/22.6666666677898938/solverInfo.dat": "e6d3987ec74d7cae7281a8bbea1ba457412c0e8a39c9ae13edd78e458633cc9f",
+    "solverInfo1/9.333333333800775/solverInfo.dat": "277bda3df764531f67d6ff45968f571b6c9dae9893877dd7b7584bcddf448902"
+  },
+  "final_fields_sha256": {
+    "time": "29.3333333347844523",
+    "files": {
+      "U": "631e36959daa1288a65964131ecd7dcc9903d1744fe6393af28e79be4475b004",
+      "U_0": "8a2547f1391c5cec6913d5d3e96c0c605f1008b83a27d6edd942ca25c3f3afd5",
+      "p": "37b8eb5a0212161c00c6896716e20e255f0850cb77343bbba4e97ae7b4e058b8",
+      "phi": "38e2ea34b892411d54bf72112a3b62a6cf9b3201fc8cb1d44c9087d912b8c643",
+      "phi_0": "f1db6ae019b17b1b9e809485c79ef573b427b326d5d4da37029dcec3e73ea2b5",
+      "uniform/cumulativeContErr": "62a29c07373e5bfb7048ec0fee69ba23b4ec3ff4767a7ee22eace14b596bf09a",
+      "uniform/functionObjects/functionObjectProperties": "7dceb07ec68aa51a7d9301a21daf106db6acb74cafe86bfcd54ecd1d397d3c46",
+      "uniform/time": "26d03ce18406076ab7da6588cd0541ed49333cf43216ed4eef42ee95e1c66867"
+    }
+  }
+}

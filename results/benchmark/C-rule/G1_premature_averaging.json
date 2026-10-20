@@ -1,0 +1,802 @@
+{
+ "root_run": "G1_premature_averaging-17c0143468d7",
+ "planner": "rule_based",
+ "final_verdict": "INCONCLUSIVE",
+ "stop_reason": "compute budget exhausted",
+ "verdict": {
+  "verdict": "INCONCLUSIVE",
+  "per_qoi": {
+   "mean_drag_coefficient": {
+    "verdict": "INCONCLUSIVE",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "PASS",
+     "statistics": "PASS",
+     "mesh": "INCONCLUSIVE",
+     "time": "INCONCLUSIVE",
+     "domain": "INCONCLUSIVE"
+    },
+    "component_uncertainty": {
+     "averaging": 0.02634546842193522,
+     "statistics": 8.047467366000715e-07
+    },
+    "combined_uncertainty": null
+   },
+   "strouhal_number": {
+    "verdict": "INCONCLUSIVE",
+    "tolerance": 0.03,
+    "component_status": {
+     "averaging": "PASS",
+     "statistics": "PASS",
+     "mesh": "INCONCLUSIVE",
+     "time": "INCONCLUSIVE",
+     "domain": "INCONCLUSIVE"
+    },
+    "component_uncertainty": {
+     "averaging": 0.013146677418984743,
+     "statistics": 2.1307295589145953e-06
+    },
+    "combined_uncertainty": null
+   }
+  },
+  "missing_components": {
+   "mean_drag_coefficient": [
+    "mesh",
+    "time",
+    "domain"
+   ],
+   "strouhal_number": [
+    "mesh",
+    "time",
+    "domain"
+   ]
+  },
+  "failed_checks": [],
+  "checks": [
+   {
+    "check": "solver_completion",
+    "status": "PASS",
+    "reason": "solver ran to its configured end and printed 'End'",
+    "value": 2.6666666668,
+    "threshold": null,
+    "source": "solver log",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mesh_quality",
+    "status": "PASS",
+    "reason": "checkMesh reports 'Mesh OK'; non-orthogonality, skewness and aspect ratio within OpenFOAM's limits. This shows the mesh is valid, NOT that it resolves the flow.",
+    "value": {
+     "max_non_orthogonality": 43.31296755,
+     "max_skewness": 0.5338415736,
+     "max_aspect_ratio": 20.98476912
+    },
+    "threshold": {
+     "max_non_orthogonality": 70.0,
+     "max_skewness": 4.0,
+     "max_aspect_ratio": 1000.0
+    },
+    "source": "checkMesh log ('Mesh OK' / 'Failed N mesh checks'); limits: max_non_orthogonality: OpenFOAM primitiveMesh::nonOrthThreshold_ default (70 deg); checkMesh reports '***' above it; max_skewness: OpenFOAM primitiveMesh::skewThreshold_ default (4); max_aspect_ratio: OpenFOAM primitiveMesh::aspectThreshold_ default (1000)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mass_conservation",
+    "status": "PASS",
+    "reason": "max relative boundary-flux imbalance 8.33e-11 <= 1.50e-03; cannot bias the requested quantities beyond tau/10",
+    "value": 8.333340528049461e-11,
+    "threshold": 0.0015,
+    "source": "postProcessing/flux_*/surfaceFieldValue.dat; threshold = tau/20 (2*eps <= tau/10 bound on induced Cd error)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {
+     "continuity_sum_local_max": 5.29322931e-14
+    }
+   },
+   {
+    "check": "linear_solver_convergence",
+    "status": "PASS",
+    "reason": "final pressure solve reached the configured tolerance in 100.0% of steps",
+    "value": {
+     "fraction_of_steps_above_tolerance": 0.0,
+     "max_final_residual": 9.999985087e-08,
+     "iteration_limit_hits": 0
+    },
+    "threshold": 0.01,
+    "source": "solver log, last pressure solve of each time step (relTol 0, so it must reach the configured absolute tolerance); solverInfo is not used because it records only the first solve of a step",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "courant_number",
+    "status": "PASS",
+    "reason": "max Courant number 0.73 < 1.0 (PISO mode). Stability/accuracy guideline only; temporal discretisation error is not quantified by this.",
+    "value": 0.7337317349,
+    "threshold": 1.0,
+    "source": "OpenFOAM User Guide (cavity tutorial); Issa (1986) J. Comput. Phys. 62:40",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "reynolds_consistency",
+    "status": "PASS",
+    "reason": "case Re=100 matches spec Re=100",
+    "value": {
+     "case": 100.0,
+     "spec": 100.0,
+     "spec_from_parameters": 100.0
+    },
+    "threshold": 0.001,
+    "source": "case physical parameters vs spec",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "force_reference_consistency",
+    "status": "PASS",
+    "reason": "magUInf equals inlet velocity and Aref equals D x mesh span",
+    "value": {
+     "magUInf": 0.15,
+     "lRef": 0.01,
+     "Aref": 0.0001,
+     "rhoInf": 1.2
+    },
+    "threshold": 0.001,
+    "source": "forceCoeffs entries vs inlet BC velocity and mesh-measured projected area (D x span)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {
+     "Aref_from_mesh_bounding_box": 0.0001
+    }
+   },
+   {
+    "check": "physics_regime",
+    "status": "INCONCLUSIVE",
+    "reason": "lift oscillation present but its amplitude changes by +25.8% across the analysed window: not yet a sustained limit cycle (decaying or still growing); a longer record is needed",
+    "value": 0.2575930313751346,
+    "threshold": 0.03,
+    "source": "Provansal, Mathis & Boyer (1987) JFM 182:1 (Re_c ~ 47); Williamson (1996) Annu. Rev. Fluid Mech. 28:477; Barkley & Henderson (1996) JFM 322:215 (mode A at Re ~ 188.5); Williamson (1996)",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "convection_scheme_order",
+    "status": "PASS",
+    "reason": "convection scheme 'Gauss linearUpwind grad(U)' is nominally second order",
+    "value": "Gauss linearUpwind grad(U)",
+    "threshold": null,
+    "source": "J. Fluids Eng. editorial policy on numerical accuracy (published with Celik et al. 2008): at least second-order spatial schemes; first-order numerical diffusion called 'devastating'",
+    "qoi": null,
+    "component": null,
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "averaging_window",
+    "status": "PASS",
+    "reason": "reported mean_drag_coefficient is biased by 2.635% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+    "value": 0.02634546842193522,
+    "threshold": 0.03,
+    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+    "qoi": "mean_drag_coefficient",
+    "component": "averaging",
+    "uncertainty": 0.02634546842193522,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7",
+     "G1_premature_averaging.long440-c4155f5b634a"
+    ],
+    "details": {
+     "reported": 1.2960986699102666,
+     "stationary": 1.331168939161199,
+     "declared_start_convective": 10.0,
+     "transient_end_convective": 144.24911984792965,
+     "declared_window_cycles": 69,
+     "kind": "bias"
+    }
+   },
+   {
+    "check": "averaging_window",
+    "status": "PASS",
+    "reason": "reported strouhal_number is biased by 1.315% relative to the stationary-window value (measured bias, added linearly to the error budget)",
+    "value": 0.013146677418984743,
+    "threshold": 0.03,
+    "source": "declared-window value vs MSER-truncated integer-cycle value of the same run",
+    "qoi": "strouhal_number",
+    "component": "averaging",
+    "uncertainty": 0.013146677418984743,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7",
+     "G1_premature_averaging.long440-c4155f5b634a"
+    ],
+    "details": {
+     "reported": 0.16128838055147918,
+     "stationary": 0.16343703452266412,
+     "declared_start_convective": 10.0,
+     "transient_end_convective": 144.24911984792965,
+     "declared_window_cycles": 69,
+     "kind": "bias"
+    }
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "PASS",
+    "reason": "statistical/stationarity uncertainty 8.05e-07 <= 1.50%",
+    "value": 8.047467366000715e-07,
+    "threshold": 0.015,
+    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+    "qoi": "mean_drag_coefficient",
+    "component": "statistics",
+    "uncertainty": 8.047467366000715e-07,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7",
+     "G1_premature_averaging.long440-c4155f5b634a"
+    ],
+    "details": {
+     "components": {
+      "ci95": 8.047467366000715e-07,
+      "drift": 7.430046240429132e-08,
+      "half_difference": 2.4597459957954333e-08
+     },
+     "n_cycles": 48,
+     "mser_hit_cap": false
+    }
+   },
+   {
+    "check": "statistical_uncertainty",
+    "status": "PASS",
+    "reason": "statistical/stationarity uncertainty 2.13e-06 <= 1.50%",
+    "value": 2.1307295589145953e-06,
+    "threshold": 0.015,
+    "source": "per-cycle batch means (t-quantile CI95), linear drift and half-window difference; max taken",
+    "qoi": "strouhal_number",
+    "component": "statistics",
+    "uncertainty": 2.1307295589145953e-06,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7",
+     "G1_premature_averaging.long440-c4155f5b634a"
+    ],
+    "details": {
+     "components": {
+      "ci95_period": 2.1307295589145953e-06,
+      "period_drift": 1.2748284574293128e-06,
+      "period_half_difference": 5.278114833086268e-08,
+      "fft_vs_zero_crossing": 2.593335710063431e-07
+     },
+     "n_cycles": 48,
+     "mser_hit_cap": false
+    }
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REFINE_MESH experiment has been run; mesh error of mean_drag_coefficient is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "mesh",
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "mesh_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REFINE_MESH experiment has been run; mesh error of strouhal_number is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "mesh",
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REDUCE_TIME_STEP experiment has been run; time error of mean_drag_coefficient is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "time",
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "time_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no REDUCE_TIME_STEP experiment has been run; time error of strouhal_number is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "time",
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no EXPAND_DOMAIN experiment has been run; domain error of mean_drag_coefficient is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "mean_drag_coefficient",
+    "component": "domain",
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   },
+   {
+    "check": "domain_sensitivity",
+    "status": "INCONCLUSIVE",
+    "reason": "no EXPAND_DOMAIN experiment has been run; domain error of strouhal_number is unknown",
+    "value": null,
+    "threshold": null,
+    "source": "",
+    "qoi": "strouhal_number",
+    "component": "domain",
+    "uncertainty": null,
+    "runs": [
+     "G1_premature_averaging-17c0143468d7"
+    ],
+    "details": {}
+   }
+  ]
+ },
+ "history": [
+  {
+   "iteration": 1,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "averaging",
+     "statistics",
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "averaging",
+     "statistics",
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: averaging, statistics, mesh, time, domain",
+    "strouhal_number: averaging, statistics, mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {},
+    "parent_run": "G1_premature_averaging-17c0143468d7",
+    "reason": "lift oscillation not yet a sustained limit cycle",
+    "expected_outcome": "amplitude settles (sustained) or decays (no shedding)"
+   },
+   "outcome": "executed -> G1_premature_averaging.long140-34c6cca905d9 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {},
+    "parent_run": "G1_premature_averaging.long140-34c6cca905d9",
+    "reason": "lift oscillation not yet a sustained limit cycle",
+    "expected_outcome": "amplitude settles (sustained) or decays (no shedding)"
+   },
+   "outcome": "executed -> G1_premature_averaging.long240-ddb0109abd94 (completed)"
+  },
+  {
+   "iteration": 3,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {},
+    "parent_run": "G1_premature_averaging.long240-ddb0109abd94",
+    "reason": "lift oscillation not yet a sustained limit cycle",
+    "expected_outcome": "amplitude settles (sustained) or decays (no shedding)"
+   },
+   "outcome": "executed -> G1_premature_averaging.long340-807cb251d414 (completed)"
+  },
+  {
+   "iteration": 4,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {},
+    "parent_run": "G1_premature_averaging.long340-807cb251d414",
+    "reason": "lift oscillation not yet a sustained limit cycle",
+    "expected_outcome": "amplitude settles (sustained) or decays (no shedding)"
+   },
+   "outcome": "executed -> G1_premature_averaging.long440-c4155f5b634a (completed)"
+  },
+  {
+   "iteration": 5,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "RUN_LONGER",
+    "parameters": {},
+    "parent_run": "G1_premature_averaging.long440-c4155f5b634a",
+    "reason": "lift oscillation not yet a sustained limit cycle",
+    "expected_outcome": "amplitude settles (sustained) or decays (no shedding)"
+   },
+   "outcome": "rejected: estimated cost 2.5x root exceeds remaining budget 2.0x",
+   "action_rejected": true
+  },
+  {
+   "iteration": 6,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {},
+    "parent_run": "G1_premature_averaging.long440-c4155f5b634a",
+    "reason": "mesh uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "rejected: estimated cost 4.6x root exceeds remaining budget 2.0x",
+   "action_rejected": true
+  },
+  {
+   "iteration": 7,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "rule_based"
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "LOW",
+   "reasoning_summary": [
+    "deterministic verdict INCONCLUSIVE"
+   ],
+   "missing_evidence": [
+    "mean_drag_coefficient: mesh, time, domain",
+    "strouhal_number: mesh, time, domain"
+   ],
+   "hypotheses": [],
+   "next_experiment": {
+    "action": "REDUCE_TIME_STEP",
+    "parameters": {},
+    "parent_run": "G1_premature_averaging.long440-c4155f5b634a",
+    "reason": "time uncertainty component is unmeasured or not yet within budget",
+    "expected_outcome": "quantifies the missing component"
+   },
+   "outcome": "rejected: estimated cost 4.0x root exceeds remaining budget 2.0x",
+   "action_rejected": true
+  }
+ ],
+ "runs": [
+  "G1_premature_averaging-17c0143468d7",
+  "G1_premature_averaging.long140-34c6cca905d9",
+  "G1_premature_averaging.long240-ddb0109abd94",
+  "G1_premature_averaging.long340-807cb251d414",
+  "G1_premature_averaging.long440-c4155f5b634a"
+ ],
+ "experiments": [
+  {
+   "action": "RUN_LONGER",
+   "params": {
+    "additional_convective_times": 100.0
+   },
+   "parent_run": "G1_premature_averaging-17c0143468d7",
+   "changes": {
+    "time.end_time": {
+     "from": 40.0,
+     "to": 140.0
+    }
+   },
+   "notes": [],
+   "initialisation": {
+    "kind": "restart",
+    "source_run": "G1_premature_averaging-17c0143468d7"
+   },
+   "estimated_cell_steps": 305800000.0,
+   "run_id": "G1_premature_averaging.long140-34c6cca905d9",
+   "status": "completed",
+   "cell_steps": 305800000.0,
+   "wall_seconds": 939.3240751429985
+  },
+  {
+   "action": "RUN_LONGER",
+   "params": {
+    "additional_convective_times": 100.0
+   },
+   "parent_run": "G1_premature_averaging.long140-34c6cca905d9",
+   "changes": {
+    "time.end_time": {
+     "from": 140.0,
+     "to": 240.0
+    }
+   },
+   "notes": [],
+   "initialisation": {
+    "kind": "restart",
+    "source_run": "G1_premature_averaging.long140-34c6cca905d9"
+   },
+   "estimated_cell_steps": 305800000.0,
+   "run_id": "G1_premature_averaging.long240-ddb0109abd94",
+   "status": "completed",
+   "cell_steps": 305800000.0,
+   "wall_seconds": 720.8685498750001
+  },
+  {
+   "action": "RUN_LONGER",
+   "params": {
+    "additional_convective_times": 100.0
+   },
+   "parent_run": "G1_premature_averaging.long240-ddb0109abd94",
+   "changes": {
+    "time.end_time": {
+     "from": 240.0,
+     "to": 340.0
+    }
+   },
+   "notes": [],
+   "initialisation": {
+    "kind": "restart",
+    "source_run": "G1_premature_averaging.long240-ddb0109abd94"
+   },
+   "estimated_cell_steps": 305800000.0,
+   "run_id": "G1_premature_averaging.long340-807cb251d414",
+   "status": "completed",
+   "cell_steps": 305800000.0,
+   "wall_seconds": 1265.6776954650013
+  },
+  {
+   "action": "RUN_LONGER",
+   "params": {
+    "additional_convective_times": 100.0
+   },
+   "parent_run": "G1_premature_averaging.long340-807cb251d414",
+   "changes": {
+    "time.end_time": {
+     "from": 340.0,
+     "to": 440.0
+    }
+   },
+   "notes": [],
+   "initialisation": {
+    "kind": "restart",
+    "source_run": "G1_premature_averaging.long340-807cb251d414"
+   },
+   "estimated_cell_steps": 305800000.0,
+   "run_id": "G1_premature_averaging.long440-c4155f5b634a",
+   "status": "completed",
+   "cell_steps": 305800000.0,
+   "wall_seconds": 1168.1345846579989
+  }
+ ],
+ "cost": {
+  "experiment_cell_steps": 1223200000.0,
+  "relative_to_root": 10.0,
+  "experiment_wall_seconds": 4094.0049051409987,
+  "n_experiments": 4,
+  "planner_calls": 7,
+  "planner_cost_usd": 0,
+  "loop_wall_seconds": 14908.899337623001
+ },
+ "authority_violations": [],
+ "n_planner_failures": 0,
+ "n_invalid_events": 3,
+ "started": "2026-10-20T03:41:01+00:00",
+ "finished": "2026-10-20T07:49:30+00:00",
+ "case": "G1_premature_averaging",
+ "stamp": {
+  "decision_code": "6406c53bb2011ef5",
+  "created": "2026-10-20T07:49:30+00:00",
+  "evidence_sha": {
+   "G1_premature_averaging-17c0143468d7": "3575430068d5a06c",
+   "G1_premature_averaging.long140-34c6cca905d9": "fc8da114dafdb922",
+   "G1_premature_averaging.long240-ddb0109abd94": "96ca6785a54531df",
+   "G1_premature_averaging.long340-807cb251d414": "35f7768f2d4e0a2c",
+   "G1_premature_averaging.long440-c4155f5b634a": "95ebdb20e9ed97ce"
+  },
+  "root_config_hash": "97623e2549ed6fe5",
+  "benchmark_git_commit": "1f1d047ee076506a65d1ac60b0d2d99f37b0c25c",
+  "benchmark_src_dirty": false,
+  "root_git_commit": "667dd6c4da4f4ac0d83b746b86b7ac2da321e288"
+ }
+}

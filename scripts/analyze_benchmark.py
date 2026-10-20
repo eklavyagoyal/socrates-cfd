@@ -226,18 +226,24 @@ def calibration_table(bench: Path, cases: list[str], labels: dict, uT: dict, sto
     U = averaging bias + RSS(other components) for the ROOT's reported value with that value's error against the
     in-house reference (an independent estimate: the reference uses chains around the baseline, not around the case).
     Attack results (att_items, same tuple layout as _calibration_rows) are tabulated and counted separately."""
-    items = []
-    for s in ("C-rule", "C-rule-prereg", "C-llm", "Bexh"):
+    items, seen, dup = [], {}, []
+    for s in ("C-rule", "C-rule-prereg", "C-llm", "Bexh") + tuple(sorted(d.name for d in bench.glob("C-llm-r*") if d.is_dir())):
         for cid in cases:
             r = current_result(bench, s, cid, labels, store, fp)
-            if r is not None:
-                items.append((cid, s, verifier_verdict(r), labels[cid]["errors"], ""))
+            if r is None:
+                continue
+            key = (cid, frozenset(r.get("runs") or [r.get("root_run")]))  # identical run graphs give identical U
+            if key in seen:
+                dup.append(f"{s}/{cid} (= {seen[key]})")
+                continue
+            seen[key] = s
+            items.append((cid, s, verifier_verdict(r), labels[cid]["errors"], ""))
     rows, n = _calibration_rows(items, uT)
     arows, an = _calibration_rows(att_items, uT)
     dep_items = [x for x in att_items if x[0] in ATTACK_SETUP_DEPARTURES]
     _, an_dep = _calibration_rows(dep_items, uT)
     _, an_num = _calibration_rows([x for x in att_items if x[0] not in ATTACK_SETUP_DEPARTURES], uT)
-    summary = {"benchmark": n, "attacks": an, "attacks_setup_departure": an_dep, "attacks_numerics_only": an_num}
+    summary = {"benchmark": n, "benchmark_duplicate_graphs": dup, "attacks": an, "attacks_setup_departure": an_dep, "attacks_numerics_only": an_num}
     if not rows and not arows:
         return [], summary
     head = ["| case | system | quantity | error vs reference | verifier U | verdict | covered |",
@@ -247,7 +253,8 @@ def calibration_table(bench: Path, cases: list[str], labels: dict, uT: dict, sto
            "'within U(T)': not covered by U alone, but by U combined with the reference's own uncertainty._", "",
            *head, *rows, "",
            f"Benchmark cases only: covered by U: {n['covered']}/{n['total']}; by U combined with U(T): "
-           f"{n['covered_within_truth_unc']}/{n['total']}."]
+           f"{n['covered_within_truth_unc']}/{n['total']}. Each distinct run graph is counted once"
+           + (f"; results with the same graph as an earlier row are not repeated: {', '.join(dup)}." if dup else ".")]
     out += ["", "Attack cases (results/attacks/, same definition; errors of the attack roots against the same "
                 "reference; results counted as in the attack section below):", ""]
     if arows:

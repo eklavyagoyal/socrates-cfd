@@ -27,7 +27,7 @@ from socrates.orchestration.store import RunStore  # noqa: E402
 
 V1 = load_config(REPO / "configs" / "verification.yaml")
 V2 = load_config(REPO / "configs" / "verification_v2.yaml")
-GROUPS = {"benchmark": ["B", "C-rule", "C-llm", "Bexh"], "attacks": ["B-v1", "B-v2", "C-rule-v1", "C-rule-v2",
+GROUPS = {"benchmark": ["B", "C-rule", "C-rule-prereg", "C-llm", "Bexh"], "attacks": ["B-v1", "B-v2", "C-rule-v1", "C-rule-v2",
                                                                      "C-llm-v1", "C-llm-v1+review"]}
 REL_TOL = 1e-9
 

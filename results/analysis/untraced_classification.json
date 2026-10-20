@@ -1,7 +1,20 @@
 {
- "generated_utc": "2026-10-20T15:44Z",
- "source": "results/analysis/untraced_numbers.json (scripts/dump_untraced.py, written 2026-10-20 15:31:16 UTC; 205 tokens)",
- "method": "For every LLM call with untraced tokens (135 calls) the evidence package was rebuilt from the stored runs (build_package/judge_package on the run graph, verdict, history, menu and budget at that iteration); re-running critic/audit.py on the stored texts reproduces the stored untraced lists exactly for 135/135 calls. Each token was classified from its context; where a derivation is given, every operand was checked to be in that call's package (at the operand's printed precision, percent strings included) or in the same LLM output, and the formula's value compared with the token.",
+ "generated_utc": "2026-10-20T19:23Z",
+ "source": "results/analysis/untraced_numbers.json (scripts/dump_untraced.py, regenerated 2026-10-20 19:12:47 UTC after all runs finished; 251 tokens)",
+ "history": [
+  {
+   "utc": "2026-10-20T15:44Z",
+   "tokens": 205,
+   "note": "first classification, of the 15:31:16 UTC snapshot of untraced_numbers.json (C-llm-r3 then had 3 of 17 cases)"
+  },
+  {
+   "utc": "2026-10-20T19:23Z",
+   "tokens": 46,
+   "note": "the 46 tokens added by the regeneration, all C-llm-r3, from 10 of the 14 cases that finished after the snapshot (D1, H1, I1 and J1 add none), classified with the same categories and method; the 205 earlier tokens are unchanged in the regenerated file (matched on phase/system/case/where/token/context) and keep their classification; one earlier justification revised (index_in_1531_snapshot 60, category unchanged)"
+  }
+ ],
+ "method": "For every audited LLM call in a case that has untraced tokens (178 calls, 93 of them with untraced tokens; all 178 re-checked under the current code in this update), the evidence package was rebuilt from the stored runs (build_package/judge_package on the run graph, verdict, history, menu and budget at that iteration); re-running critic/audit.py on the stored texts reproduces the stored untraced lists exactly for 178/178 calls. Each token was classified from its context; where a derivation is given, every operand was checked to be in that call's package (at the operand's printed precision, percent strings included) or in the same LLM output, and the formula's value compared with the token.",
+ "index_note": "index = position in the current untraced_numbers.json; index_in_1531_snapshot = position in the 15:31 snapshot (null for tokens new in the regeneration).",
  "categories": [
   "derived arithmetic",
   "restated threshold or convention",
@@ -11,16 +24,19 @@
   "unclear"
  ],
  "counts": {
-  "derived arithmetic": 180,
+  "derived arithmetic": 226,
   "restated threshold or convention": 15,
   "rounded package value": 9,
   "counts or indices": 0,
   "possible external knowledge": 0,
   "unclear": 1
  },
+ "calls_with_untraced_tokens": 93,
  "entries": [
   {
    "index": 0,
+   "index_in_1531_snapshot": 0,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "B1_small_domain",
@@ -41,6 +57,8 @@
   },
   {
    "index": 1,
+   "index_in_1531_snapshot": 1,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "C1_large_timestep",
@@ -61,6 +79,8 @@
   },
   {
    "index": 2,
+   "index_in_1531_snapshot": 2,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "C1_large_timestep",
@@ -81,6 +101,8 @@
   },
   {
    "index": 3,
+   "index_in_1531_snapshot": 3,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "C2_euler_large_timestep",
@@ -100,6 +122,8 @@
   },
   {
    "index": 4,
+   "index_in_1531_snapshot": 4,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "C2_euler_large_timestep",
@@ -119,6 +143,8 @@
   },
   {
    "index": 5,
+   "index_in_1531_snapshot": 5,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "C2_euler_large_timestep",
@@ -138,6 +164,8 @@
   },
   {
    "index": 6,
+   "index_in_1531_snapshot": 6,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "C2_euler_large_timestep",
@@ -158,6 +186,8 @@
   },
   {
    "index": 7,
+   "index_in_1531_snapshot": 7,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "C2_euler_large_timestep",
@@ -177,6 +207,8 @@
   },
   {
    "index": 8,
+   "index_in_1531_snapshot": 8,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "C2_euler_large_timestep",
@@ -196,6 +228,8 @@
   },
   {
    "index": 9,
+   "index_in_1531_snapshot": 9,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "C2_euler_large_timestep",
@@ -215,6 +249,8 @@
   },
   {
    "index": 10,
+   "index_in_1531_snapshot": 10,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -228,6 +264,8 @@
   },
   {
    "index": 11,
+   "index_in_1531_snapshot": 11,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -247,6 +285,8 @@
   },
   {
    "index": 12,
+   "index_in_1531_snapshot": 12,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -266,6 +306,8 @@
   },
   {
    "index": 13,
+   "index_in_1531_snapshot": 13,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -285,6 +327,8 @@
   },
   {
    "index": 14,
+   "index_in_1531_snapshot": 14,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -304,6 +348,8 @@
   },
   {
    "index": 15,
+   "index_in_1531_snapshot": 15,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -323,6 +369,8 @@
   },
   {
    "index": 16,
+   "index_in_1531_snapshot": 16,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -342,6 +390,8 @@
   },
   {
    "index": 17,
+   "index_in_1531_snapshot": 17,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -362,6 +412,8 @@
   },
   {
    "index": 18,
+   "index_in_1531_snapshot": 18,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -381,6 +433,8 @@
   },
   {
    "index": 19,
+   "index_in_1531_snapshot": 19,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -400,6 +454,8 @@
   },
   {
    "index": 20,
+   "index_in_1531_snapshot": 20,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -419,6 +475,8 @@
   },
   {
    "index": 21,
+   "index_in_1531_snapshot": 21,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -438,6 +496,8 @@
   },
   {
    "index": 22,
+   "index_in_1531_snapshot": 22,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -457,6 +517,8 @@
   },
   {
    "index": 23,
+   "index_in_1531_snapshot": 23,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -476,6 +538,8 @@
   },
   {
    "index": 24,
+   "index_in_1531_snapshot": 24,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -495,6 +559,8 @@
   },
   {
    "index": 25,
+   "index_in_1531_snapshot": 25,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G1_premature_averaging",
@@ -514,6 +580,8 @@
   },
   {
    "index": 26,
+   "index_in_1531_snapshot": 26,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -533,6 +601,8 @@
   },
   {
    "index": 27,
+   "index_in_1531_snapshot": 27,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -552,6 +622,8 @@
   },
   {
    "index": 28,
+   "index_in_1531_snapshot": 28,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -571,6 +643,8 @@
   },
   {
    "index": 29,
+   "index_in_1531_snapshot": 29,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -590,6 +664,8 @@
   },
   {
    "index": 30,
+   "index_in_1531_snapshot": 30,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -609,6 +685,8 @@
   },
   {
    "index": 31,
+   "index_in_1531_snapshot": 31,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -623,6 +701,8 @@
   },
   {
    "index": 32,
+   "index_in_1531_snapshot": 32,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -642,6 +722,8 @@
   },
   {
    "index": 33,
+   "index_in_1531_snapshot": 33,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -661,6 +743,8 @@
   },
   {
    "index": 34,
+   "index_in_1531_snapshot": 34,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -680,6 +764,8 @@
   },
   {
    "index": 35,
+   "index_in_1531_snapshot": 35,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -699,6 +785,8 @@
   },
   {
    "index": 36,
+   "index_in_1531_snapshot": 36,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -718,6 +806,8 @@
   },
   {
    "index": 37,
+   "index_in_1531_snapshot": 37,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -737,6 +827,8 @@
   },
   {
    "index": 38,
+   "index_in_1531_snapshot": 38,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "G2_average_from_start",
@@ -756,6 +848,8 @@
   },
   {
    "index": 39,
+   "index_in_1531_snapshot": 39,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K1_central_scheme",
@@ -775,6 +869,8 @@
   },
   {
    "index": 40,
+   "index_in_1531_snapshot": 40,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K1_central_scheme",
@@ -795,6 +891,8 @@
   },
   {
    "index": 41,
+   "index_in_1531_snapshot": 41,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K1_central_scheme",
@@ -814,6 +912,8 @@
   },
   {
    "index": 42,
+   "index_in_1531_snapshot": 42,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K1_central_scheme",
@@ -834,6 +934,8 @@
   },
   {
    "index": 43,
+   "index_in_1531_snapshot": 43,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -853,6 +955,8 @@
   },
   {
    "index": 44,
+   "index_in_1531_snapshot": 44,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -873,6 +977,8 @@
   },
   {
    "index": 45,
+   "index_in_1531_snapshot": 45,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -886,6 +992,8 @@
   },
   {
    "index": 46,
+   "index_in_1531_snapshot": 46,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -905,6 +1013,8 @@
   },
   {
    "index": 47,
+   "index_in_1531_snapshot": 47,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -925,6 +1035,8 @@
   },
   {
    "index": 48,
+   "index_in_1531_snapshot": 48,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -938,6 +1050,8 @@
   },
   {
    "index": 49,
+   "index_in_1531_snapshot": 49,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -957,6 +1071,8 @@
   },
   {
    "index": 50,
+   "index_in_1531_snapshot": 50,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -977,6 +1093,8 @@
   },
   {
    "index": 51,
+   "index_in_1531_snapshot": 51,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -997,6 +1115,8 @@
   },
   {
    "index": 52,
+   "index_in_1531_snapshot": 52,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -1016,6 +1136,8 @@
   },
   {
    "index": 53,
+   "index_in_1531_snapshot": 53,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -1036,6 +1158,8 @@
   },
   {
    "index": 54,
+   "index_in_1531_snapshot": 54,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -1056,6 +1180,8 @@
   },
   {
    "index": 55,
+   "index_in_1531_snapshot": 55,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "K2_fine_large",
@@ -1076,6 +1202,8 @@
   },
   {
    "index": 56,
+   "index_in_1531_snapshot": 56,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "baseline",
@@ -1095,6 +1223,8 @@
   },
   {
    "index": 57,
+   "index_in_1531_snapshot": 57,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "baseline",
@@ -1114,6 +1244,8 @@
   },
   {
    "index": 58,
+   "index_in_1531_snapshot": 58,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm",
    "case": "baseline",
@@ -1133,6 +1265,8 @@
   },
   {
    "index": 59,
+   "index_in_1531_snapshot": 59,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "A1_coarse_mesh",
@@ -1153,6 +1287,8 @@
   },
   {
    "index": 60,
+   "index_in_1531_snapshot": 60,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "A1_coarse_mesh",
@@ -1162,16 +1298,20 @@
    "mechanical_triage": "other",
    "category": "derived arithmetic",
    "kind": "cell-count arithmetic",
-   "justification": "Per-direction factor of the default 1.4142 cell-count refinement: sqrt(1.4142) = 1.19.",
+   "justification": "sqrt of the menu default factor 1.4142 = 1.19, computed under the reading that the factor multiplies the total cell count ('about 1.19x per direction'). The premise is wrong: REFINE_MESH multiplies the cell count in each direction (this case's factor-2.0 child: 7616 -> 30580 cells, x4.02), so 1.4142 is already the per-direction factor. The number is derived; the reading of the menu text is not. The call proposed factor 2.0 (menu maximum) either way.",
    "derivation": "1.4142**0.5",
    "derivation_value": 1.1892,
    "operand_sources": {
     "1.4142": "package",
     "0.5": "constant"
-   }
+   },
+   "justification_before_revision": "Per-direction factor of the default 1.4142 cell-count refinement: sqrt(1.4142) = 1.19.",
+   "justification_revised_utc": "2026-10-20T19:23Z"
   },
   {
    "index": 61,
+   "index_in_1531_snapshot": 61,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "A1_coarse_mesh",
@@ -1191,6 +1331,8 @@
   },
   {
    "index": 62,
+   "index_in_1531_snapshot": 62,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "A2_moderate_mesh",
@@ -1210,6 +1352,8 @@
   },
   {
    "index": 63,
+   "index_in_1531_snapshot": 63,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "B1_small_domain",
@@ -1230,6 +1374,8 @@
   },
   {
    "index": 64,
+   "index_in_1531_snapshot": 64,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "B2_moderate_domain",
@@ -1250,6 +1396,8 @@
   },
   {
    "index": 65,
+   "index_in_1531_snapshot": 65,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C1_large_timestep",
@@ -1269,6 +1417,8 @@
   },
   {
    "index": 66,
+   "index_in_1531_snapshot": 66,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C1_large_timestep",
@@ -1289,6 +1439,8 @@
   },
   {
    "index": 67,
+   "index_in_1531_snapshot": 67,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C1_large_timestep",
@@ -1309,6 +1461,8 @@
   },
   {
    "index": 68,
+   "index_in_1531_snapshot": 68,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C1_large_timestep",
@@ -1329,6 +1483,8 @@
   },
   {
    "index": 69,
+   "index_in_1531_snapshot": 69,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C1_large_timestep",
@@ -1349,6 +1505,8 @@
   },
   {
    "index": 70,
+   "index_in_1531_snapshot": 70,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1368,6 +1526,8 @@
   },
   {
    "index": 71,
+   "index_in_1531_snapshot": 71,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1387,6 +1547,8 @@
   },
   {
    "index": 72,
+   "index_in_1531_snapshot": 72,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1408,6 +1570,8 @@
   },
   {
    "index": 73,
+   "index_in_1531_snapshot": 73,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1429,6 +1593,8 @@
   },
   {
    "index": 74,
+   "index_in_1531_snapshot": 74,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1448,6 +1614,8 @@
   },
   {
    "index": 75,
+   "index_in_1531_snapshot": 75,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1467,6 +1635,8 @@
   },
   {
    "index": 76,
+   "index_in_1531_snapshot": 76,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1487,6 +1657,8 @@
   },
   {
    "index": 77,
+   "index_in_1531_snapshot": 77,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1506,6 +1678,8 @@
   },
   {
    "index": 78,
+   "index_in_1531_snapshot": 78,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1525,6 +1699,8 @@
   },
   {
    "index": 79,
+   "index_in_1531_snapshot": 79,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1545,6 +1721,8 @@
   },
   {
    "index": 80,
+   "index_in_1531_snapshot": 80,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1564,6 +1742,8 @@
   },
   {
    "index": 81,
+   "index_in_1531_snapshot": 81,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1584,6 +1764,8 @@
   },
   {
    "index": 82,
+   "index_in_1531_snapshot": 82,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1605,6 +1787,8 @@
   },
   {
    "index": 83,
+   "index_in_1531_snapshot": 83,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1625,6 +1809,8 @@
   },
   {
    "index": 84,
+   "index_in_1531_snapshot": 84,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1645,6 +1831,8 @@
   },
   {
    "index": 85,
+   "index_in_1531_snapshot": 85,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1666,6 +1854,8 @@
   },
   {
    "index": 86,
+   "index_in_1531_snapshot": 86,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1679,6 +1869,8 @@
   },
   {
    "index": 87,
+   "index_in_1531_snapshot": 87,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1700,6 +1892,8 @@
   },
   {
    "index": 88,
+   "index_in_1531_snapshot": 88,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1713,6 +1907,8 @@
   },
   {
    "index": 89,
+   "index_in_1531_snapshot": 89,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1734,6 +1930,8 @@
   },
   {
    "index": 90,
+   "index_in_1531_snapshot": 90,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1755,6 +1953,8 @@
   },
   {
    "index": 91,
+   "index_in_1531_snapshot": 91,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1774,6 +1974,8 @@
   },
   {
    "index": 92,
+   "index_in_1531_snapshot": 92,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1793,6 +1995,8 @@
   },
   {
    "index": 93,
+   "index_in_1531_snapshot": 93,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1812,6 +2016,8 @@
   },
   {
    "index": 94,
+   "index_in_1531_snapshot": 94,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1831,6 +2037,8 @@
   },
   {
    "index": 95,
+   "index_in_1531_snapshot": 95,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1850,6 +2058,8 @@
   },
   {
    "index": 96,
+   "index_in_1531_snapshot": 96,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1869,6 +2079,8 @@
   },
   {
    "index": 97,
+   "index_in_1531_snapshot": 97,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1888,6 +2100,8 @@
   },
   {
    "index": 98,
+   "index_in_1531_snapshot": 98,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1909,6 +2123,8 @@
   },
   {
    "index": 99,
+   "index_in_1531_snapshot": 99,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1928,6 +2144,8 @@
   },
   {
    "index": 100,
+   "index_in_1531_snapshot": 100,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1947,6 +2165,8 @@
   },
   {
    "index": 101,
+   "index_in_1531_snapshot": 101,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1966,6 +2186,8 @@
   },
   {
    "index": 102,
+   "index_in_1531_snapshot": 102,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -1987,6 +2209,8 @@
   },
   {
    "index": 103,
+   "index_in_1531_snapshot": 103,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -2006,6 +2230,8 @@
   },
   {
    "index": 104,
+   "index_in_1531_snapshot": 104,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -2025,6 +2251,8 @@
   },
   {
    "index": 105,
+   "index_in_1531_snapshot": 105,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -2044,6 +2272,8 @@
   },
   {
    "index": 106,
+   "index_in_1531_snapshot": 106,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -2063,6 +2293,8 @@
   },
   {
    "index": 107,
+   "index_in_1531_snapshot": 107,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -2082,6 +2314,8 @@
   },
   {
    "index": 108,
+   "index_in_1531_snapshot": 108,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -2101,6 +2335,8 @@
   },
   {
    "index": 109,
+   "index_in_1531_snapshot": 109,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -2121,6 +2357,8 @@
   },
   {
    "index": 110,
+   "index_in_1531_snapshot": 110,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "C2_euler_large_timestep",
@@ -2141,6 +2379,8 @@
   },
   {
    "index": 111,
+   "index_in_1531_snapshot": 111,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "E1_noslip_side_walls",
@@ -2161,6 +2401,8 @@
   },
   {
    "index": 112,
+   "index_in_1531_snapshot": 112,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "E1_noslip_side_walls",
@@ -2181,6 +2423,8 @@
   },
   {
    "index": 113,
+   "index_in_1531_snapshot": 113,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G1_premature_averaging",
@@ -2200,6 +2444,8 @@
   },
   {
    "index": 114,
+   "index_in_1531_snapshot": 114,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G1_premature_averaging",
@@ -2219,6 +2465,8 @@
   },
   {
    "index": 115,
+   "index_in_1531_snapshot": 115,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G1_premature_averaging",
@@ -2238,6 +2486,8 @@
   },
   {
    "index": 116,
+   "index_in_1531_snapshot": 116,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G1_premature_averaging",
@@ -2257,6 +2507,8 @@
   },
   {
    "index": 117,
+   "index_in_1531_snapshot": 117,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G1_premature_averaging",
@@ -2276,6 +2528,8 @@
   },
   {
    "index": 118,
+   "index_in_1531_snapshot": 118,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G1_premature_averaging",
@@ -2295,6 +2549,8 @@
   },
   {
    "index": 119,
+   "index_in_1531_snapshot": 119,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G1_premature_averaging",
@@ -2316,6 +2572,8 @@
   },
   {
    "index": 120,
+   "index_in_1531_snapshot": 120,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G1_premature_averaging",
@@ -2335,6 +2593,8 @@
   },
   {
    "index": 121,
+   "index_in_1531_snapshot": 121,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G1_premature_averaging",
@@ -2354,6 +2614,8 @@
   },
   {
    "index": 122,
+   "index_in_1531_snapshot": 122,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2373,6 +2635,8 @@
   },
   {
    "index": 123,
+   "index_in_1531_snapshot": 123,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2392,6 +2656,8 @@
   },
   {
    "index": 124,
+   "index_in_1531_snapshot": 124,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2411,6 +2677,8 @@
   },
   {
    "index": 125,
+   "index_in_1531_snapshot": 125,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2430,6 +2698,8 @@
   },
   {
    "index": 126,
+   "index_in_1531_snapshot": 126,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2449,6 +2719,8 @@
   },
   {
    "index": 127,
+   "index_in_1531_snapshot": 127,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2468,6 +2740,8 @@
   },
   {
    "index": 128,
+   "index_in_1531_snapshot": 128,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2487,6 +2761,8 @@
   },
   {
    "index": 129,
+   "index_in_1531_snapshot": 129,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2507,6 +2783,8 @@
   },
   {
    "index": 130,
+   "index_in_1531_snapshot": 130,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2526,6 +2804,8 @@
   },
   {
    "index": 131,
+   "index_in_1531_snapshot": 131,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "G2_average_from_start",
@@ -2545,6 +2825,8 @@
   },
   {
    "index": 132,
+   "index_in_1531_snapshot": 132,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K1_central_scheme",
@@ -2564,6 +2846,8 @@
   },
   {
    "index": 133,
+   "index_in_1531_snapshot": 133,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K1_central_scheme",
@@ -2583,6 +2867,8 @@
   },
   {
    "index": 134,
+   "index_in_1531_snapshot": 134,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K1_central_scheme",
@@ -2603,6 +2889,8 @@
   },
   {
    "index": 135,
+   "index_in_1531_snapshot": 135,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2616,6 +2904,8 @@
   },
   {
    "index": 136,
+   "index_in_1531_snapshot": 136,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2636,6 +2926,8 @@
   },
   {
    "index": 137,
+   "index_in_1531_snapshot": 137,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2649,6 +2941,8 @@
   },
   {
    "index": 138,
+   "index_in_1531_snapshot": 138,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2669,6 +2963,8 @@
   },
   {
    "index": 139,
+   "index_in_1531_snapshot": 139,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2682,6 +2978,8 @@
   },
   {
    "index": 140,
+   "index_in_1531_snapshot": 140,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2702,6 +3000,8 @@
   },
   {
    "index": 141,
+   "index_in_1531_snapshot": 141,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2715,6 +3015,8 @@
   },
   {
    "index": 142,
+   "index_in_1531_snapshot": 142,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2735,6 +3037,8 @@
   },
   {
    "index": 143,
+   "index_in_1531_snapshot": 143,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2748,6 +3052,8 @@
   },
   {
    "index": 144,
+   "index_in_1531_snapshot": 144,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r2",
    "case": "K2_fine_large",
@@ -2768,6 +3074,834 @@
   },
   {
    "index": 145,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "A2_moderate_mesh",
+   "where": "/history[0]/meta",
+   "token": "1.19",
+   "context": "itivity signal than the default 1.4142, which is only about 1.19x linear and could fall inside the noise",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "sqrt of the menu default factor 1.4142 = 1.189, computed under the reading that the factor multiplies the total cell count ('about 1.19x linear'). The premise is wrong: REFINE_MESH multiplies the cell count in each direction (recorded factor-2.0 children: A2 17162 -> 68888 cells, x4.01; A1 7616 -> 30580; K2 54244 -> 216220), so the default 1.4142 is already the per-direction factor. The number is derived; the reading of the menu text is not. The call proposed factor 2.0 (menu maximum) either way.",
+   "derivation": "1.4142**0.5",
+   "derivation_value": 1.1892,
+   "operand_sources": {
+    "1.4142": "package",
+    "0.5": "constant"
+   }
+  },
+  {
+   "index": 146,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "A2_moderate_mesh",
+   "where": "/history[2]/meta",
+   "token": "1.07",
+   "context": "ain run (about 0.7 of root cost) and a time-step run (about 1.07) both fit afterwards.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "REDUCE_TIME_STEP from R0 (menu 2266 s) / root cost 2124.0 s = 1.067 root-cost units.",
+   "derivation": "2266/2124.0",
+   "derivation_value": 1.06685,
+   "operand_sources": {
+    "2266": "package",
+    "2124.0": "package"
+   }
+  },
+  {
+   "index": 147,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "B1_small_domain",
+   "where": "/history[0]/meta",
+   "token": "0.0625",
+   "context": "With half height 8D and blockage 0.0625, a Cd or St change greater than 3% woul",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "physical-parameter arithmetic",
+   "justification": "Blockage of the proposed EXPAND_DOMAIN child: recorded blockage 0.125 (half height 4 D) / proposed factor 2.0 = 0.0625 (half height 8 D).",
+   "derivation": "0.125/2.0",
+   "derivation_value": 0.0625,
+   "operand_sources": {
+    "0.125": "package",
+    "2.0": "package"
+   }
+  },
+  {
+   "index": 148,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "B2_moderate_domain",
+   "where": "/history[0]/meta",
+   "token": "8%",
+   "context": "od. The St frequency resolution is 0.013333, which is about 8% of St=0.16704, but the St value is cons",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "St frequency resolution as a percentage of R0's St: 0.013333/0.16704 = 7.98 % ('about 8%').",
+   "derivation": "100*0.013333/0.16704",
+   "derivation_value": 7.98192,
+   "operand_sources": {
+    "100": "constant",
+    "0.013333": "package",
+    "0.16704": "package"
+   }
+  },
+  {
+   "index": 149,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "B2_moderate_domain",
+   "where": "/history[1]/meta",
+   "token": "0.75%",
+   "context": "ge is much smaller than the R0 to R1 change: Cd below about 0.75% and St below about 0.5%. The domain com",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction threshold",
+   "justification": "Threshold in an expected outcome ('much smaller than the R0 to R1 change'), anchored on the recorded R0 -> R1 Cd change of 2.37 % (1.3713 -> 1.3395, quoted in the same output); 0.75 % is about a third of it (0.75/2.37 = 0.32). A rounded judgement bound for a converging domain error, not a claimed measurement."
+  },
+  {
+   "index": 150,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C1_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "0.43%",
+   "context": "ws a real mesh sensitivity. Cd goes 1.3235 -> 1.3292, about 0.43%. St goes 0.16361 -> 0.16467, about 0.65",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R3 -> R4 (1.3235 -> 1.3292, values quoted in the same output) = 0.43 %.",
+   "derivation": "100*(1.3292-1.3235)/1.3235",
+   "derivation_value": 0.430676,
+   "operand_sources": {
+    "100": "constant",
+    "1.3292": "package",
+    "1.3235": "package"
+   }
+  },
+  {
+   "index": 151,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C1_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "0.65%",
+   "context": "5 -> 1.3292, about 0.43%. St goes 0.16361 -> 0.16467, about 0.65%. Both are below the 3% tolerance. Neith",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R3 -> R4 (0.16361 -> 0.16467, values quoted in the same output) = 0.65 %.",
+   "derivation": "100*(0.16467-0.16361)/0.16361",
+   "derivation_value": 0.647882,
+   "operand_sources": {
+    "100": "constant",
+    "0.16467": "package",
+    "0.16361": "package"
+   }
+  },
+  {
+   "index": 152,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C1_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "0.43%",
+   "context": "The R3->R4 mesh shift (Cd about 0.43%, St about 0.65%) means R0's Strouhal me",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R3 -> R4 (1.3235 -> 1.3292, values quoted in the same output) = 0.43 %.",
+   "derivation": "100*(1.3292-1.3235)/1.3235",
+   "derivation_value": 0.430676,
+   "operand_sources": {
+    "100": "constant",
+    "1.3292": "package",
+    "1.3235": "package"
+   }
+  },
+  {
+   "index": 153,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C1_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "0.65%",
+   "context": "The R3->R4 mesh shift (Cd about 0.43%, St about 0.65%) means R0's Strouhal mesh error could e",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R3 -> R4 (0.16361 -> 0.16467, values quoted in the same output) = 0.65 %.",
+   "derivation": "100*(0.16467-0.16361)/0.16361",
+   "derivation_value": 0.647882,
+   "operand_sources": {
+    "100": "constant",
+    "0.16467": "package",
+    "0.16361": "package"
+   }
+  },
+  {
+   "index": 154,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C1_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.43%",
+   "context": ") completed. Over R3 -> R4, Cd goes 1.3235 -> 1.3292 (about 0.43%) and St goes 0.16361 -> 0.16467 (about ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R3 -> R4 (1.3235 -> 1.3292, values quoted in the same output) = 0.43 %.",
+   "derivation": "100*(1.3292-1.3235)/1.3235",
+   "derivation_value": 0.430676,
+   "operand_sources": {
+    "100": "constant",
+    "1.3292": "package",
+    "1.3235": "package"
+   }
+  },
+  {
+   "index": 155,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C1_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.65%",
+   "context": " 1.3292 (about 0.43%) and St goes 0.16361 -> 0.16467 (about 0.65%). The verifier gives R0 no mesh compone",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R3 -> R4 (0.16361 -> 0.16467, values quoted in the same output) = 0.65 %.",
+   "derivation": "100*(0.16467-0.16361)/0.16361",
+   "derivation_value": 0.647882,
+   "operand_sources": {
+    "100": "constant",
+    "0.16467": "package",
+    "0.16361": "package"
+   }
+  },
+  {
+   "index": 156,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C1_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.43%",
+   "context": "R0 mesh error is small. R3 -> R4 gives 0.43% for Cd and 0.65% for St, which is below",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R3 -> R4 (1.3235 -> 1.3292, values quoted in the same output) = 0.43 %.",
+   "derivation": "100*(1.3292-1.3235)/1.3235",
+   "derivation_value": 0.430676,
+   "operand_sources": {
+    "100": "constant",
+    "1.3292": "package",
+    "1.3235": "package"
+   }
+  },
+  {
+   "index": 157,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C1_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.65%",
+   "context": "R0 mesh error is small. R3 -> R4 gives 0.43% for Cd and 0.65% for St, which is below the 3% tolerance",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "St change R3 -> R4 (0.16361 -> 0.16467, values quoted in the same output) = 0.65 %.",
+   "derivation": "100*(0.16467-0.16361)/0.16361",
+   "derivation_value": 0.647882,
+   "operand_sources": {
+    "100": "constant",
+    "0.16467": "package",
+    "0.16361": "package"
+   }
+  },
+  {
+   "index": 158,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[2]/meta",
+   "token": "4.3",
+   "context": "further dt halving from R2 costs an estimated 4504 s, about 4.3 units of R0 cost. That leaves room for ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "REDUCE_TIME_STEP from R2 (menu 4504 s) / root cost 1055.7 s = 4.27 units.",
+   "derivation": "4504/1055.7",
+   "derivation_value": 4.26636,
+   "operand_sources": {
+    "4504": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 159,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[3]/meta",
+   "token": "1.07",
+   "context": "e units are used. A REFINE_MESH from R0 costs 1130 s, about 1.07 units, which is affordable. Refining fr",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "REFINE_MESH from R0 (menu 1130 s) / root cost 1055.7 s = 1.07 units.",
+   "derivation": "1130/1055.7",
+   "derivation_value": 1.07038,
+   "operand_sources": {
+    "1130": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 160,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "1.6",
+   "context": "02, max Courant 1.1744) gives an estimated Courant of about 1.6 after refinement. That is below R0's st",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "prediction",
+   "justification": "Expected max Courant after refining R1 by the proposed factor 1.4142 at fixed dt: R1's max Courant 1.1744 x 1.4142 = 1.66, written as 'about 1.6' (truncated; 1.66 rounds to 1.7).",
+   "derivation": "1.1744*1.4142",
+   "derivation_value": 1.66084,
+   "operand_sources": {
+    "1.1744": "package",
+    "1.4142": "package"
+   }
+  },
+  {
+   "index": 161,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "4.3",
+   "context": "48. Refining from R2 would be safer but costs 4520 s (about 4.3 units) and would use almost all the rem",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "REFINE_MESH from R2 (menu 4520 s) / root cost 1055.7 s = 4.28 units.",
+   "derivation": "4520/1055.7",
+   "derivation_value": 4.28152,
+   "operand_sources": {
+    "4520": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 162,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "2.14",
+   "context": " 12 units are used. REFINE_MESH from R1 costs 2260 s (about 2.14 units), leaving about 2.35 units. That ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "REFINE_MESH from R1 (menu 2260 s) / root cost 1055.7 s = 2.14 units.",
+   "derivation": "2260/1055.7",
+   "derivation_value": 2.14076,
+   "operand_sources": {
+    "2260": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 163,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "2.35",
+   "context": "MESH from R1 costs 2260 s (about 2.14 units), leaving about 2.35 units. That is enough for one EXPAND_DO",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining after the proposed run: 12 - 7.51 used - 2.14 (its derived cost) = 2.35.",
+   "derivation": "12-7.51-2260/1055.7",
+   "derivation_value": 2.34924,
+   "operand_sources": {
+    "12": "package",
+    "7.51": "package",
+    "2260": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 164,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "2.14",
+   "context": " its parent, so the mesh effect is isolated. It costs about 2.14 units of the 4.49 remaining, which stil",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "REFINE_MESH from R1 (menu 2260 s) / root cost 1055.7 s = 2.14 units.",
+   "derivation": "2260/1055.7",
+   "derivation_value": 2.14076,
+   "operand_sources": {
+    "2260": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 165,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[4]/meta",
+   "token": "4.49",
+   "context": "e mesh effect is isolated. It costs about 2.14 units of the 4.49 remaining, which still leaves room for ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 7.51 used.",
+   "derivation": "12-7.51",
+   "derivation_value": 4.49,
+   "operand_sources": {
+    "12": "package",
+    "7.51": "package"
+   }
+  },
+  {
+   "index": 166,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "2.35",
+   "context": "6 experiments used, 9.65 of 12 compute units used, so about 2.35 units remain and exactly one experiment",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 9.65 used.",
+   "derivation": "12-9.65",
+   "derivation_value": 2.35,
+   "operand_sources": {
+    "12": "package",
+    "9.65": "package"
+   }
+  },
+  {
+   "index": 167,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.71",
+   "context": "EXPAND_DOMAIN from R0 costs 748 s, about 0.71 units. The near-field mesh is unchanged",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "EXPAND_DOMAIN from R0 (menu 748 s) / root cost 1055.7 s = 0.71 units.",
+   "derivation": "748/1055.7",
+   "derivation_value": 0.708535,
+   "operand_sources": {
+    "748": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 168,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "0.71",
+   "context": "anged, so it should run stably. It costs about 748 s (about 0.71 units) against about 2.35 units remaini",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "EXPAND_DOMAIN from R0 (menu 748 s) / root cost 1055.7 s = 0.71 units.",
+   "derivation": "748/1055.7",
+   "derivation_value": 0.708535,
+   "operand_sources": {
+    "748": "package",
+    "1055.7": "package"
+   }
+  },
+  {
+   "index": 169,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "C2_euler_large_timestep",
+   "where": "/history[5]/meta",
+   "token": "2.35",
+   "context": "ably. It costs about 748 s (about 0.71 units) against about 2.35 units remaining. R0 as parent compares ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12 - 9.65 used.",
+   "derivation": "12-9.65",
+   "derivation_value": 2.35,
+   "operand_sources": {
+    "12": "package",
+    "9.65": "package"
+   }
+  },
+  {
+   "index": 170,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "E1_noslip_side_walls",
+   "where": "/history[4]/meta",
+   "token": "5.95",
+   "context": "te 1974 s) within the remaining budget of 2 experiments and 5.95 relative compute.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 6.05 used.",
+   "derivation": "12-6.05",
+   "derivation_value": 5.95,
+   "operand_sources": {
+    "12": "package",
+    "6.05": "package"
+   }
+  },
+  {
+   "index": 171,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "E1_noslip_side_walls",
+   "where": "/history[5]/meta",
+   "token": "4.88",
+   "context": " 7.12 of 12.0 relative compute are used, which leaves about 4.88 times the root cost. EXPAND_DOMAIN on R",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 7.12 used.",
+   "derivation": "12-7.12",
+   "derivation_value": 4.88,
+   "operand_sources": {
+    "12": "package",
+    "7.12": "package"
+   }
+  },
+  {
+   "index": 172,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "F1_upwind_convection",
+   "where": "/history[1]/meta",
+   "token": "2.3%",
+   "context": "indow values differ. Drag goes from 1.2674 to 1.2968 (about 2.3%). Strouhal goes from 0.12581 to 0.1426 ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "relative change between runs",
+   "justification": "Cd change R0 -> R1, stationary-window values quoted in the same sentence = 2.32 %.",
+   "derivation": "100*(1.2968-1.2674)/1.2674",
+   "derivation_value": 2.31971,
+   "operand_sources": {
+    "100": "constant",
+    "1.2968": "package",
+    "1.2674": "package"
+   }
+  },
+  {
+   "index": 173,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G1_premature_averaging",
+   "where": "/history[0]/meta",
+   "token": "60",
+   "context": "es and is the prerequisite for interpreting the others. The 60-unit extension costs about 1.5x the roo",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter",
+   "justification": "The planner's own RUN_LONGER length (additional_convective_times = 60), inside the menu range 25-300 (default 100); a choice, not a claim about the evidence. Its stated cost '1.5x the root' is 60 / the root's 40 convective units."
+  },
+  {
+   "index": 174,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "5.87",
+   "context": "2.0 compute units used. A root run costs 391.64 s, so about 5.87 units (~2300 s) remain. A REFINE_MESH f",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 6.13 used.",
+   "derivation": "12-6.13",
+   "derivation_value": 5.87,
+   "operand_sources": {
+    "12": "package",
+    "6.13": "package"
+   }
+  },
+  {
+   "index": 175,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G1_premature_averaging",
+   "where": "/history[2]/meta",
+   "token": "2300",
+   "context": "nits used. A root run costs 391.64 s, so about 5.87 units (~2300 s) remain. A REFINE_MESH from R2 (4164 ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining 5.87 units x root cost 391.64 s = 2299 s ('~2300 s').",
+   "derivation": "(12-6.13)*391.64",
+   "derivation_value": 2298.93,
+   "operand_sources": {
+    "12": "package",
+    "6.13": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 176,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "0.042",
+   "context": "832) and domain estimate (0.03768) already combine to about 0.042, so the budget is exceeded however the ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic (error budget)",
+   "justification": "Root-sum-square of the Cd mesh (0.01832) and domain (0.03768) component uncertainties = 0.0419 ('about 0.042').",
+   "derivation": "(0.01832**2+0.03768**2)**0.5",
+   "derivation_value": 0.0418976,
+   "operand_sources": {
+    "0.01832": "package",
+    "2": "constant",
+    "0.03768": "package",
+    "0.5": "constant"
+   }
+  },
+  {
+   "index": 177,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "3.22",
+   "context": "et: 8.78 of 12.0 compute units are used, which leaves about 3.22 units (about 1260 s at the 391.64 s roo",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 8.78 used.",
+   "derivation": "12-8.78",
+   "derivation_value": 3.22,
+   "operand_sources": {
+    "12": "package",
+    "8.78": "package"
+   }
+  },
+  {
+   "index": 178,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G1_premature_averaging",
+   "where": "/history[3]/meta",
+   "token": "1260",
+   "context": "ompute units are used, which leaves about 3.22 units (about 1260 s at the 391.64 s root cost). REDUCE_TI",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining 3.22 units x root cost 391.64 s = 1261 s ('about 1260 s').",
+   "derivation": "(12-8.78)*391.64",
+   "derivation_value": 1261.08,
+   "operand_sources": {
+    "12": "package",
+    "8.78": "package",
+    "391.64": "package"
+   }
+  },
+  {
+   "index": 179,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G2_average_from_start",
+   "where": "/history[0]/meta",
+   "token": "69%",
+   "context": "a statistics uncertainty of 0.01039 for drag. That is about 69% of the 1.5% per-component limit (0.5*to",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent ratio",
+   "justification": "Cd statistics uncertainty 0.01039 as a share of the per-component limit 0.5 x tolerance 0.03 = 69.3 %.",
+   "derivation": "100*0.01039/(0.5*0.03)",
+   "derivation_value": 69.2667,
+   "operand_sources": {
+    "100": "constant",
+    "0.01039": "package",
+    "0.5": "constant",
+    "0.03": "package"
+   }
+  },
+  {
+   "index": 180,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G2_average_from_start",
+   "where": "/history[0]/meta",
+   "token": "16",
+   "context": "About 16 more shedding cycles. If the lift ampli",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "physical-parameter arithmetic",
+   "justification": "Shedding cycles in the proposed 100 extra convective units: 100 x St 0.163 (stationary window) = 16.3 (with the reported 0.16144: 16.1).",
+   "derivation": "100*0.163",
+   "derivation_value": 16.3,
+   "operand_sources": {
+    "100": "constant",
+    "0.163": "package"
+   }
+  },
+  {
+   "index": 181,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G2_average_from_start",
+   "where": "/history[2]/meta",
+   "token": "1.64",
+   "context": "Budget: compute used is 10.36 of 12.0, leaving 1.64 relative to the root. The cheapest menu",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 10.36 used.",
+   "derivation": "12-10.36",
+   "derivation_value": 1.64,
+   "operand_sources": {
+    "12": "package",
+    "10.36": "package"
+   }
+  },
+  {
+   "index": 182,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G2_average_from_start",
+   "where": "/history[2]/meta",
+   "token": "1.64",
+   "context": ") and EXPAND_DOMAIN (1126 s). The root R0 cost 636.22 s, so 1.64 root-equivalents is about 1043 s. By my",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining compute: 12.0 - 10.36 used.",
+   "derivation": "12-10.36",
+   "derivation_value": 1.64,
+   "operand_sources": {
+    "12": "package",
+    "10.36": "package"
+   }
+  },
+  {
+   "index": 183,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "G2_average_from_start",
+   "where": "/history[2]/meta",
+   "token": "1043",
+   "context": "he root R0 cost 636.22 s, so 1.64 root-equivalents is about 1043 s. By my reading, neither fits, and RED",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "budget arithmetic",
+   "justification": "Remaining 1.64 units x root cost 636.22 s = 1043 s.",
+   "derivation": "(12-10.36)*636.22",
+   "derivation_value": 1043.4,
+   "operand_sources": {
+    "12": "package",
+    "10.36": "package",
+    "636.22": "package"
+   }
+  },
+  {
+   "index": 184,
+   "index_in_1531_snapshot": 145,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r3",
    "case": "K1_central_scheme",
@@ -2786,7 +3920,9 @@
    }
   },
   {
-   "index": 146,
+   "index": 185,
+   "index_in_1531_snapshot": 146,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r3",
    "case": "K1_central_scheme",
@@ -2805,7 +3941,9 @@
    }
   },
   {
-   "index": 147,
+   "index": 186,
+   "index_in_1531_snapshot": 147,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r3",
    "case": "K1_central_scheme",
@@ -2824,7 +3962,9 @@
    }
   },
   {
-   "index": 148,
+   "index": 187,
+   "index_in_1531_snapshot": 148,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r3",
    "case": "K1_central_scheme",
@@ -2843,7 +3983,9 @@
    }
   },
   {
-   "index": 149,
+   "index": 188,
+   "index_in_1531_snapshot": 149,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r3",
    "case": "K1_central_scheme",
@@ -2862,7 +4004,9 @@
    }
   },
   {
-   "index": 150,
+   "index": 189,
+   "index_in_1531_snapshot": 150,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r3",
    "case": "K1_central_scheme",
@@ -2881,7 +4025,9 @@
    }
   },
   {
-   "index": 151,
+   "index": 190,
+   "index_in_1531_snapshot": 151,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r3",
    "case": "K1_central_scheme",
@@ -2900,7 +4046,9 @@
    }
   },
   {
-   "index": 152,
+   "index": 191,
+   "index_in_1531_snapshot": 152,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "C-llm-r3",
    "case": "K1_central_scheme",
@@ -2919,7 +4067,146 @@
    }
   },
   {
-   "index": 153,
+   "index": 192,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K2_fine_large",
+   "where": "/history[0]/meta",
+   "token": "0.0049",
+   "context": "f 0.16382, which is coarser than the 3 % tolerance of about 0.0049. The reported Strouhal number equals th",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent conversion",
+   "justification": "The 3 % tolerance in absolute St units: 0.03 x 0.16382 = 0.0049.",
+   "derivation": "0.03*0.16382",
+   "derivation_value": 0.0049146,
+   "operand_sources": {
+    "0.03": "package",
+    "0.16382": "package"
+   }
+  },
+  {
+   "index": 193,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K2_fine_large",
+   "where": "/history[0]/meta",
+   "token": "0.83",
+   "context": "Domain truncation and blockage (0.83 %) have a negligible effect.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent conversion",
+   "justification": "Blockage ratio 0.0083333 written as '0.83 %'.",
+   "derivation": "100*0.0083333",
+   "derivation_value": 0.83333,
+   "operand_sources": {
+    "100": "constant",
+    "0.0083333": "package"
+   }
+  },
+  {
+   "index": 194,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "1.7",
+   "context": "Under that inference, a factor of about 1.7 or less keeps the child under 160000 ce",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "Largest refinement factor from R0 (54244 cells) under the 160000-cell limit = 1.72 ('about 1.7 or less'), using the factor-squared scaling the text infers from the rejected 216220-cell child.",
+   "derivation": "(160000/54244)**0.5",
+   "derivation_value": 1.71745,
+   "operand_sources": {
+    "160000": "package",
+    "54244": "package",
+    "0.5": "constant"
+   }
+  },
+  {
+   "index": 195,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "1.6",
+   "context": "out 1.7 or less keeps the child under 160000 cells. I chose 1.6 to leave margin for rounding. It should",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter",
+   "justification": "The planner's own refinement factor, chosen below the derived limit 1.717 (sqrt(160000/54244)) and inside the menu range 1.3-2.0; a choice, not a claim about the evidence."
+  },
+  {
+   "index": 196,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "1.4e5",
+   "context": "se 1.6 to leave margin for rounding. It should give roughly 1.4e5 cells, which is an estimate and not a r",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "cell-count arithmetic",
+   "justification": "R0's 54244 cells x 1.6^2 = 138865 ('roughly 1.4e5').",
+   "derivation": "54244*1.6**2",
+   "derivation_value": 138865.0,
+   "operand_sources": {
+    "54244": "package",
+    "1.6": "same LLM output",
+    "2": "constant"
+   }
+  },
+  {
+   "index": 197,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "0.83",
+   "context": "Domain truncation and blockage (0.83 %) have a negligible effect.",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "percent conversion",
+   "justification": "Blockage ratio 0.0083333 written as '0.83 %'.",
+   "derivation": "100*0.0083333",
+   "derivation_value": 0.83333,
+   "operand_sources": {
+    "100": "constant",
+    "0.0083333": "package"
+   }
+  },
+  {
+   "index": 198,
+   "index_in_1531_snapshot": null,
+   "classified_utc": "2026-10-20T19:23Z",
+   "phase": "benchmark",
+   "system": "C-llm-r3",
+   "case": "K2_fine_large",
+   "where": "/history[1]/meta",
+   "token": "1.6",
+   "context": "nt appears to scale with about the square of the factor, so 1.6 should stay under the limit. It is the ",
+   "mechanical_triage": "other",
+   "category": "derived arithmetic",
+   "kind": "proposed parameter",
+   "justification": "The planner's own refinement factor, chosen below the derived limit 1.717 (sqrt(160000/54244)) and inside the menu range 1.3-2.0; a choice, not a claim about the evidence."
+  },
+  {
+   "index": 199,
+   "index_in_1531_snapshot": 153,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "A1_coarse_mesh",
@@ -2932,7 +4219,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 154,
+   "index": 200,
+   "index_in_1531_snapshot": 154,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "A1_coarse_mesh",
@@ -2951,7 +4240,9 @@
    }
   },
   {
-   "index": 155,
+   "index": 201,
+   "index_in_1531_snapshot": 155,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "A1_coarse_mesh",
@@ -2971,7 +4262,9 @@
    }
   },
   {
-   "index": 156,
+   "index": 202,
+   "index_in_1531_snapshot": 156,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "A2_moderate_mesh",
@@ -2984,7 +4277,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 157,
+   "index": 203,
+   "index_in_1531_snapshot": 157,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "A2_moderate_mesh",
@@ -3003,7 +4298,9 @@
    }
   },
   {
-   "index": 158,
+   "index": 204,
+   "index_in_1531_snapshot": 158,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "A2_moderate_mesh",
@@ -3022,7 +4319,9 @@
    }
   },
   {
-   "index": 159,
+   "index": 205,
+   "index_in_1531_snapshot": 159,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "A2_moderate_mesh",
@@ -3042,7 +4341,9 @@
    }
   },
   {
-   "index": 160,
+   "index": 206,
+   "index_in_1531_snapshot": 160,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "C1_large_timestep",
@@ -3055,7 +4356,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 161,
+   "index": 207,
+   "index_in_1531_snapshot": 161,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "C1_large_timestep",
@@ -3075,7 +4378,9 @@
    }
   },
   {
-   "index": 162,
+   "index": 208,
+   "index_in_1531_snapshot": 162,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "C2_euler_large_timestep",
@@ -3088,7 +4393,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 163,
+   "index": 209,
+   "index_in_1531_snapshot": 163,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "C2_euler_large_timestep",
@@ -3108,7 +4415,9 @@
    }
   },
   {
-   "index": 164,
+   "index": 210,
+   "index_in_1531_snapshot": 164,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "E1_noslip_side_walls",
@@ -3121,7 +4430,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 165,
+   "index": 211,
+   "index_in_1531_snapshot": 165,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "G1_premature_averaging",
@@ -3141,7 +4452,9 @@
    }
   },
   {
-   "index": 166,
+   "index": 212,
+   "index_in_1531_snapshot": 166,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "G2_average_from_start",
@@ -3154,7 +4467,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 167,
+   "index": 213,
+   "index_in_1531_snapshot": 167,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "G2_average_from_start",
@@ -3174,7 +4489,9 @@
    }
   },
   {
-   "index": 168,
+   "index": 214,
+   "index_in_1531_snapshot": 168,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "H1_dynamic_viscosity",
@@ -3194,7 +4511,9 @@
    }
   },
   {
-   "index": 169,
+   "index": 215,
+   "index_in_1531_snapshot": 169,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "H1_dynamic_viscosity",
@@ -3214,7 +4533,9 @@
    }
   },
   {
-   "index": 170,
+   "index": 216,
+   "index_in_1531_snapshot": 170,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "I1_force_reference",
@@ -3234,7 +4555,9 @@
    }
   },
   {
-   "index": 171,
+   "index": 217,
+   "index_in_1531_snapshot": 171,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "I1_force_reference",
@@ -3255,7 +4578,9 @@
    }
   },
   {
-   "index": 172,
+   "index": 218,
+   "index_in_1531_snapshot": 172,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "I1_force_reference",
@@ -3277,7 +4602,9 @@
    }
   },
   {
-   "index": 173,
+   "index": 219,
+   "index_in_1531_snapshot": 173,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "I1_force_reference",
@@ -3298,7 +4625,9 @@
    }
   },
   {
-   "index": 174,
+   "index": 220,
+   "index_in_1531_snapshot": 174,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "K1_central_scheme",
@@ -3311,7 +4640,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 175,
+   "index": 221,
+   "index_in_1531_snapshot": 175,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "K1_central_scheme",
@@ -3330,7 +4661,9 @@
    }
   },
   {
-   "index": 176,
+   "index": 222,
+   "index_in_1531_snapshot": 176,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "K1_central_scheme",
@@ -3350,7 +4683,9 @@
    }
   },
   {
-   "index": 177,
+   "index": 223,
+   "index_in_1531_snapshot": 177,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "K2_fine_large",
@@ -3363,7 +4698,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 178,
+   "index": 224,
+   "index_in_1531_snapshot": 178,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "baseline",
@@ -3382,7 +4719,9 @@
    }
   },
   {
-   "index": 179,
+   "index": 225,
+   "index_in_1531_snapshot": 179,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "benchmark",
    "system": "L-judge",
    "case": "baseline",
@@ -3401,7 +4740,9 @@
    }
   },
   {
-   "index": 180,
+   "index": 226,
+   "index_in_1531_snapshot": 180,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1",
    "case": "X1_cylinder_geometry",
@@ -3420,7 +4761,9 @@
    }
   },
   {
-   "index": 181,
+   "index": 227,
+   "index_in_1531_snapshot": 181,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1",
    "case": "X2_inlet_shear",
@@ -3434,7 +4777,9 @@
    "package_value": "0.019654541917742144"
   },
   {
-   "index": 182,
+   "index": 228,
+   "index_in_1531_snapshot": 182,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1",
    "case": "X2_inlet_shear",
@@ -3447,7 +4792,9 @@
    "justification": "The planner's own RUN_LONGER length (additional_convective_times), inside the menu range 25-300 (default 100); a choice, not a claim about the evidence."
   },
   {
-   "index": 183,
+   "index": 229,
+   "index_in_1531_snapshot": 183,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1",
    "case": "X2_inlet_shear",
@@ -3461,7 +4808,9 @@
    "package_value": "0.019654541917742144"
   },
   {
-   "index": 184,
+   "index": 230,
+   "index_in_1531_snapshot": 184,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1",
    "case": "X2_inlet_shear",
@@ -3475,7 +4824,9 @@
    "package_value": "0.019654541917742144"
   },
   {
-   "index": 185,
+   "index": 231,
+   "index_in_1531_snapshot": 185,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1",
    "case": "X2_inlet_shear",
@@ -3494,7 +4845,9 @@
    }
   },
   {
-   "index": 186,
+   "index": 232,
+   "index_in_1531_snapshot": 186,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1",
    "case": "X2_inlet_shear",
@@ -3514,7 +4867,9 @@
    }
   },
   {
-   "index": 187,
+   "index": 233,
+   "index_in_1531_snapshot": 187,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1",
    "case": "X2_inlet_shear",
@@ -3534,7 +4889,9 @@
    }
   },
   {
-   "index": 188,
+   "index": 234,
+   "index_in_1531_snapshot": 188,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1",
    "case": "X2_inlet_shear",
@@ -3554,7 +4911,9 @@
    }
   },
   {
-   "index": 189,
+   "index": 235,
+   "index_in_1531_snapshot": 189,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X1_cylinder_geometry",
@@ -3574,7 +4933,9 @@
    }
   },
   {
-   "index": 190,
+   "index": 236,
+   "index_in_1531_snapshot": 190,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X1_cylinder_geometry",
@@ -3594,7 +4955,9 @@
    }
   },
   {
-   "index": 191,
+   "index": 237,
+   "index_in_1531_snapshot": 191,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X2_inlet_shear",
@@ -3608,7 +4971,9 @@
    "package_value": "0.019654541917742144"
   },
   {
-   "index": 192,
+   "index": 238,
+   "index_in_1531_snapshot": 192,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X2_inlet_shear",
@@ -3627,7 +4992,9 @@
    }
   },
   {
-   "index": 193,
+   "index": 239,
+   "index_in_1531_snapshot": 193,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X2_inlet_shear",
@@ -3641,7 +5008,9 @@
    "package_value": "0.019654541917742144"
   },
   {
-   "index": 194,
+   "index": 240,
+   "index_in_1531_snapshot": 194,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X2_inlet_shear",
@@ -3655,7 +5024,9 @@
    "package_value": "0.019654541917742144"
   },
   {
-   "index": 195,
+   "index": 241,
+   "index_in_1531_snapshot": 195,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X2_inlet_shear",
@@ -3669,7 +5040,9 @@
    "package_value": "0.019654541917742144"
   },
   {
-   "index": 196,
+   "index": 242,
+   "index_in_1531_snapshot": 196,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X2_inlet_shear",
@@ -3683,7 +5056,9 @@
    "package_value": "0.019654541917742144"
   },
   {
-   "index": 197,
+   "index": 243,
+   "index_in_1531_snapshot": 197,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X3_compensating_errors",
@@ -3702,7 +5077,9 @@
    }
   },
   {
-   "index": 198,
+   "index": 244,
+   "index_in_1531_snapshot": 198,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "C-llm-v1+review",
    "case": "X3_compensating_errors",
@@ -3721,7 +5098,9 @@
    }
   },
   {
-   "index": 199,
+   "index": 245,
+   "index_in_1531_snapshot": 199,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "L-judge",
    "case": "X1_cylinder_geometry",
@@ -3742,7 +5121,9 @@
    }
   },
   {
-   "index": 200,
+   "index": 246,
+   "index_in_1531_snapshot": 200,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "L-judge",
    "case": "X1_cylinder_geometry",
@@ -3762,7 +5143,9 @@
    }
   },
   {
-   "index": 201,
+   "index": 247,
+   "index_in_1531_snapshot": 201,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "L-judge",
    "case": "X1_cylinder_geometry",
@@ -3775,7 +5158,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 202,
+   "index": 248,
+   "index_in_1531_snapshot": 202,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "L-judge",
    "case": "X1_cylinder_geometry",
@@ -3794,7 +5179,9 @@
    }
   },
   {
-   "index": 203,
+   "index": 249,
+   "index_in_1531_snapshot": 203,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "L-judge",
    "case": "X2_inlet_shear",
@@ -3807,7 +5194,9 @@
    "justification": "Confidence level of the recorded 95 % CI; a convention."
   },
   {
-   "index": 204,
+   "index": 250,
+   "index_in_1531_snapshot": 204,
+   "classified_utc": "2026-10-20T15:44Z",
    "phase": "attacks",
    "system": "L-judge",
    "case": "X3_compensating_errors",

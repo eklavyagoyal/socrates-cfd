@@ -6,6 +6,8 @@ This report asks two questions:
 
 Numbers come from `results/runs/` via `scripts/make_baseline_report.py`. The full generated tables are in
 [`baseline_generated.md`](baseline_generated.md); the reference and its chains are in `results/baseline/truth.json`.
+The verdicts on the benchmark systems' own baseline graphs (§6) come from the final benchmark results
+(`results/benchmark/<system>/baseline.json`; every system complete on 2026-10-20).
 Three adversarial fact-checks of earlier drafts led to further study stages (§3) and to corrections throughout.
 
 **Question** (`configs/problem_cylinder_re100.yaml`): the time-mean drag coefficient and the Strouhal number of a
@@ -41,12 +43,29 @@ as unbounded.
   (§3). The reference uncertainty carries this as a model-form term.
 - **Success criteria.**
   - 2a (pre-registered) is met: the baseline's Cd and St lie within the literature band widened by τ.
-  - 2b is met through its fallback clause ("or the report explains why not"). The pre-registered verifier does
-    *not* bound the drag uncertainty. On the full-study graph (baseline + 11 study runs, §6) it returns
-    INCONCLUSIVE for drag, because the drag domain component (component U = 2.62 %, from the coarse-far-field
-    domain chain) exceeds τ/2. It ACCEPTs St (combined U 1.86 %). The baseline graphs that C-rule, C-llm, C-llm-r2
-    and Bexh built also leave drag INCONCLUSIVE on the domain component, with component U from 1.74 % to 3.89 %;
-    the values below 2.62 % come mainly from domain levels that had not settled, not from better evidence (§6).
+  - 2b asks that the baseline's own verification bound the numerical uncertainty below τ, "or the report explains
+    why not". On the full-study graph (baseline + 11 study runs, §6) the pre-registered verifier does *not* bound the
+    drag uncertainty: it returns INCONCLUSIVE for drag, because the drag domain component (component U = 2.62 %, from
+    the coarse-far-field domain chain) exceeds τ/2. It ACCEPTs St (combined U 1.86 %). The drag components themselves
+    add up to less than τ (averaging bias 0.007 % plus the RSS of statistics, mesh 0.85 %, time 0.65 % and domain
+    2.62 % gives 2.83 %). What fails is the verifier's limit of τ/2 per component, and this report reads 2b through
+    that rule. On that graph 2b is met only through its fallback clause; §6 explains why.
+  - The verifier did bound both quantities in one of the system graphs built for the baseline case, not in the
+    full-study graph. C-llm-r3, the third of three runs of the LLM planner, ACCEPTed the baseline, both quantities
+    and so the case: Cd combined U 1.87 % (mesh 0.86 %, time 1.10 %, domain 1.23 %), St 1.59 % (mesh 1.33 %, time
+    0.31 %, domain 0.79 %). The baseline's errors against T (+1.20 %, −0.31 %) lie inside these U, so the ACCEPT is
+    correct on point estimates; with the mitigation the baseline is ambiguous and the ACCEPT is not scored.
+  - That bound does not reproduce. The other two LLM runs, the rule planner (C-rule, and C-rule-prereg with the same
+    graph) and Bexh leave drag INCONCLUSIVE on the domain component, with component U from 1.74 % to 3.89 %. The
+    accepting graph's domain chain stops at ×2 (half-height 40, 60, 80 D), and its two enlarged levels are 80 D/U
+    runs: the ×2 run had not settled (Cd 1.32259 against 1.32189 settled), and the ×1.5 run has no continuation, so
+    whether it had settled is not known. The drag observed order on that chain (how fast Cd approaches its limit as
+    the domain grows, estimated from three levels) is 1.55; the other planner graphs give 0.82–0.94. All of these
+    orders lie inside the band where the Celik safety factor is 1.25 (§4), so the factor is the same in every graph.
+    A higher order puts the extrapolated limit closer to the root, and that alone gives the smaller U. With the
+    settled value of its ×2 level the same estimate gives 1.97 %: INCONCLUSIVE. The values below 2.62 % come mainly
+    from unsettled levels, not from better evidence (§6). The K2 ACCEPT (C-llm-r2) shares this: with its ×2 run's
+    180 D/U continuation in place of the 80 D/U value, its drag domain component gives 2.61 %: INCONCLUSIVE (§6).
 
 ## 2. Case set-up
 
@@ -271,44 +290,78 @@ not the refined test run.
 Each uncertainty component (statistics, mesh, time, domain) PASSes only if its U ≤ τ/2. The averaging component is
 a measured bias and PASSes if it is ≤ τ. The combined U (the averaging bias plus the root-sum-square of the
 uncertainty components, design §13) is formed only when every component PASSes, and must be ≤ τ. The drag domain
-component does not PASS in any graph in this section, so no drag combined U exists.
+component PASSes in only one graph in this section (C-llm-r3's, below), so that is the only graph with a drag
+combined U.
 
-C-rule, C-llm, C-llm-r2 and Bexh built their own, smaller graphs for the baseline case
-(`results/benchmark/<system>/baseline.json`, verifier `per_qoi`). A and L-judge build no verifier graph, and B's
-single-run graph has no domain level (first table above). The full-study domain chain uses the settled
-continuations (`baseline.long250`, `baseline.long180`, `baseline.long280`).
+C-rule, C-llm, C-llm-r2, C-llm-r3 and Bexh built their own, smaller graphs for the baseline case
+(`results/benchmark/<system>/baseline.json`, verifier `per_qoi`); C-rule-prereg built exactly C-rule's graph. A and
+L-judge build no verifier graph, and B's single-run graph has no domain level (first table above). The full-study
+domain chain uses the settled continuations (`baseline.long250`, `baseline.long180`, `baseline.long280`).
 
-| graph | Cd domain component U | Cd | St |
-|---|---|---|---|
-| full study (above) | 2.62 % | INCONCLUSIVE | ACCEPT (combined U 1.86 %) |
-| C-rule | 1.81 % | INCONCLUSIVE | ACCEPT (combined U 1.59 %) |
-| C-llm | 1.74 % | INCONCLUSIVE | INCONCLUSIVE (domain component 1.85 %) |
-| C-llm-r2 (repeat) | 1.88 % | INCONCLUSIVE | INCONCLUSIVE (domain component 1.59 %) |
-| Bexh (one domain level: two-level estimate, p = 1, Fs = 3) | 3.89 % | INCONCLUSIVE | INCONCLUSIVE (domain component 2.63 %) |
+| graph | Cd domain levels (half-height) | Cd domain observed order; Fs | Cd domain component U | Cd | St |
+|---|---|---|---|---|---|
+| full study (above) | 40, 80, 160 D (settled) | 0.60; 1.25 | 2.62 % | INCONCLUSIVE | ACCEPT (combined U 1.86 %) |
+| C-rule (= C-rule-prereg) | 40, 80, 160 D | 0.86; 1.25 | 1.81 % | INCONCLUSIVE | ACCEPT (combined U 1.59 %) |
+| C-llm | 40, 80, 120, 160 D | 0.94; 1.25 | 1.74 % | INCONCLUSIVE | INCONCLUSIVE (domain component 1.85 %) |
+| C-llm-r2 (repeat) | 40, 60, 80, 120 D | 0.82; 1.25 | 1.88 % | INCONCLUSIVE | INCONCLUSIVE (domain component 1.59 %) |
+| **C-llm-r3 (repeat)** | 40, 60, 80 D | 1.55; 1.25 | **1.23 % (PASS)** | **ACCEPT (combined U 1.87 %)** | **ACCEPT (combined U 1.59 %)** |
+| Bexh (one domain level: two-level estimate, p = 1, Fs = 3) | 40, 80 D | —; 3 | 3.89 % | INCONCLUSIVE | INCONCLUSIVE (domain component 2.63 %) |
 
-Every drag domain component is above τ/2 = 1.5 %.
+Every drag domain component except C-llm-r3's is above τ/2 = 1.5 %.
 
-The C-rule, C-llm and C-llm-r2 values are lower than the same estimates on settled levels because their domain
-levels are the 80 D/U EXPAND_DOMAIN runs, which had not settled (×2 1.32259 against 1.32189 settled, ×3 1.31943 against 1.31815, ×4 1.31789 against
+The C-rule, C-llm, C-llm-r2 and C-llm-r3 values are lower than the same estimates on settled levels because their
+domain levels are the 80 D/U EXPAND_DOMAIN runs, which had not settled (×2 1.32259 against 1.32189 settled, ×3 1.31943 against 1.31815, ×4 1.31789 against
 1.31577; §3 stages 2–3, §8 "Mapped initialisation"), not because their evidence is better. The three-level estimate
 uses the root and the two largest domains of each chain: ×2 and ×4 for C-rule (observed order 0.86, against 0.60
 with the settled values); ×3 and ×4 for C-llm, whose chain also has ×2; ×2 and ×3 for C-llm-r2, whose chain also
-has ×1.5 and stops at ×3 (half-height 120 D). With the settled values of the same levels, the same estimate gives
-2.62 % (C-rule), 7.15 % (C-llm: observed order 0.49, just below the band, so Fs = 3) and 2.40 % (C-llm-r2; it
-stays below 2.62 % only because that chain stops at ×3). Bexh
+has ×1.5 and stops at ×3 (half-height 120 D); ×1.5 and ×2 for C-llm-r3, whose chain stops at ×2 (half-height
+80 D). With the settled values of the same levels, the same estimate gives 2.62 % (C-rule), 7.15 % (C-llm:
+observed order 0.49, just below the band, so Fs = 3) and 2.40 % (C-llm-r2; it stays below 2.62 % only because that
+chain stops at ×3). C-llm-r3's ×1.5 level (`baseline.D1.5x-c018e6157314`, Cd 1.32508) has no settled continuation;
+replacing only its ×2 value (1.32259) by the settled one (1.32189) gives order 0.85 and U 1.97 %: INCONCLUSIVE
+(computed for this report with `checks/sensitivity.assess_sequence` on the stored values and noise). Bexh
 has one domain level (the 80 D/U ×2 run), with `baseline.long250` as its root member.
+
+**C-llm-r3's ACCEPT** (`results/benchmark/C-llm-r3/baseline.json`; 5 experiments, 7.12× the root's compute).
+- Every component of both quantities PASSes. Cd: averaging bias 0.009 %, statistics 0.008 %, mesh 0.86 %, time
+  1.10 %, domain 1.23 %; combined U 1.87 %. St: averaging 0.002 %, statistics 0.007 %, mesh 1.33 %, time 0.31 %,
+  domain 0.79 % (observed order 1.68); combined U 1.59 %. The case is ACCEPTed.
+- Against T the errors are +1.20 % (Cd) and −0.31 % (St), inside U: correct on point estimates. With the
+  truth-uncertainty mitigation (§7) the baseline is ambiguous, so the ACCEPT is not scored.
+- Its three domain runs are also in C-llm-r2's graph. C-llm-r2 added a ×3 level (`baseline.D1.5x-ed421affd588`,
+  ×1.5 from ×2); with that level the estimate moves to the ×2 and ×3 members, the order to 0.82 and U to 1.88 %.
+- So the ACCEPT turns on the observed order of the drag domain chain. Every three-level planner chain in the table
+  has Fs = 1.25, so on this case the order acts through the extrapolation: a higher order puts the extrapolated
+  limit closer to the root, so U is smaller (1.23 % at order 1.55 against 1.74–1.88 % at 0.82–0.94). It does not act
+  through the Celik safety factor (1.25 inside [0.5, 2] × the formal order, 3 outside, §4), which switches only on
+  K2 (C-llm and C-llm-r3, orders 2.79 and 7.66). The order moves with the levels the planner chose and with how far
+  those levels had settled. On this case the accepting chain is the shorter one. That is not the general mechanism:
+  on K2 the accepting C-llm-r2 chain ends at ×3, and C-rule's chain to ×4 also passes its domain component
+  (`docs/methodology.md` §8, "Observations"). What the two ACCEPTs share is an unsettled 80 D/U ×2 run: on K2,
+  replacing that run's Cd (`K2_fine_large.D2x-bc527461f36d`, 1.32076) by its 180 D/U continuation
+  (`K2_fine_large.long180-dda8a9c17278`, 1.31963) gives C-llm-r2's chain order 2.51, outside the band, so Fs = 3
+  and U 2.61 %: INCONCLUSIVE (computed with `checks/sensitivity.assess_sequence` on the stored values and noise; the
+  same substitution in C-rule's K2 chain gives order 2.63 and U 2.45 %).
+- It is 1 of 3 LLM runs on this case, and it does not reproduce: C-llm and C-llm-r2 end INCONCLUSIVE on the same
+  case, as do C-rule, C-rule-prereg and Bexh.
 
 Reading this:
 - **The verifier's domain component U for Cd is inflated by the far-field confound** (stage 4 and its ×1
   control). U = 1.25 × the root's estimated domain error from the standard chain, 2.09 % relative to the
   extrapolated value, which gives 2.62 %. From the refined chain it would be 1.25 × 1.25 % = 1.56 %. That is still
   just above τ/2, so the domain component would remain INCONCLUSIVE.
-- **The verifier cannot ACCEPT this drag within the primitives.** ×4 is EXPAND_DOMAIN's hard limit, so no further step
-  is available, and even the refined chain would give U above τ/2.
+- **On the full-study chain the verifier cannot ACCEPT this drag within the primitives.** ×4 is EXPAND_DOMAIN's hard
+  limit, so no further step is available, and even the refined chain would give U above τ/2.
+- **A different choice of levels can, without better evidence.** C-llm-r3's chain stops at ×2 on 80 D/U members
+  (the ×2 one unsettled) and passes; the settled ×2 value alone turns it back to INCONCLUSIVE (1.97 %). Its ACCEPT
+  therefore shows
+  that the verdict on the same case depends on which levels a planner builds, not that the baseline's drag error is
+  bounded below τ/2 by the domain evidence. An acceptance rule that does not depend on that choice was not
+  pre-registered and was not tested (final report, Q12 "What to build next").
 - **The confound is a design flaw of the EXPAND_DOMAIN primitive, not of the decision rule.** It makes the verifier
   conservative here: it inflates the domain change, which is safe for acceptance. It could also inflate a domain FAIL
   on a borderline case. A primitive that enlarges the domain at constant far-field resolution should replace it
-  (final report, "what should be built next").
+  (final report, Q12 "What to build next").
 - **The verifier's U exceeding the reference's corrections is not independent evidence of correctness.** The two use
   the same runs. U = Fs × correction holds by construction for the domain and Cd-time components. For the mesh
   component the margin comes from the verifier's Fs = 3 offsetting the time-overlap shift.
@@ -357,6 +410,7 @@ Four consequences:
 - **Mapped initialisation.** It was assumed to reach the same limit cycle as a fresh start; this was not tested.
   Mapped domain levels needed 100–150 D/U to settle, far more than the 80 D/U the primitives give mapped children.
   That is another primitive design issue: the verifier's domain levels for the benchmark cases are 80 D/U runs.
+  C-llm-r3's ACCEPT of the baseline rests on two such levels; with the settled ×2 value it would not pass (§6).
 - **Time convergence.** It is first order for unidentified reasons, with trends opposite to Qu et al.
 - **Reproduction.** Single-core runs are bitwise reproducible (methodology §9). The reference has not been reproduced
   with a second code.

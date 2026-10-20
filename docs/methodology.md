@@ -56,8 +56,9 @@ the linear-solver parser fix (§7) and the other early extractor changes ran at 
 on 2026-10-19 and recorded only their time (committed in 4a53ce3 and f27a82d); no current
 evidence file shows them. Since R19 the record carries the extractor fingerprint: 15 evidence
 files carry `extraction.reextracted = true` (12 root runs at 08:24 UTC, the C1 and C2 roots at
-09:08 and the K1 root at 09:33, all on 2026-10-19). Every evidence file in the run store (175 on
-2026-10-20 at 10:46 UTC) carries the same extractor fingerprint.
+09:08 and the K1 root at 09:33, all on 2026-10-19). Every evidence file in the final run store carries the same
+extractor fingerprint (`e5ad2b6ece3659d0`): 207 files, one for each of the 198 completed and 9 failed run records; the
+other 7 of the 214 records are 'running' records with no live owner and no evidence file (`results/analysis/run_audit.md`).
 
 ## 3. Deterministic checks (`checks/`)
 
@@ -107,7 +108,7 @@ the mesh-sensitivity result.
 **Deterministic verdict first.** If it is ACCEPT or REJECT, the loop stops. The
 planner is consulted only while the verdict is INCONCLUSIVE.
 
-**LLM critic.** Headless `claude -p` with:
+**LLM critic.** A headless LLM command-line client in non-interactive mode (`-p`) with:
 - no tools (`--tools ""`), no MCP servers, no settings files, no session persistence, an empty working directory;
 - a replacement system prompt stating the authority rules;
 - a JSON-schema-constrained output, then pydantic validation (extra keys forbidden; the action is an enum of the four primitives).
@@ -145,6 +146,11 @@ are applied before this order (a deviation, §6):
 - RUN_LONGER on a statistically unreliable refinement-family member (R6, commit 1df98b8);
 - RUN_LONGER on the root's longest continuation while `physics_regime` is INCONCLUSIVE (with R24, commit 10f8b80).
 
+The planner without these two rules, exactly as pre-registered, was run afterwards as **C-rule-prereg**
+(`scripts/run_rule_prereg.py`; same loop, validator, budgets and decision code; earliest `started` time among its
+results 12:53:58 UTC on 2026-10-20, last result 19:11 UTC) for a sensitivity analysis of criterion 5b (§8,
+"Observations").
+
 **LLM transport.** Calls are bounded: 300 s timeout, ≤ 3 attempts with exponential
 backoff and jitter. Every attempt, error, latency and cost is recorded.
 
@@ -153,8 +159,8 @@ backoff and jitter. Every attempt, error, latency and cost is recorded.
 Pre-registered in `docs/design.md` §19, committed at 07:13 UTC on 2026-10-19 (dd548bc), after the
 first root runs had started (07:00–07:02). The decision code was revised after early verdicts were
 known. Every benchmark result carries the final decision-code stamp. Attack results carry none and
-rest on a replay of the verifier, which has to be repeated on the final result set. The details
-are under "Deviations from pre-registration" below.
+rest on a replay of the verifier, repeated on the final result set (137 of 137 results reproduce; item 1
+below). The details are under "Deviations from pre-registration" below.
 
 **In-house reference** (final construction; details and numbers in `reports/baseline_validation.md`
 §3–4). From the baseline's one-factor chains:
@@ -212,9 +218,9 @@ Times are UTC on 2026-10-19 unless stated; commits are from `git log`.
    - Six decision-code commits followed the first committed verdicts: 667dd6c (07:35), 8161f5c (07:40), 1df98b8 (08:20), 4639ddb (08:24), 10f8b80 (08:59) and b65bf88 (09:06, the final fingerprint `6406c53bb2011ef5`).
    - `docs/design.md` was edited after dd548bc. Among the changes, §13 was brought in line with the corrected verifier (averaging as a measured bias, the order used below the band, monotone divergence, the FAIL noise rule, bias + RSS for ACCEPT), and the mapped-child duration in §18 was reduced from 100 to 80 D/U (b8057b0, 07:23, before the first committed child run, created at 07:24). The pre-registered text is the dd548bc version (`git show dd548bc:docs/design.md`). The pre-registered text of §19 is unchanged; an annotation marked as not part of it describes how T was actually built (the superseded extrapolation rule, the model-form terms, the refined ×4 member).
 
-   Each benchmark result carries the decision-code stamp (all current ones: `6406c53bb2011ef5`). Attack results carry none and are checked only by `scripts/replay_verdicts.py` (E11). The last recorded replay (`results/analysis/replay.json`, 2026-10-20 05:02 UTC) matched all 62 results with a verifier verdict that existed then (A and L-judge results have none to replay). It has to be re-run on the final result set before the claim holds for every reported verdict. The revisions were nevertheless made with some early verdicts known.
-2. **Rule planner.** §19 fixes the C-rule order statistics/averaging → mesh → time → domain. The RUN_LONGER request for an INCONCLUSIVE `physics_regime` was added after the first results (10f8b80) and is applied before that order; so is the RUN_LONGER request for an unreliable family member (1df98b8). The regime rule cannot discharge the check it targets (§8, "Observations").
-3. **Reference T.** T has four committed versions in `benchmark/labels.json`. All 17 A, B and L-judge results existed before the first version, as did 5 C-rule and 5 C-llm results (7 and 6 by the last version); 2 Bexh results existed by 3cff05d. Metrics and tables (`results/benchmark/metrics.json`, `reports/benchmark_tables.md`) were regenerated with each version.
+   Each benchmark result carries the decision-code stamp (all current ones: `6406c53bb2011ef5`). Attack results carry none and are checked only by `scripts/replay_verdicts.py` (E11). The final replay (`results/analysis/replay.json`, 2026-10-20 19:12 UTC, after the last result was stored) matches all 137 results that have a verifier verdict: 119 benchmark results (B, C-rule, C-rule-prereg, C-llm, C-llm-r2, C-llm-r3 and Bexh, 17 each) and 18 attack results (B-v1, B-v2, C-rule-v1, C-rule-v2, C-llm-v1 and C-llm-v1+review, 3 each). A and L-judge results have no verifier verdict to replay. The revisions were nevertheless made with some early verdicts known.
+2. **Rule planner.** §19 fixes the C-rule order statistics/averaging → mesh → time → domain. The RUN_LONGER request for an INCONCLUSIVE `physics_regime` was added after the first results (10f8b80) and is applied before that order; so is the RUN_LONGER request for an unreliable family member (1df98b8). The regime rule cannot discharge the check it targets (§8, "Observations"). The planner without both rules was run afterwards as C-rule-prereg (§5); it gives C-rule's verdict on 16 of 17 cases and differs on F1 (§8, "Observations").
+3. **Reference T.** T has four committed versions in `benchmark/labels.json`. All 17 A, B and L-judge results existed before the first version, as did 5 C-rule and 5 C-llm results (7 and 6 by the last version); 2 Bexh results existed by 3cff05d. C-llm-r2, C-rule-prereg and C-llm-r3 started on 2026-10-20 (07:50, 12:53 and 14:11 UTC), after the final version. Metrics and tables (`results/benchmark/metrics.json`, `reports/benchmark_tables.md`) were regenerated with each version.
 
    | commit | time | Cd | St | basis |
    |---|---|---|---|---|
@@ -228,13 +234,15 @@ Times are UTC on 2026-10-19 unless stated; commits are from `git log`.
    - In the point-estimate view the flawed set is {A1, B1, B2, C2, D1, F1, H1, I1} under every committed version. The credible set changes: {C1, K2, baseline} (3d9f43c, 3cff05d) → {A2, C1, G2, J1} (33d5ebf) → {A2, C1, J1, K2, baseline} (021fc5a).
    - In the view with the truth-uncertainty mitigation, the flawed set {A1, B1, B2, D1, F1, H1, I1} and the empty credible set are the same under every version.
    - False-acceptance and detection rates therefore do not depend on the revisions of T. Correct-acceptance and false-rejection rates in the point-estimate view do.
-5. **Decision rule for criterion 5b.** It was fixed after 15 of 17 C-llm results were known (3ee09b1, 2026-10-20 09:17; §8).
+5. **Decision rule for criterion 5b.** It was fixed after 15 of 17 C-llm results were known (3ee09b1, 2026-10-20 09:17; §8). Outcome under the rule: not met; in the sensitivity analysis against C-rule-prereg: met, by one case (§8, "Decision rule for success criterion 5b", Results).
 6. **Post-attack extensions.** The v2 checks `geometry_consistency` and `inlet_uniformity` (`configs/verification_v2.yaml`, line 1: "v2 = pre-registered v1 + post-attack extensions") and the LLM acceptance review used by C-llm-v1+review were committed in 8161f5c (07:40).
    - This was after the attack cases X1–X3 were defined (0ce5d5e, 07:30) and before any attack ran. The attack roots were first created at 08:27, an attempt recorded only in git (22adb05) and replaced under the same run ids at 09:08.
    - They are post-hoc extensions of the pre-registered verifier, not part of the §19 protocol. A detection of X1–X3 by the v2 checks or by the acceptance review is therefore not a blind test.
 7. **Post-hoc analyses.** Evaluated separately and not part of the §19 protocol:
-   - the J1 variant that treats `-allGeometry`-only checkMesh failures as INCONCLUSIVE (`scripts/posthoc_allgeometry.py`, results in `results/posthoc/B-allgeo/`; 83989a7 at 09:14, after J1's verdicts were committed at 07:43; §8, "Observations");
-   - the acceptance-rule variants of `scripts/posthoc_acceptance_rule.py` (§9).
+   - the J1 variant that treats `-allGeometry`-only checkMesh failures as INCONCLUSIVE (`scripts/posthoc_allgeometry.py`, 83989a7 at 09:14, after J1's verdicts were committed at 07:43): static on all 17 cases (`results/posthoc/B-allgeo/`) and, for J1, adaptive with the rule planner (`--adaptive`, `results/posthoc/C-rule-allgeo/`, 2026-10-20 15:53 UTC); §8, "Observations";
+   - the acceptance-rule variants of `scripts/posthoc_acceptance_rule.py` (§9);
+   - the rule planner exactly as pre-registered, C-rule-prereg (`scripts/run_rule_prereg.py`, `results/benchmark/C-rule-prereg/`), used only for a sensitivity analysis of criterion 5b; the committed 5b rule names C-rule (§8);
+   - tests of the LLM acceptance review on the two real ACCEPTs and on a counterfactual X1 ACCEPT (`scripts/posthoc_review_tests.py`, `results/posthoc/review-on-accepts/`; §8, "Observations").
 
 ## 7. Development log of methodological corrections
 
@@ -378,6 +386,30 @@ no cost metric, margin or test. A review found this gap after 15 of 17 C-llm res
   benchmark. Other differences (first-experiment targeting, savings on single cases) are reported descriptively and
   do not meet the criterion.
 
+**Results** (final result set, 2026-10-20 19:12 UTC; `reports/benchmark_tables.md`, "Criterion 5b decision rule"
+and its sensitivity analysis; `results/benchmark/metrics.json`, `criterion_5b`). These are outcomes of the rule
+above; the rule itself is unchanged.
+- **Committed rule (primary answer): not met.** Paired cases: 17 of 17. Accuracy is tied: 7 correct decisions each
+  in both label views, no false acceptance by either, and one false rejection each on point estimates (J1, by the
+  static `mesh_quality` check). Cost: total paired compute 83.06× root for C-llm against 81.29× for C-rule; costs
+  differ by more than 5 % in 10 cases, C-llm cheaper in 2 of them, sign test p = 0.109. LLM cost on the paired
+  cases USD 5.13. So the LLM planner adds no measurable value on this benchmark.
+- **Sensitivity analysis against C-rule-prereg (not the committed rule): met, on accuracy, by one case.** Against
+  the rule planner exactly as pre-registered, C-llm makes 7 correct decisions to C-rule-prereg's 6 in both views,
+  with no more false acceptances or false rejections. The whole difference is F1, which C-rule-prereg leaves
+  INCONCLUSIVE because its mesh and time studies never get a statistically reliable root member (§8,
+  "Observations"). Cost is not met there either: 83.06× against 90.45× root (C-llm lower), but C-llm is cheaper in
+  only 4 of the 11 cases that differ by more than 5 %, p = 0.549.
+- **How to read the two.** The committed rule is the answer to 5b. The sensitivity "win" does not show an ability of
+  the LLM: it exposes a gap in the pre-registered rule planner that one deterministic rule closes. The post-hoc
+  unreliable-member rule (1df98b8) requests exactly the continuation that F1's root needs; in C-rule's own F1 run the
+  regime rule's continuations supplied it first. C-rule with only the unreliable-member rule was not run: that this
+  one rule closes the gap is inferred from what the rule requests, and what was observed is that C-rule, with both
+  post-hoc rules, REJECTs F1.
+- **Not part of either comparison.** The repeats' two case-level ACCEPTs (C-llm-r2 on K2, C-llm-r3 on the
+  baseline; §8, "Observations"), both correct on point estimates, come from the planner's choice of parameters and
+  levels. Neither reproduces in the other LLM runs, and the rule excludes repeats; they are reported descriptively.
+
 ### Observations logged during the evaluation (not changed in the pre-registered verifier)
 
 - **J1 (coarse wake):** `checkMesh -allGeometry` reports "Cells with small determinant (< 0.001): 48", which OpenFOAM counts as a failed check, so `mesh_quality` FAILs and every system REJECTs J1. Its reported Cd/St are within ~1 % of the baseline, so if the measured label is *credible*, this is a false rejection caused by an extended-geometry quality heuristic rather than by an accuracy problem. A post-hoc variant that treats `-allGeometry`-only failures as INCONCLUSIVE (to be discharged by mesh refinement) is evaluated separately and reported as a protocol deviation (§6, "Deviations from pre-registration", item 7).
@@ -385,6 +417,12 @@ no cost metric, margin or test. A review found this gap after 15 of 17 C-llm res
   (`results/posthoc/flagged_cells.txt`); the enlarged-domain meshes of the baseline study fail the same check with
   cells 57–155 D from the cylinder. The flag reacts to stretched far-field cells, not to the wake region that sets
   the forces.
+  - Static, on all 17 cases (`results/posthoc/B-allgeo/`), the variant changes only J1: REJECT → INCONCLUSIVE.
+  - Adaptive, with the rule planner (`results/posthoc/C-rule-allgeo/J1_coarse_wake.json`), J1 ends INCONCLUSIVE
+    after 5 experiments (REFINE_MESH √2 twice, REDUCE_TIME_STEP, EXPAND_DOMAIN ×2 twice; 6.54× root). The concern is
+    not discharged, because the St mesh component is 2.17 % (> τ/2; demonstrated change 1.39 %), and both domain
+    components are above τ/2 (Cd 1.64 %, St 2.28 %). The variant removes the false rejection of the point-estimate
+    view but does not reach the correct ACCEPT.
 - **The in-house reference needed three stages beyond the pre-registered study** (details and numbers:
   `reports/baseline_validation.md` §3–4). The committed versions of T, and which results were known when each was
   made, are listed in §6 ("Deviations from pre-registration").
@@ -400,23 +438,73 @@ no cost metric, margin or test. A review found this gap after 15 of 17 C-llm res
   - The finer mesh levels ran at a smaller dt (REFINE_MESH holds the Courant number). Each is shifted to the
     baseline dt with the time chain's model C·dt^p; an accidental pair of f = 2 runs showed weaker dt sensitivity than
     the model, so the full shift is also carried as a model-form term.
-  - The same far-field coarsening inflates the verifier's own domain component (U = 2.62 % of Cd for the baseline),
-    which is why no system can ACCEPT the baseline's drag. This is a property of the pre-registered EXPAND_DOMAIN
-    primitive and was not changed.
+  - The same far-field coarsening inflates the verifier's own domain component: 2.62 % of Cd on the baseline's
+    full-study graph (baseline + 11 study runs), so the verifier cannot ACCEPT the baseline's drag on that graph.
+    This is a property of the pre-registered EXPAND_DOMAIN primitive and was not changed. One benchmark graph with a
+    shorter chain of 80 D/U levels (its ×2 level unsettled) did ACCEPT the baseline (next item).
+- **Two case-level ACCEPTs, both in LLM repeats, both resting on the levels the planner chose (the domain chain's
+  observed order, and on K2 also a third mesh level).**
+  - Of the 119 benchmark results and 18 attack results that carry a verifier verdict, exactly two are case-level
+    ACCEPTs, and both come from repeats of the LLM planner. C-llm-r2 on K2: Cd combined U 1.54 % (mesh 0.34 %, time 0.79 %, domain
+    1.27 %), St 1.69 % (mesh 0.99 %, time 0.27 %, domain 1.34 %); errors against T +0.94 % and −0.07 %. C-llm-r3 on
+    the baseline: Cd 1.87 % (mesh 0.86 %, time 1.10 %, domain 1.23 %), St 1.59 % (mesh 1.33 %, time 0.31 %, domain
+    0.79 %); errors +1.20 % and −0.31 %. No ACCEPT by C-llm (first run), C-rule, C-rule-prereg, Bexh or B. There is
+    no case-level false acceptance by any verifier-based result on the benchmark or the attacks (System A, OpenFOAM
+    diagnostics only, ACCEPTs 6 of the 7 flawed benchmark cases with the mitigation and 7 of 8 on point estimates). At quantity level there is one: X1's St under
+    C-rule-v1 (error −3.60 % against U 1.62 %), inside an INCONCLUSIVE case verdict.
+  - Both are correct on point estimates: each error lies within the stated U. Both cases are ambiguous with the
+    truth-uncertainty mitigation, so there the ACCEPTs are not scored. 2 of 2 ACCEPTs correct on point estimates
+    gives a one-sided 95 % Clopper–Pearson lower bound of 0.224 on the share of correct ACCEPTs.
+  - What decides them is mainly the drag domain component, through its observed order. The order acts in two ways:
+    it sets how far the extrapolated limit lies from the root (a higher order gives a smaller estimated error), and
+    outside the band it switches the safety factor from 1.25 to 3. On the baseline only the first acts; on K2 both do.
+    The observed order says how fast the value approaches its limit as the domain grows, estimated from the root
+    and the two largest domains; inside [0.5, 2] × the formal order 1 the safety factor is Fs = 1.25, outside it
+    p = min(observed, formal) with Fs = 3 (§3). The order of the same case differs between runs with the domain
+    levels chosen and with how far those levels had settled:
+    - K2 (root half-height 60 D): C-rule (= C-rule-prereg) ×1, ×2, ×4 gives 1.51, U 1.02 %, PASS; C-rule was
+      blocked by its mesh study instead (its second REFINE_MESH was refused by the 160,000-cell limit, so St kept a
+      two-level estimate, U 2.17 %). C-llm ×1, ×2, ×4 gives 2.79, outside the band, so Fs = 3 and U 2.38 %. C-llm-r2
+      ×1, ×2, ×3 gives 1.06, U 1.27 %, PASS, and it took a third mesh level from the root with factor 1.65, inside
+      the cell limit: ACCEPT. C-llm-r3 ×1, ×1.5, ×2, ×3 gives 7.66, so Fs = 3 and U 1.87 %; its mesh study also
+      stayed two-level (REFINE_MESH ×2 refused by the cell limit, then a single ×1.6), so its St mesh component was
+      2.19 %. The two PASSes use the
+      ×2 level's 80 D/U run (`K2_fine_large.D2x-bc527461f36d`, Cd 1.32076); C-llm and C-llm-r3 use its continuation
+      to 180 D/U (`K2_fine_large.long180-dda8a9c17278`, Cd 1.31963).
+    - Baseline: 0.82–0.94 in the other three-level planner graphs (C-rule 0.86, C-llm 0.94, C-llm-r2 0.82; all
+      inside the band, so Fs = 1.25; U 1.74–1.88 %)
+      against 1.55 in C-llm-r3's chain ×1, ×1.5, ×2 (U 1.23 %, PASS). C-llm-r2's graph holds the same three runs
+      plus a ×3 level. With the settled value of the ×2 level, C-llm-r3's estimate gives order 0.85 and 1.97 %
+      (`reports/baseline_validation.md` §6).
+  - So acceptance is fragile to the planner's choices. The order estimate moves U across τ/2: on the baseline
+    through the extrapolation alone (Fs = 1.25 in every chain), on K2 also through the switch of Fs between 1.25
+    and 3. Both ACCEPTs rest on their case's unsettled 80 D/U ×2 run. With the settled ×2 value the baseline estimate
+    gives 1.97 %; on K2, with the 180 D/U continuation's Cd (1.31963 for 1.32076), C-llm-r2's own chain gives order
+    2.51, Fs = 3, U 2.61 % (computed with `checks/sensitivity.assess_sequence` on the stored values and noise). In
+    both cases the result is INCONCLUSIVE. Avoiding the largest levels is not the mechanism in general: on K2 the
+    accepting chain reaches ×3 and C-rule's ×4 chain also passes its domain component.
+  - Run-to-run variance over the three complete LLM runs (C-llm, C-llm-r2, C-llm-r3; `reports/benchmark_tables.md`,
+    "LLM run-to-run variance"): the verdict is identical in 15 of 17 cases, and the two disagreements are exactly
+    these ACCEPTs, each reached in 1 of 3 runs; the experiment sequence is identical in 6 of 17. Every case flawed in
+    the mitigated view (A1, B1, B2, D1, F1, H1, I1) is REJECTed in all three runs; C2, flawed on point estimates
+    only, is INCONCLUSIVE in all three. Correct acceptance on the 5 point-estimate-credible cases: C-llm 0/5
+    (one-sided 95 % upper bound 0.451), C-llm-r2 and C-llm-r3 1/5 each (0.657); C-rule, C-rule-prereg and Bexh 0/5.
+    The repeats reuse simulations from the shared store, so they measure the variance of the planner's choices, not
+    of the simulations.
 - **REFINE_MESH keeps Δt when the parent's max Courant number exceeds 1** (§4; run.json note "parent max Co …
   already exceeds 1.0; time step kept so that only the mesh changes"). This is a design defect of the primitive.
-  - On C1 (root max Co 3.42) and C2 (2.92), every refinement of the root that has run diverged: C1 ×1.3, ×√2 and
-    ×2; C2 ×√2 and ×2. All ended with returncode −8 (floating-point exception) and a recorded max Co of
-    10¹⁰²–10¹⁰³.
+  - On C1 (root max Co 3.42) and C2 (2.92), every refinement of the root diverged: ×1.3, ×√2 and ×2 on each root.
+    All ended with returncode −8 (floating-point exception) and a recorded max Co between 9.2 × 10¹⁰² and
+    9.2 × 10¹⁰⁴. The last of them, C2's ×1.3 (`C2_euler_large_timestep.m1.3-53f0c75d4a04`, launched by C-llm-r2
+    at 07:52 on 2026-10-20), was recorded as failed at 12:29 UTC.
   - Refinements of a REDUCE_TIME_STEP child completed, but they are not members of the root's mesh family (§3).
-  - A refinement of either root keeps its Δt. On C1 even the smallest allowed factor (×1.3; `primitives.py`
-    range 1.3–2.0) diverged, and larger factors raise the Courant number further. The mesh component of the C1
-    root therefore cannot be measured with the current primitives, and no adaptive system can ACCEPT C1
+  - A refinement of either root keeps its Δt. On both roots even the smallest allowed factor (×1.3; `primitives.py`
+    range 1.3–2.0) diverged, and larger factors raise the Courant number further. The mesh component of the C1 and
+    C2 roots therefore cannot be measured with the current primitives, and no adaptive system can ACCEPT C1
     (credible in the point-estimate view).
-  - On C2 a ×1.3 root refinement (`C2_euler_large_timestep.m1.3-53f0c75d4a04`, launched by C-llm-r2 at 07:52 on
-    2026-10-20) had produced no solver output at 10:46 UTC on 2026-10-20.
-- **A diverged refinement is reported as missing evidence.** `RunGraph.factor_family` drops failed children. The
-  C-rule, C-llm and Bexh results for C1 and C2, and the C-llm-r2 result for C1, therefore all give the mesh reason
+- **A diverged refinement is reported as missing evidence.** `RunGraph.factor_family` drops failed children. Every
+  adaptive result for C1 and C2 (C-rule, C-rule-prereg, C-llm, C-llm-r2, C-llm-r3 and Bexh) contains at least one
+  diverged refinement of the root, and all of them give the mesh reason
   "no REFINE_MESH experiment has been run; mesh error of … is unknown", although refinements ran and diverged.
   The reason text is wrong, and the divergence does not appear in the verdict.
 - **Bexh refines diverged parents.** Its fixed protocol (REFINE_MESH √2 twice) launched the second refinement from
@@ -438,6 +526,71 @@ no cost metric, margin or test. A review found this gap after 15 of 17 C-llm res
     G1 and G2 ended INCONCLUSIVE on their compute and experiment budgets.
   - Because `physics_regime` is a gate check (no error-budget component) without a discharge path in `aggregate`,
     a root on which it is INCONCLUSIVE can never be ACCEPTed, whatever experiments run.
+- **The rule planner as pre-registered (C-rule-prereg, `scripts/run_rule_prereg.py`).** It runs the §19 order
+  only, without the unreliable-member and regime RUN_LONGER rules (§5; §6, item 2), with the same loop, validator,
+  budgets and decision code (`6406c53bb2011ef5`); simulations already in the store are reused.
+  - On 14 of 17 cases it builds exactly C-rule's run graph. It differs on F1, G1 and G2, the three cases where the
+    regime rule had fired first in C-rule. Verdicts are identical on 16 of 17 cases; G1 and G2 end INCONCLUSIVE in
+    both.
+  - **F1 differs.** C-rule REJECTs it (St mesh change 6.74 % > τ). C-rule-prereg ends INCONCLUSIVE with the compute
+    budget exhausted, after 5 experiments and 11.40× root: REFINE_MESH √2 twice (a third refused by the 2×
+    refinement limit), REDUCE_TIME_STEP three times (a fourth refused by the Δt limit), then an EXPAND_DOMAIN
+    refused for budget.
+  - The obstacle is the root itself. It has 10 stationary cycles and statistical uncertainties of 1.07 % (Cd) and
+    1.47 % (St). That is within τ/2, so the statistics component PASSes and the pre-registered order (statistics
+    first) never asks for RUN_LONGER. It is above the member-reliability limit (Fs₂ · u ≤ τ/2 with Fs₂ = 3; R6,
+    R28), so every mesh and time study, which contains the root as a member, stays INCONCLUSIVE ("family member(s)
+    not statistically reliable … run them longer first").
+  - The verifier does not evaluate a family with an unreliable member at all, so even its FAIL test is skipped.
+    C-rule-prereg's two refinements changed St by 11.8 % (root 0.1258 → ×2 0.1426, relative to the ×2 value;
+    computed for this document from the runs' evidence), more than τ after the 2 × noise deduction (2 × 1.47 %).
+  - What this shows about the post-hoc rules. The unreliable-member rule (1df98b8) requests RUN_LONGER on a member
+    the verifier lists as unreliable, which is the step F1's root needs; the LLM planner took that step on its own
+    (REFINE_MESH ×2, then RUN_LONGER on the root: St change 11.45 %, REJECT). In C-rule's own F1 run the regime
+    rule fired first, and its four continuations made the root reliable before the first refinement. So the
+    pre-registered order has a gap that one deterministic RUN_LONGER rule closes; that the unreliable-member rule
+    alone would close it is inferred from what it requests, since C-rule with only that rule was not run. The regime
+    rule's cost is in the previous item.
+  - Effect on criterion 5b: F1 is the whole accuracy difference in the sensitivity analysis (§8, "Decision rule for
+    success criterion 5b", Results).
+- **Tests of the LLM acceptance review (post hoc, `scripts/posthoc_review_tests.py`).** The review (C-llm-v1+review)
+  is veto-only and is called only on a deterministic ACCEPT. None occurred in the attacks or in the first C-llm run,
+  so it was never exercised there (`results/attacks/review-on-benchmark/`: "no ACCEPT to review" on all 17 cases).
+  - Method. The script rebuilds each review's evidence package exactly as the loop builds it and stores it with its
+    sha256 (`results/posthoc/review-on-accepts/*.package.txt`, `*.package_meta.json`). The stored review outputs
+    (2026-10-20 14:14–14:16 UTC) were produced by the same code run inline before the script existed. LLM outputs
+    are not deterministic, so a new run with `--call` can differ.
+  - On the two real ACCEPTs (C-llm-r2 on K2, C-llm-r3 on the baseline) the review concurs: no false veto.
+  - Counterfactual X1 ACCEPT: the verdict the combined-only rule V1 (`scripts/posthoc_acceptance_rule.py`) would
+    give, made consistent by setting the checks that are INCONCLUSIVE only because U > τ/2 to PASS. On the
+    C-llm-v1 graph the review concurs, which would be a false acceptance of a +5.98 % drag error. Its package
+    contains the measured cylinder extent, 0.0105 m against D = 0.01 m, 12 times; the review wrote "D is 0.01 m"
+    and "No recorded field shows a mismatch with the question that would invalidate the result". On the C-rule-v1
+    graph it vetoes, for numerical reasons (domain not converged, observed order 0.85, domain U 1.92 % above τ/2;
+    the enlarged-domain runs fail checkMesh; few stationary cycles), not because of the geometry: it too wrote "No
+    spec mismatch in geometry, inlet or boundary-condition types is visible", although its package contains the
+    measured extent 0.0105 m 10 times.
+  - So one of two counterfactual false ACCEPTs is blocked, for the wrong reason, and neither review noticed the
+    geometry. L-judge, given the same field,
+    did REJECT X1, citing the 0.0105 m patch extent: an LLM given this field may or may not notice the flaw. The
+    review is not a substitute for the v2 consistency checks (`geometry_consistency`, `inlet_uniformity`), which
+    REJECT X1 and X2 under every acceptance-rule variant and change none of the 17 benchmark verdicts
+    (`results/attacks/B-v2-on-benchmark/`).
+- **Calibration of the verifier's uncertainty (not a pre-registered metric; `scripts/analyze_benchmark.py`).** For
+  every result whose mesh, time and domain components all carry an estimate, each quantity's U (averaging bias +
+  RSS of the components, §3) is compared with its error against T.
+  - Counting: each distinct run graph once. A result whose graph equals an earlier row's (for example the 14
+    C-rule-prereg graphs equal to C-rule's, or a repeat that rebuilt a graph) is not repeated; the repeats' new
+    graphs are included (`reports/benchmark_tables.md`, "Calibration").
+  - Benchmark: U covers the error in 64 of 66 quantity rows (one-sided 95 % lower bound 0.908; rows share cases and
+    runs, so they are not independent). The two misses are Bexh H1 St (6.05 % against U 3.01 %; H1 solves
+    Re = 83.3) and Bexh I1 Cd (11.05 % against 4.21 %; wrong force normalisation). These are set-up errors, which U
+    does not estimate by construction: U covers averaging, statistics, mesh, time and domain for the problem as
+    set up. Both cases are REJECTed by static checks.
+  - Attacks: 4 of 10 rows covered; the six misses are all X1 (a cylinder 5 % too large), a set-up departure of the
+    same kind.
+  - U and T come from the same Richardson machinery and partly from the same runs, so coverage is consistency, not
+    independent confirmation.
 - **Per-iteration check outputs are not stored.** A result keeps the final verdict with all its checks. For each
   iteration it keeps only the verdict, the missing components, the planner's output and the outcome (`history`), so
   the reason an intermediate verdict was INCONCLUSIVE is not on record. Example: after C-llm's first experiment on F1
@@ -446,9 +599,9 @@ no cost metric, margin or test. A review found this gap after 15 of 17 C-llm res
 - **Compute figures are stand-alone costs.** Each result counts the cell-steps and wall time of every experiment
   run it used, including runs that another system had already computed in the shared content-addressed store
   (§6).
-  - In the stored benchmark results on 2026-10-20 (09:37 UTC), 44 of 109 distinct experiment runs appear in more
-    than one system's result. For example, `B2_moderate_domain.D2x-44c88f366919` is counted by Bexh, C-llm,
-    C-llm-r2 and C-rule. Summing compute across systems double counts.
+  - In the final benchmark results, 74 of 156 distinct experiment runs appear in more than one system's result.
+    For example, `B2_moderate_domain.D2x-44c88f366919` is counted by Bexh, C-llm, C-llm-r2, C-llm-r3, C-rule and
+    C-rule-prereg. Summing compute across systems double counts.
   - Wall time is also contaminated by CPU oversubscription and queueing. The baseline and I1 roots (30 580 cells ×
     15 000 steps each) took 1442 s and 4804 s. C-llm's E1 result reports 10 759 s of experiment wall time inside a
     7 421 s loop.
@@ -475,15 +628,34 @@ digits (relative difference 0.0). Files: `results/reproducibility/`. Single-core
 and binaries are bitwise deterministic here; parallel (decomposed) runs would not be expected to be.
 
 **Integrity tools.** None of them runs a simulation or changes a run record or a stored result; each writes only its
-own report. Live processes keep writing results, so each report is a snapshot.
+own report. Their final outputs were written at about 19:12 UTC on 2026-10-20, after the last result was stored and
+with no live owner process.
 - `scripts/replay_verdicts.py` re-runs the current verifier on the stored run graph of every result with a verifier
-  verdict (benchmark B, C-rule, C-llm, Bexh, C-llm-r*; the attack systems except L-judge) and requires the verdict,
-  the failed checks and every component status and uncertainty to match (E11). Output: `results/analysis/replay.json`.
+  verdict and requires the verdict, the failed checks and every component status and uncertainty to match (E11).
+  Final output: 137 of 137 match (benchmark B, C-rule, C-rule-prereg, C-llm, C-llm-r2, C-llm-r3, Bexh; the attack
+  systems except L-judge). Output: `results/analysis/replay.json`.
 - `scripts/audit_runs.py` compares the run store with the stored results and the git history: runs no result names,
-  orphaned 'running' records, failed runs, records without the R19 hashes, and earlier attempts under a current run
-  id (§8, "Observations"). Output: `results/analysis/run_audit.{json,md}`.
+  orphaned 'running' records, failed runs, records without the R19 hashes, superseded loop attempts and earlier
+  attempts under a current run id (§8, "Observations"). Final output: 214 run records (198 completed, 9 failed,
+  7 'running' with no live owner); 11 are named by no stored result. Output: `results/analysis/run_audit.{json,md}`.
 - `scripts/dump_untraced.py` lists every number in LLM-written text that the numeric audit could not trace, with its
-  context and a mechanical triage (convention, leakage-check, other). Output: `results/analysis/untraced_numbers.{json,md}`.
-- `scripts/posthoc_acceptance_rule.py` (post-hoc, not pre-registered) replays the verifier on the stored run graphs
-  and re-aggregates the component checks under two looser acceptance rules, to show what blocks acceptance.
-  Output: `results/posthoc/acceptance_rule.{json,md}`.
+  context and a mechanical triage (convention, leakage-check, other). Final output: 251 untraced tokens, against 205
+  at 15:31 UTC; the 46 added since are all in C-llm-r3 text. Output: `results/analysis/untraced_numbers.{json,md}`;
+  the per-token reading of the tokens is in `results/analysis/untraced_classification.{json,md}`.
+
+**Post-hoc analysis scripts** (not part of the §19 protocol; §6, item 7). None edits the decision code:
+`run_rule_prereg.py` and `posthoc_allgeometry.py` apply their variants by replacing or wrapping functions inside the
+script, and `posthoc_acceptance_rule.py` re-aggregates copies of the replayed checks with the decision code's own
+`aggregate()`.
+- `scripts/posthoc_acceptance_rule.py` replays the verifier on the stored run graphs and re-aggregates the component
+  checks under two looser acceptance rules (V1 combined U only; V2 no τ/2 limit on the domain component), to show
+  what blocks acceptance. No simulation. Output: `results/posthoc/acceptance_rule.{json,md}`.
+- `scripts/posthoc_review_tests.py` tests the LLM acceptance review on the two real ACCEPTs and on a counterfactual
+  X1 ACCEPT (§8, "Observations"). By default it only rebuilds and hashes the review packages; `--call` asks the LLM
+  again. No simulation. Output: `results/posthoc/review-on-accepts/`.
+- `scripts/run_rule_prereg.py` runs the rule planner exactly as pre-registered (C-rule-prereg) through the normal
+  loop, for the 5b sensitivity analysis. It reuses runs from the store and runs new simulations where none exist.
+  Output: `results/benchmark/C-rule-prereg/`.
+- `scripts/posthoc_allgeometry.py` evaluates the `-allGeometry` variant for J1: statically on every benchmark case
+  (no simulation; `results/posthoc/B-allgeo/`) and, with `--adaptive`, with the rule planner on the cases whose
+  static verdict changes, which runs simulations (`results/posthoc/C-rule-allgeo/`).

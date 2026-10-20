@@ -320,8 +320,8 @@ See research §7. In summary:
 | 5–6 | Static verifier; adversarial cases run and screened | done |
 | 7–8 | Experiment primitives with provenance; mesh/time/domain studies on baseline | done; the reference needed three further stages (methodology §8) |
 | 9–10 | Critic and loop; rule-based planner | done |
-| 11–12 | Benchmark A/B/C + ablations | A, B, L-judge and C-rule complete (17/17). Running at 2026-10-20 10:47 UTC: C-llm 16/17 (K1 finished at 09:29; K2 running), Bexh 12/17, C-llm-r2 repeat 11/17. Post-hoc J1 adaptive variant (`scripts/posthoc_allgeometry.py --adaptive`) and the C-llm-r3 repeat not started |
-| 13–14 | Attacks on the verifier; final reports | attacks complete (X1–X3 for every attack system); benchmark extensions (acceptance review and verifier v2 on the benchmark cases, `scripts/run_attacks.py --benchmark-extensions`) pending; baseline report final; benchmark and final reports pending |
+| 11–12 | Benchmark A/B/C + ablations | done; all simulations complete (last result 2026-10-20 19:11 UTC). A, B, L-judge, C-rule, C-llm and Bexh, the LLM repeats C-llm-r2 and C-llm-r3, and C-rule-prereg (the rule planner as pre-registered, a sensitivity analysis for criterion 5b; `scripts/run_rule_prereg.py`): 17/17 each. Post-hoc J1 variant (`scripts/posthoc_allgeometry.py`): static on all 17 cases and adaptive on J1 (`--adaptive`) |
+| 13–14 | Attacks on the verifier; final reports | done. Attacks: 21 results (X1–X3 for each of the 7 attack systems). Benchmark extensions (`scripts/run_attacks.py --benchmark-extensions`): verifier v2 on the 17 benchmark roots (0 verdict changes against B) and the acceptance review on C-llm's 17 first-run results (no ACCEPT to review, so it never ran). Post-hoc analyses: acceptance-rule variants (`scripts/posthoc_acceptance_rule.py`), review tests (`scripts/posthoc_review_tests.py`). Integrity outputs regenerated on the final result set: replay 137/137, run audit, untraced numbers. Reports final: `reports/baseline_validation.md`, `reports/benchmark_tables.md`, `reports/benchmark_results.md`, `reports/final_report.md` |
 
 ---
 

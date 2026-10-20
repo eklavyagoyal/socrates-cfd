@@ -274,12 +274,12 @@ See research §7. In summary:
 | Days | Work | Status |
 |---|---|---|
 | 1–2 | Research; parametric generator; runner; parsers tested on real output | done |
-| 3–4 | Baseline run and validation; evidence engine | in progress |
-| 5–6 | Static verifier; adversarial cases run and screened | |
-| 7–8 | Experiment primitives with provenance; mesh/time/domain studies on baseline | |
-| 9–10 | Critic and loop; rule-based planner | |
-| 11–12 | Benchmark A/B/C + ablations | |
-| 13–14 | Attacks on the verifier; final reports | |
+| 3–4 | Baseline run and validation; evidence engine | done |
+| 5–6 | Static verifier; adversarial cases run and screened | done |
+| 7–8 | Experiment primitives with provenance; mesh/time/domain studies on baseline | done; the reference needed three further stages (methodology §8) |
+| 9–10 | Critic and loop; rule-based planner | done |
+| 11–12 | Benchmark A/B/C + ablations | A, B, L-judge complete; C-rule, C-llm, Bexh and LLM repeats running |
+| 13–14 | Attacks on the verifier; final reports | attacks mostly complete; baseline report final; benchmark and final reports pending |
 
 ---
 

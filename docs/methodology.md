@@ -272,6 +272,28 @@ clean in their configuration.
 ### Observations logged during the evaluation (not changed in the pre-registered verifier)
 
 - **J1 (coarse wake):** `checkMesh -allGeometry` reports "Cells with small determinant (< 0.001): 48", which OpenFOAM counts as a failed check, so `mesh_quality` FAILs and every system REJECTs J1. Its reported Cd/St are within ~1 % of the baseline, so if the measured label is *credible*, this is a false rejection caused by an extended-geometry quality heuristic rather than by an accuracy problem. A post-hoc variant that treats `-allGeometry`-only failures as INCONCLUSIVE (to be discharged by mesh refinement) is evaluated separately and reported as a protocol deviation.
+  `scripts/locate_flagged_cells.py` places all 48 flagged cells at x ≈ 47 D, next to the outlet
+  (`results/posthoc/flagged_cells.txt`); the enlarged-domain meshes of the baseline study fail the same check with
+  cells 57–155 D from the cylinder. The flag reacts to stretched far-field cells, not to the wake region that sets
+  the forces.
+- **The in-house reference needed three stages beyond the pre-registered study** (details and numbers:
+  `reports/baseline_validation.md` §3–4). Each change was made before any benchmark result was interpreted, and
+  the version history of T is reported.
+  - Stage 2: the domain levels had not reached a limit cycle in 80 D/U (the wake had not crossed the enlarged
+    domain); they were continued to 180/280 D/U, and dt/8 was added because St's time behaviour was unresolved.
+  - Stage 3: a ×3 domain level showed the four-level domain chain is not asymptotic (the slope in 1/half-height
+    grew with the domain).
+  - Stage 4: EXPAND_DOMAIN keeps the per-cell growth rate, so the far field coarsens as the domain grows (last wake
+    cell ≈ 1 D at ×1, 3.9 D at ×4). Refining the ×4 far field (outer-block counts ×1.5) raised Cd by 0.16 %; the
+    same refinement on the ×1 domain changed Cd by 0.03 %, so most of the change is far-field resolution beyond the
+    baseline's extent. The refined ×4 member replaced the standard one; the gap between the two chains is carried in
+    U(T) as a far-field model-form term (0.82 % of Cd), so the replacement is consistency, not confirmation.
+  - The finer mesh levels ran at a smaller dt (REFINE_MESH holds the Courant number). Each is shifted to the
+    baseline dt with the time chain's model C·dt^p; an accidental pair of f = 2 runs showed weaker dt sensitivity than
+    the model, so the full shift is also carried as a model-form term.
+  - The same far-field coarsening inflates the verifier's own domain component (U = 2.62 % of Cd for the baseline),
+    which is why no system can ACCEPT the baseline's drag. This is a property of the pre-registered EXPAND_DOMAIN
+    primitive and was not changed.
 
 ## 9. Reproducibility check
 

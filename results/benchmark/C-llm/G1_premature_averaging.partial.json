@@ -102,6 +102,109 @@
     "expected_outcome": "The lift amplitude saturates and a stationary window of 4 or more cycles becomes available. The drag drift and CI, and the Strouhal statistical uncertainty, fall to 0.015 or below, which is 0.5*tolerance. If mean drag or Strouhal number moves by more than 0.03 relative to the R0 values, the R0 transient bias is confirmed. If they stay put, the remaining budget goes to the mesh, time-step and domain checks."
    },
    "outcome": "executed -> G1_premature_averaging.long140-34c6cca905d9 (completed)"
+  },
+  {
+   "iteration": 2,
+   "deterministic_verdict": "INCONCLUSIVE",
+   "missing_components": {
+    "mean_drag_coefficient": [
+     "mesh",
+     "time",
+     "domain"
+    ],
+    "strouhal_number": [
+     "mesh",
+     "time",
+     "domain"
+    ]
+   },
+   "meta": {
+    "planner": "llm_critic",
+    "backend": {
+     "backend": "claude-cli",
+     "model": "cli-default",
+     "effort": "high",
+     "cli_version": "2.1.304 (Claude Code)",
+     "timeout_s": 300.0,
+     "max_attempts": 3
+    },
+    "latency_s": 28.91073947700002,
+    "cost_usd": 0.08000061,
+    "attempts": 1,
+    "errors": [],
+    "prompt_chars": 21097,
+    "model_fingerprint": "6ad399b27406",
+    "numeric_audit": {
+     "traced": 44,
+     "untraced": [
+      {
+       "token": "0.0037",
+       "context": ", 0.02631 of the 0.03 tolerance is already used. Only about 0.0037 is left for the root-sum-square of the "
+      },
+      {
+       "token": "9.5",
+       "context": "experiments used and 2.5x of 12x compute used, which leaves 9.5x, about 3720 s. REFINE_MESH from R1 cos"
+      },
+      {
+       "token": "3720",
+       "context": "used and 2.5x of 12x compute used, which leaves 9.5x, about 3720 s. REFINE_MESH from R1 costs 1812 s (ab"
+      },
+      {
+       "token": "4.6",
+       "context": "9.5x, about 3720 s. REFINE_MESH from R1 costs 1812 s (about 4.6x), so it is affordable. Running mesh, t"
+      },
+      {
+       "token": "4419",
+       "context": "o it is affordable. Running mesh, time and domain together (4419 s) would exceed the remaining budget. T"
+      }
+     ],
+     "n_untraced": 5
+    },
+    "run_aliases": {
+     "G1_premature_averaging-17c0143468d7": "R0",
+     "G1_premature_averaging.long140-34c6cca905d9": "R1"
+    }
+   },
+   "decision": "MORE_EVIDENCE",
+   "confidence": "MEDIUM",
+   "reasoning_summary": [
+    "The deterministic verdict is INCONCLUSIVE and failed_checks is empty. ACCEPT is not allowed, and REJECT is not justified because no FAIL has been measured.",
+    "R1 (RUN_LONGER from R0, 140 convective units) resolved the stationarity problem. It has 12 stationary cycles. Drag drift is 0.0001195 and the CI95 is 3.4541e-05. The Strouhal number is 0.16343 from both the window and the FFT, with a frequency resolution of 0.0076923.",
+    "The averaging bias of the R0-reported values is measured. Drag is biased by 2.631% (R0 1.2961 vs R1 stationary window 1.3311). Strouhal is biased by 1.312% (0.16129 vs 0.16343). Averaging and statistics both PASS.",
+    "The error-budget rule adds the averaging bias linearly. For drag, 0.02631 of the 0.03 tolerance is already used. Only about 0.0037 is left for the root-sum-square of the mesh, time and domain components. The remaining experiments may therefore not be able to produce an ACCEPT for drag. They can still produce a measured FAIL, or show the drag error is small.",
+    "Mesh, time and domain sensitivity are all unmeasured (INCONCLUSIVE). R0/R1 use a coarse mesh: 30580 cells, representative size 0.45745 D, 160 cells around the cylinder, and wake_last_cell_D 1.0209 over 111 streamwise wake cells. Spatial error is the most likely component to change drag or Strouhal number by more than 3%.",
+    "The time step is 0.01 D/U, with max Courant 0.73373 and about 612 steps per shedding period. The backward scheme is second order, so time error is less likely to be dominant. The domain is 30 D upstream, 50 D downstream and 40 D half-height, with blockage 0.0125. That is generous, and the domain experiment is cheaper (1040 s) if budget allows later.",
+    "Budget: 1 of 6 experiments used and 2.5x of 12x compute used, which leaves 9.5x, about 3720 s. REFINE_MESH from R1 costs 1812 s (about 4.6x), so it is affordable. Running mesh, time and domain together (4419 s) would exceed the remaining budget. The most informative experiment must therefore go first.",
+    "R1 is the parent because it is the stationary baseline. R0's window is short and biased, so comparing against it would confound the mesh effect with transient bias.",
+    "The R0 physics_regime INCONCLUSIVE (+25.8% lift amplitude drift) applies to the short R0 record only. R1 shows a drift of 1.2e-4 over 12 cycles and no longer flags non-stationarity."
+   ],
+   "missing_evidence": [
+    "Mesh discretisation error for mean drag and Strouhal number (REFINE_MESH not run)",
+    "Temporal discretisation error (REDUCE_TIME_STEP not run)",
+    "Domain truncation and blockage error (EXPAND_DOMAIN not run)",
+    "A physics_regime re-evaluation that includes the long R1 record, to confirm a sustained limit cycle",
+    "Combined uncertainty for both quantities, which depends on the three missing components"
+   ],
+   "hypotheses": [
+    {
+     "hypothesis": "The coarse mesh (cell size 0.45745 D, wake_last_cell_D 1.0209, 160 cells around the cylinder) biases mean drag and/or Strouhal number by more than 3%. The effect is stronger on the wake-dependent Strouhal number.",
+     "test": "REFINE_MESH on R1 with factor 1.4142. If mean drag or Strouhal number changes by more than 0.03 relative, beyond 2x noise, that is a FAIL and the root is rejected. If the changes are below about 0.015, mesh error is acceptable."
+    },
+    {
+     "hypothesis": "Time and domain errors are small and are not the limiting components.",
+     "test": "If budget allows after the mesh result, run EXPAND_DOMAIN (about 1040 s) and then compare. REDUCE_TIME_STEP (about 1567 s) is lower priority."
+    }
+   ],
+   "next_experiment": {
+    "action": "REFINE_MESH",
+    "parameters": {
+     "factor": 1.4142
+    },
+    "parent_run": "G1_premature_averaging.long140-34c6cca905d9",
+    "reason": "Mesh error is unmeasured and is the most likely flaw to move drag or Strouhal number by more than the 3% tolerance. The mesh is coarse, especially in the wake. R1 is the stationary baseline with 12 cycles and negligible drift, so a mesh comparison against it is not confounded by transient bias. This is the most informative use of the remaining budget, which cannot cover all three of mesh, time and domain.",
+    "expected_outcome": "If drag and Strouhal number differ from R1 (1.3311 and 0.16343) by less than 0.015 relative, mesh error is acceptable. If either differs by more than 0.03 relative, beyond 2x noise, the verifier records a FAIL and the root is rejected. A change in between means a further refinement or another primitive is needed."
+   },
+   "outcome": "executed -> G1_premature_averaging.m1.41-5d1d1becf814 (completed)"
   }
  ]
 }

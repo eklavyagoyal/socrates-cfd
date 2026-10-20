@@ -2,25 +2,15 @@
  "problems": [
   "C-rule/K1_central_scheme: missing",
   "C-rule/K2_fine_large: missing",
-  "C-rule/A2_moderate_mesh: missing",
   "C-rule/B2_moderate_domain: missing",
   "C-rule/C1_large_timestep: missing",
-  "C-rule/C2_euler_large_timestep: missing",
-  "C-rule/E1_noslip_side_walls: missing",
   "C-rule/F1_upwind_convection: missing",
   "C-rule/G1_premature_averaging: missing",
   "C-rule/G2_average_from_start: missing",
   "C-llm/K1_central_scheme: missing",
   "C-llm/K2_fine_large: missing",
-  "C-llm/A1_coarse_mesh: missing",
-  "C-llm/A2_moderate_mesh: missing",
-  "C-llm/B2_moderate_domain: missing",
   "C-llm/C1_large_timestep: missing",
-  "C-llm/C2_euler_large_timestep: missing",
-  "C-llm/E1_noslip_side_walls: missing",
-  "C-llm/F1_upwind_convection: missing",
   "C-llm/G1_premature_averaging: missing",
-  "C-llm/G2_average_from_start: missing",
   "Bexh/K1_central_scheme: missing",
   "Bexh/K2_fine_large: missing",
   "Bexh/A1_coarse_mesh: missing",
@@ -28,14 +18,11 @@
   "Bexh/B1_small_domain: missing",
   "Bexh/B2_moderate_domain: missing",
   "Bexh/C1_large_timestep: missing",
-  "Bexh/C2_euler_large_timestep: missing",
   "Bexh/E1_noslip_side_walls: missing",
   "Bexh/F1_upwind_convection: missing",
   "Bexh/G1_premature_averaging: missing",
   "Bexh/H1_dynamic_viscosity: missing",
-  "Bexh/I1_force_reference: missing",
-  "Bexh/J1_coarse_wake: missing",
-  "Bexh/G2_average_from_start: missing"
+  "Bexh/J1_coarse_wake: missing"
  ],
  "metrics": {
   "A": {
@@ -449,15 +436,30 @@
      "label": "flawed",
      "outcome": "correct"
     },
+    "A2_moderate_mesh": {
+     "verdict": "INCONCLUSIVE",
+     "label": "ambiguous",
+     "outcome": "ambiguous_inconclusive"
+    },
     "B1_small_domain": {
      "verdict": "REJECT",
      "label": "flawed",
      "outcome": "correct"
     },
+    "C2_euler_large_timestep": {
+     "verdict": "INCONCLUSIVE",
+     "label": "ambiguous",
+     "outcome": "ambiguous_inconclusive"
+    },
     "D1_steady_solver": {
      "verdict": "REJECT",
      "label": "flawed",
      "outcome": "correct"
+    },
+    "E1_noslip_side_walls": {
+     "verdict": "INCONCLUSIVE",
+     "label": "ambiguous",
+     "outcome": "ambiguous_inconclusive"
     },
     "H1_dynamic_viscosity": {
      "verdict": "REJECT",
@@ -476,10 +478,10 @@
     }
    },
    "summary": {
-    "n": 7,
+    "n": 10,
     "n_flawed": 5,
     "n_credible": 0,
-    "n_ambiguous": 2,
+    "n_ambiguous": 5,
     "n_error": 0,
     "errors_by_label": {
      "flawed": 0,
@@ -487,37 +489,37 @@
      "ambiguous": 0
     },
     "n_stale_excluded": 0,
-    "n_missing": 10,
+    "n_missing": 7,
     "false_acceptance_rate": 0.0,
     "detection_rate": 1.0,
     "missed_but_safe_rate": 0.0,
     "correct_acceptance_rate": null,
     "false_rejection_rate": null,
-    "inconclusive_rate": 0.14285714285714285,
+    "inconclusive_rate": 0.4,
     "ambiguous_verdicts": {
      "ACCEPT": 0,
      "REJECT": 1,
-     "INCONCLUSIVE": 1
+     "INCONCLUSIVE": 4
     },
     "ambiguous_accepts_above_best_estimate_tau": 0,
-    "mean_experiments": 1.4285714285714286,
-    "total_experiments": 10,
-    "mean_compute_relative_to_root": 1.9969167531632794,
-    "total_experiment_wall_hours": 8.638393324417777,
+    "mean_experiments": 2.6,
+    "total_experiments": 26,
+    "mean_compute_relative_to_root": 3.5793337728759873,
+    "total_experiment_wall_hours": 14.989947011199723,
     "llm_cost_usd": 0.0,
     "authority_violations": 0,
     "untraced_numbers": 0,
     "first_experiment_targets_flaw": "1/2"
    },
    "summary_point_estimate_labels": {
-    "n_flawed": 5,
-    "n_credible": 2,
-    "n_ambiguous": 0,
+    "n_flawed": 6,
+    "n_credible": 3,
+    "n_ambiguous": 1,
     "false_acceptance_rate": 0.0,
-    "detection_rate": 1.0,
-    "missed_but_safe_rate": 0.0,
+    "detection_rate": 0.8333333333333334,
+    "missed_but_safe_rate": 0.16666666666666666,
     "correct_acceptance_rate": 0.0,
-    "false_rejection_rate": 0.5
+    "false_rejection_rate": 0.3333333333333333
    }
   },
   "C-llm": {
@@ -527,12 +529,42 @@
      "label": "ambiguous",
      "outcome": "ambiguous_inconclusive"
     },
+    "A1_coarse_mesh": {
+     "verdict": "REJECT",
+     "label": "flawed",
+     "outcome": "correct"
+    },
+    "A2_moderate_mesh": {
+     "verdict": "INCONCLUSIVE",
+     "label": "ambiguous",
+     "outcome": "ambiguous_inconclusive"
+    },
     "B1_small_domain": {
      "verdict": "REJECT",
      "label": "flawed",
      "outcome": "correct"
     },
+    "B2_moderate_domain": {
+     "verdict": "REJECT",
+     "label": "flawed",
+     "outcome": "correct"
+    },
+    "C2_euler_large_timestep": {
+     "verdict": "INCONCLUSIVE",
+     "label": "ambiguous",
+     "outcome": "ambiguous_inconclusive"
+    },
     "D1_steady_solver": {
+     "verdict": "REJECT",
+     "label": "flawed",
+     "outcome": "correct"
+    },
+    "E1_noslip_side_walls": {
+     "verdict": "INCONCLUSIVE",
+     "label": "ambiguous",
+     "outcome": "ambiguous_inconclusive"
+    },
+    "F1_upwind_convection": {
      "verdict": "REJECT",
      "label": "flawed",
      "outcome": "correct"
@@ -551,13 +583,18 @@
      "verdict": "REJECT",
      "label": "ambiguous",
      "outcome": "ambiguous_reject"
+    },
+    "G2_average_from_start": {
+     "verdict": "INCONCLUSIVE",
+     "label": "ambiguous",
+     "outcome": "ambiguous_inconclusive"
     }
    },
    "summary": {
-    "n": 6,
-    "n_flawed": 4,
+    "n": 13,
+    "n_flawed": 7,
     "n_credible": 0,
-    "n_ambiguous": 2,
+    "n_ambiguous": 6,
     "n_error": 0,
     "errors_by_label": {
      "flawed": 0,
@@ -565,37 +602,37 @@
      "ambiguous": 0
     },
     "n_stale_excluded": 0,
-    "n_missing": 11,
+    "n_missing": 4,
     "false_acceptance_rate": 0.0,
     "detection_rate": 1.0,
     "missed_but_safe_rate": 0.0,
     "correct_acceptance_rate": null,
     "false_rejection_rate": null,
-    "inconclusive_rate": 0.16666666666666666,
+    "inconclusive_rate": 0.38461538461538464,
     "ambiguous_verdicts": {
      "ACCEPT": 0,
      "REJECT": 1,
-     "INCONCLUSIVE": 1
+     "INCONCLUSIVE": 5
     },
     "ambiguous_accepts_above_best_estimate_tau": 0,
-    "mean_experiments": 1.1666666666666667,
-    "total_experiments": 7,
-    "mean_compute_relative_to_root": 1.5008611169485502,
-    "total_experiment_wall_hours": 7.978628056973056,
-    "llm_cost_usd": 0.6551801349999999,
+    "mean_experiments": 2.3846153846153846,
+    "total_experiments": 31,
+    "mean_compute_relative_to_root": 4.031427877399232,
+    "total_experiment_wall_hours": 21.644130880593607,
+    "llm_cost_usd": 3.010597355,
     "authority_violations": 0,
-    "untraced_numbers": 4,
-    "first_experiment_targets_flaw": "1/1"
+    "untraced_numbers": 24,
+    "first_experiment_targets_flaw": "4/4"
    },
    "summary_point_estimate_labels": {
-    "n_flawed": 4,
-    "n_credible": 2,
-    "n_ambiguous": 0,
+    "n_flawed": 8,
+    "n_credible": 3,
+    "n_ambiguous": 2,
     "false_acceptance_rate": 0.0,
-    "detection_rate": 1.0,
-    "missed_but_safe_rate": 0.0,
+    "detection_rate": 0.875,
+    "missed_but_safe_rate": 0.125,
     "correct_acceptance_rate": 0.0,
-    "false_rejection_rate": 0.5
+    "false_rejection_rate": 0.3333333333333333
    }
   },
   "Bexh": {
@@ -605,17 +642,32 @@
      "label": "ambiguous",
      "outcome": "ambiguous_inconclusive"
     },
+    "C2_euler_large_timestep": {
+     "verdict": "INCONCLUSIVE",
+     "label": "ambiguous",
+     "outcome": "ambiguous_inconclusive"
+    },
     "D1_steady_solver": {
      "verdict": "REJECT",
      "label": "flawed",
      "outcome": "correct"
+    },
+    "I1_force_reference": {
+     "verdict": "REJECT",
+     "label": "flawed",
+     "outcome": "correct"
+    },
+    "G2_average_from_start": {
+     "verdict": "INCONCLUSIVE",
+     "label": "ambiguous",
+     "outcome": "ambiguous_inconclusive"
     }
    },
    "summary": {
-    "n": 2,
-    "n_flawed": 1,
+    "n": 5,
+    "n_flawed": 2,
     "n_credible": 0,
-    "n_ambiguous": 1,
+    "n_ambiguous": 3,
     "n_error": 0,
     "errors_by_label": {
      "flawed": 0,
@@ -623,35 +675,35 @@
      "ambiguous": 0
     },
     "n_stale_excluded": 0,
-    "n_missing": 15,
+    "n_missing": 12,
     "false_acceptance_rate": 0.0,
     "detection_rate": 1.0,
     "missed_but_safe_rate": 0.0,
     "correct_acceptance_rate": null,
     "false_rejection_rate": null,
-    "inconclusive_rate": 0.5,
+    "inconclusive_rate": 0.6,
     "ambiguous_verdicts": {
      "ACCEPT": 0,
      "REJECT": 0,
-     "INCONCLUSIVE": 1
+     "INCONCLUSIVE": 3
     },
     "ambiguous_accepts_above_best_estimate_tau": 0,
-    "mean_experiments": 4.0,
-    "total_experiments": 8,
-    "mean_compute_relative_to_root": 5.810016049705689,
-    "total_experiment_wall_hours": 6.202650343050276,
+    "mean_experiments": 4.6,
+    "total_experiments": 23,
+    "mean_compute_relative_to_root": 7.391198299542185,
+    "total_experiment_wall_hours": 14.720522359658883,
     "llm_cost_usd": 0.0,
     "authority_violations": 0,
     "untraced_numbers": 0,
     "first_experiment_targets_flaw": null
    },
    "summary_point_estimate_labels": {
-    "n_flawed": 1,
+    "n_flawed": 3,
     "n_credible": 1,
-    "n_ambiguous": 0,
+    "n_ambiguous": 1,
     "false_acceptance_rate": 0.0,
-    "detection_rate": 1.0,
-    "missed_but_safe_rate": 0.0,
+    "detection_rate": 0.6666666666666666,
+    "missed_but_safe_rate": 0.3333333333333333,
     "correct_acceptance_rate": 0.0,
     "false_rejection_rate": 0.0
    }

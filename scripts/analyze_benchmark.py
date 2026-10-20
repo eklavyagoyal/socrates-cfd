@@ -120,7 +120,8 @@ def variance_table(bench: Path, cases: list[str], labels: dict, store: RunStore,
     out = ["", "### LLM run-to-run variance (independent repeats of C-llm)", "",
            "| case | label | " + " | ".join(reps) + " | same verdict | same experiment sequence |",
            "|---|---|" + "---|" * len(reps) + "---|---|"]
-    n_same_v = n_same_seq = n = 0
+    n_same_v = n_same_seq = n = n_complete = n_same_v_c = n_same_seq_c = 0
+    pair = {}
     for cid in cases:
         rows = []
         for s in reps:
@@ -137,20 +138,35 @@ def variance_table(bench: Path, cases: list[str], labels: dict, store: RunStore,
                 continue
             seq = tuple((e["action"], e["run_id"]) for e in (r.get("experiments") or []) if e.get("run_id"))
             rows.append((r.get("final_verdict") or r.get("verdict"), seq))
-        if any(x is None for x in rows):
+        for j, s in enumerate(reps[1:], 1):  # pairwise against the first run, over the cases both have
+            if rows[0] is not None and rows[j] is not None:
+                pw = pair.setdefault(s, [0, 0, 0])
+                pw[0] += 1
+                pw[1] += rows[0][0] == rows[j][0]
+                pw[2] += rows[0][1] == rows[j][1]
+        present = [x for x in rows if x is not None]
+        if len(present) < 2:
             out.append(f"| {cid} | {labels[cid]['label']} | " + " | ".join("—" if x is None else x[0] for x in rows)
-                       + " | incomplete | incomplete |")
+                       + " | — | — |")
             continue
         n += 1
-        sv = len({x[0] for x in rows}) == 1
-        ss = len({x[1] for x in rows}) == 1
+        complete = len(present) == len(rows)
+        n_complete += complete
+        sv = len({x[0] for x in present}) == 1
+        ss = len({x[1] for x in present}) == 1
         n_same_v += sv
         n_same_seq += ss
-        cell = [f"{v} ({' → '.join(a[0].split('_')[0] for a in q) or 'none'})" for v, q in rows]
-        out.append(f"| {cid} | {labels[cid]['label']} | " + " | ".join(cell) + f" | {'yes' if sv else '**no**'} | "
-                   f"{'yes' if ss else 'no'} |")
-    out += ["", f"Complete repeat sets: {n}; identical verdict in {n_same_v}/{n}; identical experiment sequence in "
-                f"{n_same_seq}/{n}."]
+        n_same_v_c += sv and complete
+        n_same_seq_c += ss and complete
+        cell = ["—" if x is None else f"{x[0]} ({' → '.join(a[0].split('_')[0] for a in x[1]) or 'none'})" for x in rows]
+        part = "" if complete else f" (of {len(present)} runs)"
+        out.append(f"| {cid} | {labels[cid]['label']} | " + " | ".join(cell) + f" | {'yes' if sv else '**no**'}{part} | "
+                   f"{'yes' if ss else 'no'}{part} |")
+    out += ["", f"Cases with at least two runs: {n}; identical verdict across the available runs in {n_same_v}/{n}; "
+                f"identical experiment sequence in {n_same_seq}/{n}. Complete sets (all {len(reps)} runs): {n_complete}; "
+                f"identical verdict in {n_same_v_c}/{n_complete}; identical sequence in {n_same_seq_c}/{n_complete}.",
+            "Pairwise against the first run (C-llm): " + "; ".join(
+                f"{s}: identical verdict {v}/{k}, identical sequence {q}/{k}" for s, (k, v, q) in pair.items()) + "."]
     return out
 
 

@@ -25,3 +25,22 @@ valid only if the multi-die Ultra scales like a single die (not yet measured; an
 run would test that).
 
 Custom kernels vs plain PyTorch: 5.7× (RTX 5090) to 7× (M4) on the same math.
+
+## External cross-check: published FluidX3D table (D3Q19 SRT, FP32, 153 B/cell)
+
+Numbers read from https://github.com/ProjectPhysX/FluidX3D (benchmark table only; no code used).
+
+| Device | Bandwidth | MLUPS |
+|---|---|---|
+| RTX 5090 | 1,792 GB/s | 9,522 (ours: 9,983) |
+| RTX 4090 | 1,008 GB/s | 5,624 |
+| RTX 4070 | 504 GB/s | 2,646 |
+| M1 Max 24CU / M1 Ultra 64CU | 400 / 800 GB/s | 2,369 / 4,519 (Ultra = 1.91× Max) |
+| M2 Max 38CU / M2 Ultra 76CU | 400 / 800 GB/s | 2,405 / 4,629 (Ultra = 1.92× Max) |
+| M3 Ultra 60CU | 819 GB/s | 4,438 |
+| M5 10CU | 153 GB/s | 800 |
+
+Findings: Apple Ultra chips scale ~1.9× over Max for lattice Boltzmann (the multi-die
+question is answered for M1/M2); GPU core count barely matters at equal bandwidth
+(M2 Ultra 76CU vs M1 Ultra 64CU: +2.4 %). Projection M5 Ultra (1,228 GB/s, 80–89 % of spec
+as in the table, or 77 % as on our M4/M4 Pro): ≈ 6,200–7,100 MLUPS.

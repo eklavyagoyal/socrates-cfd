@@ -1,0 +1,79 @@
+{
+ "machine": {
+  "chip": "Apple M4",
+  "memory_gb": 32,
+  "cpu_perf_cores": "4",
+  "cpu_eff_cores": "6",
+  "macos": "26.5",
+  "python": "3.14.5",
+  "torch": "2.14.1",
+  "model": "Mac mini",
+  "gpu_cores": "10"
+ },
+ "copy": [
+  {
+   "size_gib": 0.25,
+   "gb_s": 93.7,
+   "spread": 0.006
+  },
+  {
+   "size_gib": 1.0,
+   "gb_s": 92.6,
+   "spread": 0.004
+  },
+  {
+   "size_gib": 2.0,
+   "gb_s": 92.5,
+   "spread": 0.008
+  }
+ ],
+ "d3q19_metal": [
+  {
+   "n": 128,
+   "mlups": 612,
+   "effective_gb_s": 93.0,
+   "fraction_of_copy": 0.993,
+   "spread": 0.012,
+   "memory_gib": 0.3
+  },
+  {
+   "n": 192,
+   "mlups": 594,
+   "effective_gb_s": 90.2,
+   "fraction_of_copy": 0.963,
+   "spread": 0.008,
+   "memory_gib": 1.0
+  },
+  {
+   "n": 256,
+   "mlups": 592,
+   "effective_gb_s": 89.9,
+   "fraction_of_copy": 0.96,
+   "spread": 0.013,
+   "memory_gib": 2.38
+  },
+  {
+   "n": 320,
+   "mlups": 592,
+   "effective_gb_s": 90.0,
+   "fraction_of_copy": 0.961,
+   "spread": 0.016,
+   "memory_gib": 4.64
+  }
+ ],
+ "d3q19_torch": [
+  {
+   "n": 128,
+   "mlups": 88,
+   "spread": 0.011
+  }
+ ],
+ "correctness": {
+  "max_rel_error_vs_reference": 6.136644969956251e-08,
+  "mass_drift": 2.2219971388312005e-08
+ },
+ "summary": {
+  "copy_peak_gb_s": 93.7,
+  "d3q19_best_mlups": 612
+ }
+}

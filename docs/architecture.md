@@ -35,7 +35,7 @@ Every solver run goes through the content-addressed **run store** with provenanc
 | `physis.solvers.thermal` | heat conduction (conjugate solid/fluid), thermal LBM (advection–diffusion, Boussinesq) | same |
 | `physis.solvers.fem` | voxel finite elements: linear elasticity (2D/3D), thermal stress | same |
 | `physis.verification` | observed order, Richardson/GCI (Celik), transient removal, cycle statistics, Strouhal, checks and verdicts, gates | reads `SolverResult`s; never edits them |
-| `physis.data` | design spaces, samplers, batch execution, verified datasets with cards | writes through `RunStore` |
+| `physis.data` | design spaces sampled in performance space (ADR-0007), samplers, batch execution, verified datasets with cards and target error | writes through `RunStore` |
 | `physis.surrogates` | models on SDF grids → fields and scalars, training, uncertainty, active learning | trains only on verified samples |
 | `physis.optimize` | Nelder–Mead/CMA-ES, surrogate-assisted and gradient-based design optimisation | evaluates through solvers or surrogates |
 | `physis.platform` | CLI, REST API, MCP server, job queue | thin; no physics |

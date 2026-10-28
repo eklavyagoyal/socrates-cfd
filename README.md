@@ -15,8 +15,8 @@ Built for the TUM.ai E-Lab 6.0 by Luis Dehlwes and Eklavya Goyal. Geometry seman
 ## Start here
 
 - [`docs/architecture.md`](docs/architecture.md): layers, data flow, grid and precision conventions
-- [`docs/decisions/`](docs/decisions/): ADR-0001 … ADR-0006 (why torch, why SDF-native grids, gates,
-  Volyra parity, run store, authority boundaries)
+- [`docs/decisions/`](docs/decisions/): ADR-0001 … ADR-0007 (why torch, why SDF-native grids, gates,
+  Volyra parity, run store, authority boundaries, performance-space parameterisation)
 - [`docs/validation.md`](docs/validation.md): gate status per capability
 
 ## Setup

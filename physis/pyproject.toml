@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "physis"
+version = "0.1.0"
+description = "Self-built engineering physics platform: SDF geometry, GPU solvers (flow, heat, structure), verification, physics-AI surrogates"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.9",
+    "numpy>=2.0",
+    "scipy>=1.14",
+    "pydantic>=2.6",
+    "PyYAML>=6.0",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+physis = "physis.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not validation and not slow' -q"
+markers = [
+    "slow: longer unit/integration tests (minutes)",
+    "validation: validation gates against external references; write validation/results/<gate>.json",
+]

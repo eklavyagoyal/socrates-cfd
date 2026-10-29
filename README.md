@@ -15,9 +15,9 @@ Built for the TUM.ai E-Lab 6.0 by Luis Dehlwes and Eklavya Goyal. Geometry seman
 ## Start here
 
 - [`docs/architecture.md`](docs/architecture.md): layers, data flow, grid and precision conventions
-- [`docs/decisions/`](docs/decisions/): ADR-0001 … ADR-0008 (why torch, why SDF-native grids, gates,
+- [`docs/decisions/`](docs/decisions/): ADR-0001 … ADR-0009 (why torch, why SDF-native grids, gates,
   Volyra parity, run store, authority boundaries, performance-space parameterisation, first family:
-  transpiration-cooled porous walls)
+  transpiration-cooled porous walls, where OpenFOAM fits)
 - [`docs/validation.md`](docs/validation.md): gate status per capability
 
 ## Setup
@@ -39,7 +39,7 @@ python3 -m venv .venv
 |---|---|
 | `src/physis/core` | backend (device/dtype policy), `Grid`, `Spec`, `SolverResult`, provenance, `RunStore` |
 | `src/physis/geometry` | SDF nodes in torch, Volyra import/parity, parametric families, voxelization |
-| `src/physis/solvers` | `lbm` (flow), `thermal` (heat), `fem` (structure); contract in `solvers/base.py` |
+| `src/physis/solvers` | `lbm` (flow: D3Q19 TRT, torch reference + fused Metal kernel), `thermal` (heat), `fem` (structure); contract in `solvers/base.py` |
 | `src/physis/verification` | convergence/GCI, evidence extraction, gates |
 | `src/physis/data` | design spaces, batch runs, verified datasets |
 | `src/physis/surrogates` | physics-AI models, training, uncertainty |

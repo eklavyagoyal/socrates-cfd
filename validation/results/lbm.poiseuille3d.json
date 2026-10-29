@@ -1,0 +1,60 @@
+{
+ "gate": "lbm.poiseuille3d",
+ "capability": "lbm.d3q19.trt.bounce_back_wall",
+ "status": "PASS",
+ "reference": {
+  "source": "analytic plane Poiseuille, u(z) = g/(2 nu) (z - z0)(z1 - z), walls midway between nodes",
+  "criteria": "max relative profile error <= 1e-10 for H in {8, 16, 32} and tau+ in {0.8, 2.0}; flow rate identical across tau+ to 1e-10"
+ },
+ "metrics": {
+  "H8_tau0.8_max_rel_err": 1.2735073137131323e-14,
+  "H8_tau0.8_steps": 2500,
+  "H8_tau2.0_max_rel_err": 3.2267921800163824e-15,
+  "H8_tau2.0_steps": 1000,
+  "H16_tau0.8_max_rel_err": 4.3368086899420184e-14,
+  "H16_tau0.8_steps": 8500,
+  "H16_tau2.0_max_rel_err": 6.590248499421693e-15,
+  "H16_tau2.0_steps": 2500,
+  "H32_tau0.8_max_rel_err": 1.5481940699577956e-13,
+  "H32_tau0.8_steps": 30500,
+  "H32_tau2.0_max_rel_err": 1.7169183963113558e-14,
+  "H32_tau2.0_steps": 7000
+ },
+ "checks": [
+  {
+   "name": "max_rel_profile_error",
+   "value": 1.5481940699577956e-13,
+   "op": "<=",
+   "limit": 1e-10,
+   "pass": true
+  },
+  {
+   "name": "tau_dependence_of_flow_rate",
+   "value": 1.3666845433135677e-13,
+   "op": "<=",
+   "limit": 1e-10,
+   "pass": true
+  }
+ ],
+ "notes": [],
+ "error": null,
+ "backend": {
+  "device": "cpu",
+  "dtype": "float64"
+ },
+ "code": {
+  "subpackage": "solvers.lbm",
+  "fingerprint": "2e06ef94a103870e8ff3936bbda10abb8b68b8829a5f67352a15af68a7ff7190",
+  "commit": "b7e531187b108682ba5e66089285cd27c23edbad",
+  "dirty": true
+ },
+ "environment": {
+  "python": "3.14.5",
+  "torch": "2.14.1",
+  "platform": "macOS-26.5-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "threads": 8
+ },
+ "wall_time_s": 17.262,
+ "timestamp": "2026-10-29T12:31:49+0100"
+}

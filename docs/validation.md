@@ -6,7 +6,7 @@ stored result was produced by a different version of the solver's source.
 
 | Gate | Capability | Status | Checks | Reference | Run |
 |---|---|---|---|---|---|
-| `lbm.poiseuille3d` | lbm.d3q19.trt.bounce_back_wall | **PASS** | ✓ max_rel_profile_error: 1.548e-13 <= 1e-10<br>✓ tau_dependence_of_flow_rate: 1.367e-13 <= 1e-10 | analytic plane Poiseuille, u(z) = g/(2 nu) (z - z0)(z1 - z), walls midway between nodes | 2026-10-29T12:31:49+0100, 17.262 s, float64 |
-| `lbm.sc_sphere_array` | lbm.d3q19.trt.porous_permeability | **PASS** | ✓ max_rel_drag_error_L32: 0.04874 <= 0.06<br>✓ max_rel_drag_error_L48: 0.0243 <= 0.04<br>✓ tau_dependence: 2.499e-06 <= 0.0001<br>✓ force_dependence: 3.641e-07 <= 0.001 | Sangani & Acrivos (1982), Int. J. Multiphase Flow 8:343-360, values via arXiv:1401.2025 Table 1 (C = C*/(1+err)) | 2026-10-29T12:43:51+0100, 721.698 s, float64 |
+| `lbm.poiseuille3d` | lbm.d3q19.trt.bounce_back_wall | **PASS** | ✓ max_rel_profile_error: 1.548e-13 <= 1e-10<br>✓ tau_dependence_of_flow_rate: 1.367e-13 <= 1e-10 | analytic plane Poiseuille, u(z) = g/(2 nu) (z - z0)(z1 - z), walls midway between nodes | 2026-10-29T14:40:27+0100, 16.812 s, float64 |
+| `lbm.sc_sphere_array` | lbm.d3q19.trt.porous_permeability | **PASS** | ✓ max_rel_drag_error_L32: 0.04874 <= 0.06<br>✓ max_rel_drag_error_L48: 0.0243 <= 0.04<br>✓ tau_dependence: 2.499e-06 <= 0.0001<br>✓ force_dependence: 3.641e-07 <= 0.001 | Sangani & Acrivos (1982), Int. J. Multiphase Flow 8:343-360, values via arXiv:1401.2025 Table 1 (C = C*/(1+err)) | 2026-10-29T14:52:15+0100, 708.028 s, float64 |
 
 2 of 2 gates pass on the current code.

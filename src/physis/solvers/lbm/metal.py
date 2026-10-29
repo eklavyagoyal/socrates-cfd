@@ -105,9 +105,9 @@ def _library():
 
 
 class MetalStepper:
-    """Owns the double buffer and the device constants for one solid mask."""
+    """Persistent double buffer plus the device constants for one solid mask (MPS, float32)."""
 
-    def __init__(self, solid: Tensor):
+    def __init__(self, solid: Tensor, h0: Tensor | None = None):
         if not available():
             raise RuntimeError("Metal fast path needs an Apple GPU and torch.mps.compile_shader")
         dev = torch.device("mps")
@@ -116,14 +116,18 @@ class MetalStepper:
         self.n = self.solid.numel()
         self.dims = torch.tensor(self.shape, dtype=torch.int32, device=dev)
         self.lib = _library()
+        self.a = (h0 if h0 is not None else torch.zeros(19, *self.shape)).to(device=dev, dtype=torch.float32).contiguous()
+        self.b = torch.empty_like(self.a)
 
-    def run(self, h: Tensor, steps: int, g: Tensor, omega_p: float, omega_m: float) -> Tensor:
-        """Advance ``h`` (float32 on MPS, shape (19, *shape)) by ``steps`` and return the new state."""
-        prm = torch.tensor([omega_p, omega_m, *[float(v) for v in g.tolist()]],
-                           dtype=torch.float32, device=h.device)
-        a = h.contiguous()
-        b = torch.empty_like(a)
+    @property
+    def state(self) -> Tensor:
+        return self.a
+
+    def run(self, steps: int, g, omega_p: float, omega_m: float) -> Tensor:
+        """Advance the state by ``steps`` and return it (float32 on MPS, shape (19, *shape))."""
+        gx, gy, gz = (float(v) for v in g)
+        prm = torch.tensor([omega_p, omega_m, gx, gy, gz], dtype=torch.float32, device=self.a.device)
         for _ in range(steps):
-            self.lib.trt_step(a, b, self.solid, prm, self.dims, threads=self.n)
-            a, b = b, a
-        return a
+            self.lib.trt_step(self.a, self.b, self.solid, prm, self.dims, threads=self.n)
+            self.a, self.b = self.b, self.a
+        return self.a

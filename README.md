@@ -33,16 +33,21 @@ python3 -m venv .venv
 `PHYSIS_THREADS` limits torch threads per process (default 3 in tests);
 `PHYSIS_STORE` sets the run-store location (default `var/store`, not in git).
 
+## Weekend run on an NVIDIA GPU
+
+[`docs/weekend-5090.md`](docs/weekend-5090.md): `scripts/weekend_5090.py` computes a pore-scale
+permeability dataset and trains the first learned closure; `--quick` smoke-tests every stage.
+
 ## Layout
 
 | Path | Contents |
 |---|---|
 | `src/physis/core` | backend (device/dtype policy), `Grid`, `Spec`, `SolverResult`, provenance, `RunStore` |
-| `src/physis/geometry` | SDF nodes in torch, Volyra import/parity, parametric families, voxelization |
-| `src/physis/solvers` | `lbm` (flow: D3Q19 TRT, torch reference + fused Metal kernel), `thermal` (heat), `fem` (structure); contract in `solvers/base.py` |
+| `src/physis/geometry` | SDF nodes in torch, porous RVE families (sphere beds, templated pores, gyroids), Volyra import/parity, voxelization |
+| `src/physis/solvers` | `lbm` (flow: D3Q19 TRT; torch reference, fused Metal and Triton kernels), `thermal` (heat), `fem` (structure); contract in `solvers/base.py` |
 | `src/physis/verification` | convergence/GCI, evidence extraction, gates |
-| `src/physis/data` | design spaces, batch runs, verified datasets |
-| `src/physis/surrogates` | physics-AI models, training, uncertainty |
+| `src/physis/data` | structure descriptors, pore-scale RVE samples, design spaces, verified datasets |
+| `src/physis/surrogates` | learned closures (Kozeny–Carman baseline, MLP ensemble, 3D CNN), uncertainty |
 | `src/physis/optimize` | design optimisation |
 | `src/physis/platform` | CLI, REST API, MCP server |
 | `tests/` | unit tests and validation gates |

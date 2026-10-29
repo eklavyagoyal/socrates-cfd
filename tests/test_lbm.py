@@ -6,6 +6,7 @@ import pytest
 import torch
 
 from physis.solvers.lbm import PeriodicFlow, PeriodicFlowSpec, lattice, metal, trt
+from physis.solvers.lbm.periodic import _reductions, bytes_needed, choose_impl
 
 needs_metal = pytest.mark.skipif(not metal.available(), reason="needs an Apple GPU (MPS + compile_shader)")
 
@@ -70,7 +71,7 @@ def test_metal_kernel_matches_reference(cpu64):
     ref = h
     for _ in range(25):
         ref = lat.step(ref, g, wp, wm)
-    got = metal.MetalStepper(solid).run(h.float().to("mps"), 25, g.float(), wp, wm).cpu().double()
+    got = metal.MetalStepper(solid, h.float().to("mps")).run(25, g.tolist(), wp, wm).cpu().double()
     assert float((got - ref).abs().max()) < 1e-8 * max(1.0, float(ref.abs().max())) + 1e-9
     assert abs(float(got.sum() - h.sum())) < 1e-5  # float32 mass bookkeeping over 25 steps
 
@@ -99,3 +100,47 @@ def test_spec_rejects_bad_input():
         _sphere_spec(8, 0.5, tau_plus=0.5)
     with pytest.raises(ValueError):
         PeriodicFlowSpec(grid={"shape": [4, 4, 4], "spacing": 1.0, "origin": [0, 0, 0]}, force=(0.0, 0.0, 0.0))
+
+
+def test_generated_triton_kernel_logic_matches_reference(cpu64):
+    """The generated Triton kernel, run through a CPU emulation of the Triton subset it uses.
+    Checks indexing, periodic wrap, bounce-back and the TRT pair update; GPU compilation is
+    checked on CUDA machines by ``triton_kernel.selfcheck``."""
+    from triton_shim import load_emulated_kernel_module
+
+    mod = load_emulated_kernel_module()
+    mod.BLOCK = 128
+    solid, h = _random_case(seed=5, shape=(7, 6, 5), solid_fraction=0.3)
+    g = (1e-5, -2e-6, 3e-6)
+    wp, wm = 1 / 0.9, 1 / lattice.tau_minus(0.9)
+    lat = trt.Lattice(solid, cpu64)
+    ref = h
+    for _ in range(4):
+        ref = lat.step(ref, cpu64.tensor(g), wp, wm)
+    st = mod.TritonStepper.__new__(mod.TritonStepper)
+    st.solid, st.shape = solid.to(torch.uint8).contiguous(), tuple(solid.shape)
+    st.n = st.solid.numel()
+    st.a, st.b = h.float().contiguous(), torch.empty(h.shape, dtype=torch.float32)
+    got = st.run(4, g, wp, wm).double()
+    assert float((got - ref).abs().max()) < 1e-5 * float(ref.abs().max()) + 1e-9
+
+
+def test_reductions_match_full_macroscopic(cpu64):
+    solid, h = _random_case(seed=9)
+    lat = trt.Lattice(solid, cpu64)
+    g = (2e-5, 0.0, -1e-5)
+    rho, u = lat.macroscopic(h, cpu64.tensor(g))
+    norm = (g[0] ** 2 + g[2] ** 2) ** 0.5
+    d = (g[0] / norm, 0.0, g[2] / norm)
+    r = _reductions(h, cpu64.tensor(lattice.C), g, d, ~solid, speed=True)
+    assert abs(r["ud"] - float((u[0] * d[0] + u[2] * d[2]).mean())) < 1e-15
+    assert abs(r["umax"] - float(torch.linalg.vector_norm(u, dim=0).max())) < 1e-15
+
+
+def test_impl_choice_and_memory_estimate(cpu64, cpu32):
+    assert choose_impl("auto", cpu64) == "torch"
+    assert choose_impl("auto", cpu32) == "torch"
+    with pytest.raises(ValueError):
+        choose_impl("triton", cpu32)
+    assert bytes_needed((512, 512, 512), "triton") < 32 * 2**30 * 0.8  # fits a 32 GB card
+    assert bytes_needed((512, 512, 512), "torch") > bytes_needed((512, 512, 512), "triton")

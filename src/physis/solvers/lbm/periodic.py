@@ -12,6 +12,12 @@ zero in the solid. With TRT at the magic parameter the steady solution, and ther
 does not depend on the viscosity chosen (ADR-0008 uses this to pick a fast-converging
 ``tau_plus``).
 
+Three implementations of the same step: the torch reference (any device, the only one in
+float64), a fused Metal kernel (Apple GPUs) and a fused Triton kernel (NVIDIA GPUs, used
+only after its self-check against the reference passes). The fast paths keep just the
+double buffer and the solid mask on the device and reduce moments one component at a
+time, so a 512^3 cell fits in 32 GB.
+
 Everything is in lattice units (dx = dt = 1) except ``permeability``, which is scaled by
 the grid spacing squared.
 """
@@ -20,6 +26,7 @@ from __future__ import annotations
 
 import math
 import time
+import warnings
 from typing import Any, Literal
 
 import torch
@@ -31,9 +38,11 @@ from physis.core.result import SolverResult
 from physis.core.spec import Spec
 from physis.geometry import from_spec, solid_mask
 from physis.solvers.base import SolverDivergence, register
-from physis.solvers.lbm import lattice, metal, trt
+from physis.solvers.lbm import lattice, metal, triton_kernel, trt
 
 MACH_LIMIT = 0.3
+
+Impl = Literal["auto", "torch", "metal", "triton"]
 
 
 class PeriodicFlowSpec(Spec):
@@ -45,7 +54,7 @@ class PeriodicFlowSpec(Spec):
     max_steps: int = Field(200_000, ge=1)
     check_every: int = Field(200, ge=1)
     tol: float = Field(1e-9, gt=0)  # relative change of U_D between checks
-    impl: Literal["auto", "torch", "metal"] = "auto"
+    impl: Impl = "auto"
     keep_fields: bool = True
 
     @field_validator("tau_plus")
@@ -63,13 +72,55 @@ class PeriodicFlowSpec(Spec):
         return v
 
 
-def _use_metal(spec: PeriodicFlowSpec, backend: Backend) -> bool:
-    if spec.impl == "torch":
-        return False
-    fast_ok = backend.device.type == "mps" and backend.dtype == torch.float32 and metal.available()
-    if spec.impl == "metal" and not fast_ok:
-        raise ValueError("impl='metal' needs the fast backend on an Apple GPU (MPS, float32)")
-    return fast_ok
+def choose_impl(requested: Impl, backend: Backend) -> str:
+    """The implementation that will actually run for ``requested`` on ``backend``."""
+    fast = backend.dtype == torch.float32
+    if requested == "torch":
+        return "torch"
+    if requested in ("auto", "metal") and fast and backend.device.type == "mps" and metal.available():
+        return "metal"
+    if requested in ("auto", "triton") and fast and backend.device.type == "cuda" and triton_kernel.available():
+        ok, detail = triton_kernel.selfcheck(str(backend.device))
+        if ok:
+            return "triton"
+        if requested == "triton":
+            raise RuntimeError(f"Triton kernel failed its self-check: {detail}")
+        warnings.warn(f"Triton kernel failed its self-check ({detail}); using the torch reference path", stacklevel=2)
+    if requested in ("metal", "triton"):
+        raise ValueError(f"impl={requested!r} is not available on {backend.describe()}")
+    return "torch"
+
+
+def bytes_needed(shape: tuple[int, ...], impl: str, itemsize: int = 4) -> int:
+    """Device memory a run needs, as a guard before allocating (estimate, not a bound)."""
+    n = math.prod(shape)
+    if impl in ("metal", "triton"):
+        return n * (2 * 19 * itemsize + 1 + 6 * itemsize)  # double buffer, mask, reduction temporaries
+    return n * (19 * (1 + 6 * itemsize) + 8 * itemsize)  # bounce-back masks, stream/collide temporaries
+
+
+def _reductions(h: torch.Tensor, c: torch.Tensor, g: tuple[float, float, float], direction: tuple[float, float, float],
+                fluid: torch.Tensor, *, speed: bool) -> dict[str, float]:
+    """Superficial velocity along ``direction``, max |u| and mean fluid speed, one component at a time."""
+    rho = 1.0 + h.sum(0)
+    usq = torch.zeros_like(rho) if speed else None
+    ud = torch.zeros_like(rho)
+    for a in range(3):
+        ua = (torch.tensordot(c[:, a], h, dims=1) - 0.5 * rho * g[a]) / rho
+        ua = torch.where(fluid, ua, torch.zeros_like(ua))
+        if direction[a] != 0.0:
+            ud = ud + direction[a] * ua
+        if speed:
+            usq = usq + ua * ua
+        del ua
+    out = {"ud": float(ud.mean())}
+    n_fluid = int(fluid.sum())
+    if speed:
+        mag = torch.sqrt(usq)
+        out["umax"] = float(mag.max())
+        out["mean_speed_fluid"] = float(mag.sum()) / max(n_fluid, 1)
+    out["ud_fluid"] = float(ud.sum()) / max(n_fluid, 1)
+    return out
 
 
 @register
@@ -87,39 +138,43 @@ class PeriodicFlow:
             solid = solid_mask(from_spec(spec.geometry), grid, backend)
         if bool(solid.all()):
             raise ValueError("the geometry fills the whole cell")
+        fluid = ~solid
 
+        impl = choose_impl(spec.impl, backend)
         omega_p = 1.0 / spec.tau_plus
         omega_m = 1.0 / lattice.tau_minus(spec.tau_plus, spec.magic)
         nu = lattice.viscosity(spec.tau_plus)
-        g = backend.tensor(spec.force)
-        g_norm = float(torch.linalg.vector_norm(g))
-        direction = g / g_norm
+        g = tuple(float(v) for v in spec.force)
+        g_norm = math.sqrt(sum(v * v for v in g))
+        direction = tuple(v / g_norm for v in g)
+        c = backend.tensor(lattice.C)
 
-        ref = trt.Lattice(solid, backend)  # macroscopic moments (and the stepper on the torch path)
-        use_metal = _use_metal(spec, backend)
-        stepper = metal.MetalStepper(solid) if use_metal else None
-        h = ref.rest()
+        if impl == "torch":
+            ref = trt.Lattice(solid, backend)
+            g_t = backend.tensor(g)
+            state = {"h": ref.rest()}
 
-        def advance(state: torch.Tensor, n: int) -> torch.Tensor:
-            if stepper is not None:
-                return stepper.run(state, n, g, omega_p, omega_m)
-            for _ in range(n):
-                state = ref.step(state, g, omega_p, omega_m)
-            return state
+            def advance(n: int) -> torch.Tensor:
+                for _ in range(n):
+                    state["h"] = ref.step(state["h"], g_t, omega_p, omega_m)
+                return state["h"]
+        else:
+            h0 = torch.zeros(lattice.Q, *grid.shape, dtype=torch.float32, device=backend.device)
+            stepper = (metal.MetalStepper(solid, h0) if impl == "metal" else triton_kernel.TritonStepper(solid, h0))
+            del h0
 
-        def superficial(state: torch.Tensor) -> tuple[float, float]:
-            _, u = ref.macroscopic(state, g)
-            ud = float((u * direction.view(3, 1, 1, 1)).sum(0).mean())
-            umax = float(torch.linalg.vector_norm(u, dim=0).max())
-            return ud, umax
+            def advance(n: int) -> torch.Tensor:
+                return stepper.run(n, g, omega_p, omega_m)
 
         t0 = time.perf_counter()
         steps, history, converged, previous = 0, [], False, None
+        h = None
         while steps < spec.max_steps:
             n = min(spec.check_every, spec.max_steps - steps)
-            h = advance(h, n)
+            h = advance(n)
             steps += n
-            ud, umax = superficial(h)
+            r = _reductions(h, c, g, direction, fluid, speed=True)
+            ud, umax = r["ud"], r["umax"]
             if not (math.isfinite(ud) and math.isfinite(umax)):
                 raise SolverDivergence(f"non-finite state after {steps} steps")
             mach = umax / math.sqrt(lattice.CS2)
@@ -132,16 +187,25 @@ class PeriodicFlow:
             previous = ud
         if backend.device.type == "mps":
             torch.mps.synchronize()
+        elif backend.device.type == "cuda":
+            torch.cuda.synchronize()
         wall = time.perf_counter() - t0
 
-        rho, u = ref.macroscopic(h, g)
-        n_fluid = int(ref.fluid.sum())
+        final = _reductions(h, c, g, direction, fluid, speed=True)
+        n_fluid = int(fluid.sum())
         porosity = n_fluid / grid.size
-        ud, umax = superficial(h)
+        ud = final["ud"]
         k_lu = nu * ud / g_norm
         fields = {}
         if spec.keep_fields:
-            fields = {"ux": u[0], "uy": u[1], "uz": u[2], "rho": rho, "solid": solid.to(backend.dtype)}
+            rho = 1.0 + h.sum(0)
+            comps = []
+            for a in range(3):
+                ua = (torch.tensordot(c[:, a], h, dims=1) - 0.5 * rho * g[a]) / rho
+                comps.append(torch.where(fluid, ua, torch.zeros_like(ua)))
+            fields = {"ux": comps[0], "uy": comps[1], "uz": comps[2],
+                      "rho": torch.where(fluid, rho, torch.ones_like(rho)), "solid": solid.to(backend.dtype)}
+        tortuosity = final["mean_speed_fluid"] / final["ud_fluid"] if final["ud_fluid"] > 0 else float("nan")
         return SolverResult(
             kind=self.kind,
             grid=grid,
@@ -153,7 +217,8 @@ class PeriodicFlow:
                 "permeability_lu": k_lu,
                 "permeability": k_lu * grid.spacing**2,
                 "viscosity_lu": nu,
-                "mach_max": umax / math.sqrt(lattice.CS2),
+                "mach_max": final["umax"] / math.sqrt(lattice.CS2),
+                "tortuosity_hydraulic": tortuosity,
             },
             series={
                 "step": torch.tensor([s for s, _ in history], dtype=torch.float64),
@@ -162,7 +227,7 @@ class PeriodicFlow:
             diagnostics={
                 "steps": steps,
                 "converged": converged,
-                "impl": "metal" if use_metal else "torch",
+                "impl": impl,
                 "wall_time_s": wall,
                 "mlups": grid.size * steps / wall / 1e6 if wall > 0 else None,
                 "fluid_nodes": n_fluid,
@@ -171,6 +236,7 @@ class PeriodicFlow:
             units={
                 "porosity": "1", "superficial_velocity": "lu", "intrinsic_velocity": "lu",
                 "permeability_lu": "lu^2", "permeability": "length^2", "viscosity_lu": "lu",
-                "mach_max": "1", "ux": "lu", "uy": "lu", "uz": "lu", "rho": "lu", "solid": "1",
+                "mach_max": "1", "tortuosity_hydraulic": "1",
+                "ux": "lu", "uy": "lu", "uz": "lu", "rho": "lu", "solid": "1",
             },
         )

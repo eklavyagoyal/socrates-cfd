@@ -74,7 +74,8 @@ class MLPEnsemble:
         self.models: list[_MLP] = []
 
     def fit(self, x: np.ndarray, y: np.ndarray, x_val: np.ndarray | None = None, y_val: np.ndarray | None = None):
-        self.mu, self.sd = x.mean(0), x.std(0) + 1e-9
+        self.mu, self.sd = x.mean(0), x.std(0)
+        self.sd = np.where(self.sd < 1e-6, 1.0, self.sd)
         self.ymu, self.ysd = y.mean(), y.std() + 1e-9
         xt = torch.tensor((x - self.mu) / self.sd, dtype=torch.float32, device=self.device)
         yt = torch.tensor((y - self.ymu) / self.ysd, dtype=torch.float32, device=self.device)

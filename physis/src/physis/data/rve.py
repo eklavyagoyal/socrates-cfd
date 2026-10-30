@@ -55,7 +55,7 @@ def check_interval(n: int, nu: float) -> int:
 
 
 def run_rve(geometry: dict[str, Any], n: int, backend: Backend, *, target_velocity: float = 2e-4,
-            tau_plus: float = 1.5, tol: float = 1e-6, impl: str = "auto", max_steps: int = 400_000,
+            tau_plus: float = 1.5, tol: float = 1e-5, impl: str = "auto", max_steps: int = 400_000,
             force: float | None = None) -> dict[str, Any]:
     """Descriptors and Darcy permeability of one structure at ``n^3`` (box length 1)."""
     grid = Grid((n, n, n), BOX / n, (0.0, 0.0, 0.0))

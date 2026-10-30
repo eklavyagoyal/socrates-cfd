@@ -13,92 +13,92 @@
  },
  "metrics": {
   "L32_chi0.5": {
-   "drag": 2.927952172585547,
+   "drag": 2.927952172441677,
    "reference": 2.8451216510622315,
-   "rel_err": 0.029113173945441106,
+   "rel_err": 0.02911317389487378,
    "solid_fraction_voxel": 0.06640625,
    "solid_fraction_nominal": 0.06544984694978735,
-   "steps": 6200,
-   "converged": true,
-   "mach_max": 0.0006757240405051734
-  },
-  "L32_chi0.7": {
-   "drag": 6.156925729766047,
-   "reference": 6.002168884091928,
-   "rel_err": 0.025783487379751113,
-   "solid_fraction_voxel": 0.18017578125,
-   "solid_fraction_nominal": 0.17959438003021644,
-   "steps": 2900,
-   "converged": true,
-   "mach_max": 0.0003622382336118432
-  },
-  "L32_chi0.9": {
-   "drag": 20.09644759182226,
-   "reference": 19.162445642579215,
-   "rel_err": 0.048741270642807644,
-   "solid_fraction_voxel": 0.383544921875,
-   "solid_fraction_nominal": 0.3817035074111599,
-   "steps": 1400,
-   "converged": true,
-   "mach_max": 0.00018893459243269237
-  },
-  "L48_chi0.5": {
-   "drag": 2.87217918484988,
-   "reference": 2.8451216510622315,
-   "rel_err": 0.009510150041403875,
-   "solid_fraction_voxel": 0.06517650462962965,
-   "solid_fraction_nominal": 0.06544984694978735,
-   "steps": 13400,
-   "converged": true,
-   "mach_max": 0.0015412780113135565
-  },
-  "L48_chi0.7": {
-   "drag": 6.0696592686865545,
-   "reference": 6.002168884091928,
-   "rel_err": 0.011244332823340253,
-   "solid_fraction_voxel": 0.1786747685185185,
-   "solid_fraction_nominal": 0.17959438003021644,
    "steps": 6300,
    "converged": true,
-   "mach_max": 0.0008219535887314493
+   "mach_max": 0.0006757240405406591
   },
-  "L48_chi0.9": {
-   "drag": 19.628147113013156,
-   "reference": 19.162445642579215,
-   "rel_err": 0.024302820168170314,
-   "solid_fraction_voxel": 0.3812934027777778,
-   "solid_fraction_nominal": 0.3817035074111599,
+  "L32_chi0.7": {
+   "drag": 6.156925729509912,
+   "reference": 6.002168884091928,
+   "rel_err": 0.02578348733707747,
+   "solid_fraction_voxel": 0.18017578125,
+   "solid_fraction_nominal": 0.17959438003021644,
    "steps": 3000,
    "converged": true,
-   "mach_max": 0.00043215278218881707
+   "mach_max": 0.00036223823362938436
   },
-  "darcy_check_pore_mach": 0.0014489958395022902
+  "L32_chi0.9": {
+   "drag": 20.096447591620635,
+   "reference": 19.162445642579215,
+   "rel_err": 0.04874127063228584,
+   "solid_fraction_voxel": 0.383544921875,
+   "solid_fraction_nominal": 0.3817035074111599,
+   "steps": 1500,
+   "converged": true,
+   "mach_max": 0.00018893459243505658
+  },
+  "L48_chi0.5": {
+   "drag": 2.872179184606161,
+   "reference": 2.8451216510622315,
+   "rel_err": 0.009510149955741731,
+   "solid_fraction_voxel": 0.06517650462962965,
+   "solid_fraction_nominal": 0.06544984694978735,
+   "steps": 13500,
+   "converged": true,
+   "mach_max": 0.0015412780114531636
+  },
+  "L48_chi0.7": {
+   "drag": 6.069659268263724,
+   "reference": 6.002168884091928,
+   "rel_err": 0.011244332752893937,
+   "solid_fraction_voxel": 0.1786747685185185,
+   "solid_fraction_nominal": 0.17959438003021644,
+   "steps": 6400,
+   "converged": true,
+   "mach_max": 0.0008219535887978946
+  },
+  "L48_chi0.9": {
+   "drag": 19.628147112170716,
+   "reference": 19.162445642579215,
+   "rel_err": 0.02430282012420726,
+   "solid_fraction_voxel": 0.3812934027777778,
+   "solid_fraction_nominal": 0.3817035074111599,
+   "steps": 3100,
+   "converged": true,
+   "mach_max": 0.0004321527822115719
+  },
+  "darcy_check_pore_mach": 0.0014489958395724584
  },
  "checks": [
   {
    "name": "max_rel_drag_error_L32",
-   "value": 0.048741270642807644,
+   "value": 0.04874127063228584,
    "op": "<=",
    "limit": 0.06,
    "pass": true
   },
   {
    "name": "max_rel_drag_error_L48",
-   "value": 0.024302820168170314,
+   "value": 0.02430282012420726,
    "op": "<=",
    "limit": 0.04,
    "pass": true
   },
   {
    "name": "tau_dependence",
-   "value": 2.4986533941895317e-06,
+   "value": 2.4985872705274303e-06,
    "op": "<=",
    "limit": 0.0001,
    "pass": true
   },
   {
    "name": "force_dependence",
-   "value": 3.641034522772202e-07,
+   "value": 3.641034533874432e-07,
    "op": "<=",
    "limit": 0.001,
    "pass": true
@@ -114,8 +114,8 @@
  },
  "code": {
   "subpackage": "solvers.lbm",
-  "fingerprint": "85dc36049805e9ce9b793b44b47bc8a83f535a39a7872af34e93e12f2fd2cefc",
-  "commit": "0d041bd84f8c670ab433cf173e177eb45c2f8ed2",
+  "fingerprint": "872d937c3f13d33af05f3b0b0be7f5018655bd9b9e13b676eda1adb5a0b07e9a",
+  "commit": "3408af5b04160e5bf28c3427820791aec1fd6ee1",
   "dirty": true
  },
  "environment": {
@@ -125,6 +125,6 @@
   "machine": "arm64",
   "threads": 6
  },
- "wall_time_s": 708.028,
- "timestamp": "2026-10-29T14:52:15+0100"
+ "wall_time_s": 715.731,
+ "timestamp": "2026-10-30T12:56:14+0100"
 }

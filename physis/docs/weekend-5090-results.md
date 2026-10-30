@@ -4,6 +4,26 @@
 > `gpu-5090-92` (NVIDIA RTX 5090, 31.3 GB). Exit code 0. Full output committed under
 > `physis/runs/weekend-20261030-main/`.
 
+> **Correction (2026-10-30, after review of the raw run data):**
+> - **Not all 600 samples converged by the criterion.** 118 of the 200 `spheres` samples ran to
+>   `max_steps` = 400,000. A short 10-step last window before `max_steps` was then misread as
+>   convergence. These 118 samples took 177 of the 190 solver minutes.
+> - Cause: an undamped period-2 oscillation of the superficial velocity (relative amplitude
+>   ~2e-4), a staggered mode of the periodic lattice excited by the impulsive start. Checks every
+>   199 steps sampled alternate phases and never saw a quiet window.
+> - Fixed in physis: each check averages the last two time steps; only full windows count; two
+>   quiet windows in a row are required; the default tolerance is 1e-5.
+> - Re-running three affected samples with the fix: they converge in 1,592–3,184 steps, and K
+>   agrees with this run to ≤ 1e-4. **The dataset values are valid**; only the time per sample and
+>   the `converged` flags were wrong.
+> - With the fix the same 600-sample run should take roughly 10–15 minutes instead of 3.2 h
+>   (estimate from step counts).
+> - The "677 MLUPS" in `report.md` is a measurement artefact: the short self-check run included
+>   Triton's JIT compile. Real throughput from the dataset is a median of **9,377 MLUPS**
+>   (128³) and up to 12,419 (64³). The self-check now times a second, warm run.
+> - 384³/512³ were skipped because the GPU was shared: 8.1 GB were free at preflight and
+>   5.0 GB at the resolution stage, against 31.3 GB total.
+
 This document is the full context for the first real GPU dataset + learned closure. It is
 meant to be read by a fresh agent so it has everything without re-deriving it: what was run,
 every number, the exact data format, and what the results do and do not support.
@@ -20,7 +40,7 @@ every number, the exact data format, and what the results do and do not support.
 | selfcheck | **Triton D3Q19 kernel vs float64 torch reference: PASS** (max abs diff 1.517e-10, ref scale 3.603e-4) |
 | gates | Poiseuille 3D **PASS**, Sangani–Acrivos sphere array **PASS** (pytest, CPU float64, 28 min) |
 | resolution | one sphere structure at 64³→256³; 384³/512³ skipped (memory guard) |
-| dataset | **600 samples** at 128³, all `ok`, all converged |
+| dataset | **600 samples** at 128³, all `ok` (118 hit max_steps, see the correction above; values valid) |
 | train | Kozeny–Carman baseline vs MLP ensemble, 2 splits |
 | forchheimer | inertia onset, 3 structures |
 | cnn | 3D CNN on raw voxel volumes |

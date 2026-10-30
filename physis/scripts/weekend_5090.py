@@ -16,7 +16,8 @@ exists, so a crash never costs finished work; ``--force`` reruns):
     python scripts/weekend_5090.py                       # everything
     python scripts/weekend_5090.py --quick               # ~2-5 min smoke test of every stage
     python scripts/weekend_5090.py --stages dataset,train --samples 1200
-    python scripts/weekend_5090.py --stages dataset --samples 600 --sample-offset 600  # shard 2
+    python scripts/weekend_5090.py --stages dataset --samples 600 --sample-offset 600  # shard 2 of a parallel run
+    python scripts/merge_shards.py runs/merged runs/shard-*                       # then: --out runs/merged --stages train,cnn,report
 """
 
 from __future__ import annotations
@@ -121,6 +122,7 @@ def stage_selfcheck(ctx) -> dict:
     grid = Grid((n, n, n), 1.0 / n, (0.0, 0.0, 0.0))
     spec = PeriodicFlowSpec(grid=grid.to_dict(), geometry=geom, force=(1e-6, 0, 0), tau_plus=1.5,
                             check_every=200, max_steps=400, tol=1e-30, impl="auto", keep_fields=False)
+    PeriodicFlow().run(spec, ctx.backend)  # warm-up: the first call compiles the GPU kernel
     r = PeriodicFlow().run(spec, ctx.backend)
     out["mlups"] = r.diagnostics["mlups"]
     log(f"path {impl}: {out['mlups']:.0f} MLUPS at {n}^3")
@@ -159,7 +161,7 @@ def stage_resolution(ctx) -> dict:
             rows.append({"n": n, "status": "skipped_memory", "need_gb": need / 2**30})
             continue
         t0 = time.time()
-        r = rve.run_rve(geom, n, ctx.backend, tol=1e-6)
+        r = rve.run_rve(geom, n, ctx.backend)
         r["wall_total_s"] = time.time() - t0
         rows.append(r)
         log(f"resolution {n}^3: K = {r.get('permeability', float('nan')):.4e}, status {r['status']}, "
@@ -194,7 +196,7 @@ def stage_dataset(ctx) -> dict:
                 continue
             geom = rve.random_structure(i)
             try:
-                row = rve.run_rve(geom, n, ctx.backend, tol=1e-6)
+                row = rve.run_rve(geom, n, ctx.backend)
             except Exception as exc:  # noqa: BLE001 - one failed sample must not stop the night
                 row = {"family": rve.family_of(geom), "geometry": geom, "status": f"error: {type(exc).__name__}: {exc}"}
             row["index"] = i
@@ -208,8 +210,9 @@ def stage_dataset(ctx) -> dict:
             new += 1
             if new in (3, 20) or new % 50 == 0:
                 per = (time.time() - t_start) / new
-                left = (total - len(done) - new) * per
-                log(f"dataset: {len(done) + new}/{total}, {per:.1f} s/sample, ~{left / 3600:.1f} h left")    rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+                left = (total - len([d for d in done if ctx.offset <= d < ctx.offset + total]) - new) * per
+                log(f"dataset: {len(done) + new}/{total}, {per:.1f} s/sample, ~{left / 3600:.1f} h left")
+    rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
     counts = {}
     for r in rows:
         counts[r["status"]] = counts.get(r["status"], 0) + 1
@@ -269,8 +272,8 @@ def _parity_plot(path: Path, y, kc, mean, std, title) -> None:
     fig, ax = plt.subplots(figsize=(5, 5))
     lo, hi = float(min(y.min(), kc.min(), mean.min())), float(max(y.max(), kc.max(), mean.max()))
     ax.plot([lo, hi], [lo, hi], "k--", lw=1)
-    ax.scatter(y, kc, s=10, alpha=0.6, label="Kozeny–Carman")
-    ax.errorbar(y, mean, yerr=std, fmt="o", ms=3, alpha=0.7, label="MLP ensemble (±1σ)")
+    ax.scatter(y, kc, s=10, alpha=0.6, color="tab:orange", label="Kozeny–Carman")
+    ax.errorbar(y, mean, yerr=std, fmt="o", ms=3, alpha=0.7, color="tab:blue", label="MLP ensemble (±1σ)")
     ax.set_xlabel("log10 K (LBM)")
     ax.set_ylabel("log10 K (predicted)")
     ax.set_title(title)
@@ -287,14 +290,14 @@ def stage_forchheimer(ctx) -> dict:
     out = []
     for fam in rve.FAMILIES:
         geom = rve.random_structure(3, fam, seed_offset=4242)
-        base = rve.run_rve(geom, n, ctx.backend, tau_plus=tau, target_velocity=2e-4, tol=1e-6)
+        base = rve.run_rve(geom, n, ctx.backend, tau_plus=tau, target_velocity=2e-4)
         if base["status"] != "ok":
             out.append({"family": fam, "status": base["status"]})
             continue
         g0 = base["force_lu"]
         pts = []
         for factor in ([1, 10, 40] if ctx.quick else [1, 5, 20, 50, 100, 200, 350]):
-            r = rve.run_rve(geom, n, ctx.backend, tau_plus=tau, force=g0 * factor, tol=1e-6)
+            r = rve.run_rve(geom, n, ctx.backend, tau_plus=tau, force=g0 * factor)
             if r["status"] != "ok" or r["mach_max"] > 0.15:
                 break
             u = r["permeability_lu"] * r["force_lu"] / nu  # superficial velocity

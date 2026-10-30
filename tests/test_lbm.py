@@ -144,3 +144,12 @@ def test_impl_choice_and_memory_estimate(cpu64, cpu32):
         choose_impl("triton", cpu32)
     assert bytes_needed((512, 512, 512), "triton") < 32 * 2**30 * 0.8  # fits a 32 GB card
     assert bytes_needed((512, 512, 512), "torch") > bytes_needed((512, 512, 512), "triton")
+
+
+def test_short_last_window_is_not_convergence(cpu64):
+    """max_steps that is not a multiple of check_every leaves a short last window; the tiny
+    change over it must not be reported as convergence (seen on the RTX 5090 run)."""
+    spec = _sphere_spec(16, 0.6, tol=1e-12, max_steps=410, impl="torch")  # windows of 100, last one 10 steps
+    r = PeriodicFlow().run(spec, cpu64)
+    assert r.diagnostics["steps"] == 410
+    assert r.diagnostics["converged"] is False

@@ -53,7 +53,7 @@ class PeriodicFlowSpec(Spec):
     magic: float = lattice.MAGIC
     max_steps: int = Field(200_000, ge=1)
     check_every: int = Field(200, ge=1)
-    tol: float = Field(1e-9, gt=0)  # relative change of U_D between checks
+    tol: float = Field(1e-9, gt=0)  # relative change of U_D between two full check windows (needed twice in a row)
     impl: Impl = "auto"
     keep_fields: bool = True
 
@@ -167,23 +167,38 @@ class PeriodicFlow:
                 return stepper.run(n, g, omega_p, omega_m)
 
         t0 = time.perf_counter()
-        steps, history, converged, previous = 0, [], False, None
+        steps, history, converged, previous, calm = 0, [], False, None, 0
         h = None
+        # Periodic lattices carry a small undamped period-2 oscillation (a staggered mode excited by
+        # the impulsive start); a single-step sample alternates between its two levels forever. Every
+        # check therefore averages the last two time steps.
         while steps < spec.max_steps:
             n = min(spec.check_every, spec.max_steps - steps)
-            h = advance(n)
+            if n >= 2:
+                r1 = _reductions(advance(n - 1), c, g, direction, fluid, speed=False)
+                h = advance(1)
+                r = _reductions(h, c, g, direction, fluid, speed=True)
+                ud, umax = 0.5 * (r1["ud"] + r["ud"]), r["umax"]
+            else:
+                h = advance(n)
+                r = _reductions(h, c, g, direction, fluid, speed=True)
+                ud, umax = r["ud"], r["umax"]
             steps += n
-            r = _reductions(h, c, g, direction, fluid, speed=True)
-            ud, umax = r["ud"], r["umax"]
             if not (math.isfinite(ud) and math.isfinite(umax)):
                 raise SolverDivergence(f"non-finite state after {steps} steps")
             mach = umax / math.sqrt(lattice.CS2)
             if mach > MACH_LIMIT:
                 raise SolverDivergence(f"Mach {mach:.3f} exceeds {MACH_LIMIT} after {steps} steps")
             history.append((steps, ud))
-            if previous is not None and ud != 0 and abs(ud - previous) <= spec.tol * abs(ud):
-                converged = True
+            if n < spec.check_every:  # a short last window before max_steps changes little: never evidence
                 break
+            if previous is not None and ud != 0 and abs(ud - previous) <= spec.tol * abs(ud):
+                calm += 1
+                if calm >= 2:  # twice in a row, so one quiet window inside an oscillation does not count
+                    converged = True
+                    break
+            else:
+                calm = 0
             previous = ud
         if backend.device.type == "mps":
             torch.mps.synchronize()
@@ -194,7 +209,7 @@ class PeriodicFlow:
         final = _reductions(h, c, g, direction, fluid, speed=True)
         n_fluid = int(fluid.sum())
         porosity = n_fluid / grid.size
-        ud = final["ud"]
+        ud = history[-1][1] if history else final["ud"]  # two-step average of the last check
         k_lu = nu * ud / g_norm
         fields = {}
         if spec.keep_fields:

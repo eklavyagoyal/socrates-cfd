@@ -1,0 +1,16 @@
+{
+  "host": "nc-9-1-3",
+  "gpu": "NVIDIA GeForce RTX 5090",
+  "gpu_index": 0,
+  "gpu_free_before_mib": 31676,
+  "command": "CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python -u scripts/eval_generalization.py --device cuda",
+  "exit_code": 0,
+  "dataset_sha256": "c120718f9962e78be9e191794da0d9184ed8a20b5daf8e179025ac6978c0db62",
+  "base_commit": "bf55600c9aad3a4f7ffba1f71425efddc27652ff",
+  "launch": "nohup setsid, stdin /dev/null, remote log /var/tmp/eval-fixed-nohup.log",
+  "notes": [
+    "Earlier run eval-generalization-20261030-201203 was interrupted to relaunch with nohup; only the completed 202010 evaluation is included.",
+    "MLP uses CPU; CNN uses CUDA. Five base seeds 0, 1000, 2000, 3000, 4000; ensemble member seeds base + m for m = 0..4.",
+    "No evaluation split or model was skipped."
+  ]
+}

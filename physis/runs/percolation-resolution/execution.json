@@ -1,0 +1,59 @@
+{
+  "dataset_sha256": "c120718f9962e78be9e191794da0d9184ed8a20b5daf8e179025ac6978c0db62",
+  "indices": [
+    583,
+    325,
+    682,
+    148,
+    220,
+    436,
+    667,
+    790
+  ],
+  "required_sizes": [
+    128,
+    192,
+    256
+  ],
+  "required_pairs_completed": 24,
+  "optional_pairs_completed": [
+    [
+      220,
+      384
+    ]
+  ],
+  "optional_384_not_completed": [
+    583,
+    325,
+    682,
+    148,
+    436,
+    667,
+    790
+  ],
+  "max_steps": {
+    "128": 400000,
+    "192": 800000,
+    "256": 800000,
+    "384": 800000
+  },
+  "backend": "CUDA float32",
+  "impl": "triton",
+  "launch": "nohup setsid, stdin /dev/null, remote logs under /var/tmp/socrates-cfd/physis/runs/percolation-resolution",
+  "remote_root": "/var/tmp/socrates-cfd/physis",
+  "collection_utc": "2026-10-30T21:08:00Z",
+  "active_redundant_job_at_collection": {
+    "host": "nc-12-2-5",
+    "pid": 105564,
+    "pair": [
+      790,
+      256
+    ]
+  },
+  "notes": [
+    "Stored geometries verified equal to source dataset for all canonical rows.",
+    "All 128 K values match the source dataset exactly.",
+    "Helpers received a baseline-failure deferral guard after launch; active runs had completed baselines, so the guard does not change their numerical results.",
+    "Raw checkpoint files contain copied baseline rows; selected table provenance is recorded on every canonical row."
+  ]
+}

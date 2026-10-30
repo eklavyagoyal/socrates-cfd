@@ -52,8 +52,31 @@ third (CPU re-check, same data):
 
 On a genuinely new structure type the learned model is far worse than Kozeny–Carman (gyroid:
 orders of magnitude wrong). The closure is trustworthy **only for known families inside the
-trained porosity range**; it is not general. The CNN (which sees the voxel geometry, not a
-family tag) may do better on unseen structures — not yet tested.
+trained porosity range**; it is not general.
+
+**Full generalization eval (multi-seed, CNN vs KC vs MLP on identical splits):** ran on a free
+5090, 3 seeds per trainable model, R² = min–max over seeds. See
+`runs/eval-generalization-20261030-194912/` and `scripts/eval_generalization.py`.
+
+| split | KC R² | MLP R² | CNN R² |
+|---|---|---|---|
+| random | 0.880 | 0.973–0.974 | 0.983–0.988 |
+| porosity band held-out | 0.944 | 0.954–0.962 | 0.750–0.849 |
+| unseen spheres | 0.868 | 0.718–0.834 | 0.644–0.805 |
+| unseen voids | 0.434 | 0.276–0.311 | 0.200–0.309 |
+| unseen gyroid | 0.944 | −35…−16 | 0.853–0.920 |
+
+Honest reading:
+- **No learned model beats Kozeny–Carman on a genuinely new structure type.** That is the
+  answer to the headline question, and it settles the overclaim for good.
+- The CNN sees voxel geometry, so it survives the unseen-gyroid case (0.85–0.92 vs KC 0.944;
+  MLP collapses to −16…−35 because its family one-hot is all-zero for an unseen family).
+  On unseen spheres/voids, KC still wins.
+- Porosity-band extrapolation (known families, new porosity): KC is best (0.944); the CNN is
+  notably worse (0.75–0.85). The earlier "0.988" was seed noise (real MLP band: 0.954–0.962).
+- Unseen voids is the hardest case for everyone (KC 0.434, all models ~0.2–0.3): these sit
+  near the percolation threshold where 128³ passages may be a few voxels wide and the
+  training targets themselves are least reliable.
 
 The dataset itself (800 unique structures, 798 ok, no duplicates) is sound and reproducible;
 the limitation is in what the learned model claims to do.

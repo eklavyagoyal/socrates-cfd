@@ -16,6 +16,7 @@ exists, so a crash never costs finished work; ``--force`` reruns):
     python scripts/weekend_5090.py                       # everything
     python scripts/weekend_5090.py --quick               # ~2-5 min smoke test of every stage
     python scripts/weekend_5090.py --stages dataset,train --samples 1200
+    python scripts/weekend_5090.py --stages dataset --samples 600 --sample-offset 600  # shard 2
 """
 
 from __future__ import annotations
@@ -187,7 +188,8 @@ def stage_dataset(ctx) -> dict:
     log(f"dataset: {len(done)} of {total} samples already done, {n}^3 each")
     t_start, new = time.time(), 0
     with path.open("a") as fh:
-        for i in range(total):
+        for k in range(total):
+            i = ctx.offset + k  # global sample index: parallel shards get distinct seeds
             if i in done:
                 continue
             geom = rve.random_structure(i)
@@ -207,8 +209,7 @@ def stage_dataset(ctx) -> dict:
             if new in (3, 20) or new % 50 == 0:
                 per = (time.time() - t_start) / new
                 left = (total - len(done) - new) * per
-                log(f"dataset: {len(done) + new}/{total}, {per:.1f} s/sample, ~{left / 3600:.1f} h left")
-    rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+                log(f"dataset: {len(done) + new}/{total}, {per:.1f} s/sample, ~{left / 3600:.1f} h left")    rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
     counts = {}
     for r in rows:
         counts[r["status"]] = counts.get(r["status"], 0) + 1
@@ -407,12 +408,15 @@ def main() -> int:
     ap.add_argument("--stages", default=",".join(STAGES))
     ap.add_argument("--force", action="store_true", help="rerun stages that already have results")
     ap.add_argument("--samples", type=int, default=600)
+    ap.add_argument("--sample-offset", type=int, default=0,
+                    help="shift sample indices by this amount (parallel shards: distinct seeds per node)")
     ap.add_argument("--size", type=int, default=128)
     ap.add_argument("--device", default="auto")
     args = ap.parse_args()
 
     ctx = Ctx()
     ctx.quick, ctx.samples, ctx.size = args.quick, args.samples, args.size
+    ctx.offset = args.sample_offset
     ctx.out = Path(args.out or ROOT / "runs" / f"weekend-{time.strftime('%Y%m%d')}{'-quick' if args.quick else ''}")
     ctx.out.mkdir(parents=True, exist_ok=True)
     ctx.backend = get_backend("fast", device=args.device)

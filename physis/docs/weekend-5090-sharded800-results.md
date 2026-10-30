@@ -35,10 +35,28 @@ duplicate indices — sharding verified correct.
 | porosity held-out | unc↔err Spearman | 0.24 | | | |
 | 3D CNN (voxels) | cnn | **0.983** | 0.038 | — | 159 |
 
-**Headline:** with 200 more samples than run #1, the MLP now **beats Kozeny–Carman even
-out-of-distribution** (0.988 vs 0.944 on the held-out porosity band). Run #1 tied/lost there
-(0.931 vs 0.936 on 600 samples). The learned closure generalizes beyond the training
-porosity range once given enough data.
+**Headline (corrected after independent re-check):** the single-run 0.988 was a favorable
+seed. Re-running the MLP with 3 seeds on the held-out porosity band gives 0.965 / 0.967 /
+0.960 (KC 0.944) — consistently better than KC, but the margin is within seed noise, and the
+earlier claim that more data "fixed" out-of-distribution extrapolation was overclaimed.
+
+**Important limitation (unseen structure types):** the MLP one-hot-encodes the family, so it
+has no geometric information for a family it never saw. Train on two families, test on the
+third (CPU re-check, same data):
+
+| held-out family | KC R² | MLP R² (2 seeds) |
+|---|---|---|
+| spheres | 0.868 | 0.72 / 0.82 |
+| voids | 0.434 | 0.28 / 0.29 |
+| gyroid | 0.944 | **−35 / −17** |
+
+On a genuinely new structure type the learned model is far worse than Kozeny–Carman (gyroid:
+orders of magnitude wrong). The closure is trustworthy **only for known families inside the
+trained porosity range**; it is not general. The CNN (which sees the voxel geometry, not a
+family tag) may do better on unseen structures — not yet tested.
+
+The dataset itself (800 unique structures, 798 ok, no duplicates) is sound and reproducible;
+the limitation is in what the learned model claims to do.
 
 ## Forchheimer (inertia onset)
 

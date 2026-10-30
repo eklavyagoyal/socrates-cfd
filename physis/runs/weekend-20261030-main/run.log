@@ -1,0 +1,45 @@
+[2026-10-29 22:22:38] starting physis weekend run -> runs/weekend-20261029
+NVIDIA GeForce RTX 5090, 32607 MiB, 590.48.01
+[2026-10-29 22:22:38] python: Python 3.12.3 | TRITON_CACHE_DIR=/var/tmp/socrates-triton-cache
+[22:22:40] --- preflight
+[22:22:40] --- selfcheck
+[22:22:43] Triton self-check: PASS (max abs diff 1.517e-10 (reference scale 3.603e-04))
+[22:22:46] path triton: 677 MLUPS at 160^3
+[22:22:46] --- gates
+[22:50:45] gates: return code 0 (1679.2 s)
+[22:50:45] --- resolution
+[22:50:45] resolution 64^3: K = 7.5230e-04, status ok, 500 steps, 0.0 s
+[22:50:45] resolution 96^3: K = 7.4396e-04, status ok, 1008 steps, 0.1 s
+[22:50:46] resolution 128^3: K = 7.4327e-04, status ok, 1990 steps, 0.6 s
+[22:50:49] resolution 192^3: K = 7.4575e-04, status ok, 4032 steps, 3.4 s
+[22:51:03] resolution 256^3: K = 7.4791e-04, status ok, 7164 steps, 13.6 s
+[22:51:03] resolution 384^3: skipped (needs ~9.3 GB, 5.0 GB free)
+[22:51:03] resolution 512^3: skipped (needs ~22.1 GB, 5.0 GB free)
+[22:51:03] --- dataset
+[22:51:03] dataset: 0 of 600 samples already done, 128^3 each
+[22:51:05] dataset: 3/600, 0.8 s/sample, ~0.1 h left
+[22:52:53] dataset: 20/600, 5.5 s/sample, ~0.9 h left
+[23:08:31] dataset: 50/600, 21.0 s/sample, ~3.2 h left
+[23:23:05] dataset: 100/600, 19.2 s/sample, ~2.7 h left
+[23:40:45] dataset: 150/600, 19.9 s/sample, ~2.5 h left
+[23:58:14] dataset: 200/600, 20.2 s/sample, ~2.2 h left
+[00:16:19] dataset: 250/600, 20.5 s/sample, ~2.0 h left
+[00:34:20] dataset: 300/600, 20.7 s/sample, ~1.7 h left
+[00:45:56] dataset: 350/600, 19.7 s/sample, ~1.4 h left
+[00:59:08] dataset: 400/600, 19.2 s/sample, ~1.1 h left
+[01:14:05] dataset: 450/600, 19.1 s/sample, ~0.8 h left
+[01:27:17] dataset: 500/600, 18.7 s/sample, ~0.5 h left
+[01:45:24] dataset: 550/600, 19.0 s/sample, ~0.3 h left
+[02:03:19] dataset: 600/600, 19.2 s/sample, ~0.0 h left
+[02:03:19] --- train
+[02:03:32] train [random]: KC R2 0.837 | MLP R2 0.984
+[02:03:39] train [porosity_band_held_out]: KC R2 0.936 | MLP R2 0.931
+[02:03:39] --- forchheimer
+[02:04:03] forchheimer [spheres]: 4 points, Re up to 12.57
+[02:04:17] forchheimer [voids]: 4 points, Re up to 5.29
+[02:04:48] forchheimer [gyroid]: 5 points, Re up to 29.36
+[02:04:48] --- cnn
+[02:04:58] cnn: R2 0.979, MAE 0.044 (log10 K)
+[02:04:58] --- report
+[02:04:58] report written: runs/weekend-20261029/report.md — send the whole folder runs/weekend-20261029 back
+[2026-10-30 02:04:59] weekend run finished, exit code 0

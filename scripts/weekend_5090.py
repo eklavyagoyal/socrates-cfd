@@ -23,6 +23,7 @@ exists, so a crash never costs finished work; ``--force`` reruns):
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import math
 import os
@@ -67,6 +68,9 @@ def load(out: Path, name: str) -> dict | None:
 
 def free_device_bytes(device: torch.device) -> int:
     if device.type == "cuda":
+        # memory held in torch's cache by an earlier (smaller) run counts as used for the driver
+        gc.collect()
+        torch.cuda.empty_cache()
         return torch.cuda.mem_get_info(device)[0]
     if device.type == "mps":
         return int(torch.mps.recommended_max_memory() * 0.8)
@@ -147,7 +151,8 @@ def stage_gates(ctx) -> dict:
 
 
 def stage_resolution(ctx) -> dict:
-    impl = load(ctx.out, "selfcheck")["impl"]
+    sc = load(ctx.out, "selfcheck")  # absent when this folder's run skipped the selfcheck stage
+    impl = sc["impl"] if sc else choose_impl("auto", ctx.backend)
     sizes = [24, 32, 48] if ctx.quick else [64, 96, 128, 192, 256, 384, 512]
     if impl == "torch":
         sizes = [s for s in sizes if s <= 192]
@@ -349,7 +354,8 @@ def stage_report(ctx) -> dict:
     if sc.get("warning"):
         L.append(f"- ⚠ {sc['warning']}")
     g = s["gates"] or {}
-    L += ["", "## Validation gates", "", f"- `{g.get('command')}` → return code {g.get('returncode')}"]
+    L += ["", "## Validation gates", "", f"- `{g.get('command')}` → return code {g.get('returncode')}" if g else
+          "- not run in this folder (stage skipped); see `validation/results/` for the last recorded gates"]
     for k, v in (g.get("records") or {}).items():
         L.append(f"  - {k}: **{v}**")
     res = s["resolution"] or {}
